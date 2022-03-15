@@ -6,11 +6,28 @@ using System.Web.Mvc;
 
 namespace web2.Controllers
 {
+// ----------------------------------------------------------- // 
+// Name: Indices mgmt section
+// Desc:
+// ----------------------------------------------------------- // 
+
     public class HomeController : Controller
     {
         public ActionResult Index()
         {
             return View();
         }
+
+        [HttpPost]
+        public ActionResult Index(FormCollection col)
+        {  
+            if (col["btnHomeSubmit"].ToString() == "join")
+            {
+               
+                return RedirectToAction("Index", "Member");
+            }
+            return View();
+        }
+
     }
 }
