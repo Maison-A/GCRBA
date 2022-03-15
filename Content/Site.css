@@ -1,0 +1,158 @@
+﻿body {
+    margin: 0 0 1em 0;
+    padding: 0;
+    font-size: 1em;
+    font-family: "Proxima Nova Extra Condensed",proxima-nova-extra-condensed,Helvetica,sans-serif;
+}
+
+#site-header {
+	background-color: black;
+	color: white;
+	font-size: 2.25em;
+	padding: 20px 0px 20px 20px;
+}
+
+#site-icon {
+	margin-right: 0.5em;
+	color: #4CAF50;
+}
+
+h2 {
+    margin-top: 1.5em;
+}
+
+#workspace {
+    padding-left: 2em;
+    display: table-cell;
+}
+
+.icon-bar {
+	background-color: black;
+	display: table-cell;
+	float: left;
+}
+
+.icon-bar a {
+	display: block;
+	text-align: center;
+	padding: 16px;
+	transition: all 0.3s ease;
+	color: white;
+	font-size: 30px;
+}
+
+.icon-bar a:hover {
+	background-color: #4b4a4a;
+}
+
+.icon-bar .active {
+	background-color: #4CAF50;
+}
+
+.icon-bar .active:hover {
+	background-color: #4CAF50;
+}
+
+p {
+    margin-bottom: 1.5em;
+}
+
+.section {
+    overflow: visible;
+    display: block;
+    clear: both;
+    margin: 0 0 1.0em 0;
+    overflow: auto;
+}
+
+.item {
+    display: inline;
+    float: left;
+    margin-right: 1.0em;
+    margin-bottom: 1.0em;
+}
+
+button, input[type=submit], input[type=button] {
+	cursor: pointer;
+	padding: 12px 30px 12px 30px;
+	background-color: #E4E4E4;
+	color: black;
+	border: 1px solid white;
+}
+
+button i {
+	margin-right: 0.35em;
+}
+
+.button-action {
+	background-color: #4CAF50;
+	color: white;
+}
+
+.button-action:hover {
+	background-color: #2f6a31;
+}
+
+.button-cancel {
+	background-color: #E4E4E4;
+	color: black;
+}
+
+.button-cancel:hover {
+	background-color: #555;
+	color: white;
+}
+
+.button-alert {
+	background-color: #FF0000;
+	color: white;
+}
+
+.button-alert:hover {
+	background-color: #b30000;
+	color: white;
+}
+
+.mobile-content {
+    display: none;
+}
+
+@media only screen and (max-width : 30em) {
+	.item {
+		width: 90%;
+		display: block;
+	}
+}
+
+@media only screen and (max-width : 48em) {
+
+    h2 {
+        margin-top: 0.5em;
+    }
+
+    #workspace {
+        padding-left: 1em;
+    }
+
+    #site-header {
+        font-size: 1.75em;
+        padding: 10px 0px 10px 10px;
+    }
+
+    p {
+        margin-bottom: 1em;
+    }
+
+    .full-content {
+        display: none;
+    }
+
+    .mobile-content {
+        display: inline;
+    }
+
+    .icon-bar a {
+        padding: 10px;
+        font-size: 20px;
+    }
+}

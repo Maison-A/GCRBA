@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <script src="https://kit.fontawesome.com/a75ff89abd.js" crossorigin="anonymous"></script>
+    <!-- this is the style sheet to be used -->
+    <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" />
+</head>
+<body>
+    <div>
+        <!-- all code in every cshtml page is run through this div -->
+        @RenderBody()
+    </div>
+</body>
+</html>
