@@ -24,7 +24,7 @@ namespace web2.Controllers
             if (col["btnHomeSubmit"].ToString() == "join")
             {
                
-                return RedirectToAction("Index", "Member");
+                return RedirectToAction("AddNewMember", "Member");
             }
             return View();
         }
