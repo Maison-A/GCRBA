@@ -9,8 +9,10 @@
 <p>The current date and time is: @DateTime.Now</p>
 
 <div class="some-spacing">
-        <button class="button-action" id="btnJoin" name="btnHomeSubmit" value="join">Join the GCRBA!</button>
-</div>
+    
+    <div class="button-action">
+        @Html.ActionLink("Join the GCRBA!", "AddNewMember", "Member")
+    </div>
 
 <div class="some-spacing">
 
