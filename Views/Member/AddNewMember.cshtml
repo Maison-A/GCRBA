@@ -1,9 +1,26 @@
-﻿
+﻿@model GCRBA.Models.Member
 @{
-    ViewBag.Title = "AddNewMember";
+    ViewBag.Title = "New GCRBA Member Form";
 }
 
 <h2>@ViewBag.Title</h2>
 <p>The current date and time is: @DateTime.Now</p>
+
+
+@using (Html.BeginForm(FormMethod.Post))
+{
+
+
+    if (Model.ActionType == GCRBA.Models.Member.ActionTypes.RequiredFieldsMissing)
+    {
+        <div id="content-locked">
+
+            <i class="fad fa-exclamation-trangle fa-2x"></i>
+            <span>All fields are required.</span>
+        </div>
+    }
+
+}
+
 
 

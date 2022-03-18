@@ -13,23 +13,15 @@ namespace GCRBA.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //public ActionResult Index(FormCollection col)
-        //{
-        //    if (col["btnHomeSubmit"].ToString() == "join")
-        //    {
-
-        //        return RedirectToAction("Index", "Member");
-        //    }
-        //    return View();
-        //}
-
 
         public ActionResult AddNewMember()
         {
             return View();
         }
+
+      
+
     }
 
-  
+
 }
