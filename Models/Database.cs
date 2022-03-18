@@ -57,12 +57,12 @@ namespace GCRBA.Models
 				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
 				SqlDataAdapter da = new SqlDataAdapter("LOGIN", cn);
 				DataSet ds;
-				User newUser = null;
+				Member newMember = null;
 
 				da.SelectCommand.CommandType = CommandType.StoredProcedure;
 
-				SetParameter(ref da, "@user_id", u.UserID, SqlDbType.NVarChar);
-				SetParameter(ref da, "@password", u.Password, SqlDbType.NVarChar);
+				SetParameter(ref da, "@user_id", m.UserID, SqlDbType.NVarChar);
+				SetParameter(ref da, "@password", m.Password, SqlDbType.NVarChar);
 
 				try
 				{
@@ -70,14 +70,14 @@ namespace GCRBA.Models
 					da.Fill(ds);
 					if (ds.Tables[0].Rows.Count > 0)
 					{
-						newUser = new User();
+						newMember = new Member();
 						DataRow dr = ds.Tables[0].Rows[0];
-						newUser.UID = (long)dr["UID"];
-						newUser.UserID = u.UserID;
-						newUser.Password = u.Password;
-						newUser.FirstName = (string)dr["FirstName"];
-						newUser.LastName = (string)dr["LastName"];
-						newUser.Email = (string)dr["Email"];
+						newMember.UID = (long)dr["UID"];
+						newMember.UserID = m.UserID;
+						newMember.Password = m.Password;
+						newMember.FirstName = (string)dr["FirstName"];
+						newMember.LastName = (string)dr["LastName"];
+						newMember.Email = (string)dr["Email"];
 					}
 				}
 				catch (Exception ex) { throw new Exception(ex.Message); }
@@ -85,12 +85,12 @@ namespace GCRBA.Models
 				{
 					CloseDBConnection(ref cn);
 				}
-				return newUser; //alls well in the world
+				return newMember; //alls well in the world
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public User.ActionTypes UpdateUser(User u)
+		public Member.ActionTypes UpdateMember(Member m)
 		{
 			try
 			{
@@ -99,12 +99,12 @@ namespace GCRBA.Models
 				SqlCommand cm = new SqlCommand("UPDATE_USER", cn);
 				int intReturnValue = -1;
 
-				SetParameter(ref cm, "@uid", u.UID, SqlDbType.BigInt);
-				SetParameter(ref cm, "@user_id", u.UserID, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@password", u.Password, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@first_name", u.FirstName, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@last_name", u.LastName, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@email", u.Email, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@uid", m.UID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@user_id", m.UserID, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@password", m.Password, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@first_name", m.FirstName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@last_name", m.LastName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@email", m.Email, SqlDbType.NVarChar);
 
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
 
