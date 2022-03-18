@@ -29,11 +29,11 @@ namespace GCRBA.Models
 				Database db = new Database();
 				if (UID == 0)
 				{ //insert new user
-					this.ActionType = db.InsertUser(this);
+					this.ActionType = db.InsertMember(this);
 				}
 				else
 				{
-					this.ActionType = db.UpdateUser(this);
+					this.ActionType = db.InsertMember(this);
 				}
 				return this.ActionType;
 			}
