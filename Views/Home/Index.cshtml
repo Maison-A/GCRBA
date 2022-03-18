@@ -8,17 +8,18 @@
 
 <p>The current date and time is: @DateTime.Now</p>
 
-<div class="some-spacing">
-        <button class="button-action" id="btnJoin" name="btnHomeSubmit" value="join">Join the GCRBA!</button>
-</div>
+@using (Html.BeginForm()) {
+	<div class="some-spacing">
+        <button class="button-action" id="btnJoin" name="btnSubmit" value="join">Join the GCRBA!</button>
+	</div>
 
-<div class="some-spacing">
+	<div class="some-spacing">
 
-    <p>BAKERIES</p>
+		<button class="button-action" id="btnBakery" name="btnSubmit" value="bakery"><i class="fal fa-birthday-cake"></i>Find a Bakery</button>
 
-    <p>VENDORS</p>
+		<button class="button-action" id="btnBakery" name="btnSubmit" value="vendor"><i class="fal fa-birthday-cake"></i>Connect with Vendors</button>
 
-    <p>EDUCATION</p>
+		<button class="button-action" id="btnBakery" name="btnSubmit" value="education"><i class="fal fa-birthday-cake"></i>Learn to Bake!</button>
 
-</div>
-
+	</div>
+}

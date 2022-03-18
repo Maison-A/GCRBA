@@ -4,8 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace web2.Controllers
-{
+namespace GCRBA.Controllers {
 // ----------------------------------------------------------- // 
 // Name: Indices mgmt section
 // Desc:
@@ -21,13 +20,22 @@ namespace web2.Controllers
         [HttpPost]
         public ActionResult Index(FormCollection col)
         {  
-            if (col["btnHomeSubmit"].ToString() == "join")
-            {
-               
+            if(col["btnSubmit"].ToString() == "join") {
                 return RedirectToAction("AddNewMember", "Member");
             }
-            return View();
-        }
 
+            if(col["btnSubmit"].ToString() == "bakery") {
+				return RedirectToAction("Index", "Bakery");
+			}
+
+            if (col["btnSubmit"].ToString() == "vendor") {
+                return RedirectToAction("Index", "Vendor");
+            }
+
+            if (col["btnSubmit"].ToString() == "education") {
+                return RedirectToAction("Index", "Education");
+            }
+            return View();
+        } 
     }
 }
