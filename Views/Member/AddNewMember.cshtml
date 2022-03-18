@@ -11,15 +11,48 @@
 {
 
 
-    if (Model.ActionType == GCRBA.Models.Member.ActionTypes.RequiredFieldsMissing)
+    @*if (Model.ActionType == GCRBA.Models.Member.ActionTypes.RequiredFieldsMissing)
     {
         <div id="content-locked">
 
             <i class="fad fa-exclamation-trangle fa-2x"></i>
             <span>All fields are required.</span>
         </div>
-    }
+    }*@
+    // TODO: - organize labels/textboxes
+    //       - add proper labels/textboxes
+    //       - create style in css?
+    <div class="section">
+        <div class="item">
+            <div>@Html.LabelFor(model => model.FirstName)</div>
+            <div>@Html.TextBoxFor(model => model.FirstName, new { @autofocus = "autofocus" })</div>
+        </div>
+        <div class="item">
+            <div>@Html.LabelFor(model => model.LastName)</div>
+            <div>@Html.TextBoxFor(model => model.LastName)</div>
+        </div>
+        <!-- third item (email)-->
+        <div class="item">
+            <div>@Html.LabelFor(model => model.Email)</div>
+            <div>@Html.TextBoxFor(model => model.Email)</div>
+        </div>
 
+    </div>
+    <div class="section">
+        <div class="item">
+            <div>@Html.LabelFor(model => model.UserID)</div>
+            <div>@Html.TextBoxFor(model => model.UserID)</div>
+        </div>
+        <div class="item">
+            <div>@Html.LabelFor(model => model.Password)</div>
+            <div>@Html.TextBoxFor(model => model.Password, new { type = "password" })</div>
+        </div>
+
+    </div>
+
+    <div>
+        <button id="btnSignUp" name="btnSubmit" value="signup" class="button-action"><i class="fas fa-user-plus"></i> Sign-Up</button>
+    </div>
 }
 
 
