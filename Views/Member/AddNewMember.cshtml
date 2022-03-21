@@ -4,40 +4,55 @@
 }
 
 <h2>@ViewBag.Title</h2>
-<p>The current date and time is: @DateTime.Now</p>
-
 
 @using (Html.BeginForm(FormMethod.Post))
 {
 
-
-    @*if (Model.ActionType == GCRBA.Models.Member.ActionTypes.RequiredFieldsMissing)
-    {
-        <div id="content-locked">
-
-            <i class="fad fa-exclamation-trangle fa-2x"></i>
-            <span>All fields are required.</span>
-        </div>
-    }*@
     // TODO: - organize labels/textboxes
     //       - add proper labels/textboxes
     //       - create style in css?
-    <div class="section">
-        <div class="item">
-            <div>@Html.LabelFor(model => model.FirstName)</div>
-            <div>@Html.TextBoxFor(model => model.FirstName, new { @autofocus = "autofocus" })</div>
-        </div>
-        <div class="item">
-            <div>@Html.LabelFor(model => model.LastName)</div>
-            <div>@Html.TextBoxFor(model => model.LastName)</div>
-        </div>
-        <!-- third item (email)-->
-        <div class="item">
-            <div>@Html.LabelFor(model => model.Email)</div>
-            <div>@Html.TextBoxFor(model => model.Email)</div>
-        </div>
-
+<div class="section"  >
+    <!-- Member First Name -->
+    <div class="item">
+        <div>@Html.Label("First Name")</div>
+        <div>@Html.TextBoxFor(model => model.FirstName, new { @autofocus = "autofocus" })</div>
     </div>
+    <!-- Member Last Name -->
+    <div class="item">
+        <div>@Html.Label("Last Name")</div>
+        <div>@Html.TextBoxFor(model => model.LastName)</div>
+    </div>
+    <!-- Membership Type -->
+    <div class="item">
+        <div>@Html.Label("Membership Type")</div>
+        <div class="some-spacing">
+            @Html.RadioButtonFor(model => model.MemberShipType, "A", false)@Html.Label("A")
+            @Html.RadioButtonFor(model => model.MemberShipType, "B", false)@Html.Label("B")
+            @Html.RadioButtonFor(model => model.MemberShipType, "C", false)@Html.Label("C")
+        </div>
+    </div>
+
+    <!-- Email -->
+    <div class="item">
+        <div>@Html.Label("E-mail")</div>
+        <div>@Html.TextBoxFor(model => model.Email)</div>
+    </div>
+
+    <!-- Username -->
+    <div class="item">
+        <div>@Html.Label("Username")</div>
+        <div>@Html.TextBoxFor(model => model.UserName)</div>
+    </div>
+
+    <!-- Password -->
+    <div class="item">
+        <div>@Html.LabelFor(model => model.Email)</div>
+        <div>@Html.TextBoxFor(model => model.Email)</div>
+    </div>
+
+
+
+</div>
     <div class="section">
         <div class="item">
             <div>@Html.LabelFor(model => model.UserID)</div>

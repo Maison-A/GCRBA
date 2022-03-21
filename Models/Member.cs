@@ -13,7 +13,7 @@ namespace GCRBA.Models
 		public string FirstName = string.Empty;
 		public string LastName = string.Empty;
 		public string MemberShipType = string.Empty;
-		//public string 
+		public string UserName = string.Empty;
 		public string UserID = string.Empty;
 		public string Password = string.Empty;
 		public string Email = string.Empty;

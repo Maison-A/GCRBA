@@ -12,6 +12,12 @@
 	padding: 20px 0px 20px 20px;
 }
 
+.some-spacing {
+    magin-bottom: 1em;
+    display: inline-block
+}
+
+
 #site-icon {
 	margin-right: 0.5em;
 	color: #4CAF50;
