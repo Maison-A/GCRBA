@@ -19,7 +19,22 @@ namespace GCRBA.Controllers
             return View();
         }
 
-      
+
+        [HttpPost]
+        public ActionResult AddNewMember(FormCollection col)
+        {
+            if (col["btnSignUp"].ToString() == "signup")
+            {
+                //validate data
+
+                // send data if valid to db
+
+                // return to member page - use generated user id as 
+                // param
+                return RedirectToAction("AddNewMember", "Member");
+            }
+            return View();
+        }
 
     }
 
