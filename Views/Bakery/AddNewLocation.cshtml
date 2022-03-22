@@ -1,0 +1,16 @@
+﻿
+@{
+    ViewBag.Title = "New Bakery Location Form";
+}
+
+<h2>@ViewBag.Title</h2>
+<p>Please enter the information for the new bakery location</p>
+
+<div>
+    @using(Html.BeginForm()) {
+                <div class="some-spacing">
+                    <button class="button-action" id="btnAddLocation" name="btnSubmit" value="NewLocation">Enter New Location</button>
+                </div>
+			}
+</div>
+
