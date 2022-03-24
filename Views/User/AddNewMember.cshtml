@@ -10,57 +10,38 @@
 
 <div class="section">
     <!-- Member First Name -->
-    <div class="item">
+    <div>
         <div>@Html.Label("First Name")</div>
         <div>@Html.TextBoxFor(model => model.FirstName, new { @autofocus = "autofocus" })</div>
     </div>
     <!-- Member Last Name -->
-    <div class="item">
+    <div>
         <div>@Html.Label("Last Name")</div>
         <div>@Html.TextBoxFor(model => model.LastName)</div>
     </div>
-    <!-- Membership Type -->
-    <div class="item">
-        <div>@Html.Label("Membership Type")</div>
-        <div class="some-spacing">
-            @Html.RadioButtonFor(model => model.MemberShipType, "A", false)@Html.Label("A")
-            @Html.RadioButtonFor(model => model.MemberShipType, "B", false)@Html.Label("B")
-            @Html.RadioButtonFor(model => model.MemberShipType, "C", false)@Html.Label("C")
-        </div>
-    </div>
-    
+
     <!-- Email -->
-    <div class="item">
+    <div>
         <div>@Html.Label("E-mail")</div>
         <div>@Html.TextBoxFor(model => model.Email)</div>
     </div>
 
-    <!-- Username -->
-    <div class="item">
-        <div>@Html.Label("Username")</div>
-        <div>@Html.TextBoxFor(model => model.UserName)</div>
-    </div>
 
-    <!-- Password -->
-    <div class="item">
-        <div>@Html.LabelFor(model => model.Email)</div>
-        <div>@Html.TextBoxFor(model => model.Email)</div>
-    </div>
-
-
-
-</div>
+    <!-- Membership Type -->
     <div class="section">
-        <div class="item">
-            <div>@Html.LabelFor(model => model.UserName)</div>
-            <div>@Html.TextBoxFor(model => model.UserName)</div>
+        <div>@Html.Label("Membership Type")</div>
+        <div class="some-spacing">
+            @Html.RadioButtonFor(model => model.MemberShipType, "A", false)@Html.Label("A - $10")
+            @Html.RadioButtonFor(model => model.MemberShipType, "B", false)@Html.Label("B - $20")
+            @Html.RadioButtonFor(model => model.MemberShipType, "C", false)@Html.Label("C - $100")
         </div>
-        <div class="item">
-            <div>@Html.LabelFor(model => model.Password)</div>
-            <div>@Html.TextBoxFor(model => model.Password, new { type = "password" })</div>
-        </div>
-
     </div>
+    <!-- payment type -->
+    <div class="some-spacing">
+        @Html.RadioButtonFor(model => model.MemberShipType, "A", false)@Html.Label("Zelle")
+        @Html.RadioButtonFor(model => model.MemberShipType, "B", false)@Html.Label("Check")
+    </div>
+</div>
 
     <div>
         <button id="btnSignUp" name="btnSubmit" value="signup" class="button-action"><i class="fas fa-user-plus"></i> Sign-Up</button>

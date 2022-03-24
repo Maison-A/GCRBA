@@ -7,56 +7,52 @@
 
 @using (Html.BeginForm(FormMethod.Post))
 {
-
-    // TODO:
+<div>
     <div class="section">
-        <!-- Member First Name -->
-        <div class="item">
-            <div>@Html.Label("First Name")</div>
-            <div>@Html.TextBoxFor(model => model.FirstName, new { @autofocus = "autofocus" })</div>
+        <div>
+            <!-- User First Name -->
+            <div>
+                <div>@Html.Label("First Name")</div>
+                <div>@Html.TextBoxFor(model => model.FirstName, new { @autofocus = "autofocus" })</div>
+            </div>
+            <!-- User Last Name -->
+            <div>
+                <div>@Html.Label("Last Name")</div>
+                <div>@Html.TextBoxFor(model => model.LastName)</div>
+            </div>
         </div>
-        <!-- Member Last Name -->
-        <div class="item">
-            <div>@Html.Label("Last Name")</div>
-            <div>@Html.TextBoxFor(model => model.LastName)</div>
-        </div>
-       
-    <!-- Email -->
-        <div class="item">
+
+        <!-- Email -->
+        <div>
             <div>@Html.Label("E-mail")</div>
             <div>@Html.TextBoxFor(model => model.Email)</div>
         </div>
 
         <!-- Username -->
-        <div class="item">
+        <div>
             <div>@Html.Label("Username")</div>
             <div>@Html.TextBoxFor(model => model.UserName)</div>
         </div>
-
-        <!-- Password -->
-        <div class="item">
-            <div>@Html.LabelFor(model => model.Email)</div>
-            <div>@Html.TextBoxFor(model => model.Email)</div>
-        </div>
-
-
-
     </div>
+    <!-- Password -->
     <div class="section">
-        <div class="item">
-            <div>@Html.LabelFor(model => model.UserName)</div>
-            <div>@Html.TextBoxFor(model => model.UserName)</div>
-        </div>
-        <div class="item">
-            <div>@Html.LabelFor(model => model.Password)</div>
-            <div>@Html.TextBoxFor(model => model.Password, new { type = "password" })</div>
-        </div>
+        <div>@Html.Label("Password")</div>
+        <div>@Html.TextBoxFor(model => model.Password)</div>
 
+    <!-- Password verify -->
+        <div>@Html.Label("Verify Password")</div>
+        <div>@Html.TextBoxFor(model => model.Password)</div>
     </div>
+    <div class="some-spacing">
+        @Html.CheckBox("IsChecked", false)@Html.Label("Would you like to join the GCRBA?")
+    </div>
+</div>
+    // TODO:
+  
 
     <div>
         <button id="btnNewUser" name="btnSubmit" value="newuser" class="button-action"><i class="fas fa-user-plus"></i> Sign-Up</button>
-        @*@Html.CheckBox("", false)@Html.Label("Would you like to join the GCRBA?")*@
+       
     </div>
 }
 

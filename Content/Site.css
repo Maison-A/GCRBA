@@ -14,7 +14,7 @@
 
 .some-spacing {
     magin-bottom: 1em;
-    display: block
+    
 }
 
 
@@ -24,7 +24,6 @@
     right: 0;
 }
 
-</style >
 
 #site-icon {
     margin-right: 0.5em;

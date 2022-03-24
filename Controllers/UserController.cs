@@ -23,7 +23,10 @@ namespace GCRBA.Views.User
         [HttpPost]
         public ActionResult AddNewUser(FormCollection col)
         {
-            if (col["btnSignUp"].ToString() == "signup")
+            // check if checkbox is checked, if so then submit all data and redirect to new member form?
+            // or maybe pull a partial view up?
+
+            if (col["btnNewUser"].ToString() == "newuser")
             {
                 //validate data
 
