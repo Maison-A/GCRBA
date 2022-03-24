@@ -9,7 +9,7 @@ namespace GCRBA.Models
 	public class Database
 	{
 		// this user object will be retrieved from where the user types in their data
-		public Member.ActionTypes InsertMember(Member m)
+		public User.ActionTypes InsertUser(User u)
 		{
 			try
 			{
@@ -17,13 +17,13 @@ namespace GCRBA.Models
 				SqlConnection cn = null;
 
 				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
-				SqlCommand cm = new SqlCommand("INSERT_MEMBER", cn);
+				SqlCommand cm = new SqlCommand("INSERT_USER", cn);
 				int intReturnValue = -1;
 
 				// passing in the comand, name of what to mod, the value, the data type and where it's putting the 
 				// data which is only pertnant to the first param (big int is an output param)
-				SetParameter(ref cm, "@uid", m.UID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
-				SetParameter(ref cm, "@user_id", m.UserID, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@uid", u.UID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+				SetParameter(ref cm, "@user_id", u.UserName, SqlDbType.NVarChar);
 				
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
 
@@ -35,21 +35,21 @@ namespace GCRBA.Models
 
 				switch (intReturnValue)
 				{
-					case 1: // new member created
-						m.UID = (long)cm.Parameters["@uid"].Value;
-						return Member.ActionTypes.InsertSuccessful;
+					case 1: // new user created
+						u.UID = (long)cm.Parameters["@uid"].Value;
+						return User.ActionTypes.InsertSuccessful;
 					case -1:
-						return Member.ActionTypes.DuplicateEmail;
+						return User.ActionTypes.DuplicateEmail;
 					case -2:
-						return Member.ActionTypes.DuplicateUserID;
+						return User.ActionTypes.DuplicateUserID;
 					default:
-						return Member.ActionTypes.Unknown;
+						return User.ActionTypes.Unknown;
 				}
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public Member Login(Member m)
+		public User Login(User u)
 		{
 			try
 			{
@@ -57,12 +57,12 @@ namespace GCRBA.Models
 				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
 				SqlDataAdapter da = new SqlDataAdapter("LOGIN", cn);
 				DataSet ds;
-				Member newMember = null;
+				User newUser = null;
 
 				da.SelectCommand.CommandType = CommandType.StoredProcedure;
 
-				SetParameter(ref da, "@user_id", m.UserID, SqlDbType.NVarChar);
-				SetParameter(ref da, "@password", m.Password, SqlDbType.NVarChar);
+				SetParameter(ref da, "@user_id", u.UserName, SqlDbType.NVarChar);
+				SetParameter(ref da, "@password", u.Password, SqlDbType.NVarChar);
 
 				try
 				{
@@ -70,14 +70,14 @@ namespace GCRBA.Models
 					da.Fill(ds);
 					if (ds.Tables[0].Rows.Count > 0)
 					{
-						newMember = new Member();
+						newUser = new User();
 						DataRow dr = ds.Tables[0].Rows[0];
-						newMember.UID = (long)dr["UID"];
-						newMember.UserID = m.UserID;
-						newMember.Password = m.Password;
-						newMember.FirstName = (string)dr["FirstName"];
-						newMember.LastName = (string)dr["LastName"];
-						newMember.Email = (string)dr["Email"];
+						newUser.UID = (long)dr["UID"];
+						newUser.UserName = u.UserName;
+						newUser.Password = u.Password;
+						newUser.FirstName = (string)dr["FirstName"];
+						newUser.LastName = (string)dr["LastName"];
+						newUser.Email = (string)dr["Email"];
 					}
 				}
 				catch (Exception ex) { throw new Exception(ex.Message); }
@@ -85,12 +85,12 @@ namespace GCRBA.Models
 				{
 					CloseDBConnection(ref cn);
 				}
-				return newMember; //alls well in the world
+				return newUser; //alls well in the world
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public Member.ActionTypes UpdateMember(Member m)
+		public User.ActionTypes UpdateUser(User u)
 		{
 			try
 			{
@@ -99,12 +99,12 @@ namespace GCRBA.Models
 				SqlCommand cm = new SqlCommand("UPDATE_USER", cn);
 				int intReturnValue = -1;
 
-				SetParameter(ref cm, "@uid", m.UID, SqlDbType.BigInt);
-				SetParameter(ref cm, "@user_id", m.UserID, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@password", m.Password, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@first_name", m.FirstName, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@last_name", m.LastName, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@email", m.Email, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@uid", u.UID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@user_name", u.UserName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@password", u.Password, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@first_name", u.FirstName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@last_name", u.LastName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@email", u.Email, SqlDbType.NVarChar);
 
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
 
@@ -116,9 +116,9 @@ namespace GCRBA.Models
 				switch (intReturnValue)
 				{
 					case 1: //new updated
-						return Member.ActionTypes.UpdateSuccessful;
+						return User.ActionTypes.UpdateSuccessful;
 					default:
-						return Member.ActionTypes.Unknown;
+						return User.ActionTypes.Unknown;
 				}
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }

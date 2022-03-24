@@ -6,20 +6,24 @@
 
 <h2>@ViewBag.Title</h2>
 
-<p>The current date and time is: @DateTime.Now</p>
-
 @using (Html.BeginForm()) {
-	<div class="some-spacing">
-        <button class="button-action" id="btnJoin" name="btnSubmit" value="join">Join the GCRBA!</button>
-	</div>
+<div class="topcorner">
+    <button class="button-action" id="btnJoin" name="btnSubmit" value="join">Join the GCRBA!</button>
+    <button class="button-action" id="btnJoin" name="btnSubmit" value="signup">Sign up to list your Bakery!</button>
+</div>
 
-	<div class="some-spacing">
+	<div>
+        <div>
+            <button class="button-action" id="btnBakery" name="btnSubmit" value="bakery"><i class="fal fa-birthday-cake"></i>Find a Bakery</button>
+        </div>
+        <div>
+            <button class="button-action" id="btnBakery" name="btnSubmit" value="vendor"><i class="fal fa-birthday-cake"></i>Connect with Vendors</button>
+        </div>
+        <div>
+            <button class="button-action" id="btnBakery" name="btnSubmit" value="education"><i class="fal fa-birthday-cake"></i>Learn to Bake!</button>
+        </div>
 
-		<button class="button-action" id="btnBakery" name="btnSubmit" value="bakery"><i class="fal fa-birthday-cake"></i>Find a Bakery</button>
-
-		<button class="button-action" id="btnBakery" name="btnSubmit" value="vendor"><i class="fal fa-birthday-cake"></i>Connect with Vendors</button>
-
-		<button class="button-action" id="btnBakery" name="btnSubmit" value="education"><i class="fal fa-birthday-cake"></i>Learn to Bake!</button>
+		
 
 	</div>
 }

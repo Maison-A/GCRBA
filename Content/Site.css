@@ -14,13 +14,21 @@
 
 .some-spacing {
     magin-bottom: 1em;
-    display: inline-block
+    display: block
 }
 
 
+.topcorner {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+</style >
+
 #site-icon {
-	margin-right: 0.5em;
-	color: #4CAF50;
+    margin-right: 0.5em;
+    color: #4CAF50;
 }
 
 h2 {

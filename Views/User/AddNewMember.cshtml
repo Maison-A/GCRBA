@@ -1,4 +1,4 @@
-﻿@model GCRBA.Models.Member
+﻿@model GCRBA.Models.User
 @{
     ViewBag.Title = "New GCRBA Member Form";
 }
@@ -8,10 +8,7 @@
 @using (Html.BeginForm(FormMethod.Post))
 {
 
-    // TODO: - organize labels/textboxes
-    //       - add proper labels/textboxes
-    //       - create style in css?
-<div class="section"  >
+<div class="section">
     <!-- Member First Name -->
     <div class="item">
         <div>@Html.Label("First Name")</div>
@@ -31,7 +28,7 @@
             @Html.RadioButtonFor(model => model.MemberShipType, "C", false)@Html.Label("C")
         </div>
     </div>
-
+    
     <!-- Email -->
     <div class="item">
         <div>@Html.Label("E-mail")</div>
@@ -55,8 +52,8 @@
 </div>
     <div class="section">
         <div class="item">
-            <div>@Html.LabelFor(model => model.UserID)</div>
-            <div>@Html.TextBoxFor(model => model.UserID)</div>
+            <div>@Html.LabelFor(model => model.UserName)</div>
+            <div>@Html.TextBoxFor(model => model.UserName)</div>
         </div>
         <div class="item">
             <div>@Html.LabelFor(model => model.Password)</div>

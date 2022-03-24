@@ -21,10 +21,15 @@ namespace GCRBA.Controllers {
         public ActionResult Index(FormCollection col)
         {  
             if(col["btnSubmit"].ToString() == "join") {
-                return RedirectToAction("AddNewMember", "Member");
+                return RedirectToAction("AddNewMember", "User");
             }
 
-            if(col["btnSubmit"].ToString() == "bakery") {
+            if (col["btnSubmit"].ToString() == "signup")
+            {
+                return RedirectToAction("AddNewUser", "User");
+            }
+
+            if (col["btnSubmit"].ToString() == "bakery") {
 				return RedirectToAction("Index", "Bakery");
 			}
 
