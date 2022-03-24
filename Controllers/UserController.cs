@@ -48,7 +48,7 @@ namespace GCRBA.Views.User
         [HttpPost]
         public ActionResult AddNewMember(FormCollection col)
         {
-            if (col["btnSignUp"].ToString() == "signup")
+            if (col["btnSignUp"].ToString() == "submit")
             {
                 //validate data
 
