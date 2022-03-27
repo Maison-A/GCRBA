@@ -8,151 +8,94 @@ namespace GCRBA.Models
 {
 	public class Database
 	{
-		// this user object will be retrieved from where the user types in their data
-		public Member.ActionTypes InsertMember(Member m)
-		{
-			try
-			{
-				//create a connection object
-				SqlConnection cn = null;
-
-				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
-				SqlCommand cm = new SqlCommand("INSERT_MEMBER", cn);
-				int intReturnValue = -1;
-
-				// passing in the comand, name of what to mod, the value, the data type and where it's putting the 
-				// data which is only pertnant to the first param (big int is an output param)
-				SetParameter(ref cm, "@uid", m.UID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
-				SetParameter(ref cm, "@user_id", m.UserID, SqlDbType.NVarChar);
-				
-				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
-
-				// once this line completes, it will return the return value from the db (if 1 then good)
-				cm.ExecuteReader();
-
-				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
-				CloseDBConnection(ref cn);
-
-				switch (intReturnValue)
-				{
-					case 1: // new member created
-						m.UID = (long)cm.Parameters["@uid"].Value;
-						return Member.ActionTypes.InsertSuccessful;
-					case -1:
-						return Member.ActionTypes.DuplicateEmail;
-					case -2:
-						return Member.ActionTypes.DuplicateUserID;
-					default:
-						return Member.ActionTypes.Unknown;
-				}
-			}
-			catch (Exception ex) { throw new Exception(ex.Message); }
-		}
-
-		public Member Login(Member m)
-		{
-			try
-			{
-				SqlConnection cn = new SqlConnection();
-				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
-				SqlDataAdapter da = new SqlDataAdapter("LOGIN", cn);
-				DataSet ds;
-				Member newMember = null;
-
-				da.SelectCommand.CommandType = CommandType.StoredProcedure;
-
-				SetParameter(ref da, "@user_id", m.UserID, SqlDbType.NVarChar);
-				SetParameter(ref da, "@password", m.Password, SqlDbType.NVarChar);
-
-				try
-				{
-					ds = new DataSet();
-					da.Fill(ds);
-					if (ds.Tables[0].Rows.Count > 0)
-					{
-						newMember = new Member();
-						DataRow dr = ds.Tables[0].Rows[0];
-						newMember.UID = (long)dr["UID"];
-						newMember.UserID = m.UserID;
-						newMember.Password = m.Password;
-						newMember.FirstName = (string)dr["FirstName"];
-						newMember.LastName = (string)dr["LastName"];
-						newMember.Email = (string)dr["Email"];
-					}
-				}
-				catch (Exception ex) { throw new Exception(ex.Message); }
-				finally
-				{
-					CloseDBConnection(ref cn);
-				}
-				return newMember; //alls well in the world
-			}
-			catch (Exception ex) { throw new Exception(ex.Message); }
-		}
-
-		public Member.ActionTypes UpdateMember(Member m)
-		{
-			try
-			{
-				SqlConnection cn = null;
-				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
-				SqlCommand cm = new SqlCommand("UPDATE_USER", cn);
-				int intReturnValue = -1;
-
-				SetParameter(ref cm, "@uid", m.UID, SqlDbType.BigInt);
-				SetParameter(ref cm, "@user_id", m.UserID, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@password", m.Password, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@first_name", m.FirstName, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@last_name", m.LastName, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@email", m.Email, SqlDbType.NVarChar);
-
-				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
-
-				cm.ExecuteReader();
-
-				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
-				CloseDBConnection(ref cn);
-
-				switch (intReturnValue)
-				{
-					case 1: //new updated
-						return Member.ActionTypes.UpdateSuccessful;
-					default:
-						return Member.ActionTypes.Unknown;
-				}
-			}
-			catch (Exception ex) { throw new Exception(ex.Message); }
-		}
-
+		// open database connection
 		private bool GetDBConnection(ref SqlConnection SQLConn)
-		{
+        {
 			try
-			{
+            {
 				if (SQLConn == null) SQLConn = new SqlConnection();
+
+				// check connection state
 				if (SQLConn.State != ConnectionState.Open)
-				{
+                {
+					// no open connection, get connection string and try to open connection  
 					SQLConn.ConnectionString = ConfigurationManager.AppSettings["AppDBConnect"];
 					SQLConn.Open();
 				}
+				// connection successful 
 				return true;
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
-		}
+        }
 
+		// close database connection 
 		private bool CloseDBConnection(ref SqlConnection SQLConn)
-		{
+        {
 			try
-			{
+            {
+				// is connection closed?
 				if (SQLConn.State != ConnectionState.Closed)
-				{
+                {
+					// no, so close it 
 					SQLConn.Close();
 					SQLConn.Dispose();
 					SQLConn = null;
 				}
+				// connection closed successfully
 				return true;
-			}
+            }
 			catch (Exception ex) { throw new Exception(ex.Message); }
-		}
+        }
+
+		// log in user
+		public User Login(User user)
+        {
+			try
+            {
+				// create instance of SqlConnection object 
+				SqlConnection cn = new SqlConnection();
+
+				// throw error if database connection unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// create instance of SqlDataAdapter object 
+				SqlDataAdapter da = new SqlDataAdapter("LOGIN", cn);
+
+                // create instance of DataSet
+                DataSet ds;
+				User newUser = null;
+
+				// specify command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				// set parameters
+				SetParameter(ref da, "@strUsername", user.UserID, SqlDbType.NVarChar);
+				SetParameter(ref da, "@strPassword", user.Password, SqlDbType.NVarChar);
+
+                try
+                {
+					ds = new DataSet();
+					da.Fill(ds);
+					if (ds.Tables[0].Rows.Count > 0)
+                    {
+						newUser = new User();
+						DataRow dr = ds.Tables[0].Rows[0];
+						newUser.UID = Convert.ToInt16(dr["intUserID"]);
+						newUser.FirstName = (string)dr["strFirstName"];
+						newUser.LastName = (string)dr["strLastName"];
+						newUser.UserID = user.UserID;
+						newUser.Password = user.Password;
+                    }
+                }
+				catch (Exception ex) { throw new Exception(ex.Message); }
+				finally
+                {
+					CloseDBConnection(ref cn);
+                }
+				return newUser;
+            }
+			catch (Exception ex) { throw new Exception(ex.Message); }
+        }
 
 		private int SetParameter(ref SqlCommand cm, string ParameterName, Object Value
 			, SqlDbType ParameterType, int FieldSize = -1
