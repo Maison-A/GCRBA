@@ -8,7 +8,7 @@ namespace GCRBA.Views.User
 {
     public class UserController : Controller
     {
-        // GET: User
+        
         public ActionResult Index()
         {
             return View();
