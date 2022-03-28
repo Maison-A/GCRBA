@@ -69,7 +69,7 @@ namespace GCRBA.Models
 				da.SelectCommand.CommandType = CommandType.StoredProcedure;
 
 				// set parameters
-				SetParameter(ref da, "@strUsername", user.UserID, SqlDbType.NVarChar);
+				SetParameter(ref da, "@strUsername", user.Username, SqlDbType.NVarChar);
 				SetParameter(ref da, "@strPassword", user.Password, SqlDbType.NVarChar);
 
                 try
@@ -83,8 +83,15 @@ namespace GCRBA.Models
 						newUser.UID = Convert.ToInt16(dr["intUserID"]);
 						newUser.FirstName = (string)dr["strFirstName"];
 						newUser.LastName = (string)dr["strLastName"];
-						newUser.UserID = user.UserID;
+						newUser.Address = (string)dr["strAddress"];
+						newUser.City = (string)dr["strCity"];
+						newUser.intStateID = Convert.ToInt16(dr["intStateID"]);
+						newUser.Zip = (string)dr["strZip"];
+						newUser.Phone = (string)dr["strPhone"];
+						newUser.Email = (string)dr["strEmail"];
+						newUser.Username = user.Username;
 						newUser.Password = user.Password;
+						newUser.isAdmin = Convert.ToInt16(dr["isAdmin"]);
                     }
                 }
 				catch (Exception ex) { throw new Exception(ex.Message); }

@@ -23,11 +23,11 @@ namespace GCRBA.Controllers
                 Models.User user = new Models.User();
 
                 // get whatever input is in the textboxes 
-                user.UserID = col["UserID"];
+                user.Username = col["Username"];
                 user.Password = col["Password"];
 
                 // are input fields empty? 
-                if (user.UserID.Length == 0 || user.Password.Length == 0)
+                if (user.Username.Length == 0 || user.Password.Length == 0)
                 {
                     // yes, change User ActionType and return View with User object as argument 
                     user.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
@@ -39,8 +39,8 @@ namespace GCRBA.Controllers
                     // has submit button with value login been pressed?
                     if (col["btnSubmit"] == "login")
                     {
-                        // yes, assign UserID and Password values to UserID and Password properties in User object
-                        user.UserID = col["UserID"];
+                        // yes, assign Username and Password values to Username and Password properties in User object
+                        user.Username = col["Username"];
                         user.Password = col["Password"];
 
                         // call Login method on User object
@@ -59,7 +59,7 @@ namespace GCRBA.Controllers
                         else
                         {
                             user = new Models.User();
-                            user.UserID = col["UserID"];
+                            user.Username = col["Username"];
                             user.ActionType = Models.User.ActionTypes.LoginFailed;
                             return View(user);
                         }

@@ -10,8 +10,16 @@ namespace GCRBA.Models
         public int UID = 0;
         public string FirstName = string.Empty;
         public string LastName = string.Empty;
-        public string UserID = string.Empty;
+        public string Address = string.Empty;
+        public string City = string.Empty;
+        public int intStateID = 0;
+        public string Zip = string.Empty;
+        public string Phone = string.Empty;
+        public string Email = string.Empty;
+        public string Username = string.Empty;
         public string Password = string.Empty;
+        public int isAdmin = 0;
+
         public ActionTypes ActionType = ActionTypes.NoType;
 
         // obtain current session status
