@@ -198,7 +198,7 @@ CREATE TABLE tblDay
 
 CREATE TABLE tblLocationHours
 (
-	intLocationHoursID		SMALLINT IDENTITY(1,1)		NOT NULL, 
+	intLocationHoursID		BIGINT IDENTITY(1,1)		NOT NULL, 
 	intLocationID			BIGINT				NOT NULL, 
 	intDayID			SMALLINT			NOT NULL, 
 	strOpen				NVARCHAR(100), 
@@ -353,7 +353,9 @@ VALUES	('Donuts'),
 	('Deli/Catering'),
 	('Other'),
 	('Wholesale'),
-	('Delivery (3rd Party)')
+	('Delivery (3rd Party)'),
+	('Shipping'),
+	('Online Ordering')
 
 INSERT INTO tblDay (strDay)
 VALUES	('Monday'),
