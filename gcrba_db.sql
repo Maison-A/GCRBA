@@ -18,6 +18,7 @@ IF OBJECT_ID('tblWebsite')		IS NOT NULL DROP TABLE tblWebsite
 IF OBJECT_ID('tblUser')			IS NOT NULL DROP TABLE tblUser 
 IF OBJECT_ID('tblState')		IS NOT NULL DROP TABLE tblState 
 IF OBJECT_ID('tblDay')			IS NOT NULL DROP TABLE tblDay
+IF OBJECT_ID('tblMainBanner')		IS NOT NULL DROP TABLE tblMainBanner
 IF OBJECT_ID('LOGIN')			IS NOT NULL DROP PROCEDURE LOGIN 
 
 
@@ -197,12 +198,19 @@ CREATE TABLE tblDay
 
 CREATE TABLE tblLocationHours
 (
-	intLocationHoursID		SMALLINT IDENTITY(1,1)	NOT NULL, 
-	intLocationID			BIGINT			NOT NULL, 
-	intDayID			SMALLINT		NOT NULL, 
-	strOpen				NVARCHAR(100), 
-	strClose			NVARCHAR(100), 
+	intLocationHoursID	SMALLINT IDENTITY(1,1)	NOT NULL, 
+	intLocationID		BIGINT			NOT NULL, 
+	intDayID		SMALLINT		NOT NULL, 
+	strOpen			NVARCHAR(100), 
+	strClose		NVARCHAR(100), 
 	CONSTRAINT tblLocationHours_PK PRIMARY KEY (intLocationHoursID)
+)
+
+CREATE TABLE tblMainBanner
+(
+	intMainBannerID		SMALLINT	NOT NULL, 
+	strBanner		NVARCHAR(1000)	NOT NULL,
+	CONSTRAINT tblMainBanner_PK PRIMARY KEY (intMainBannerID)
 )
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
