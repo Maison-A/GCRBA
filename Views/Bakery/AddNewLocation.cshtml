@@ -1,16 +1,257 @@
-﻿
+﻿@model GCRBA.Models.NewLocation
+
 @{
-    ViewBag.Title = "New Bakery Location Form";
+	ViewBag.Title = "New Bakery Location Form";
 }
 
 <h2>@ViewBag.Title</h2>
 <p>Please enter the information for the new bakery location</p>
 
-<div>
-    @using(Html.BeginForm()) {
-                <div class="some-spacing">
-                    <button class="button-action" id="btnAddLocation" name="btnSubmit" value="NewLocation">Enter New Location</button>
-                </div>
-			}
-</div>
+@using (Html.BeginForm(FormMethod.Post)) {
+	if (Model.ActionType == GCRBA.Models.NewLocation.ActionTypes.RequiredFieldsMissing) {
+		<div id="content-locked">
+			<i class="fad fa-exclamation-triangle fa-2x"></i>
+			<span>All fields are required.</span>
+		</div>
+	}
+
+	<div>
+		<div>@Html.LabelFor(model => model.LocationName)</div>
+		<div>@Html.TextBoxFor(model => model.LocationName, new { @autofocus = "autofocus" })</div>
+	</div>
+	<div>
+		<div>@Html.LabelFor(model => model.StreetAddress)</div>
+		<div>@Html.TextBoxFor(model => model.StreetAddress)</div>
+	</div>
+	<div>
+		<div>@Html.LabelFor(model => model.City)</div>
+		<div>@Html.TextBoxFor(model => model.City)</div>
+	</div>
+	<div>
+		<div>@Html.LabelFor(model => model.State)</div>
+		<div>@Html.TextBoxFor(model => model.State)</div>
+	</div>
+	<div>
+		<div>@Html.LabelFor(model => model.Zip)</div>
+		<div>@Html.TextBoxFor(model => model.Zip)</div>
+	</div>
+
+	<div class="some-spacing">
+		<div>@Html.LabelFor(m => Model.Contact_FirstName)</div>
+		<div>@Html.TextBoxFor(m => Model.Contact_FirstName, new { @autofocus = "autofocus" })</div>
+	</div>
+
+	<div class="some-spacing">
+		<div>@Html.LabelFor(m => Model.Contact_LastName)</div>
+		<div>@Html.TextBoxFor(m => Model.Contact_LastName)</div>
+	</div>
+
+	<div class="some-spacing">
+		<div><label for="ContactPhone_AreaCode">Contact Phone Number</label></div>
+		<div>
+			(@Html.TextBoxFor(m => Model.ContactPhone.AreaCode, new { @class = "phone-area-code" })) @Html.TextBoxFor(m => Model.ContactPhone.Prefix, new { @class = "phone-prefix" }) - @Html.TextBoxFor(m => Model.ContactPhone.Suffix, new { @class = "phone-suffix" })
+		</div>
+	</div>
+
+	<div class="some-spacing">
+		<div><label for="BusinessPhone_AreaCode">Business Phone Number</label></div>
+		<div>
+			(@Html.TextBoxFor(m => Model.BusinessPhone.AreaCode, new { @class = "phone-area-code" })) @Html.TextBoxFor(m => Model.BusinessPhone.Prefix, new { @class = "phone-prefix" }) - @Html.TextBoxFor(m => Model.BusinessPhone.Suffix, new { @class = "phone-suffix" })
+		</div>
+	</div>
+
+	<div>
+		<div>@Html.LabelFor(model => model.Email)</div>
+		<div>@Html.TextBoxFor(model => model.Email)</div>
+	</div>
+
+	<div>
+		<div>@Html.LabelFor(model => model.Website)</div>
+		<div>@Html.TextBoxFor(model => model.Website)</div>
+	</div>
+
+	<div>
+		<div>@Html.LabelFor(model => model.OnlineOrdering) </div>
+		<div>@Html.TextBoxFor(model => model.OnlineOrdering) </div>
+	</div>
+
+	<br />
+	<h7>Specialty Product Categories:</h7>
+	<br />
+
+	<div>
+		@Html.CheckBoxFor(models => models.Donuts.blnAvailable)
+		@Html.LabelFor(model => model.Donuts)
+
+		@Html.CheckBoxFor(models => models.Bagels.blnAvailable)
+		@Html.LabelFor(model => model.Bagels)
+
+		@Html.CheckBoxFor(models => models.Muffins.blnAvailable)
+		@Html.LabelFor(model => model.Muffins)
+
+		@Html.CheckBoxFor(models => models.IceCream.blnAvailable)
+		@Html.LabelFor(model => model.IceCream)
+
+		@Html.CheckBoxFor(models => models.FineCandies.blnAvailable)
+		@Html.LabelFor(model => model.FineCandies)
+
+		@Html.CheckBoxFor(models => models.WeddingCakes.blnAvailable)
+		@Html.LabelFor(model => model.WeddingCakes)
+	</div>
+	<div>
+		@Html.CheckBoxFor(models => models.Breads.blnAvailable)
+		@Html.LabelFor(model => model.Breads)
+
+		@Html.CheckBoxFor(models => models.DecoratedCakes.blnAvailable)
+		@Html.LabelFor(model => model.DecoratedCakes)
+
+		@Html.CheckBoxFor(models => models.Cupcakes.blnAvailable)
+		@Html.LabelFor(model => model.Cupcakes)
+
+		@Html.CheckBoxFor(models => models.Cookies.blnAvailable)
+		@Html.LabelFor(model => model.Cookies)
+
+		@Html.CheckBoxFor(models => models.Desserts.blnAvailable)
+		@Html.LabelFor(model => model.Desserts)
+
+		@Html.CheckBoxFor(models => models.Full.blnAvailable)
+		@Html.LabelFor(model => model.Full)
+	</div>
+	<div>
+		@Html.CheckBoxFor(models => models.Deli.blnAvailable)
+		@Html.LabelFor(model => model.Deli)
+
+		@Html.CheckBoxFor(models => models.Other.blnAvailable)
+		@Html.LabelFor(model => model.Other)
+
+		@Html.CheckBoxFor(models => models.Wholesale.blnAvailable)
+		@Html.LabelFor(model => model.Wholesale)
+
+		@Html.CheckBoxFor(models => models.Delivery.blnAvailable)
+		@Html.LabelFor(model => model.Delivery)
+
+		@Html.CheckBoxFor(models => models.Shipping.blnAvailable)
+		@Html.LabelFor(model => model.Shipping)
+
+		@Html.CheckBoxFor(models => models.Online.blnAvailable)
+		@Html.LabelFor(model => model.Online)
+	</div>
+
+	<div>
+		<table>
+			<tr>
+				Hours of Operation
+			</tr>
+			<tr>
+				<td>Days</td>
+				<td>Start Time</td>
+				<td>End Time</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.LabelFor(models => models.Sunday)
+					@Html.CheckBoxFor(models => models.Sunday.blnOperational)
+				</td>
+				<td>
+					<label>Opens:</label>
+					@Html.TextBoxFor(models => models.Sunday.strOpenTime, new { type = "time" })
+				</td>
+				<td>
+					<label>Closes:</label>
+					@Html.TextBoxFor(models => models.Sunday.strClosedTime, new { type = "time" })
+				</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.LabelFor(models => models.Monday)
+					@Html.CheckBoxFor(models => models.Monday.blnOperational)
+				</td>
+				<td>
+					<label>Opens:</label>
+					@Html.TextBoxFor(models => models.Monday.strOpenTime, new { type = "time" })
+				</td>
+				<td>
+					<label>Closes:</label>
+					@Html.TextBoxFor(models => models.Monday.strClosedTime, new { type = "time" })
+				</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.LabelFor(models => models.Tuesday)
+					@Html.CheckBoxFor(models => models.Tuesday.blnOperational)
+				</td>
+				<td>
+					<label>Opens:</label>
+					@Html.TextBoxFor(models => models.Tuesday.strOpenTime, new { type = "time" })
+				</td>
+				<td>
+					<label>Closes:</label>
+					@Html.TextBoxFor(models => models.Tuesday.strClosedTime, new { type = "time" })
+				</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.LabelFor(models => models.Wednesday)
+					@Html.CheckBoxFor(models => models.Wednesday.blnOperational)
+				</td>
+				<td>
+					<label>Opens:</label>
+					@Html.TextBoxFor(models => models.Wednesday.strOpenTime, new { type = "time" })
+				</td>
+				<td>
+					<label>Closes:</label>
+					@Html.TextBoxFor(models => models.Wednesday.strClosedTime, new { type = "time" })
+				</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.LabelFor(models => models.Thursday)
+					@Html.CheckBoxFor(models => models.Thursday.blnOperational)
+				</td>
+				<td>
+					<label>Opens:</label>
+					@Html.TextBoxFor(models => models.Thursday.strOpenTime, new { type = "time" })
+				</td>
+				<td>
+					<label>Closes:</label>
+					@Html.TextBoxFor(models => models.Thursday.strClosedTime, new { type = "time" })
+				</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.LabelFor(models => models.Friday)
+					@Html.CheckBoxFor(models => models.Friday.blnOperational)
+				</td>
+				<td>
+					<label>Opens:</label>
+					@Html.TextBoxFor(models => models.Friday.strOpenTime, new { type = "time" })
+				</td>
+				<td>
+					<label>Closes:</label>
+					@Html.TextBoxFor(models => models.Friday.strClosedTime, new { type = "time" })
+				</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.LabelFor(models => models.Saturday)
+					@Html.CheckBoxFor(models => models.Saturday.blnOperational)
+				</td>
+				<td>
+					<label>Opens:</label>
+					@Html.TextBoxFor(models => models.Saturday.strOpenTime, new { type = "time" })
+				</td>
+				<td>
+					<label>Closes:</label>
+					@Html.TextBoxFor(models => models.Saturday.strClosedTime, new { type = "time" })
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<div>
+		<div class="some-spacing">
+			<button class="button-action" id="btnAddLocation" name="btnSubmit" value="NewLocation">Enter New Location</button>
+		</div>
+	</div>
+}
 

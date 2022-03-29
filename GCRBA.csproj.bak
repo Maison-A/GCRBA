@@ -150,21 +150,14 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\EducationController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-<<<<<<< Updated upstream
-    <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MemberController.cs" />
-=======
->>>>>>> Stashed changes
     <Compile Include="Controllers\VendorController.cs" />
     <Compile Include="ExportToCsv.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\CategoryItem.cs" />
     <Compile Include="Models\Database.cs" />
-    <Compile Include="Models\Days.cs" />
     <Compile Include="Models\NewLocation.cs" />
-    <Compile Include="Models\PhoneNumber.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controllers\BakeryController.cs" />
@@ -186,7 +179,6 @@
     <Content Include="Python\Scripts\.idea\Scripts.iml" />
     <Content Include="Views\Bakery\MemberBakery.cshtml" />
     <Content Include="Views\User\AddNewUser.cshtml" />
-    <Content Include="Views\Login\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
