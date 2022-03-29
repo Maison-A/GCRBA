@@ -134,11 +134,16 @@
     <Content Include="Python\Scripts\.idea\inspectionProfiles\profiles_settings.xml" />
     <Content Include="Python\Scripts\.idea\misc.xml" />
     <Content Include="Python\Scripts\.idea\modules.xml" />
+    <Content Include="Python\Scripts\.idea\vcs.xml" />
     <Content Include="Python\Scripts\.idea\workspace.xml" />
     <Content Include="Python\Scripts\client_machine.py" />
     <Content Include="Python\Scripts\connect2ArcgisOnline.py" />
+    <Content Include="Python\Scripts\deleteShapefiles.py" />
+    <Content Include="Python\Scripts\geocode_arcgis_online.py" />
     <Content Include="Python\Scripts\geolocating_clientmachine.py" />
     <Content Include="Python\Scripts\homemade_locator.py" />
+    <Content Include="Python\Scripts\search.py" />
+    <Content Include="Python\Scripts\test.py" />
     <Content Include="Python\Scripts\ZipFiles.py" />
     <Content Include="Scripts\jquery-3.6.0.js" />
     <Content Include="Scripts\jquery.filedrop.js" />
@@ -150,11 +155,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\EducationController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-<<<<<<< Updated upstream
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MemberController.cs" />
-=======
->>>>>>> Stashed changes
     <Compile Include="Controllers\VendorController.cs" />
     <Compile Include="ExportToCsv.cs" />
     <Compile Include="Global.asax.cs">
@@ -172,6 +174,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
+    <Content Include="CSV_Folder\LocationCSV.csv" />
     <None Include="packages.config" />
     <Content Include="Views\Shared\Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
@@ -182,11 +185,11 @@
     <Content Include="Views\Education\Index.cshtml" />
     <Content Include="Views\Vendor\Index.cshtml" />
     <Content Include="Views\Bakery\AddNewLocation.cshtml" />
-    <Content Include="Python\Scripts\.idea\.name" />
-    <Content Include="Python\Scripts\.idea\Scripts.iml" />
     <Content Include="Views\Bakery\MemberBakery.cshtml" />
     <Content Include="Views\User\AddNewUser.cshtml" />
     <Content Include="Views\Login\Index.cshtml" />
+    <Content Include="Python\Scripts\.idea\.name" />
+    <Content Include="Python\Scripts\.idea\Scripts.iml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -196,7 +199,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="CSV_Folder\" />
     <Folder Include="Views\Default\" />
   </ItemGroup>
   <ItemGroup>

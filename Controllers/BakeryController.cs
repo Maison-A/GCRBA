@@ -77,7 +77,7 @@ namespace GCRBA.Views.Bakery {
                     loc.Zip = col["Zip"];
 
                     //Hours of Operation
-                    loc.Sunday = new Models.Days() { strDay = "Sunday", intDayID = 1, blnOperational = Convert.ToBoolean(col["Sunday.blnOperational"].Split(',')[0]), strOpenTime = col["Sunday.strOpenTime"], strClosedTime = col["Sunday.strClosedTime"]};
+                    loc.Sunday = new Models.Days() { strDay = "Sunday", intDayID = 1, blnOperational = Convert.ToBoolean(col["Sunday.blnOperational"].Split(',')[0]), strOpenTime = col["Sunday.strOpenTime"], strClosedTime = col["Sunday.strClosedTime"] };
                     loc.Monday = new Models.Days() { strDay = "Monday", intDayID = 2, blnOperational = Convert.ToBoolean(col["Monday.blnOperational"].Split(',')[0]), strOpenTime = col["Monday.strOpenTime"], strClosedTime = col["Monday.strClosedTime"] };
                     loc.Tuesday = new Models.Days() { strDay = "Tuesday", intDayID = 3, blnOperational = Convert.ToBoolean(col["Tuesday.blnOperational"].Split(',')[0]), strOpenTime = col["Tuesday.strOpenTime"], strClosedTime = col["Tuesday.strClosedTime"] };
                     loc.Wednesday = new Models.Days() { strDay = "Wednesday", intDayID = 4, blnOperational = Convert.ToBoolean(col["Wednesday.blnOperational"].Split(',')[0]), strOpenTime = col["Wednesday.strOpenTime"], strClosedTime = col["Wednesday.strClosedTime"] };
@@ -85,24 +85,24 @@ namespace GCRBA.Views.Bakery {
                     loc.Friday = new Models.Days() { strDay = "Friday", intDayID = 6, blnOperational = Convert.ToBoolean(col["Friday.blnOperational"].Split(',')[0]), strOpenTime = col["Friday.strOpenTime"], strClosedTime = col["Friday.strClosedTime"] };
                     loc.Saturday = new Models.Days() { strDay = "Saturday", intDayID = 7, blnOperational = Convert.ToBoolean(col["Saturday.blnOperational"].Split(',')[0]), strOpenTime = col["Saturday.strOpenTime"], strClosedTime = col["Saturday.strClosedTime"] };
 
-                    loc.Donuts = new Models.CategoryItem() {ItemID = 1, ItemDesc = "Donuts", blnAvailable = Convert.ToBoolean(col["Donuts.blnAvailable"].Split(',')[0])};
-                    loc.Bagels = new Models.CategoryItem() {ItemID = 2, ItemDesc = "Bagels", blnAvailable = Convert.ToBoolean(col["Bagels.blnAvailable"].Split(',')[0])};                 
-                    loc.Muffins = new Models.CategoryItem() {ItemID = 3, ItemDesc = "Muffins", blnAvailable = Convert.ToBoolean(col["Muffins.blnAvailable"].Split(',')[0])};                 
-                    loc.IceCream = new Models.CategoryItem() {ItemID = 4, ItemDesc = "Ice Cream", blnAvailable = Convert.ToBoolean(col["IceCream.blnAvailable"].Split(',')[0])};
-                    loc.FineCandies = new Models.CategoryItem() {ItemID = 5, ItemDesc = "Fine Candies & Chocolates", blnAvailable = Convert.ToBoolean(col["Donuts.blnAvailable"].Split(',')[0])};
-                    loc.WeddingCakes = new Models.CategoryItem() {ItemID = 6, ItemDesc = "Wedding Cakes", blnAvailable = Convert.ToBoolean(col["WeddingCakes.blnAvailable"].Split(',')[0])};
-                    loc.Breads = new Models.CategoryItem() {ItemID = 7, ItemDesc = "Breads", blnAvailable = Convert.ToBoolean(col["Breads.blnAvailable"].Split(',')[0])};
-                    loc.DecoratedCakes = new Models.CategoryItem() { ItemID = 8, ItemDesc = "Decorated Cakes", blnAvailable = Convert.ToBoolean(col["DecoratedCakes.blnAvailable"].Split(',')[0])};
-                    loc.Cupcakes = new Models.CategoryItem() { ItemID = 9, ItemDesc = "Cupcakes", blnAvailable = Convert.ToBoolean(col["Cupcakes.blnAvailable"].Split(',')[0])};                    
-                    loc.Cookies = new Models.CategoryItem() { ItemID = 10, ItemDesc = "Cookies", blnAvailable = Convert.ToBoolean(col["Cookies.blnAvailable"].Split(',')[0]) };                    
-                    loc.Desserts = new Models.CategoryItem() { ItemID = 11, ItemDesc = "Desserts/Tortes", blnAvailable = Convert.ToBoolean(col["Desserts.blnAvailable"].Split(',')[0])};                   
-                    loc.Full = new Models.CategoryItem() { ItemID = 12, ItemDesc = "Full-line Bakery", blnAvailable = Convert.ToBoolean(col["Full.blnAvailable"].Split(',')[0])};                    
-                    loc.Deli = new Models.CategoryItem() { ItemID = 13, ItemDesc = "Deli/Catering", blnAvailable = Convert.ToBoolean(col["Deli.blnAvailable"].Split(',')[0])};              
-                    loc.Other = new Models.CategoryItem() { ItemID = 14, ItemDesc = "Other Carryout Deli", blnAvailable = Convert.ToBoolean(col["Other.blnAvailable"].Split(',')[0])};                   
-                    loc.Wholesale = new Models.CategoryItem() { ItemID = 15, ItemDesc = "Wholesale", blnAvailable = Convert.ToBoolean(col["Wholesale.blnAvailable"].Split(',')[0])};                    
-                    loc.Delivery = new Models.CategoryItem() { ItemID = 16, ItemDesc = "Delivery (3rd Party)", blnAvailable = Convert.ToBoolean(col["Delivery.blnAvailable"].Split(',')[0])};                 
-                    loc.Shipping = new Models.CategoryItem() { ItemID = 17, ItemDesc = "Shipping", blnAvailable = Convert.ToBoolean(col["Shipping.blnAvailable"].Split(',')[0])};
-                    loc.Online = new Models.CategoryItem() { ItemID = 18, ItemDesc = "Online Ordering", blnAvailable = Convert.ToBoolean(col["Online.blnAvailable"].Split(',')[0])};
+                    loc.Donuts = new Models.CategoryItem() { ItemID = 1, ItemDesc = "Donuts", blnAvailable = Convert.ToBoolean(col["Donuts.blnAvailable"].Split(',')[0]) };
+                    loc.Bagels = new Models.CategoryItem() { ItemID = 2, ItemDesc = "Bagels", blnAvailable = Convert.ToBoolean(col["Bagels.blnAvailable"].Split(',')[0]) };
+                    loc.Muffins = new Models.CategoryItem() { ItemID = 3, ItemDesc = "Muffins", blnAvailable = Convert.ToBoolean(col["Muffins.blnAvailable"].Split(',')[0]) };
+                    loc.IceCream = new Models.CategoryItem() { ItemID = 4, ItemDesc = "Ice Cream", blnAvailable = Convert.ToBoolean(col["IceCream.blnAvailable"].Split(',')[0]) };
+                    loc.FineCandies = new Models.CategoryItem() { ItemID = 5, ItemDesc = "Fine Candies & Chocolates", blnAvailable = Convert.ToBoolean(col["Donuts.blnAvailable"].Split(',')[0]) };
+                    loc.WeddingCakes = new Models.CategoryItem() { ItemID = 6, ItemDesc = "Wedding Cakes", blnAvailable = Convert.ToBoolean(col["WeddingCakes.blnAvailable"].Split(',')[0]) };
+                    loc.Breads = new Models.CategoryItem() { ItemID = 7, ItemDesc = "Breads", blnAvailable = Convert.ToBoolean(col["Breads.blnAvailable"].Split(',')[0]) };
+                    loc.DecoratedCakes = new Models.CategoryItem() { ItemID = 8, ItemDesc = "Decorated Cakes", blnAvailable = Convert.ToBoolean(col["DecoratedCakes.blnAvailable"].Split(',')[0]) };
+                    loc.Cupcakes = new Models.CategoryItem() { ItemID = 9, ItemDesc = "Cupcakes", blnAvailable = Convert.ToBoolean(col["Cupcakes.blnAvailable"].Split(',')[0]) };
+                    loc.Cookies = new Models.CategoryItem() { ItemID = 10, ItemDesc = "Cookies", blnAvailable = Convert.ToBoolean(col["Cookies.blnAvailable"].Split(',')[0]) };
+                    loc.Desserts = new Models.CategoryItem() { ItemID = 11, ItemDesc = "Desserts/Tortes", blnAvailable = Convert.ToBoolean(col["Desserts.blnAvailable"].Split(',')[0]) };
+                    loc.Full = new Models.CategoryItem() { ItemID = 12, ItemDesc = "Full-line Bakery", blnAvailable = Convert.ToBoolean(col["Full.blnAvailable"].Split(',')[0]) };
+                    loc.Deli = new Models.CategoryItem() { ItemID = 13, ItemDesc = "Deli/Catering", blnAvailable = Convert.ToBoolean(col["Deli.blnAvailable"].Split(',')[0]) };
+                    loc.Other = new Models.CategoryItem() { ItemID = 14, ItemDesc = "Other Carryout Deli", blnAvailable = Convert.ToBoolean(col["Other.blnAvailable"].Split(',')[0]) };
+                    loc.Wholesale = new Models.CategoryItem() { ItemID = 15, ItemDesc = "Wholesale", blnAvailable = Convert.ToBoolean(col["Wholesale.blnAvailable"].Split(',')[0]) };
+                    loc.Delivery = new Models.CategoryItem() { ItemID = 16, ItemDesc = "Delivery (3rd Party)", blnAvailable = Convert.ToBoolean(col["Delivery.blnAvailable"].Split(',')[0]) };
+                    loc.Shipping = new Models.CategoryItem() { ItemID = 17, ItemDesc = "Shipping", blnAvailable = Convert.ToBoolean(col["Shipping.blnAvailable"].Split(',')[0]) };
+                    loc.Online = new Models.CategoryItem() { ItemID = 18, ItemDesc = "Online Ordering", blnAvailable = Convert.ToBoolean(col["Online.blnAvailable"].Split(',')[0]) };
 
                     loc.Contact_FirstName = col["Contact_FirstName"];
                     loc.Contact_LastName = col["Contact_LastName"];
@@ -139,9 +139,9 @@ namespace GCRBA.Views.Bakery {
                     var specialties = new List<string>()
                     {
                         Convert.ToString(loc.Donuts.blnAvailable), Convert.ToString(loc.Bagels.blnAvailable), Convert.ToString(loc.Muffins.blnAvailable), Convert.ToString(loc.IceCream.blnAvailable),
-                        Convert.ToString(loc.FineCandies.blnAvailable), Convert.ToString(loc.WeddingCakes.blnAvailable), Convert.ToString(loc.Breads.blnAvailable), Convert.ToString(loc.DecoratedCakes.blnAvailable), 
-                        Convert.ToString(loc.Cupcakes.blnAvailable), Convert.ToString(loc.Cookies.blnAvailable), Convert.ToString(loc.Desserts.blnAvailable), Convert.ToString(loc.Full.blnAvailable), 
-                        Convert.ToString(loc.Deli.blnAvailable), Convert.ToString(loc.Other.blnAvailable), Convert.ToString(loc.Wholesale.blnAvailable), Convert.ToString(loc.Delivery.blnAvailable), 
+                        Convert.ToString(loc.FineCandies.blnAvailable), Convert.ToString(loc.WeddingCakes.blnAvailable), Convert.ToString(loc.Breads.blnAvailable), Convert.ToString(loc.DecoratedCakes.blnAvailable),
+                        Convert.ToString(loc.Cupcakes.blnAvailable), Convert.ToString(loc.Cookies.blnAvailable), Convert.ToString(loc.Desserts.blnAvailable), Convert.ToString(loc.Full.blnAvailable),
+                        Convert.ToString(loc.Deli.blnAvailable), Convert.ToString(loc.Other.blnAvailable), Convert.ToString(loc.Wholesale.blnAvailable), Convert.ToString(loc.Delivery.blnAvailable),
                         Convert.ToString(loc.Shipping.blnAvailable), Convert.ToString(loc.Online.blnAvailable)
                     };
 
@@ -215,9 +215,10 @@ namespace GCRBA.Views.Bakery {
                     Models.NewLocation loc = new Models.NewLocation();
                     return View(loc);
                 }
-            }else {
+            }
+            else {
                 return View();
-			}
+            }
         }
     }
 }
