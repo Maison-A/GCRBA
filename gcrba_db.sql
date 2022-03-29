@@ -85,7 +85,7 @@ CREATE TABLE tblCompany
 CREATE TABLE tblCompanyAward
 (
 	intCompanyAwardID	SMALLINT IDENTITY(1, 1)	NOT NULL, 
-	intCompanyID		SMALLINT		NOT NULL, 
+	intCompanyID		BIGINT			NOT NULL, 
 	strFrom			VARCHAR(100)		NOT NULL, 
 	strAward		NVARCHAR(200)		NOT NULL, 
 	CONSTRAINT tblCompanyAward_PK PRIMARY KEY (intCompanyAwardID)
@@ -213,8 +213,8 @@ CREATE TABLE tblLocationHours
 -- -----				-----				------
 -- tblUser				tblState			intStateID
 -- tblMember				tblUser				intUserID
--- tblMember				tblMemberLevel		intMemberLevelID
--- tblMember				tblPaymentType		intPaymentTypeID
+-- tblMember				tblMemberLevel			intMemberLevelID
+-- tblMember				tblPaymentType			intPaymentTypeID
 -- tblCompanyMember			tblCompany			intCompanyID
 -- tblCompanyMember			tblMember			intMemberID
 -- tblLocation				tblCompany			intCompanyID
@@ -224,11 +224,12 @@ CREATE TABLE tblLocationHours
 -- tblEventLocation			tblEvent			intEventID
 -- tblEventLocation			tblLocation			intLocationID
 -- tblAdminRequest			tblMember			intMemberID
--- tblAdminRequest			tblApprovalStatus	intApprovalStatusID
+-- tblAdminRequest			tblApprovalStatus		intApprovalStatusID
 -- tblSpecialLocation			tblSpecial			intSpecialID
 -- tblSpecialLocation			tblLocation			intLocationID
 -- tblLocationHours			tblLocation			intLocationID
 -- tblLocationHours			tblDay				intDayID
+-- tblCompanyAward			tblCompany			intCompanyID
 
 ALTER TABLE tblUser ADD CONSTRAINT tblUser_tblState_FK
 FOREIGN KEY (intStateID) REFERENCES tblState (intStateID)
@@ -283,6 +284,9 @@ FOREIGN KEY (intLocationID) REFERENCES tblLocation (intLocationID)
 
 ALTER TABLE tblLocationHours ADD CONSTRAINT tblLocationHours_tblDay_FK
 FOREIGN KEY (intDayID) REFERENCES tblDay (intDayID)
+
+ALTER TABLE tblCompanyAward ADD CONSTRAINT tblCompanyAward_tblCompany_FK
+FOREIGN KEY (intCompanyID) REFERENCES tblCompany (intCompanyID)
 
 -- -----------------------------------------------------------------------------------------
 -- STORED PROCEDURES 
