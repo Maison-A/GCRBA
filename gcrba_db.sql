@@ -6,8 +6,9 @@ IF OBJECT_ID('tblCategoryLocation')	IS NOT NULL DROP TABLE tblCategoryLocation
 IF OBJECT_ID('tblEventLocation')	IS NOT NULL DROP TABLE tblEventLocation 
 IF OBJECT_ID('tblSpecial')		IS NOT NULL DROP TABLE tblSpecial 
 IF OBJECT_ID('tblCategory')		IS NOT NULL DROP TABLE tblCategory
-IF OBJECT_ID('tblEvent')		IS NOT NULL DROP TABLE tblEvent 
+IF OBJECT_ID('tblEvent')		IS NOT NULL DROP TABLE tblEvent
 IF OBJECT_ID('tblLocation')		IS NOT NULL DROP TABLE tblLocation 
+IF OBJECT_ID('tblContactPerson') 	IS NOT NULL DROP TABLE tblContactPerson
 IF OBJECT_ID('tblAdminRequest')		IS NOT NULL DROP TABLE tblAdminRequest  
 IF OBJECT_ID('tblCompany')		IS NOT NULL DROP TABLE tblCompany 
 IF OBJECT_ID('tblMember')		IS NOT NULL DROP TABLE tblMember 
@@ -79,7 +80,8 @@ CREATE TABLE tblCompany
 	strCompanyName			NVARCHAR(50)		NOT NULL, 
 	strAbout			NVARCHAR(1000),
 	strMainURL			NVARCHAR(100), 
-	strOrderingURL			NVARCHAR(100), 
+	strOrderingURL			NVARCHAR(100),
+	strWebAdminFirst		NVARCHAR(100),
 	CONSTRAINT tblCompany_PK PRIMARY KEY (intCompanyID)
 )
 
@@ -114,10 +116,20 @@ CREATE TABLE tblLocation
 	intCompanyID			BIGINT			NOT NULL, 
 	strAddress			NVARCHAR(100)		NOT NULL, 
 	strCity				NVARCHAR(20)		NOT NULL, 
-	intStateID			SMALLINT		NOT NULL, 
+	intStateID			SMALLINT			NOT NULL, 
 	strZip				NVARCHAR(15)		NOT NULL,
 	strPhone			NVARCHAR(20)		NOT NULL,
+	intContactPersonID	BIGINT				NOT NULL,
 	CONSTRAINT tblLocation_PK PRIMARY KEY (intLocationID)
+)
+
+CREATE TABLE tblContactPerson
+(
+	intContactPersonID		BIGINT IDENTITY(1,1) NOT NULL,
+	strContactName		NVARCHAR(50)		NOT NULL,
+	strContactPhone			NVARCHAR(20)		,
+	strContactEmail			NVARCHAR(50)		,
+	CONSTRAINT tblContactPerson_PK PRIMARY KEY (intContactPersonID)
 )
 
 CREATE TABLE tblCategoryLocation
@@ -238,6 +250,7 @@ CREATE TABLE tblMainBanner
 -- tblLocationHours			tblLocation			intLocationID
 -- tblLocationHours			tblDay				intDayID
 -- tblCompanyAward			tblCompany			intCompanyID
+-- tblLocation				tblContactPerson	intContactPersonID
 
 ALTER TABLE tblUser ADD CONSTRAINT tblUser_tblState_FK
 FOREIGN KEY (intStateID) REFERENCES tblState (intStateID)
@@ -295,6 +308,9 @@ FOREIGN KEY (intDayID) REFERENCES tblDay (intDayID)
 
 ALTER TABLE tblCompanyAward ADD CONSTRAINT tblCompanyAward_tblCompany_FK
 FOREIGN KEY (intCompanyID) REFERENCES tblCompany (intCompanyID)
+
+ALTER TABLE tblLocation ADD CONSTRAINT tblLocation_tblContactPerson_FK
+FOREIGN KEY (intContactPersonID) REFERENCES tblContactPerson (intContactPersonID)
 
 -- -----------------------------------------------------------------------------------------
 -- STORED PROCEDURES 
@@ -391,10 +407,12 @@ VALUES	(1, 'Best of City Search', 'Best of City'),
 	(1, 'Trip Advisor', 'Certificate of Excellence'), 
 	(1, 'Cincinnati Chamber of Commerce', 'Small Business Award Winner')
 
+INSERT INTO tblContactPerson (strContactName, strContactPhone, strContactEmail)
+VALUES					('Briggs, Randall', '5555555555', 'briggs.r@gmail.com')
 
-INSERT INTO tblLocation (intCompanyID, strAddress, strCity, intStateID, strZip, strPhone)
-VALUES	(1, '2030 Madison Rd', 'Cincinnati', 3, '45208-3289', '513-321-3399'),
-	(2, '505 Wyoming Ave', 'Wyoming', 3, '45215-4578', '513-821-0742')
+INSERT INTO tblLocation (intCompanyID, strAddress, strCity, intStateID, strZip, strPhone, intContactPersonID)
+VALUES	(1, '2030 Madison Rd', 'Cincinnati', 3, '45208-3289', '513-321-3399', 1),
+	(2, '505 Wyoming Ave', 'Wyoming', 3, '45215-4578', '513-821-0742', 1)
 
 INSERT INTO tblLocationHours (intLocationID, intDayID, strOpen, strClose)
 VALUES	(1, 1, '10:00am', '4:00pm'),
