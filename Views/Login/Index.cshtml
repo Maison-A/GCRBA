@@ -12,15 +12,16 @@
     <!--only display if user tries to submit form with empty textbox(es)-->
     if (Model.ActionType == GCRBA.Models.User.ActionTypes.RequiredFieldMissing)
     {
-        <div>
-            All fields are required!
+        <div class="missingField">
+            <i class="fad fa-exclamation-triangle fa-2x"></i>"
+            All fields are required.
         </div>
     }
 
     if (Model.ActionType == GCRBA.Models.User.ActionTypes.LoginFailed)
     {
-        <div>
-            Invalid UserID and/or Password. Please try again.
+        <div class="missingField">
+            Invalid Username and/or Password. Please try again.
         </div>
     }
 
