@@ -87,6 +87,7 @@ namespace GCRBA.Models
             Unknown = 5,
             RequiredFieldMissing = 6,
             LoginFailed = 7
+            
         }
     }
 

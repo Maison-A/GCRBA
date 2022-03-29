@@ -7,52 +7,65 @@
 
 @using (Html.BeginForm(FormMethod.Post))
 {
-<div>
-    <div class="section">
-        <div>
-            <!-- User First Name -->
+    if (Model.ActionType == GCRBA.Models.User.ActionTypes.Unknown)
+    {
+        <div id="content-locked">
+
+            <i class="fad fa-exclamation-trangle fa-2x"></i>
+            <span>Passwords do not match</span>
+        </div>
+    }
+    <div>
+
+
+        <div class="section">
             <div>
-                <div>@Html.Label("First Name")</div>
-                <div>@Html.TextBoxFor(model => model.FirstName, new { @autofocus = "autofocus" })</div>
+                <!-- User First Name -->
+                <div>
+                    <div>@Html.Label("First Name")</div>
+                    <div>@Html.TextBoxFor(model => model.FirstName, new { @autofocus = "autofocus" })</div>
+                </div>
+
+                <!-- User Last Name -->
+                <div>
+                    <div>@Html.Label("Last Name")</div>
+                    <div>@Html.TextBoxFor(model => model.LastName)</div>
+                </div>
             </div>
-            <!-- User Last Name -->
+
+            <!-- Email -->
             <div>
-                <div>@Html.Label("Last Name")</div>
-                <div>@Html.TextBoxFor(model => model.LastName)</div>
+                <div>@Html.Label("E-mail")</div>
+                <div>@Html.TextBoxFor(model => model.Email)</div>
+            </div>
+
+            <!-- Username -->
+            <div>
+                <div>@Html.Label("Username")</div>
+                <div>@Html.TextBoxFor(model => model.Username)</div>
             </div>
         </div>
+        <!-- Password -->
+        <div class="section">
+            <div>@Html.Label("Password")</div>
+            <div>@Html.TextBoxFor(model => model.Password, new { @Name = "passver1" })</div>
 
-        <!-- Email -->
-        <div>
-            <div>@Html.Label("E-mail")</div>
-            <div>@Html.TextBoxFor(model => model.Email)</div>
+            <!-- Password verify -->
+            <div>@Html.Label("Verify Password")</div>
+            <div>@Html.TextBoxFor(model => model.Password, new { @Name = "passver2" })</div>
+
         </div>
-
-        <!-- Username -->
-        <div>
-            <div>@Html.Label("Username")</div>
-            <div>@Html.TextBoxFor(model => model.UserName)</div>
+        <div class="some-spacing">
+            @Html.CheckBox("IsChecked", false)@Html.Label("Would you like to join the GCRBA?")
+            @Html.CheckBox("IsChecked", false)@Html.Label("Would you like to join the GCRBA?")
         </div>
     </div>
-    <!-- Password -->
-    <div class="section">
-        <div>@Html.Label("Password")</div>
-        <div>@Html.TextBoxFor(model => model.Password)</div>
-
-    <!-- Password verify -->
-        <div>@Html.Label("Verify Password")</div>
-        <div>@Html.TextBoxFor(model => model.Password)</div>
-    </div>
-    <div class="some-spacing">
-        @Html.CheckBox("IsChecked", false)@Html.Label("Would you like to join the GCRBA?")
-    </div>
-</div>
     // TODO:
-  
+
 
     <div>
         <button id="btnNewUser" name="btnSubmit" value="newuser" class="button-action"><i class="fas fa-user-plus"></i> Sign-Up</button>
-       
+
     </div>
 }
 
