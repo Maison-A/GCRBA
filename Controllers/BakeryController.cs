@@ -62,7 +62,24 @@ namespace GCRBA.Views.Bakery {
             loc.Thursday = new Models.Days() { strDay = "Thursday" };
             loc.Friday = new Models.Days() { strDay = "Friday" };
             loc.Saturday = new Models.Days() { strDay = "Saturday" };
-            return View(loc);
+
+            //Special Options
+
+            //Website
+            loc.MainWeb = new Models.Website() { strWebsiteType = "Main Website URL" };
+            loc.OrderingWeb = new Models.Website() { strWebsiteType = "Ordering URL" };
+            loc.KettleWeb = new Models.Website() { strWebsiteType = "Donation Kettle URL" };
+
+            //SocialMedia
+            loc.Facebook = new Models.SocialMedia() { strPlatform = "Facebook" };
+            loc.Twitter = new Models.SocialMedia() { strPlatform = "Twitter" };
+            loc.Instagram = new Models.SocialMedia() { strPlatform = "Instagram" };
+            loc.Snapchat = new Models.SocialMedia() { strPlatform = "Snapchat" };
+            loc.TikTok = new Models.SocialMedia() { strPlatform = "TikTok" };
+            loc.Yelp = new Models.SocialMedia() { strPlatform = "Yelp" };
+            
+
+			return View(loc);
         }
 
         [HttpPost]
@@ -104,24 +121,35 @@ namespace GCRBA.Views.Bakery {
                     loc.Shipping = new Models.CategoryItem() { ItemID = 17, ItemDesc = "Shipping", blnAvailable = Convert.ToBoolean(col["Shipping.blnAvailable"].Split(',')[0]) };
                     loc.Online = new Models.CategoryItem() { ItemID = 18, ItemDesc = "Online Ordering", blnAvailable = Convert.ToBoolean(col["Online.blnAvailable"].Split(',')[0]) };
 
-                    loc.Contact_FirstName = col["Contact_FirstName"];
-                    loc.Contact_LastName = col["Contact_LastName"];
-
-                    loc.ContactPhone = new Models.PhoneNumber();
-                    loc.ContactPhone.AreaCode = col["ContactPhone.AreaCode"];
-                    loc.ContactPhone.Prefix = col["ContactPhone.Prefix"];
-                    loc.ContactPhone.Suffix = col["ContactPhone.Suffix"];
-
                     loc.BusinessPhone = new Models.PhoneNumber();
                     loc.BusinessPhone.AreaCode = col["BusinessPhone.AreaCode"];
                     loc.BusinessPhone.Prefix = col["BusinessPhone.Prefix"];
                     loc.BusinessPhone.Suffix = col["BusinessPhone.Suffix"];
+                    loc.BusinessEmail = col["BusinessEmail"];
 
-                    loc.Email = col["Email"];
-                    loc.Website = col["Website"];
+                    //Member Only Variables
+                    loc.ContactPerson.strContactFirstName = col["contactFirstName"];
+                    loc.ContactPerson.strContactLastName = col["contactLastName"];
+                    loc.ContactPerson.contactPhone = new Models.PhoneNumber();
+                    loc.ContactPerson.contactPhone.AreaCode = col["ContactPhone.AreaCode"];
+                    loc.ContactPerson.contactPhone.Prefix = col["ContactPhone.Prefix"];
+                    loc.ContactPerson.contactPhone.Suffix = col["ContactPhone.Suffix"];
+                    loc.ContactPerson.strContactEmail = col["contactEmail"];
 
-                    //Members Only Information
-                    loc.OnlineOrdering = col["OnlineOrdering"];
+                    loc.MainWeb.strURL = col["MainWeb.strURL"];
+                    loc.OrderingWeb.strURL = col["OrderingWeb.strURL"];
+                    loc.KettleWeb.strURL = col["KettleWeb.strURL"];
+
+                    loc.Facebook.strSocialMediaLink = col["Facebook.strSocialMediaLink"];
+                    loc.Twitter.strSocialMediaLink = col["Twitter.strSocialMediaLink"];
+                    loc.Instagram.strSocialMediaLink = col["Instagram.strSocialMediaLink"];
+                    loc.Snapchat.strSocialMediaLink = col["Snapchat.strSocialMediaLink"];
+                    loc.TikTok.strSocialMediaLink = col["TikTok.strSocialMediaLink"];
+                    loc.Yelp.strSocialMediaLink = col["Yelp.strSocialMediaLink"];
+
+                    loc.custServiceEmail = col["CustServEmail"];
+                    loc.Bio = col["Bio"];
+                    
 
                     var location = new List<string>()
                     {
@@ -130,10 +158,10 @@ namespace GCRBA.Views.Bakery {
 
                     var contact = new List<string>()
                     {
-                        loc.Contact_FirstName + " " + loc.Contact_LastName,
-                        loc.ContactPhone.AreaCode + loc.ContactPhone.Prefix + loc.ContactPhone.Suffix,
+                        loc.ContactPerson.strContactLastName + ", " + loc.ContactPerson.strContactFirstName,
+                        loc.ContactPerson.contactPhone.AreaCode + loc.ContactPerson.contactPhone.Prefix + loc.ContactPerson.contactPhone.Suffix,
                         loc.BusinessPhone.AreaCode + loc.BusinessPhone.Prefix +loc.BusinessPhone.Suffix,
-                        loc.Email, loc.Website
+                        loc.ContactPerson.strContactEmail                        
                     };
 
                     var specialties = new List<string>()

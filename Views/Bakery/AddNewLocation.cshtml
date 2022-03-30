@@ -16,11 +16,11 @@
 	}
 
 	<div>
-		<div>@Html.LabelFor(model => model.LocationName)</div>
+		<div>@Html.LabelFor(model => model.LocationName, "Bakery Name")</div>
 		<div>@Html.TextBoxFor(model => model.LocationName, new { @autofocus = "autofocus" })</div>
 	</div>
 	<div>
-		<div>@Html.LabelFor(model => model.StreetAddress)</div>
+		<div>@Html.LabelFor(model => model.StreetAddress, "Street Address")</div>
 		<div>@Html.TextBoxFor(model => model.StreetAddress)</div>
 	</div>
 	<div>
@@ -37,20 +37,25 @@
 	</div>
 
 	<div class="some-spacing">
-		<div>@Html.LabelFor(m => Model.Contact_FirstName)</div>
-		<div>@Html.TextBoxFor(m => Model.Contact_FirstName, new { @autofocus = "autofocus" })</div>
+		<div>@Html.LabelFor(m => Model.ContactPerson.strContactFirstName, "Contact First Name")</div>
+		<div>@Html.TextBoxFor(m => Model.ContactPerson.strContactFirstName, new { @autofocus = "autofocus" })</div>
 	</div>
 
 	<div class="some-spacing">
-		<div>@Html.LabelFor(m => Model.Contact_LastName)</div>
-		<div>@Html.TextBoxFor(m => Model.Contact_LastName)</div>
+		<div>@Html.LabelFor(m => Model.ContactPerson.strContactLastName, "Contact Last Name")</div>
+		<div>@Html.TextBoxFor(m => Model.ContactPerson.strContactLastName)</div>
 	</div>
 
 	<div class="some-spacing">
 		<div><label for="ContactPhone_AreaCode">Contact Phone Number</label></div>
 		<div>
-			(@Html.TextBoxFor(m => Model.ContactPhone.AreaCode, new { @class = "phone-area-code" })) @Html.TextBoxFor(m => Model.ContactPhone.Prefix, new { @class = "phone-prefix" }) - @Html.TextBoxFor(m => Model.ContactPhone.Suffix, new { @class = "phone-suffix" })
+			(@Html.TextBoxFor(m => Model.ContactPerson.contactPhone.AreaCode, new { @class = "phone-area-code" })) @Html.TextBoxFor(m => Model.ContactPerson.contactPhone.Prefix, new { @class = "phone-prefix" }) - @Html.TextBoxFor(m => Model.ContactPerson.contactPhone.Suffix, new { @class = "phone-suffix" })
 		</div>
+	</div>
+
+	<div>
+		<div>@Html.LabelFor(m => Model.ContactPerson.strContactEmail, "Contact Email")</div>
+		<div>@Html.TextBoxFor(m => Model.ContactPerson.strContactEmail)</div>
 	</div>
 
 	<div class="some-spacing">
@@ -61,18 +66,28 @@
 	</div>
 
 	<div>
-		<div>@Html.LabelFor(model => model.Email)</div>
-		<div>@Html.TextBoxFor(model => model.Email)</div>
+		<div>@Html.LabelFor(model => model.BusinessEmail, "Business Email")</div>
+		<div>@Html.TextBoxFor(model => model.BusinessEmail)</div>
 	</div>
 
 	<div>
-		<div>@Html.LabelFor(model => model.Website)</div>
-		<div>@Html.TextBoxFor(model => model.Website)</div>
+		<div>@Html.LabelFor(model => model.MainWeb, "Main Website URL")</div>
+		<div>@Html.TextBoxFor(model => model.MainWeb.strURL)</div>
 	</div>
 
 	<div>
-		<div>@Html.LabelFor(model => model.OnlineOrdering) </div>
-		<div>@Html.TextBoxFor(model => model.OnlineOrdering) </div>
+		<div>@Html.LabelFor(model => model.OrderingWeb, "Ordering Webpage URL") </div>
+		<div>@Html.TextBoxFor(model => model.OrderingWeb.strURL) </div>
+	</div>
+
+	<div>
+		<div>@Html.LabelFor(model => model.KettleWeb, "Donation Kettle URL") </div>
+		<div>@Html.TextBoxFor(model => model.KettleWeb.strURL) </div>
+	</div>
+	<br />	
+	<div class="some-spacing">
+		@Html.LabelFor(model => model.BizYear, "Year Established:") 
+		@Html.TextBoxFor(model => model.BizYear)
 	</div>
 
 	<br />
@@ -135,6 +150,91 @@
 
 		@Html.CheckBoxFor(models => models.Online.blnAvailable)
 		@Html.LabelFor(model => model.Online)
+	</div>
+
+	<div>
+		<table>
+			<tr>
+				Social Media Outlets
+			</tr>
+			<tr>
+				<td>Platform</td>
+				<td>Link</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.LabelFor(models => models.Facebook)
+				</td>
+				<td>
+					@Html.CheckBoxFor(models => models.Facebook.blnAvailable)
+				</td>
+				<td>
+					<label>URL:</label>
+					@Html.TextBoxFor(models => models.Facebook.strSocialMediaLink)
+				</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.LabelFor(models => models.Twitter)
+				</td>
+				<td>
+					@Html.CheckBoxFor(models => models.Twitter.blnAvailable)
+				</td>
+				<td>
+					<label>URL:</label>
+					@Html.TextBoxFor(models => models.Twitter.strSocialMediaLink)
+				</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.LabelFor(models => models.Instagram)
+				</td>
+				<td>
+					@Html.CheckBoxFor(models => models.Instagram.blnAvailable)
+				</td>
+				<td>
+					<label>URL:</label>
+					@Html.TextBoxFor(models => models.Instagram.strSocialMediaLink)
+				</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.LabelFor(models => models.Snapchat)
+				</td>
+				<td>
+					@Html.CheckBoxFor(models => models.Snapchat.blnAvailable)
+				</td>
+				<td>
+					<label>URL:</label>
+					@Html.TextBoxFor(models => models.Snapchat.strSocialMediaLink)
+				</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.LabelFor(models => models.TikTok)
+				</td>
+				<td>
+					@Html.CheckBoxFor(models => models.TikTok.blnAvailable)
+				</td>
+				<td>
+					<label>URL:</label>
+					@Html.TextBoxFor(models => models.TikTok.strSocialMediaLink)
+				</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.LabelFor(models => models.Yelp)
+				</td>
+				<td>
+					@Html.CheckBoxFor(models => models.Yelp.blnAvailable)
+				</td>
+				<td>
+					<label>URL:</label>
+					@Html.TextBoxFor(models => models.Facebook.strSocialMediaLink)
+				</td>
+			</tr>
+
+		</table>
 	</div>
 
 	<div>

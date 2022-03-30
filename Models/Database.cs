@@ -237,8 +237,9 @@ namespace GCRBA.Models
 
 				SetParameter(ref cm, "@intCompanyID", loc.lngCompanyID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
 				SetParameter(ref cm, "@strCompanyName", loc.LocationName, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@strMainURL", loc.Website, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@strOrderingURL", loc.OnlineOrdering, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strAbout", loc.Bio, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strWebAdminName", loc.WebAdmin.strContactLastName + ", "  + loc.WebAdmin.strContactFirstName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strBizYear", loc.BizYear, SqlDbType.NVarChar);
 
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
 

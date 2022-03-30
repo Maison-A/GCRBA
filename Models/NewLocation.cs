@@ -19,12 +19,8 @@ namespace GCRBA.Models {
 		public int intState = 0;
 
 		//Contact Information
-		public string Contact_FirstName = string.Empty;
-		public string Contact_LastName = string.Empty;
-		public PhoneNumber ContactPhone;
 		public PhoneNumber BusinessPhone;
-		public string Email = string.Empty;
-		public string Website = string.Empty;
+		public string BusinessEmail = string.Empty;
 
 		//Bakery Specialty Information
 		public CategoryItem Donuts = new CategoryItem();
@@ -54,43 +50,28 @@ namespace GCRBA.Models {
 		public Days Thursday = new Days();
 		public Days Friday = new Days();
 		public Days Saturday = new Days();
-		
-		/*
-		public string Bagels = string.Empty;
-		public string Muffins = string.Empty;
-		public string IceCream = string.Empty;
-		public string FineCandies = string.Empty;
-		public string WeddingCakes = string.Empty;
-		public string Breads = string.Empty;
-		public string DecoratedCakes = string.Empty;
-		public string Cupcakes = string.Empty;
-		public string Cookies = string.Empty;
-		public string Desserts = string.Empty;
-		public string Full = string.Empty;
-		public string Deli = string.Empty;
-		public string CarryoutDeli = string.Empty;
-		public string Wholesale = string.Empty;
-		public string Delivery = string.Empty;
-		public string Shipping = string.Empty;
-		public string Online = string.Empty;
-		*/
 
 		public ActionTypes ActionType = ActionTypes.NoType;
 
 		//!!!!!!!!!!!!if they are a member they will have these variables available to them!!!!!!!!!!!!!!!!!!
+		public ContactPerson ContactPerson;
+		public ContactPerson WebAdmin;
 		public string custServiceEmail = string.Empty;
+
 		//Some variables related to Current Promotional Information
 		public string Bio = string.Empty;
-		public string KettleLink = string.Empty;
-		public string OnlineOrdering = string.Empty;
-		
+		public string BizYear = string.Empty;
+		public Website MainWeb;
+		public Website OrderingWeb;
+		public Website KettleWeb;
+
 		//Social Media Variables that will be allowed to fill out if member identifies
-		public string Facebook = string.Empty;
-		public string Twitter = string.Empty;
-		public string Istagram = string.Empty;
-		public string Snapchat = string.Empty;
-		public string TikTok = string.Empty;
-		public string Yelp = string.Empty;
+		public SocialMedia Facebook;
+		public SocialMedia Twitter;
+		public SocialMedia Instagram;
+		public SocialMedia Snapchat;
+		public SocialMedia TikTok;
+		public SocialMedia Yelp;
 
 		public enum ActionTypes {
 			NoType = 0,

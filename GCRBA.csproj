@@ -163,11 +163,14 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\CategoryItem.cs" />
+    <Compile Include="Models\ContactPerson.cs" />
     <Compile Include="Models\Database.cs" />
     <Compile Include="Models\Days.cs" />
     <Compile Include="Models\NewLocation.cs" />
     <Compile Include="Models\PhoneNumber.cs" />
+    <Compile Include="Models\SocialMedia.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\Website.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controllers\BakeryController.cs" />
     <Compile Include="Controllers\UserController.cs" />
