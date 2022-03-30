@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.IO;
 
 namespace GCRBA.Views.User
 {
@@ -38,7 +39,7 @@ namespace GCRBA.Views.User
 
                 if (col["btnSubmit"].ToString() == "newuser")
                 {
-                    //validate data
+                    //validate data - trying to check pass values match
                     if (col["passver1"].ToString() != col["passver2"].ToString())
                     {
                         u.ActionType = Models.User.ActionTypes.Unknown;
