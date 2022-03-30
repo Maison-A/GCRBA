@@ -23,6 +23,7 @@ IF OBJECT_ID('tblUser')			IS NOT NULL DROP TABLE tblUser
 IF OBJECT_ID('tblState')		IS NOT NULL DROP TABLE tblState 
 IF OBJECT_ID('tblDay')			IS NOT NULL DROP TABLE tblDay
 IF OBJECT_ID('tblMainBanner')		IS NOT NULL DROP TABLE tblMainBanner
+IF OBJECT_ID('tblAboutGCRBA')	IS NOT NULL DROP TABLE tblAboutGCRBA
 IF OBJECT_ID('LOGIN')			IS NOT NULL DROP PROCEDURE LOGIN 
 
 
@@ -31,6 +32,13 @@ CREATE TABLE tblState
 	intStateID		SMALLINT IDENTITY(1,1)	NOT NULL,
 	strState		NVARCHAR(20)		NOT NULL, 
 	CONSTRAINT tblState_PK PRIMARY KEY (intStateID)
+)
+
+CREATE TABLE tblAboutGCRBA
+(
+	intAboutGCRBAID		SMALLINT IDENTITY (1,1) NOT NULL,
+	strAbout			NVARCHAR(1000) NOT NULL,
+	CONSTRAINT tblAboutGCRBA_PK PRIMARY KEY (intAboutGCRBAID)
 )
 
 -- all users listed here
@@ -83,6 +91,7 @@ CREATE TABLE tblCompany
 	strCompanyName			NVARCHAR(50)		NOT NULL, 
 	strAbout			NVARCHAR(2000),
 	strWebAdminName		NVARCHAR(100),
+	strBizYear			NVARCHAR(10),
 	CONSTRAINT tblCompany_PK PRIMARY KEY (intCompanyID)
 )
 
