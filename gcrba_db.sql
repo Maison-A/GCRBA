@@ -8,14 +8,17 @@ IF OBJECT_ID('tblSpecial')		IS NOT NULL DROP TABLE tblSpecial
 IF OBJECT_ID('tblCategory')		IS NOT NULL DROP TABLE tblCategory
 IF OBJECT_ID('tblEvent')		IS NOT NULL DROP TABLE tblEvent
 IF OBJECT_ID('tblLocation')		IS NOT NULL DROP TABLE tblLocation 
-IF OBJECT_ID('tblContactPerson') 	IS NOT NULL DROP TABLE tblContactPerson
+IF OBJECT_ID('tblContactPerson') IS NOT NULL DROP TABLE tblContactPerson
 IF OBJECT_ID('tblAdminRequest')		IS NOT NULL DROP TABLE tblAdminRequest  
+IF OBJECT_ID('tblCompanySocialMedia') IS NOT NULL DROP TABLE tblCompanySocialMedia
+IF OBJECT_ID('tblWebsite')		IS NOT NULL DROP TABLE tblWebsite 
 IF OBJECT_ID('tblCompany')		IS NOT NULL DROP TABLE tblCompany 
+IF OBJECT_ID('tblSocialMedia')	IS NOT NULL DROP TABLE tblSocialMedia
 IF OBJECT_ID('tblMember')		IS NOT NULL DROP TABLE tblMember 
 IF OBJECT_ID('tblMemberLevel')		IS NOT NULL DROP TABLE tblMemberLevel 
 IF OBJECT_ID('tblPaymentType')		IS NOT NULL DROP TABLE tblPaymentType 
 IF OBJECT_ID('tblApprovalStatus')	IS NOT NULL DROP TABLE tblApprovalStatus 
-IF OBJECT_ID('tblWebsite')		IS NOT NULL DROP TABLE tblWebsite 
+IF OBJECT_ID('tblWebsiteType')	IS NOT NULL DROP TABLE tblWebsiteType
 IF OBJECT_ID('tblUser')			IS NOT NULL DROP TABLE tblUser 
 IF OBJECT_ID('tblState')		IS NOT NULL DROP TABLE tblState 
 IF OBJECT_ID('tblDay')			IS NOT NULL DROP TABLE tblDay
@@ -78,11 +81,25 @@ CREATE TABLE tblCompany
 (
 	intCompanyID			BIGINT IDENTITY(1,1)	NOT NULL, 
 	strCompanyName			NVARCHAR(50)		NOT NULL, 
-	strAbout			NVARCHAR(1000),
-	strMainURL			NVARCHAR(100), 
-	strOrderingURL			NVARCHAR(100),
-	strWebAdminFirst		NVARCHAR(100),
+	strAbout			NVARCHAR(2000),
+	strWebAdminName		NVARCHAR(100),
 	CONSTRAINT tblCompany_PK PRIMARY KEY (intCompanyID)
+)
+
+CREATE TABLE tblSocialMedia
+(
+	intSocialMediaID		SMALLINT IDENTITY (1,1) NOT NULL,
+	strPlatform				NVARCHAR(50)			NOT NULL,
+	CONSTRAINT tblSocialMedia_PK PRIMARY KEY (intSocialMediaID)
+)
+
+CREATE TABLE tblCompanySocialMedia
+(
+	intCompanySocialMediaID BIGINT IDENTITY NOT NULL,
+	strSocialMediaLink		NVARCHAR(100)	NOT NULL,
+	intCompanyID			BIGINT			NOT NULL,
+	intSocialMediaID		SMALLINT		NOT NULL,
+	CONSTRAINT tblCompanySocialMedia_PK PRIMARY KEY (intCompanySocialMediaID)
 )
 
 CREATE TABLE tblCompanyAward
@@ -193,11 +210,19 @@ CREATE TABLE tblSpecialLocation
 	CONSTRAINT tblSpecialLocation_PK PRIMARY KEY (intSpecialLocationID)
 )
 
+CREATE TABLE tblWebsiteType
+(
+	intWebsiteTypeID  SMALLINT IDENTITY(1,1) NOT NULL,
+	strWebsiteType		VARCHAR(20)			NOT NULL,
+	CONSTRAINT tblWebsiteType_PK PRIMARY KEY (intWebsiteTypeID)
+)
+
 CREATE TABLE tblWebsite
 (
 	intWebsiteID			SMALLINT IDENTITY(1,1)		NOT NULL, 
 	intCompanyID			BIGINT				NOT NULL,
 	strURL				NVARCHAR(100)			NOT NULL, 
+	intWebsiteTypeID	SMALLINT				NOT NULL,
 	CONSTRAINT tblWebsite_PK PRIMARY KEY (intWebsiteID)
 )
 
@@ -251,6 +276,8 @@ CREATE TABLE tblMainBanner
 -- tblLocationHours			tblDay				intDayID
 -- tblCompanyAward			tblCompany			intCompanyID
 -- tblLocation				tblContactPerson	intContactPersonID
+-- tblCompanySocialMedia	tblCompany			intCompanyID
+-- tblCompanySocialMedia	tblSocialMedia		intSocialMedia
 
 ALTER TABLE tblUser ADD CONSTRAINT tblUser_tblState_FK
 FOREIGN KEY (intStateID) REFERENCES tblState (intStateID)
@@ -311,6 +338,18 @@ FOREIGN KEY (intCompanyID) REFERENCES tblCompany (intCompanyID)
 
 ALTER TABLE tblLocation ADD CONSTRAINT tblLocation_tblContactPerson_FK
 FOREIGN KEY (intContactPersonID) REFERENCES tblContactPerson (intContactPersonID)
+
+ALTER TABLE tblCompanySocialMedia ADD CONSTRAINT tblCompanySocialMedia_tblCompany_FK
+FOREIGN KEY (intCompanyID) REFERENCES tblCompany (intCompanyID)
+
+ALTER TABLE tblCompanySocialMedia ADD CONSTRAINT tblCompanySocialMedia_tblSocialMedia_FK
+FOREIGN KEY (intSocialMediaID) REFERENCES tblSocialMedia (intSocialMediaID)
+
+ALTER TABLE tblWebsite ADD CONSTRAINT tblWebsite_tblWebsiteType_FK
+FOREIGN KEY (intWebsiteTypeID) REFERENCES tblWebsiteType (intWebsiteTypeID)
+
+ALTER TABLE tblWebsite ADD CONSTRAINT tblWebsite_tblCompany_FK
+FOREIGN KEY (intCompanyID) REFERENCES tblCompany (intCompanyID)
 
 -- -----------------------------------------------------------------------------------------
 -- STORED PROCEDURES 
@@ -383,9 +422,9 @@ VALUES	('Monday'),
 	('Sunday')
 
 -- COMPANY INFORMATION FOR THE BONBONERIE
-INSERT INTO tblCompany (strCompanyName, strAbout, strMainURL, strOrderingURL)
-VALUES	('The Bonbonerie', 'In Business Since 1983<br /><br />At BonBonerie, our rule is that everything we make must be two things: beautiful and delicious. That means using quality ingredients like sweet cream butter, cane sugar, fresh lemon juice and zest, Belgian chocolate, and real vanilla from Madagascar. We create everything by hand in the BonBonerie kitchens, including all our doughs, icings, syrups, batters, and fillings.<br /><br />Each of our original recipes have been reworked and refined over years to create pastry that is unique, perfected, and delicious.<br /><br />Our extremely talented staff of bakers and decorators can customize almost anything for your special event. From astonishing cake centerpieces to hand-cut cookies, everything is crafted with the utmost care by true artists in their field.<br /><br />We are proud to be your award-winning choice for all pastries Beautiful and Delicious since 1983.', 'https://www.bonbonerie.com/', 'https://cincyfavorites.com/shop/bonbonerie-bakery/'),
-	('Wyoming Pastry Shop', 'In Business Since 1934<br /><br />Welcome to Wyoming Pastry Shop<br /><br />Our bakery has been serving the Village of Wyoming and surrounding areas since 1934. Phillip and Kimberly Reschke are the fifth owners of this hometown bakery. Phillip is a second generation Master Baker, working with his father, a Master Baker from Germany, he has learned all aspects of the bakery and pastry trade and takes pride in all of the products he crafts. Kimberly has been decorating cakes for 30 years, spending time in Cincinnati and Las Vegas perfecting her skills and creativity in a variety of pastry and cake design. We strive for complete customer satisfaction. We want you to think of us whenever you have a craving for something sweet, a special cake or cookie, or one of our many products we offer. We are a small business and will keep it small so we can control our quality to provide the best product to you.', 'http://www.wyomingpastryshop.com/', null)
+INSERT INTO tblCompany (strCompanyName, strAbout)
+VALUES	('The Bonbonerie', 'In Business Since 1983<br /><br />At BonBonerie, our rule is that everything we make must be two things: beautiful and delicious. That means using quality ingredients like sweet cream butter, cane sugar, fresh lemon juice and zest, Belgian chocolate, and real vanilla from Madagascar. We create everything by hand in the BonBonerie kitchens, including all our doughs, icings, syrups, batters, and fillings.<br /><br />Each of our original recipes have been reworked and refined over years to create pastry that is unique, perfected, and delicious.<br /><br />Our extremely talented staff of bakers and decorators can customize almost anything for your special event. From astonishing cake centerpieces to hand-cut cookies, everything is crafted with the utmost care by true artists in their field.<br /><br />We are proud to be your award-winning choice for all pastries Beautiful and Delicious since 1983.'),
+	('Wyoming Pastry Shop', 'In Business Since 1934<br /><br />Welcome to Wyoming Pastry Shop<br /><br />Our bakery has been serving the Village of Wyoming and surrounding areas since 1934. Phillip and Kimberly Reschke are the fifth owners of this hometown bakery. Phillip is a second generation Master Baker, working with his father, a Master Baker from Germany, he has learned all aspects of the bakery and pastry trade and takes pride in all of the products he crafts. Kimberly has been decorating cakes for 30 years, spending time in Cincinnati and Las Vegas perfecting her skills and creativity in a variety of pastry and cake design. We strive for complete customer satisfaction. We want you to think of us whenever you have a craving for something sweet, a special cake or cookie, or one of our many products we offer. We are a small business and will keep it small so we can control our quality to provide the best product to you.')
 
 INSERT INTO tblCompanyAward (intCompanyID, strFrom, strAward)
 VALUES	(1, 'Best of City Search', 'Best of City'),
@@ -431,15 +470,15 @@ VALUES	(1, 1, '10:00am', '4:00pm'),
 	(2, 7, 'Closed', null)
 
 
-INSERT INTO tblWebsite (intCompanyID, strURL)
-VALUES	(1, 'https://twitter.com/bonbonerie'),
-	(1, 'https://www.facebook.com/bonbonerie?ref=m'),
-	(1, 'https://www.instagram.com/bonboneriecincy/'),
-	(1, 'https://www.yelp.ca/biz/the-bonbonerie-cincinnati-2'),
-	(2, 'https://mobile.twitter.com/wyomingpastry'),
-	(2, 'https://www.facebook.com/Wyoming-Pastry-Shop-104461259599883/'),
-	(2, 'https://www.instagram.com/wyomingpastryshop/?hl=en'),
-	(2, 'https://www.yelp.com/biz/wyoming-pastry-shop-cincinnati')
+INSERT INTO tblWebsite (intCompanyID, intWebsiteTypeID, strURL)
+VALUES	(1, 1, 'https://twitter.com/bonbonerie'),
+	(1, 1, 'https://www.facebook.com/bonbonerie?ref=m'),
+	(1, 2, 'https://www.instagram.com/bonboneriecincy/'),
+	(1, 2, 'https://www.yelp.ca/biz/the-bonbonerie-cincinnati-2'),
+	(2, 3, 'https://mobile.twitter.com/wyomingpastry'),
+	(2, 2, 'https://www.facebook.com/Wyoming-Pastry-Shop-104461259599883/'),
+	(2, 1, 'https://www.instagram.com/wyomingpastryshop/?hl=en'),
+	(2, 1, 'https://www.yelp.com/biz/wyoming-pastry-shop-cincinnati')
 
 -- NON-ADMIN USER 
 INSERT INTO tblUser (strFirstName, strLastName, strAddress, strCity, intStateID, strZip, strPhone, strEmail, strUsername, strPassword, isAdmin)
@@ -455,3 +494,16 @@ VALUES	(1, 1, 2)
 
 INSERT INTO tblMainBanner (strBanner)
 VALUES	('This is an example of the main banner. This will hold information relevant to the GCRBA.')
+
+INSERT INTO tblSocialMedia (strPlatform)
+VALUES		('Facebook')
+			,('Instagram')
+			,('Snapchat')
+			,('TikTok')
+			,('Twitter')
+			,('Yelp')
+
+INSERT INTO tblWebsiteType(strWebsiteType)
+VALUES				('Main')
+					,('Ordering')
+					,('Kettle')
