@@ -4,39 +4,40 @@
     ViewBag.Title = "Index";
 }
 
-<h2>@ViewBag.Title</h2>
+<div class="container" id="login-container">
+    <h2>@ViewBag.Title</h2>
 
-<!--login form-->
-@using (Html.BeginForm(FormMethod.Post))
-{
-    <!--only display if user tries to submit form with empty textbox(es)-->
-    if (Model.ActionType == GCRBA.Models.User.ActionTypes.RequiredFieldMissing)
+    <!--login form-->
+    @using (Html.BeginForm(FormMethod.Post))
     {
-        <div class="missingField">
-            <i class="fad fa-exclamation-triangle fa-2x"></i>"
-            All fields are required.
-        </div>
-    }
+        <!--only display if user tries to submit form with empty textbox(es)-->
+        if (Model.ActionType == GCRBA.Models.User.ActionTypes.RequiredFieldMissing)
+        {
+            <div class="missing-field">
+                <i class="fad fa-exclamation-triangle fa-2x"></i>"
+                All fields are required.
+            </div>
+        }
 
-    if (Model.ActionType == GCRBA.Models.User.ActionTypes.LoginFailed)
-    {
-        <div class="missingField">
-            Invalid Username and/or Password. Please try again.
-        </div>
-    }
+        if (Model.ActionType == GCRBA.Models.User.ActionTypes.LoginFailed)
+        {
+            <div class="missing-field">
+                Invalid Username and/or Password. Please try again.
+            </div>
+        }
 
-    <div class="section">
-        <div class="item">
-            <div>@Html.LabelFor(model => model.Username)</div>
-            <div>@Html.TextBoxFor(model => model.Username, new { @autofocus = "autofocus" }) </div>
+
+        <div>
+            @Html.LabelFor(model => model.Username, new { @class = "form-label" })
+            @Html.TextBoxFor(model => model.Username, new { @autofocus = "autofocus", @class = "form-control" })
         </div>
-        <div class="item">
-            <div>@Html.LabelFor(model => model.Password)</div>
-            <div>@Html.TextBoxFor(model => model.Password, new { type = "password" }) </div>
+        <div>
+            @Html.LabelFor(model => model.Password, new { @class = "form-label" })
+            @Html.TextBoxFor(model => model.Password, new { type = "password", @class = "form-control" })
         </div>
-    </div>
-    <div>
-        <button id="btnLogin" name="btnSubmit" value="login" class="button-action">Login</button>
-    </div>
+        <div>
+            <button id="btnLogin" name="btnSubmit" value="login" class="btn btn-danger">Login</button>
+        </div>
 }
+</div>
 
