@@ -1,3 +1,4 @@
+-- DROP TABLES
 IF OBJECT_ID('tblSpecialLocation')		IS NOT NULL DROP TABLE tblSpecialLocation 
 IF OBJECT_ID('tblCompanyAward')			IS NOT NULL DROP TABLE tblCompanyAward
 IF OBJECT_ID('tblLocationHours')		IS NOT NULL DROP TABLE tblLocationHours
@@ -25,9 +26,17 @@ IF OBJECT_ID('tblState')				IS NOT NULL DROP TABLE tblState
 IF OBJECT_ID('tblDay')					IS NOT NULL DROP TABLE tblDay
 IF OBJECT_ID('tblMainBanner')			IS NOT NULL DROP TABLE tblMainBanner
 IF OBJECT_ID('tblAboutGCRBA')			IS NOT NULL DROP TABLE tblAboutGCRBA
+
+--DROP STORED PROCEDURES
 IF OBJECT_ID('LOGIN')					IS NOT NULL DROP PROCEDURE LOGIN 
 IF OBJECT_ID('VERIFY_MEMBER')			IS NOT NULL DROP PROCEDURE VERIFY_MEMBER
-
+IF OBJECT_ID('INSERT_WEBSITE')			IS NOT NULL DROP PROCEDURE INSERT_WEBSITE
+IF OBJECT_ID('INSERT_CONTACTPERSON')	IS NOT NULL DROP PROCEDURE INSERT_CONTACTPERSON
+IF OBJECT_ID('INSERT_SOCIALMEDIA')		IS NOT NULL DROP PROCEDURE INSERT_SOCIALMEDIA
+IF OBJECT_ID('INSERT_LOCATION')			IS NOT NULL DROP PROCEDURE INSERT_LOCATION
+IF OBJECT_ID('INSERT_COMPANY')			IS NOT NULL DROP PROCEDURE INSERT_COMPANY
+IF OBJECT_ID('INSERT_CATEGORYLOCATION') IS NOT NULL DROP PROCEDURE INSERT_CATEGORYLOCATION
+IF OBJECT_ID('INSERT_LOCATIONHOURS') IS NOT NULL DROP PROCEDURE INSERT_LOCATIONHOURS
 
 CREATE TABLE tblState
 (
@@ -92,7 +101,6 @@ CREATE TABLE tblCompany
 	intCompanyID			BIGINT IDENTITY(1,1)	NOT NULL, 
 	strCompanyName			NVARCHAR(50)		NOT NULL, 
 	strAbout			NVARCHAR(2000),
-	strWebAdminName		NVARCHAR(100),
 	strBizYear			NVARCHAR(10),
 	CONSTRAINT tblCompany_PK PRIMARY KEY (intCompanyID)
 )
@@ -147,7 +155,7 @@ CREATE TABLE tblLocation
 	intStateID			SMALLINT			NOT NULL, 
 	strZip				NVARCHAR(15)		NOT NULL,
 	strPhone			NVARCHAR(20)		NOT NULL,
-	intContactPersonID	BIGINT				NOT NULL,
+	strEmail			NVARCHAR(50),		
 	CONSTRAINT tblLocation_PK PRIMARY KEY (intLocationID)
 )
 
@@ -240,7 +248,7 @@ CREATE TABLE tblWebsiteType
 
 CREATE TABLE tblWebsite
 (
-	intWebsiteID			SMALLINT IDENTITY(1,1)		NOT NULL, 
+	intWebsiteID			BIGINT IDENTITY(1,1)		NOT NULL, 
 	intCompanyID			BIGINT				NOT NULL,
 	strURL				NVARCHAR(100)			NOT NULL, 
 	intWebsiteTypeID	SMALLINT				NOT NULL,
@@ -416,6 +424,232 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [dbo].[INSERT_WEBSITE]
+@intWebsiteID AS BIGINT OUTPUT
+,@intCompanyID AS BIGINT
+,@strURL AS NVARCHAR(100)
+,@intWebsiteTypeID AS SMALLINT
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+
+	DECLARE @COUNT AS TINYINT
+
+	--DONT ALLOW MORE THAN ONE COMPANY NAME IN THIS TABLE
+	SELECT @COUNT=COUNT(*) FROM db_owner.tblWebsite  WHERE intCompanyID = @intCompanyID AND strURL = @strURL 
+	IF @COUNT >0 RETURN -1 --COMPANY WEBPAGE CONNECTION ALREADY EXISTS
+
+	INSERT INTO [db_owner].[tblWebsite] WITH (TABLOCKX)
+				([intCompanyID]
+				,[strURL]
+				,[intWebsiteTypeID])
+			VALUES
+				(@intCompanyID
+				,@strURL
+				,@intWebsiteTypeID)
+	SELECT @intWebsiteID=@@IDENTITY
+	RETURN 1
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[INSERT_CONTACTPERSON]
+@intContactPersonID AS BIGINT OUTPUT
+,@strContactName AS NVARCHAR(50)
+,@strContactPhone AS NVARCHAR(20)
+,@strContactEmail AS NVARCHAR(50)
+,@intLocationID	AS BIGINT
+,@intCompanyID AS BIGINT
+,@intContactPersonTypeID AS SMALLINT
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+
+	DECLARE @COUNT AS TINYINT
+
+	INSERT INTO [db_owner].[tblContactPerson] WITH (TABLOCKX)
+				([strContactName]
+				,[strContactPhone]
+				,[strContactEmail]
+				,[intLocationID]
+				,[intCompanyID]
+				,[intContactPersonTypeID])
+			VALUES
+				(@strContactName
+				,@strContactPhone
+				,@strContactEmail
+				,@intLocationID
+				,@intCompanyID
+				,@intContactPersonTypeID)
+	SELECT @intContactPersonID=@@IDENTITY
+	RETURN 1
+
+END
+GO	
+
+CREATE PROCEDURE [dbo].[INSERT_LOCATION]
+@intLocationID AS BIGINT OUTPUT
+,@intCompanyID AS BIGINT
+,@strAddress AS NVARCHAR(100)
+,@strCity AS NVARCHAR(20)
+,@intStateID AS SMALLINT
+,@strZip NVARCHAR(15)
+,@strPhone NVARCHAR(20)
+,@strEmail NVARCHAR(50)
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+
+	DECLARE @COUNT AS TINYINT
+
+	--DONT ALLOW MORE THAN ONE EXACT ADDRESS IN THIS TABLE
+	SELECT @COUNT=COUNT(*) FROM db_owner.tblLocation  WHERE strAddress = @strAddress
+	IF @COUNT >0 RETURN -1 --COMPANY NAME EXISTS
+
+	INSERT INTO [db_owner].[tblLocation] WITH (TABLOCKX)
+				([intCompanyID]
+				,[strAddress]
+				,[strCity]
+				,[intStateID]
+				,[strZip]
+				,[strPhone]
+				,[strEmail])
+			VALUES
+				(@intCompanyID
+				,@strAddress
+				,@strCity
+				,@intStateID
+				,@strZip
+				,@strPhone
+				,@strEmail)
+	SELECT @intLocationID=@@IDENTITY
+	RETURN 1
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[INSERT_SOCIALMEDIA]
+@intCompanySocialMediaID AS BIGINT OUTPUT
+,@strSocialMediaLink AS NVARCHAR(100)
+,@intCompanyID AS BIGINT
+,@intSocialMediaID AS SMALLINT
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+
+	DECLARE @COUNT AS TINYINT
+
+	INSERT INTO [db_owner].[tblCompanySocialMedia] WITH (TABLOCKX)
+				([strSocialMediaLink]
+				,[intCompanyID]
+				,[intSocialMediaID])
+			VALUES
+				(@strSocialMediaLink
+				,@intCompanyID
+				,@intSocialMediaID)
+	SELECT @intCompanySocialMediaID=@@IDENTITY
+	RETURN 1
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[INSERT_COMPANY]
+@intCompanyID AS BIGINT OUTPUT
+,@strCompanyName AS NVARCHAR(50)
+,@strAbout AS NVARCHAR(2000)
+,@strBizYear NVARCHAR(10)
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+
+	DECLARE @COUNT AS TINYINT
+
+	--DONT ALLOW MORE THAN ONE COMPANY NAME IN THIS TABLE
+	SELECT @COUNT=COUNT(*) FROM db_owner.tblCompany  WHERE strCompanyName = @strCompanyName
+	IF @COUNT >0 RETURN -1 --COMPANY NAME EXISTS
+
+	INSERT INTO [db_owner].[tblCompany] WITH (TABLOCKX)
+				([strCompanyName]
+				,[strAbout]
+				,[strBizYear])
+			VALUES
+				(@strCompanyName
+				,@strAbout
+				,@strBizYear)
+	SELECT @intCompanyID=@@IDENTITY
+	RETURN 1
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[INSERT_CATEGORYLOCATION]
+@intCategoryLocationID AS BIGINT OUTPUT
+,@intCategoryID AS SMALLINT
+,@intLocationID AS BIGINT
+,@blnAvailable AS BIT
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+
+	DECLARE @COUNT AS TINYINT
+
+	--DONT ALLOW MORE THAN ONE EXACT ADDRESS IN THIS TABLE
+	SELECT @COUNT=COUNT(*) FROM db_owner.tblCategoryLocation  WHERE intCategoryID = @intCategoryID AND intLocationID = @intLocationID
+	IF @COUNT >0 RETURN -1 --CATEGORY NAME ALREADY EXISTS FOR LOCATION
+
+	INSERT INTO [db_owner].[tblCategoryLocation] WITH (TABLOCKX)
+				([intCategoryID]
+				,[intLocationID]
+				,[blnAvailable])
+			VALUES
+				(@intCategoryID
+				,@intLocationID
+				,@blnAvailable)
+	SELECT @intCategoryLocationID=@@IDENTITY
+	RETURN 1
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[INSERT_LOCATIONHOURS]
+@intLocationHoursID AS BIGINT OUTPUT
+,@intLocationID AS SMALLINT
+,@intDayID AS BIGINT
+,@strOpen AS NVARCHAR(100)
+,@strClose AS NVARCHAR(100)
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+
+	DECLARE @COUNT AS TINYINT
+
+	--DONT ALLOW MORE THAN ONE EXACT ADDRESS IN THIS TABLE
+	SELECT @COUNT=COUNT(*) FROM db_owner.tblLocationHours  WHERE intLocationID = @intLocationID AND @intDayID = intDayID
+	IF @COUNT >0 RETURN -1 --LOCATION HOURS ALREADY EXIST
+
+	INSERT INTO [db_owner].[tblLocationHours] WITH (TABLOCKX)
+				([intLocationID]
+				,[intDayID]
+				,[strOpen]
+				,[strClose])
+			VALUES
+				(@intLocationID
+				,@intDayID
+				,@strOpen
+				,@strClose)
+	SELECT @intLocationHoursID=@@IDENTITY
+	RETURN 1
+
+END
+GO
+
 -- -----------------------------------------------------------------------------------------
 -- ADD TEST DATA
 -- -----------------------------------------------------------------------------------------
@@ -469,9 +703,9 @@ VALUES	('Monday'),
 	('Sunday')
 
 -- COMPANY INFORMATION FOR THE BONBONERIE
-INSERT INTO tblCompany (strCompanyName, strAbout)
-VALUES	('The Bonbonerie', 'In Business Since 1983<br /><br />At BonBonerie, our rule is that everything we make must be two things: beautiful and delicious. That means using quality ingredients like sweet cream butter, cane sugar, fresh lemon juice and zest, Belgian chocolate, and real vanilla from Madagascar. We create everything by hand in the BonBonerie kitchens, including all our doughs, icings, syrups, batters, and fillings.<br /><br />Each of our original recipes have been reworked and refined over years to create pastry that is unique, perfected, and delicious.<br /><br />Our extremely talented staff of bakers and decorators can customize almost anything for your special event. From astonishing cake centerpieces to hand-cut cookies, everything is crafted with the utmost care by true artists in their field.<br /><br />We are proud to be your award-winning choice for all pastries Beautiful and Delicious since 1983.'),
-	('Wyoming Pastry Shop', 'In Business Since 1934<br /><br />Welcome to Wyoming Pastry Shop<br /><br />Our bakery has been serving the Village of Wyoming and surrounding areas since 1934. Phillip and Kimberly Reschke are the fifth owners of this hometown bakery. Phillip is a second generation Master Baker, working with his father, a Master Baker from Germany, he has learned all aspects of the bakery and pastry trade and takes pride in all of the products he crafts. Kimberly has been decorating cakes for 30 years, spending time in Cincinnati and Las Vegas perfecting her skills and creativity in a variety of pastry and cake design. We strive for complete customer satisfaction. We want you to think of us whenever you have a craving for something sweet, a special cake or cookie, or one of our many products we offer. We are a small business and will keep it small so we can control our quality to provide the best product to you.')
+INSERT INTO tblCompany (strCompanyName, strAbout, strBizYear)
+VALUES	('The Bonbonerie', 'In Business Since 1983<br /><br />At BonBonerie, our rule is that everything we make must be two things: beautiful and delicious. That means using quality ingredients like sweet cream butter, cane sugar, fresh lemon juice and zest, Belgian chocolate, and real vanilla from Madagascar. We create everything by hand in the BonBonerie kitchens, including all our doughs, icings, syrups, batters, and fillings.<br /><br />Each of our original recipes have been reworked and refined over years to create pastry that is unique, perfected, and delicious.<br /><br />Our extremely talented staff of bakers and decorators can customize almost anything for your special event. From astonishing cake centerpieces to hand-cut cookies, everything is crafted with the utmost care by true artists in their field.<br /><br />We are proud to be your award-winning choice for all pastries Beautiful and Delicious since 1983.', '1963'),
+	('Wyoming Pastry Shop', 'In Business Since 1934<br /><br />Welcome to Wyoming Pastry Shop<br /><br />Our bakery has been serving the Village of Wyoming and surrounding areas since 1934. Phillip and Kimberly Reschke are the fifth owners of this hometown bakery. Phillip is a second generation Master Baker, working with his father, a Master Baker from Germany, he has learned all aspects of the bakery and pastry trade and takes pride in all of the products he crafts. Kimberly has been decorating cakes for 30 years, spending time in Cincinnati and Las Vegas perfecting her skills and creativity in a variety of pastry and cake design. We strive for complete customer satisfaction. We want you to think of us whenever you have a craving for something sweet, a special cake or cookie, or one of our many products we offer. We are a small business and will keep it small so we can control our quality to provide the best product to you.', '1972')
 
 INSERT INTO tblCompanyAward (intCompanyID, strFrom, strAward)
 VALUES	(1, 'Best of City Search', 'Best of City'),
@@ -496,7 +730,7 @@ VALUES	(1, 'Best of City Search', 'Best of City'),
 INSERT INTO tblContactPerson (strContactName, strContactPhone, strContactEmail, intContactPersonTypeID, intCompanyID)
 VALUES					('Briggs, Randall', '5555555555', 'briggs.r@gmail.com', 1, 1)
 
-INSERT INTO tblLocation (intCompanyID, strAddress, strCity, intStateID, strZip, strPhone, intContactPersonID)
+INSERT INTO tblLocation (intCompanyID, strAddress, strCity, intStateID, strZip, strPhone, strEmail)
 VALUES	(1, '2030 Madison Rd', 'Cincinnati', 3, '45208-3289', '513-321-3399', 1),
 	(2, '505 Wyoming Ave', 'Wyoming', 3, '45215-4578', '513-821-0742', 1)
 
@@ -554,5 +788,7 @@ VALUES		('Facebook')
 			,('TikTok')
 			,('Twitter')
 			,('Yelp')
+
+
 
 
