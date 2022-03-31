@@ -128,6 +128,11 @@ button i {
     display: none;
 }
 
+.center {
+    margin-left: auto;
+    margin-right: auto;
+}
+
 @media only screen and (max-width : 30em) {
 	.item {
 		width: 90%;

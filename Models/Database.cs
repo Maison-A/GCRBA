@@ -5,15 +5,11 @@ using System.Configuration;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GCRBA.Models
-{
-	public class Database
-	{
+namespace GCRBA.Models {
+	public class Database {
 		// this user object will be retrieved from where the user types in their data
-		public User.ActionTypes InsertUser(User u)
-		{
-			try
-			{
+		public User.ActionTypes InsertUser(User u) {
+			try {
 				//create a connection object
 				SqlConnection cn = null;
 
@@ -25,7 +21,7 @@ namespace GCRBA.Models
 				// data which is only pertnant to the first param (big int is an output param)
 				SetParameter(ref cm, "@uid", u.UID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
 				SetParameter(ref cm, "@user_id", u.Username, SqlDbType.NVarChar);
-				
+
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
 
 				// once this line completes, it will return the return value from the db (if 1 then good)
@@ -34,8 +30,7 @@ namespace GCRBA.Models
 				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
 				CloseDBConnection(ref cn);
 
-				switch (intReturnValue)
-				{
+				switch (intReturnValue) {
 					case 1: // new user created
 						u.UID = (int)(long)cm.Parameters["@uid"].Value;
 						return User.ActionTypes.InsertSuccessful;
@@ -51,15 +46,12 @@ namespace GCRBA.Models
 		}
 
 		// open database connection
-		private bool GetDBConnection(ref SqlConnection SQLConn)
-		{
-			try
-			{
+		private bool GetDBConnection(ref SqlConnection SQLConn) {
+			try {
 				if (SQLConn == null) SQLConn = new SqlConnection();
 
 				// check connection state
-				if (SQLConn.State != ConnectionState.Open)
-				{
+				if (SQLConn.State != ConnectionState.Open) {
 					// no open connection, get connection string and try to open connection  
 					SQLConn.ConnectionString = ConfigurationManager.AppSettings["AppDBConnect"];
 					SQLConn.Open();
@@ -71,13 +63,10 @@ namespace GCRBA.Models
 		}
 
 		// close database connection 
-		private bool CloseDBConnection(ref SqlConnection SQLConn)
-		{
-			try
-			{
+		private bool CloseDBConnection(ref SqlConnection SQLConn) {
+			try {
 				// is connection closed?
-				if (SQLConn.State != ConnectionState.Closed)
-				{
+				if (SQLConn.State != ConnectionState.Closed) {
 					// no, so close it 
 					SQLConn.Close();
 					SQLConn.Dispose();
@@ -90,10 +79,8 @@ namespace GCRBA.Models
 		}
 
 		// log in user
-		public User Login(User user)
-		{
-			try
-			{
+		public User Login(User user) {
+			try {
 				// create instance of SqlConnection object 
 				SqlConnection cn = new SqlConnection();
 
@@ -114,12 +101,10 @@ namespace GCRBA.Models
 				SetParameter(ref da, "@strUsername", user.Username, SqlDbType.NVarChar);
 				SetParameter(ref da, "@strPassword", user.Password, SqlDbType.NVarChar);
 
-				try
-				{
+				try {
 					ds = new DataSet();
 					da.Fill(ds);
-					if (ds.Tables[0].Rows.Count > 0)
-					{
+					if (ds.Tables[0].Rows.Count > 0) {
 						newUser = new User();
 						DataRow dr = ds.Tables[0].Rows[0];
 						newUser.UID = Convert.ToInt16(dr["intUserID"]);
@@ -137,8 +122,7 @@ namespace GCRBA.Models
 					}
 				}
 				catch (Exception ex) { throw new Exception(ex.Message); }
-				finally
-				{
+				finally {
 					CloseDBConnection(ref cn);
 				}
 				return newUser;
@@ -192,10 +176,8 @@ namespace GCRBA.Models
 		private int SetParameter(ref SqlCommand cm, string ParameterName, Object Value
 			, SqlDbType ParameterType, int FieldSize = -1
 			, ParameterDirection Direction = ParameterDirection.Input
-			, Byte Precision = 0, Byte Scale = 0)
-		{
-			try
-			{
+			, Byte Precision = 0, Byte Scale = 0) {
+			try {
 				cm.CommandType = CommandType.StoredProcedure;
 				if (FieldSize == -1)
 					cm.Parameters.Add(ParameterName, ParameterType);
@@ -216,10 +198,8 @@ namespace GCRBA.Models
 		private int SetParameter(ref SqlDataAdapter cm, string ParameterName, Object Value
 			, SqlDbType ParameterType, int FieldSize = -1
 			, ParameterDirection Direction = ParameterDirection.Input
-			, Byte Precision = 0, Byte Scale = 0)
-		{
-			try
-			{
+			, Byte Precision = 0, Byte Scale = 0) {
+			try {
 				cm.SelectCommand.CommandType = CommandType.StoredProcedure;
 				if (FieldSize == -1)
 					cm.SelectCommand.Parameters.Add(ParameterName, ParameterType);
@@ -237,10 +217,8 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public User.ActionTypes UpdateUser(User u)
-		{
-			try
-			{
+		public User.ActionTypes UpdateUser(User u) {
+			try {
 				SqlConnection cn = null;
 				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
 				SqlCommand cm = new SqlCommand("UPDATE_USER", cn);
@@ -260,8 +238,7 @@ namespace GCRBA.Models
 				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
 				CloseDBConnection(ref cn);
 
-				switch (intReturnValue)
-				{
+				switch (intReturnValue) {
 					case 1: //new updated
 						return User.ActionTypes.UpdateSuccessful;
 					default:
@@ -281,7 +258,7 @@ namespace GCRBA.Models
 				SetParameter(ref cm, "@intCompanyID", loc.lngCompanyID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
 				SetParameter(ref cm, "@strCompanyName", loc.LocationName, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strAbout", loc.Bio, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@strWebAdminName", loc.WebAdmin.strContactLastName + ", "  + loc.WebAdmin.strContactFirstName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strWebAdminName", loc.WebAdmin.strContactLastName + ", " + loc.WebAdmin.strContactFirstName, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strBizYear", loc.BizYear, SqlDbType.NVarChar);
 
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
@@ -426,7 +403,80 @@ namespace GCRBA.Models
 				return NewLocation.ActionTypes.InsertSuccessful;
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
 
+		public NewLocation.ActionTypes InsertSocialMedia(NewLocation loc, List<Models.SocialMedia> socialMedias) {
+			try {
+				int[] arrReturnValue = new int[] { 1 };
+				List<int> ls = arrReturnValue.ToList();
+
+				foreach (Models.SocialMedia item in socialMedias) {
+					if (item.blnAvailable == false) break;
+					SqlConnection cn = null;
+					if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+					SqlCommand cm = new SqlCommand("INSERT_SOCIALMEDIA", cn);
+
+					SetParameter(ref cm, "@intCompanySocialMediaID", item.intCompanySocialMediaID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+					SetParameter(ref cm, "@strSocialMediaLink", item.strSocialMediaLink, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@intCompanyID", loc.lngCompanyID, SqlDbType.BigInt);
+					SetParameter(ref cm, "@intSocialMediaID", item.intSocialMediaID, SqlDbType.SmallInt);
+
+					SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+					cm.ExecuteReader();
+
+					item.intCompanySocialMediaID = (long)cm.Parameters["@intCompanySocialMediaID"].Value;
+					ls.Add((int)cm.Parameters["ReturnValue"].Value);
+					CloseDBConnection(ref cn);
+				}
+
+				arrReturnValue = ls.ToArray();
+				foreach (int item in arrReturnValue) {
+					switch (item) {
+						case 1: // new user created
+							break;
+						default:
+							return NewLocation.ActionTypes.Unknown;
+					}
+				}
+				return NewLocation.ActionTypes.InsertSuccessful;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public NewLocation.ActionTypes InsertContactPerson(NewLocation loc) {
+			try {
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("INSERT_CONTACTPERSON", cn);
+				int intReturnValue = -1;
+				string phone = string.Empty;
+
+				if (loc.ContactPerson.contactPhone.AreaCode != null && loc.ContactPerson.contactPhone.Prefix != null && loc.ContactPerson.contactPhone.Suffix != null) {
+					phone = '(' + loc.ContactPerson.contactPhone.AreaCode + ')' + loc.ContactPerson.contactPhone.Prefix + '-' + loc.ContactPerson.contactPhone.Suffix;
+				}
+
+				SetParameter(ref cm, "@intContactPersonID", loc.ContactPerson.lngContactPersonID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+				SetParameter(ref cm, "@strContactName", loc.ContactPerson.strContactLastName + ", " + loc.ContactPerson.strContactFirstName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strContactPhone", phone, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strContactEmail", loc.ContactPerson.strContactEmail, SqlDbType.NVarChar);
+
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				switch (intReturnValue) {
+					case 1: // new user created
+						loc.ContactPerson.lngContactPersonID = (long)cm.Parameters["@intContactPersonID"].Value;
+						return NewLocation.ActionTypes.InsertSuccessful;
+					default:
+						return NewLocation.ActionTypes.Unknown;
+				}
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 	}
 }

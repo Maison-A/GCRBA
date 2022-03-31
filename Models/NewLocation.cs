@@ -56,6 +56,7 @@ namespace GCRBA.Models {
 		//!!!!!!!!!!!!if they are a member they will have these variables available to them!!!!!!!!!!!!!!!!!!
 		public ContactPerson ContactPerson;
 		public ContactPerson WebAdmin;
+		public ContactPerson CustService;
 		public string custServiceEmail = string.Empty;
 
 		//Some variables related to Current Promotional Information
@@ -82,13 +83,15 @@ namespace GCRBA.Models {
 			Unknown = 5
 		}
 
-		public NewLocation.ActionTypes StoreNewLocation(List<Models.CategoryItem> categories, List<Models.Days> LocationHours) {
+		public NewLocation.ActionTypes StoreNewLocation(List<Models.CategoryItem> categories, List<Models.Days> LocationHours, List<Models.SocialMedia> socialMedias) {
 			try {
 				Database db = new Database();
 				this.ActionType = db.InsertCompany(this);
 				this.ActionType = db.InsertLocation(this);
 				this.ActionType = db.InsertSpecialties(this, categories);
 				this.ActionType = db.InsertLocationHours(this, LocationHours);
+				this.ActionType = db.InsertSocialMedia(this, socialMedias);
+				this.ActionType = db.InsertContactPerson(this);
 				return this.ActionType;
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }

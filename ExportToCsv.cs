@@ -14,12 +14,12 @@ using CsvHelper.Configuration;
 
 namespace GCRBA {
 	public class ExportToCsv {
-        static void Main(List<string> Location, List<string> Contact, List<string> Specialties) {
+        static void Main(List<string> Location, List<string> Contact, List<string> Specialties, List<Models.SocialMedia> socialMedias) {
 
-            Export(Location, Contact, Specialties);
+            Export(Location, Contact, Specialties, socialMedias);
         }
 
-        public static void Export(List<string> Location, List<string> Contact, List<string> Specialties) {
+        public static void Export(List<string> Location, List<string> Contact, List<string> Specialties, List<Models.SocialMedia> socialMedias) {
             int LocationIndex = 0;
             int SpecialtyIndex = 0;
             int ContactIndex = 0;
