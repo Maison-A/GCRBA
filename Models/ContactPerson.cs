@@ -10,5 +10,6 @@ namespace GCRBA.Models {
 		public string strContactLastName = string.Empty;
 		public PhoneNumber contactPhone;
 		public string strContactEmail = string.Empty;
+		public int intContactTypeID = 0;
 	}
 }

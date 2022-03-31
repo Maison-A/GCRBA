@@ -54,7 +54,7 @@ namespace GCRBA.Models {
 		public ActionTypes ActionType = ActionTypes.NoType;
 
 		//!!!!!!!!!!!!if they are a member they will have these variables available to them!!!!!!!!!!!!!!!!!!
-		public ContactPerson ContactPerson;
+		public ContactPerson LocationContact;
 		public ContactPerson WebAdmin;
 		public ContactPerson CustService;
 		public string custServiceEmail = string.Empty;
@@ -83,7 +83,7 @@ namespace GCRBA.Models {
 			Unknown = 5
 		}
 
-		public NewLocation.ActionTypes StoreNewLocation(List<Models.CategoryItem> categories, List<Models.Days> LocationHours, List<Models.SocialMedia> socialMedias) {
+		public NewLocation.ActionTypes StoreNewLocation(List<Models.CategoryItem> categories, List<Models.Days> LocationHours, List<Models.SocialMedia> socialMedias, List<Models.Website> websites, List<Models.ContactPerson> contacts) {
 			try {
 				Database db = new Database();
 				this.ActionType = db.InsertCompany(this);
@@ -91,7 +91,8 @@ namespace GCRBA.Models {
 				this.ActionType = db.InsertSpecialties(this, categories);
 				this.ActionType = db.InsertLocationHours(this, LocationHours);
 				this.ActionType = db.InsertSocialMedia(this, socialMedias);
-				this.ActionType = db.InsertContactPerson(this);
+				this.ActionType = db.InsertWebsite(this, websites);
+				this.ActionType = db.InsertContactPerson(this, contacts);
 				return this.ActionType;
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }

@@ -258,7 +258,6 @@ namespace GCRBA.Models {
 				SetParameter(ref cm, "@intCompanyID", loc.lngCompanyID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
 				SetParameter(ref cm, "@strCompanyName", loc.LocationName, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strAbout", loc.Bio, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@strWebAdminName", loc.WebAdmin.strContactLastName + ", " + loc.WebAdmin.strContactFirstName, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strBizYear", loc.BizYear, SqlDbType.NVarChar);
 
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
@@ -299,6 +298,8 @@ namespace GCRBA.Models {
 				SetParameter(ref cm, "@intStateID", loc.intState, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strZip", loc.Zip, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strPhone", PhoneNumber, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strEmail", loc.BusinessEmail, SqlDbType.NVarChar);
+				
 
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
 
@@ -411,7 +412,7 @@ namespace GCRBA.Models {
 				List<int> ls = arrReturnValue.ToList();
 
 				foreach (Models.SocialMedia item in socialMedias) {
-					if (item.blnAvailable == false) break;
+					if (item.blnAvailable == false) continue;
 					SqlConnection cn = null;
 					if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
 					SqlCommand cm = new SqlCommand("INSERT_SOCIALMEDIA", cn);
@@ -444,39 +445,93 @@ namespace GCRBA.Models {
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public NewLocation.ActionTypes InsertContactPerson(NewLocation loc) {
+		public NewLocation.ActionTypes InsertContactPerson(NewLocation loc, List<Models.ContactPerson> contacts) {
 			try {
-				SqlConnection cn = null;
-				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
-				SqlCommand cm = new SqlCommand("INSERT_CONTACTPERSON", cn);
-				int intReturnValue = -1;
-				string phone = string.Empty;
+				int[] arrReturnValue = new int[] { 1 };
+				List<int> ls = arrReturnValue.ToList();
 
-				if (loc.ContactPerson.contactPhone.AreaCode != null && loc.ContactPerson.contactPhone.Prefix != null && loc.ContactPerson.contactPhone.Suffix != null) {
-					phone = '(' + loc.ContactPerson.contactPhone.AreaCode + ')' + loc.ContactPerson.contactPhone.Prefix + '-' + loc.ContactPerson.contactPhone.Suffix;
+				foreach (Models.ContactPerson item in contacts) {
+					string name = item.strContactLastName + ", " + item.strContactFirstName;
+					string phone = "(" + item.contactPhone.AreaCode + ") " + item.contactPhone.Prefix + "-" + item.contactPhone.Suffix ;
+
+
+					if (item.strContactFirstName == string.Empty || item.strContactLastName == string.Empty) continue;
+					if (item.contactPhone.AreaCode == string.Empty || item.contactPhone.Prefix == string.Empty) continue;
+
+					SqlConnection cn = null;
+					if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+					SqlCommand cm = new SqlCommand("INSERT_CONTACTPERSON", cn);
+					int intReturnValue = -1;
+
+					SetParameter(ref cm, "@intContactPersonID", item.lngContactPersonID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+					SetParameter(ref cm, "@strContactName", name, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@strContactPhone", phone, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@strContactEmail", item.strContactEmail, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@intLocationID", loc.lngLocationID, SqlDbType.BigInt);
+					SetParameter(ref cm, "@intCompanyID", loc.lngCompanyID, SqlDbType.BigInt);
+					SetParameter(ref cm, "@intContactPersonTypeID", item.intContactTypeID, SqlDbType.SmallInt);
+
+					SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+					cm.ExecuteReader();
+
+					intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+					CloseDBConnection(ref cn);
 				}
 
-				SetParameter(ref cm, "@intContactPersonID", loc.ContactPerson.lngContactPersonID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
-				SetParameter(ref cm, "@strContactName", loc.ContactPerson.strContactLastName + ", " + loc.ContactPerson.strContactFirstName, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@strContactPhone", phone, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@strContactEmail", loc.ContactPerson.strContactEmail, SqlDbType.NVarChar);
-
-				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
-
-				cm.ExecuteReader();
-
-				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
-				CloseDBConnection(ref cn);
-
-				switch (intReturnValue) {
-					case 1: // new user created
-						loc.ContactPerson.lngContactPersonID = (long)cm.Parameters["@intContactPersonID"].Value;
-						return NewLocation.ActionTypes.InsertSuccessful;
-					default:
-						return NewLocation.ActionTypes.Unknown;
+				arrReturnValue = ls.ToArray();
+				foreach (int item in arrReturnValue) {
+					switch (item) {
+						case 1: // new user created
+							break;
+						default:
+							return NewLocation.ActionTypes.Unknown;
+					}
 				}
+				return NewLocation.ActionTypes.InsertSuccessful;
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
+
+		public NewLocation.ActionTypes InsertWebsite(NewLocation loc, List<Models.Website> websites) {
+			try {
+				int[] arrReturnValue = new int[] { 1 };
+				List<int> ls = arrReturnValue.ToList();
+
+				foreach (Models.Website item in websites) {
+					if (item.strURL == string.Empty) continue;
+					SqlConnection cn = null;
+					if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+					SqlCommand cm = new SqlCommand("INSERT_WEBSITE", cn);
+
+					SetParameter(ref cm, "@intWebsiteID", item.intWebsiteID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+					SetParameter(ref cm, "@intCompanyID", loc.lngCompanyID, SqlDbType.BigInt);
+					SetParameter(ref cm, "@strURL", item.strURL, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@intWebsiteTypeID", item.intWebsiteTypeID, SqlDbType.SmallInt);
+
+					SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+					cm.ExecuteReader();
+
+					item.intWebsiteID = (long)cm.Parameters["@intWebsiteID"].Value;
+					ls.Add((int)cm.Parameters["ReturnValue"].Value);
+					CloseDBConnection(ref cn);
+				}
+
+				arrReturnValue = ls.ToArray();
+				foreach (int item in arrReturnValue) {
+					switch (item) {
+						case 1: // new user created
+							break;
+						default:
+							return NewLocation.ActionTypes.Unknown;
+					}
+				}
+				return NewLocation.ActionTypes.InsertSuccessful;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+
 	}
 }

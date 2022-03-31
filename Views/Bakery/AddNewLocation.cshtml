@@ -329,25 +329,25 @@
 	<!--Contact Person Information-->
 	<div>
 		<div class="some-spacing">
-			<div>@Html.LabelFor(m => Model.ContactPerson.strContactFirstName, "Contact First Name")</div>
-			<div>@Html.TextBoxFor(m => Model.ContactPerson.strContactFirstName, new { @autofocus = "autofocus" })</div>
+			<div>@Html.LabelFor(m => Model.LocationContact.strContactFirstName, "Contact First Name")</div>
+			<div>@Html.TextBoxFor(m => Model.LocationContact.strContactFirstName, new { @autofocus = "autofocus" })</div>
 		</div>
 
 		<div class="some-spacing">
-			<div>@Html.LabelFor(m => Model.ContactPerson.strContactLastName, "Contact Last Name")</div>
-			<div>@Html.TextBoxFor(m => Model.ContactPerson.strContactLastName)</div>
+			<div>@Html.LabelFor(m => Model.LocationContact.strContactLastName, "Contact Last Name")</div>
+			<div>@Html.TextBoxFor(m => Model.LocationContact.strContactLastName)</div>
 		</div>
 
 		<div class="some-spacing">
 			<div><label for="ContactPhone_AreaCode">Contact Phone Number</label></div>
 			<div>
-				(@Html.TextBoxFor(m => Model.ContactPerson.contactPhone.AreaCode, new { @class = "phone-area-code" })) @Html.TextBoxFor(m => Model.ContactPerson.contactPhone.Prefix, new { @class = "phone-prefix" }) - @Html.TextBoxFor(m => Model.ContactPerson.contactPhone.Suffix, new { @class = "phone-suffix" })
+				(@Html.TextBoxFor(m => Model.LocationContact.contactPhone.AreaCode, new { @class = "phone-area-code" })) @Html.TextBoxFor(m => Model.LocationContact.contactPhone.Prefix, new { @class = "phone-prefix" }) - @Html.TextBoxFor(m => Model.LocationContact.contactPhone.Suffix, new { @class = "phone-suffix" })
 			</div>
 		</div>
 
 		<div>
-			<div>@Html.LabelFor(m => Model.ContactPerson.strContactEmail, "Contact Email")</div>
-			<div>@Html.TextBoxFor(m => Model.ContactPerson.strContactEmail)</div>
+			<div>@Html.LabelFor(m => Model.LocationContact.strContactEmail, "Contact Email")</div>
+			<div>@Html.TextBoxFor(m => Model.LocationContact.strContactEmail)</div>
 		</div>
 	</div>
 
@@ -366,7 +366,7 @@
 		<div class="some-spacing">
 			<div><label for="ContactPhone_AreaCode">Customer Service Phone Number</label></div>
 			<div>
-				(@Html.TextBoxFor(m => Model.CustService.contactPhone.AreaCode, new { @class = "phone-area-code" })) @Html.TextBoxFor(m => Model.ContactPerson.contactPhone.Prefix, new { @class = "phone-prefix" }) - @Html.TextBoxFor(m => Model.ContactPerson.contactPhone.Suffix, new { @class = "phone-suffix" })
+				(@Html.TextBoxFor(m => Model.CustService.contactPhone.AreaCode, new { @class = "phone-area-code" })) @Html.TextBoxFor(m => Model.CustService.contactPhone.Prefix, new { @class = "phone-prefix" }) - @Html.TextBoxFor(m => Model.CustService.contactPhone.Suffix, new { @class = "phone-suffix" })
 			</div>
 		</div>
 
@@ -504,7 +504,7 @@
 				</td>
 				<td>
 					<label>URL:</label>
-					@Html.TextBoxFor(models => models.Facebook.strSocialMediaLink)
+					@Html.TextBoxFor(models => models.Yelp.strSocialMediaLink)
 				</td>
 			</tr>
 		</table>

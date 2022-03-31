@@ -87,6 +87,7 @@ namespace GCRBA.Views.Bakery {
             if (col["btnSubmit"].ToString() == "NewLocation") {
                 try {
                     Models.NewLocation loc = new Models.NewLocation();
+                    //Location
                     loc.LocationName = col["LocationName"];
                     loc.StreetAddress = col["StreetAddress"];
                     loc.City = col["City"];
@@ -102,11 +103,12 @@ namespace GCRBA.Views.Bakery {
                     loc.Friday = new Models.Days() { strDay = "Friday", intDayID = 6, blnOperational = Convert.ToBoolean(col["Friday.blnOperational"].Split(',')[0]), strOpenTime = col["Friday.strOpenTime"], strClosedTime = col["Friday.strClosedTime"] };
                     loc.Saturday = new Models.Days() { strDay = "Saturday", intDayID = 7, blnOperational = Convert.ToBoolean(col["Saturday.blnOperational"].Split(',')[0]), strOpenTime = col["Saturday.strOpenTime"], strClosedTime = col["Saturday.strClosedTime"] };
 
+                    //Product Categories
                     loc.Donuts = new Models.CategoryItem() { ItemID = 1, ItemDesc = "Donuts", blnAvailable = Convert.ToBoolean(col["Donuts.blnAvailable"].Split(',')[0]) };
                     loc.Bagels = new Models.CategoryItem() { ItemID = 2, ItemDesc = "Bagels", blnAvailable = Convert.ToBoolean(col["Bagels.blnAvailable"].Split(',')[0]) };
                     loc.Muffins = new Models.CategoryItem() { ItemID = 3, ItemDesc = "Muffins", blnAvailable = Convert.ToBoolean(col["Muffins.blnAvailable"].Split(',')[0]) };
                     loc.IceCream = new Models.CategoryItem() { ItemID = 4, ItemDesc = "Ice Cream", blnAvailable = Convert.ToBoolean(col["IceCream.blnAvailable"].Split(',')[0]) };
-                    loc.FineCandies = new Models.CategoryItem() { ItemID = 5, ItemDesc = "Fine Candies & Chocolates", blnAvailable = Convert.ToBoolean(col["Donuts.blnAvailable"].Split(',')[0]) };
+                    loc.FineCandies = new Models.CategoryItem() { ItemID = 5, ItemDesc = "Fine Candies & Chocolates", blnAvailable = Convert.ToBoolean(col["FineCandies.blnAvailable"].Split(',')[0]) };
                     loc.WeddingCakes = new Models.CategoryItem() { ItemID = 6, ItemDesc = "Wedding Cakes", blnAvailable = Convert.ToBoolean(col["WeddingCakes.blnAvailable"].Split(',')[0]) };
                     loc.Breads = new Models.CategoryItem() { ItemID = 7, ItemDesc = "Breads", blnAvailable = Convert.ToBoolean(col["Breads.blnAvailable"].Split(',')[0]) };
                     loc.DecoratedCakes = new Models.CategoryItem() { ItemID = 8, ItemDesc = "Decorated Cakes", blnAvailable = Convert.ToBoolean(col["DecoratedCakes.blnAvailable"].Split(',')[0]) };
@@ -121,6 +123,7 @@ namespace GCRBA.Views.Bakery {
                     loc.Shipping = new Models.CategoryItem() { ItemID = 17, ItemDesc = "Shipping", blnAvailable = Convert.ToBoolean(col["Shipping.blnAvailable"].Split(',')[0]) };
                     loc.Online = new Models.CategoryItem() { ItemID = 18, ItemDesc = "Online Ordering", blnAvailable = Convert.ToBoolean(col["Online.blnAvailable"].Split(',')[0]) };
 
+                    //Business Contact Information
                     loc.BusinessPhone = new Models.PhoneNumber();
                     loc.BusinessPhone.AreaCode = col["BusinessPhone.AreaCode"];
                     loc.BusinessPhone.Prefix = col["BusinessPhone.Prefix"];
@@ -128,94 +131,99 @@ namespace GCRBA.Views.Bakery {
                     loc.BusinessEmail = col["BusinessEmail"];
 
                     //Member Only Variables
-                    loc.ContactPerson.strContactFirstName = col["contactFirstName"];
-                    loc.ContactPerson.strContactLastName = col["contactLastName"];
-                    loc.ContactPerson.contactPhone = new Models.PhoneNumber();
-                    loc.ContactPerson.contactPhone.AreaCode = col["ContactPhone.AreaCode"];
-                    loc.ContactPerson.contactPhone.Prefix = col["ContactPhone.Prefix"];
-                    loc.ContactPerson.contactPhone.Suffix = col["ContactPhone.Suffix"];
-                    loc.ContactPerson.strContactEmail = col["ContactPerson.strContactEmail"];
+                    //Contact Person Information
+                    loc.LocationContact = new Models.ContactPerson();
+                    loc.LocationContact.strContactFirstName = col["LocationContact.strContactFirstName"];
+                    loc.LocationContact.strContactLastName = col["LocationContact.strContactLastName"];
+                    loc.LocationContact.contactPhone = new Models.PhoneNumber();
+                    loc.LocationContact.contactPhone.AreaCode = col["LocationContact.contactPhone.AreaCode"];
+                    loc.LocationContact.contactPhone.Prefix = col["LocationContact.contactPhone.Prefix"];
+                    loc.LocationContact.contactPhone.Suffix = col["LocationContact.contactPhone.Suffix"];
+                    loc.LocationContact.strContactEmail = col["LocationContact.strContactEmail"];
+                    loc.LocationContact.intContactTypeID = 1;
 
+                    //Web Admin contact information
+                    loc.WebAdmin = new Models.ContactPerson();
                     loc.WebAdmin.strContactFirstName = col["WebAdmin.strContactFirstName"];
                     loc.WebAdmin.strContactLastName = col["WebAdmin.strContactLastName"];
                     loc.WebAdmin.contactPhone = new Models.PhoneNumber();
-                    loc.WebAdmin.contactPhone.AreaCode = col["WebAdmin.AreaCode"];
-                    loc.WebAdmin.contactPhone.Prefix = col["WebAdmin.Prefix"];
-                    loc.WebAdmin.contactPhone.Suffix = col["WebAdmin.Suffix"];
+                    loc.WebAdmin.contactPhone.AreaCode = col["WebAdmin.contactPhone.AreaCode"];
+                    loc.WebAdmin.contactPhone.Prefix = col["WebAdmin.contactPhone.Prefix"];
+                    loc.WebAdmin.contactPhone.Suffix = col["WebAdmin.contactPhone.Suffix"];
                     loc.WebAdmin.strContactEmail = col["WebAdmin.strContactEmail"];
+                    loc.WebAdmin.intContactTypeID = 2;
 
+                    //Customer Service Contact Information
+                    loc.CustService = new Models.ContactPerson();
                     loc.CustService.strContactFirstName = col["CustService.strContactFirstName"];
                     loc.CustService.strContactLastName = col["CustService.strContactLastName"];
                     loc.CustService.contactPhone = new Models.PhoneNumber();
-                    loc.CustService.contactPhone.AreaCode = col["CustService.AreaCode"];
-                    loc.CustService.contactPhone.Prefix = col["CustService.Prefix"];
-                    loc.CustService.contactPhone.Suffix = col["CustService.Suffix"];
+                    loc.CustService.contactPhone.AreaCode = col["CustService.contactPhone.AreaCode"];
+                    loc.CustService.contactPhone.Prefix = col["CustService.contactPhone.Prefix"];
+                    loc.CustService.contactPhone.Suffix = col["CustService.contactPhone.Suffix"];
                     loc.CustService.strContactEmail = col["CustService.strContactEmail"];
+                    loc.CustService.intContactTypeID = 3;
 
+                    //Web Portal Information
+                    loc.MainWeb = new Models.Website();
+                    loc.MainWeb.intWebsiteTypeID = 1;
                     loc.MainWeb.strURL = col["MainWeb.strURL"];
+
+                    loc.OrderingWeb = new Models.Website();
+                    loc.OrderingWeb.intWebsiteTypeID = 2;
                     loc.OrderingWeb.strURL = col["OrderingWeb.strURL"];
+
+                    loc.KettleWeb = new Models.Website();
+                    loc.KettleWeb.intWebsiteTypeID = 3;
                     loc.KettleWeb.strURL = col["KettleWeb.strURL"];
 
-                    loc.Facebook = new Models.SocialMedia() { strSocialMediaLink = col["Facebook.strSocialMediaLink"], intSocialMediaID = 1 };
-                    loc.Instagram = new Models.SocialMedia() { strSocialMediaLink = col["Instagram.strSocialMediaLink"], intSocialMediaID = 2 };
-                    loc.Snapchat = new Models.SocialMedia() { strSocialMediaLink = col["Snapchat.strSocialMediaLink"], intSocialMediaID = 3 };
-                    loc.TikTok = new Models.SocialMedia() { strSocialMediaLink = col["TikTok.strSocialMediaLink"], intSocialMediaID = 4 };
-                    loc.Twitter = new Models.SocialMedia() { strSocialMediaLink = col["Twitter.strSocialMediaLink"], intSocialMediaID = 5 };                   
-                    loc.Yelp = new Models.SocialMedia() { strSocialMediaLink = col["Yelp.strSocialMediaLink"], intSocialMediaID = 6 };
+					//Social Media Information
+					loc.Facebook = new Models.SocialMedia() { strSocialMediaLink = col["Facebook.strSocialMediaLink"], intSocialMediaID = 1, blnAvailable = Convert.ToBoolean(col["Facebook.blnAvailable"].Split(',')[0]) };
+					loc.Instagram = new Models.SocialMedia() { strSocialMediaLink = col["Instagram.strSocialMediaLink"], intSocialMediaID = 2, blnAvailable = Convert.ToBoolean(col["Instagram.blnAvailable"].Split(',')[0]) };
+                    loc.Snapchat = new Models.SocialMedia() { strSocialMediaLink = col["Snapchat.strSocialMediaLink"], intSocialMediaID = 3, blnAvailable = Convert.ToBoolean(col["Snapchat.blnAvailable"].Split(',')[0]) };
+                    loc.TikTok = new Models.SocialMedia() { strSocialMediaLink = col["TikTok.strSocialMediaLink"], intSocialMediaID = 4, blnAvailable = Convert.ToBoolean(col["TikTok.blnAvailable"].Split(',')[0]) };
+                    loc.Twitter = new Models.SocialMedia() { strSocialMediaLink = col["Twitter.strSocialMediaLink"], intSocialMediaID = 5, blnAvailable = Convert.ToBoolean(col["Twitter.blnAvailable"].Split(',')[0]) };                   
+                    loc.Yelp = new Models.SocialMedia() { strSocialMediaLink = col["Yelp.strSocialMediaLink"], intSocialMediaID = 6, blnAvailable = Convert.ToBoolean(col["Yelp.blnAvailable"].Split(',')[0]) };
 
-
-                    loc.custServiceEmail = col["CustServEmail"];
+                    //Extra Business Information
                     loc.BizYear = col["BizYear"];
                     loc.Bio = col["Bio"];
 
+                    //LIST MOST IMPORTANT TO GEOCODE
                     var location = new List<string>()
                     {
                         loc.LocationName, loc.StreetAddress + ' ' + loc.City + ' ' + loc.State + ' ' + loc.Zip
                     };
 
-                    //For GIS listing
-                    var contact = new List<string>()
-                    {
-                        loc.ContactPerson.strContactLastName + ", " + loc.ContactPerson.strContactFirstName,
-                        loc.ContactPerson.contactPhone.AreaCode + loc.ContactPerson.contactPhone.Prefix + loc.ContactPerson.contactPhone.Suffix,
-                        loc.ContactPerson.strContactEmail                        
+                    var businessInfo = new List<string>() {
+                        loc.BusinessPhone.AreaCode + loc.BusinessPhone.Prefix + loc.BusinessPhone.Suffix,
+                        loc.BusinessEmail,
+                        loc.BizYear,
+                        loc.Bio
                     };
 
-                    //Both GIS and Database listing
+                    var contacts = new List<Models.ContactPerson>()
+                    {
+                        loc.LocationContact, loc.WebAdmin, loc.CustService                       
+                    };
+                    
                     var socialmedia = new List<Models.SocialMedia>() {
                         loc.Facebook, loc.Twitter, loc.Instagram, loc.Snapchat, loc.TikTok, loc.Yelp
                     };
 
-                    //For GIS listing
-                    var specialties = new List<string>()
-                    {
-                        Convert.ToString(loc.Donuts.blnAvailable), Convert.ToString(loc.Bagels.blnAvailable), Convert.ToString(loc.Muffins.blnAvailable), Convert.ToString(loc.IceCream.blnAvailable),
-                        Convert.ToString(loc.FineCandies.blnAvailable), Convert.ToString(loc.WeddingCakes.blnAvailable), Convert.ToString(loc.Breads.blnAvailable), Convert.ToString(loc.DecoratedCakes.blnAvailable),
-                        Convert.ToString(loc.Cupcakes.blnAvailable), Convert.ToString(loc.Cookies.blnAvailable), Convert.ToString(loc.Desserts.blnAvailable), Convert.ToString(loc.Full.blnAvailable),
-                        Convert.ToString(loc.Deli.blnAvailable), Convert.ToString(loc.Other.blnAvailable), Convert.ToString(loc.Wholesale.blnAvailable), Convert.ToString(loc.Delivery.blnAvailable),
-                        Convert.ToString(loc.Shipping.blnAvailable), Convert.ToString(loc.Online.blnAvailable)
-                    };
-
-                    //For Database listing
                     var categories = new List<Models.CategoryItem>() 
                     {
                         loc.Donuts, loc.Bagels, loc.Muffins, loc.IceCream, loc.FineCandies, loc.WeddingCakes, loc.Breads, loc.DecoratedCakes, loc.Cupcakes, loc.Cookies, loc.Desserts, loc.Full,
                         loc.Deli, loc.Other, loc.Wholesale, loc.Delivery, loc.Shipping, loc.Online
                     };
 
-                    //For GIS listing
-                    var operations = new List<string>()
-                    {
-                        loc.Sunday.strOpenTime +'-' + loc.Sunday.strClosedTime, loc.Monday.strOpenTime + '-' + loc.Monday.strClosedTime,
-                        loc.Tuesday.strOpenTime + '-' + loc.Tuesday.strClosedTime, loc.Wednesday.strOpenTime + '-' + loc.Wednesday.strClosedTime,
-                        loc.Thursday.strOpenTime + '-' + loc.Thursday.strClosedTime, loc.Friday.strOpenTime + '-' + loc.Friday.strClosedTime,
-                        loc.Saturday.strOpenTime + '-' + loc.Saturday.strClosedTime
-                    };
-
-                    //For Database listing
                     var LocationHours = new List<Models.Days>()
                     {
                         loc.Sunday, loc.Monday, loc.Tuesday, loc.Wednesday, loc.Thursday, loc.Friday, loc.Saturday
+                    };
+
+                    var Websites = new List<Models.Website>() {
+                        loc.MainWeb, loc.OrderingWeb, loc.KettleWeb
                     };
 
                     if (loc.LocationName.Length == 0 || loc.StreetAddress.Length == 0 || loc.City.Length == 0 || loc.State.Length == 0 || loc.Zip.Length == 0) {
@@ -224,12 +232,12 @@ namespace GCRBA.Views.Bakery {
                     }
 
                     Models.NewLocation.ActionTypes at = Models.NewLocation.ActionTypes.NoType;
-                    at = loc.StoreNewLocation(categories, LocationHours, socialmedia);
+                    at = loc.StoreNewLocation(categories, LocationHours, socialmedia, Websites, contacts);
                     switch (at) {
                         case Models.NewLocation.ActionTypes.InsertSuccessful:
                             loc.ActionType = Models.NewLocation.ActionTypes.InsertSuccessful;
 
-                            ExportToCsv.Export(location, contact, specialties, socialmedia);
+                            ExportToCsv.StartExport(location, businessInfo, categories, LocationHours, contacts, socialmedia, Websites);
 
                             using (firstProcess = new Process()) {
                                 firstProcess.StartInfo.FileName = "C:\\Users\\winsl\\AppData\\Local\\ESRI\\conda\\envs\\myenv-py3v2\\python.exe";

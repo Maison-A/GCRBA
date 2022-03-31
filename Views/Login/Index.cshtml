@@ -1,0 +1,42 @@
+﻿@model GCRBA.Models.User
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<!--login form-->
+@using (Html.BeginForm(FormMethod.Post))
+{
+    <!--only display if user tries to submit form with empty textbox(es)-->
+    if (Model.ActionType == GCRBA.Models.User.ActionTypes.RequiredFieldMissing)
+    {
+        <div class="missingField">
+            <i class="fad fa-exclamation-triangle fa-2x"></i>"
+            All fields are required.
+        </div>
+    }
+
+    if (Model.ActionType == GCRBA.Models.User.ActionTypes.LoginFailed)
+    {
+        <div class="missingField">
+            Invalid Username and/or Password. Please try again.
+        </div>
+    }
+
+    <div class="section">
+        <div class="item">
+            <div>@Html.LabelFor(model => model.Username)</div>
+            <div>@Html.TextBoxFor(model => model.Username, new { @autofocus = "autofocus" }) </div>
+        </div>
+        <div class="item">
+            <div>@Html.LabelFor(model => model.Password)</div>
+            <div>@Html.TextBoxFor(model => model.Password, new { type = "password" }) </div>
+        </div>
+    </div>
+    <div>
+        <button id="btnLogin" name="btnSubmit" value="login" class="button-action">Login</button>
+    </div>
+}
+
