@@ -7,13 +7,14 @@ IF OBJECT_ID('tblEventLocation')		IS NOT NULL DROP TABLE tblEventLocation
 IF OBJECT_ID('tblSpecial')				IS NOT NULL DROP TABLE tblSpecial 
 IF OBJECT_ID('tblCategory')				IS NOT NULL DROP TABLE tblCategory
 IF OBJECT_ID('tblEvent')				IS NOT NULL DROP TABLE tblEvent
-IF OBJECT_ID('tblLocation')				IS NOT NULL DROP TABLE tblLocation 
 IF OBJECT_ID('tblContactPerson')		IS NOT NULL DROP TABLE tblContactPerson
+IF OBJECT_ID('tblLocation')				IS NOT NULL DROP TABLE tblLocation 
 IF OBJECT_ID('tblAdminRequest')			IS NOT NULL DROP TABLE tblAdminRequest  
 IF OBJECT_ID('tblCompanySocialMedia')	IS NOT NULL DROP TABLE tblCompanySocialMedia
 IF OBJECT_ID('tblWebsite')				IS NOT NULL DROP TABLE tblWebsite 
 IF OBJECT_ID('tblWebsiteType')			IS NOT NULL DROP TABLE tblWebsiteType
 IF OBJECT_ID('tblCompany')				IS NOT NULL DROP TABLE tblCompany 
+IF OBJECT_ID('tblContactPersonType')	IS NOT NULL DROP TABLE tblContactPersonType
 IF OBJECT_ID('tblSocialMedia')			IS NOT NULL DROP TABLE tblSocialMedia
 IF OBJECT_ID('tblMember')				IS NOT NULL DROP TABLE tblMember 
 IF OBJECT_ID('tblMemberLevel')			IS NOT NULL DROP TABLE tblMemberLevel 
@@ -156,7 +157,17 @@ CREATE TABLE tblContactPerson
 	strContactName		NVARCHAR(50)		NOT NULL,
 	strContactPhone			NVARCHAR(20)		,
 	strContactEmail			NVARCHAR(50)		,
+	intLocationID			BIGINT				,
+	intCompanyID			BIGINT				NOT NULL,
+	intContactPersonTypeID	SMALLINT			NOT NULL,
 	CONSTRAINT tblContactPerson_PK PRIMARY KEY (intContactPersonID)
+)
+
+CREATE TABLE tblContactPersonType
+(
+	intContactPersonTypeID		SMALLINT IDENTITY(1,1)	NOT NULL,
+	strContactPersonType		NVARCHAR(50)			NOT NULL,
+	CONSTRAINT tblContactPersonType_PK PRIMARY KEY (intContactPersonTypeID)
 )
 
 CREATE TABLE tblCategoryLocation
@@ -264,30 +275,32 @@ CREATE TABLE tblMainBanner
 -- FOREIGN KEYS 
 -------------------------------------------------------------------------------------------------------------------------------
 
--- CHILD				PARENT				COLUMN(s)
--- -----				-----				------
--- tblUser				tblState			intStateID
--- tblMember				tblUser				intUserID
+-- CHILD					PARENT					COLUMN(s)
+-- -----					-----					------
+-- tblUser					tblState				intStateID
+-- tblMember				tblUser					intUserID
 -- tblMember				tblMemberLevel			intMemberLevelID
 -- tblMember				tblPaymentType			intPaymentTypeID
--- tblCompanyMember			tblCompany			intCompanyID
--- tblCompanyMember			tblMember			intMemberID
--- tblLocation				tblCompany			intCompanyID
--- tblLocation				tblState			intStateID
--- tblCategoryLocation			tblCategory			intCategoryID
--- tblCategoryLocation			tblLocation			intLocationID
--- tblEventLocation			tblEvent			intEventID
--- tblEventLocation			tblLocation			intLocationID
--- tblAdminRequest			tblMember			intMemberID
+-- tblCompanyMember			tblCompany				intCompanyID
+-- tblCompanyMember			tblMember				intMemberID
+-- tblLocation				tblCompany				intCompanyID
+-- tblLocation				tblState				intStateID
+-- tblCategoryLocation		tblCategory				intCategoryID
+-- tblCategoryLocation		tblLocation				intLocationID
+-- tblEventLocation			tblEvent				intEventID
+-- tblEventLocation			tblLocation				intLocationID
+-- tblAdminRequest			tblMember				intMemberID
 -- tblAdminRequest			tblApprovalStatus		intApprovalStatusID
--- tblSpecialLocation			tblSpecial			intSpecialID
--- tblSpecialLocation			tblLocation			intLocationID
--- tblLocationHours			tblLocation			intLocationID
--- tblLocationHours			tblDay				intDayID
--- tblCompanyAward			tblCompany			intCompanyID
--- tblLocation				tblContactPerson	intContactPersonID
--- tblCompanySocialMedia	tblCompany			intCompanyID
--- tblCompanySocialMedia	tblSocialMedia		intSocialMedia
+-- tblSpecialLocation		tblSpecial				intSpecialID
+-- tblSpecialLocation		tblLocation				intLocationID
+-- tblLocationHours			tblLocation				intLocationID
+-- tblLocationHours			tblDay					intDayID
+-- tblCompanyAward			tblCompany				intCompanyID
+-- tblCompanySocialMedia	tblCompany				intCompanyID
+-- tblCompanySocialMedia	tblSocialMedia			intSocialMedia
+-- tblContactPerson			tblLocation				intLocationID
+-- tblContactPerson			tblCompanyID			intCompanyID
+-- tblContactPerson			tblContactPersonType	intContactPersonTypeID
 
 ALTER TABLE tblUser ADD CONSTRAINT tblUser_tblState_FK
 FOREIGN KEY (intStateID) REFERENCES tblState (intStateID)
@@ -346,9 +359,6 @@ FOREIGN KEY (intDayID) REFERENCES tblDay (intDayID)
 ALTER TABLE tblCompanyAward ADD CONSTRAINT tblCompanyAward_tblCompany_FK
 FOREIGN KEY (intCompanyID) REFERENCES tblCompany (intCompanyID)
 
-ALTER TABLE tblLocation ADD CONSTRAINT tblLocation_tblContactPerson_FK
-FOREIGN KEY (intContactPersonID) REFERENCES tblContactPerson (intContactPersonID)
-
 ALTER TABLE tblCompanySocialMedia ADD CONSTRAINT tblCompanySocialMedia_tblCompany_FK
 FOREIGN KEY (intCompanyID) REFERENCES tblCompany (intCompanyID)
 
@@ -360,6 +370,15 @@ FOREIGN KEY (intWebsiteTypeID) REFERENCES tblWebsiteType (intWebsiteTypeID)
 
 ALTER TABLE tblWebsite ADD CONSTRAINT tblWebsite_tblCompany_FK
 FOREIGN KEY (intCompanyID) REFERENCES tblCompany (intCompanyID)
+
+ALTER TABLE tblContactPerson ADD CONSTRAINT tblContactPerson_tblLocation_FK
+FOREIGN KEY (intLocationID) REFERENCES tblLocation (intLocationID)
+
+ALTER TABLE tblContactPerson ADD CONSTRAINT tblContactPerson_tblCompany_FK
+FOREIGN KEY (intCompanyID) REFERENCES tblCompany (intCompanyID)
+
+ALTER TABLE tblContactPerson ADD CONSTRAINT tblContactPerson_tblContactPersonType_FK
+FOREIGN KEY (intContactPersonTypeID) REFERENCES tblContactPersonType (intContactPersonTypeID)
 
 -- -----------------------------------------------------------------------------------------
 -- STORED PROCEDURES 
@@ -400,6 +419,11 @@ GO
 -- -----------------------------------------------------------------------------------------
 -- ADD TEST DATA
 -- -----------------------------------------------------------------------------------------
+
+INSERT INTO tblContactPersonType (strContactPersonType)
+VALUES			('Location Contact')
+				,('Web Admin')
+				,('Customer Service Representative')
 
 INSERT INTO tblState (strState)
 VALUES	('Indiana'),
@@ -469,8 +493,8 @@ VALUES	(1, 'Best of City Search', 'Best of City'),
 	(1, 'Trip Advisor', 'Certificate of Excellence'), 
 	(1, 'Cincinnati Chamber of Commerce', 'Small Business Award Winner')
 
-INSERT INTO tblContactPerson (strContactName, strContactPhone, strContactEmail)
-VALUES					('Briggs, Randall', '5555555555', 'briggs.r@gmail.com')
+INSERT INTO tblContactPerson (strContactName, strContactPhone, strContactEmail, intContactPersonTypeID, intCompanyID)
+VALUES					('Briggs, Randall', '5555555555', 'briggs.r@gmail.com', 1, 1)
 
 INSERT INTO tblLocation (intCompanyID, strAddress, strCity, intStateID, strZip, strPhone, intContactPersonID)
 VALUES	(1, '2030 Madison Rd', 'Cincinnati', 3, '45208-3289', '513-321-3399', 1),
@@ -530,4 +554,5 @@ VALUES		('Facebook')
 			,('TikTok')
 			,('Twitter')
 			,('Yelp')
+
 
