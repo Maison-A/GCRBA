@@ -1,30 +1,31 @@
-IF OBJECT_ID('tblSpecialLocation')	IS NOT NULL DROP TABLE tblSpecialLocation 
-IF OBJECT_ID('tblCompanyAward')		IS NOT NULL DROP TABLE tblCompanyAward
-IF OBJECT_ID('tblLocationHours')	IS NOT NULL DROP TABLE tblLocationHours
-IF OBJECT_ID('tblCompanyMember')	IS NOT NULL DROP TABLE tblCompanyMember
-IF OBJECT_ID('tblCategoryLocation')	IS NOT NULL DROP TABLE tblCategoryLocation 
-IF OBJECT_ID('tblEventLocation')	IS NOT NULL DROP TABLE tblEventLocation 
-IF OBJECT_ID('tblSpecial')		IS NOT NULL DROP TABLE tblSpecial 
-IF OBJECT_ID('tblCategory')		IS NOT NULL DROP TABLE tblCategory
-IF OBJECT_ID('tblEvent')		IS NOT NULL DROP TABLE tblEvent
-IF OBJECT_ID('tblLocation')		IS NOT NULL DROP TABLE tblLocation 
-IF OBJECT_ID('tblContactPerson') IS NOT NULL DROP TABLE tblContactPerson
-IF OBJECT_ID('tblAdminRequest')		IS NOT NULL DROP TABLE tblAdminRequest  
-IF OBJECT_ID('tblCompanySocialMedia') IS NOT NULL DROP TABLE tblCompanySocialMedia
-IF OBJECT_ID('tblWebsite')		IS NOT NULL DROP TABLE tblWebsite 
-IF OBJECT_ID('tblCompany')		IS NOT NULL DROP TABLE tblCompany 
-IF OBJECT_ID('tblSocialMedia')	IS NOT NULL DROP TABLE tblSocialMedia
-IF OBJECT_ID('tblMember')		IS NOT NULL DROP TABLE tblMember 
-IF OBJECT_ID('tblMemberLevel')		IS NOT NULL DROP TABLE tblMemberLevel 
-IF OBJECT_ID('tblPaymentType')		IS NOT NULL DROP TABLE tblPaymentType 
-IF OBJECT_ID('tblApprovalStatus')	IS NOT NULL DROP TABLE tblApprovalStatus 
-IF OBJECT_ID('tblWebsiteType')	IS NOT NULL DROP TABLE tblWebsiteType
-IF OBJECT_ID('tblUser')			IS NOT NULL DROP TABLE tblUser 
-IF OBJECT_ID('tblState')		IS NOT NULL DROP TABLE tblState 
-IF OBJECT_ID('tblDay')			IS NOT NULL DROP TABLE tblDay
-IF OBJECT_ID('tblMainBanner')		IS NOT NULL DROP TABLE tblMainBanner
-IF OBJECT_ID('tblAboutGCRBA')	IS NOT NULL DROP TABLE tblAboutGCRBA
-IF OBJECT_ID('LOGIN')			IS NOT NULL DROP PROCEDURE LOGIN 
+IF OBJECT_ID('tblSpecialLocation')		IS NOT NULL DROP TABLE tblSpecialLocation 
+IF OBJECT_ID('tblCompanyAward')			IS NOT NULL DROP TABLE tblCompanyAward
+IF OBJECT_ID('tblLocationHours')		IS NOT NULL DROP TABLE tblLocationHours
+IF OBJECT_ID('tblCompanyMember')		IS NOT NULL DROP TABLE tblCompanyMember
+IF OBJECT_ID('tblCategoryLocation')		IS NOT NULL DROP TABLE tblCategoryLocation 
+IF OBJECT_ID('tblEventLocation')		IS NOT NULL DROP TABLE tblEventLocation 
+IF OBJECT_ID('tblSpecial')				IS NOT NULL DROP TABLE tblSpecial 
+IF OBJECT_ID('tblCategory')				IS NOT NULL DROP TABLE tblCategory
+IF OBJECT_ID('tblEvent')				IS NOT NULL DROP TABLE tblEvent
+IF OBJECT_ID('tblLocation')				IS NOT NULL DROP TABLE tblLocation 
+IF OBJECT_ID('tblContactPerson')		IS NOT NULL DROP TABLE tblContactPerson
+IF OBJECT_ID('tblAdminRequest')			IS NOT NULL DROP TABLE tblAdminRequest  
+IF OBJECT_ID('tblCompanySocialMedia')	IS NOT NULL DROP TABLE tblCompanySocialMedia
+IF OBJECT_ID('tblWebsite')				IS NOT NULL DROP TABLE tblWebsite 
+IF OBJECT_ID('tblWebsiteType')			IS NOT NULL DROP TABLE tblWebsiteType
+IF OBJECT_ID('tblCompany')				IS NOT NULL DROP TABLE tblCompany 
+IF OBJECT_ID('tblSocialMedia')			IS NOT NULL DROP TABLE tblSocialMedia
+IF OBJECT_ID('tblMember')				IS NOT NULL DROP TABLE tblMember 
+IF OBJECT_ID('tblMemberLevel')			IS NOT NULL DROP TABLE tblMemberLevel 
+IF OBJECT_ID('tblPaymentType')			IS NOT NULL DROP TABLE tblPaymentType 
+IF OBJECT_ID('tblApprovalStatus')		IS NOT NULL DROP TABLE tblApprovalStatus 
+IF OBJECT_ID('tblUser')					IS NOT NULL DROP TABLE tblUser 
+IF OBJECT_ID('tblState')				IS NOT NULL DROP TABLE tblState 
+IF OBJECT_ID('tblDay')					IS NOT NULL DROP TABLE tblDay
+IF OBJECT_ID('tblMainBanner')			IS NOT NULL DROP TABLE tblMainBanner
+IF OBJECT_ID('tblAboutGCRBA')			IS NOT NULL DROP TABLE tblAboutGCRBA
+IF OBJECT_ID('LOGIN')					IS NOT NULL DROP PROCEDURE LOGIN 
+IF OBJECT_ID('VERIFY_MEMBER')			IS NOT NULL DROP PROCEDURE VERIFY_MEMBER
 
 
 CREATE TABLE tblState
@@ -259,9 +260,9 @@ CREATE TABLE tblMainBanner
 	CONSTRAINT tblMainBanner_PK PRIMARY KEY (intMainBannerID)
 )
 
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------
 -- FOREIGN KEYS 
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------
 
 -- CHILD				PARENT				COLUMN(s)
 -- -----				-----				------
@@ -376,10 +377,23 @@ AS
 BEGIN	
 	SET NOCOUNT ON;
 
-	select *
-	from tblUser
-	where strUsername = @strUsername
-	and strPassword = @strPassword
+	SELECT		u.intUserID, u.strFirstName, u.strLastName, u.strAddress, u.strCity, s.strState, u.strZip, u.strPhone, u.strEmail, u.strUsername, u.strPassword, u.isAdmin
+	FROM		tblState as s JOIN tblUser as u 
+				ON s.intStateID = u.intStateID
+	WHERE		u.strUsername = @strUsername and u.strPassword = @strPassword
+END
+GO
+
+
+CREATE PROCEDURE [db_owner].[VERIFY_MEMBER]
+@intUserID SMALLINT
+AS 
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT		intMemberID 
+	FROM		tblMember
+	WHERE		intUserID = @intUserID 
 END
 GO
 
@@ -478,20 +492,25 @@ VALUES	(1, 1, '10:00am', '4:00pm'),
 	(2, 6, '6:00am', '4:00pm'),
 	(2, 7, 'Closed', null)
 
+INSERT INTO tblWebsiteType(strWebsiteType)
+VALUES				('Main')
+					,('Ordering')
+					,('Kettle')
 
-INSERT INTO tblWebsite (intCompanyID, intWebsiteTypeID, strURL)
-VALUES	(1, 1, 'https://twitter.com/bonbonerie'),
-	(1, 1, 'https://www.facebook.com/bonbonerie?ref=m'),
-	(1, 2, 'https://www.instagram.com/bonboneriecincy/'),
-	(1, 2, 'https://www.yelp.ca/biz/the-bonbonerie-cincinnati-2'),
-	(2, 3, 'https://mobile.twitter.com/wyomingpastry'),
-	(2, 2, 'https://www.facebook.com/Wyoming-Pastry-Shop-104461259599883/'),
-	(2, 1, 'https://www.instagram.com/wyomingpastryshop/?hl=en'),
-	(2, 1, 'https://www.yelp.com/biz/wyoming-pastry-shop-cincinnati')
+INSERT INTO tblWebsite (intCompanyID, strURL, intWebsiteTypeID)
+VALUES	(1, 'https://twitter.com/bonbonerie', 1),
+	(1, 'https://www.facebook.com/bonbonerie?ref=m', 1),
+	(1, 'https://www.instagram.com/bonboneriecincy/', 2),
+	(1, 'https://www.yelp.ca/biz/the-bonbonerie-cincinnati-2', 2),
+	(2, 'https://mobile.twitter.com/wyomingpastry', 3),
+	(2, 'https://www.facebook.com/Wyoming-Pastry-Shop-104461259599883/', 2),
+	(2, 'https://www.instagram.com/wyomingpastryshop/?hl=en', 1),
+	(2, 'https://www.yelp.com/biz/wyoming-pastry-shop-cincinnati', 1)
 
 -- NON-ADMIN USER 
 INSERT INTO tblUser (strFirstName, strLastName, strAddress, strCity, intStateID, strZip, strPhone, strEmail, strUsername, strPassword, isAdmin)
-VALUES	('Katie', 'Schmidt', '6036 Flyer Drive', 'Cincinnati', 3, '45248', '5133103965', 'klschmidt16178@cincinnatistate.edu', 'test2', 'test2', 0)
+VALUES	('Katie', 'Schmidt', '6036 Flyer Drive', 'Cincinnati', 3, '45248', '5133103965', 'klschmidt16178@cincinnatistate.edu', 'test2', 'test2', 0),
+		('Random', 'User', '1234 Main St', 'Lawrenceburg', 1, '41010', '5135555555', 'random_user@gmail.com', 'test3', 'test3', 0)
 
 -- ADMIN USER 
 INSERT INTO tblUser (strFirstName, strLastName, strAddress, strCity, intStateID, strZip, strPhone, strEmail, strUsername, strPassword, isAdmin)
@@ -512,7 +531,3 @@ VALUES		('Facebook')
 			,('Twitter')
 			,('Yelp')
 
-INSERT INTO tblWebsiteType(strWebsiteType)
-VALUES				('Main')
-					,('Ordering')
-					,('Kettle')
