@@ -1,4 +1,11 @@
-﻿@model GCRBA.Models.NewLocation
+﻿<style>
+	.center {
+		margin-left: auto;
+		margin-right: auto;
+	}
+</style>
+
+@model GCRBA.Models.NewLocation
 
 @{
 	ViewBag.Title = "New Bakery Location Form";
@@ -14,151 +21,418 @@
 			<span>All fields are required.</span>
 		</div>
 	}
-
+	<!--Business Loction Information-->
 	<div>
-		<div>@Html.LabelFor(model => model.LocationName, "Bakery Name")</div>
-		<div>@Html.TextBoxFor(model => model.LocationName, new { @autofocus = "autofocus" })</div>
-	</div>
-	<div>
-		<div>@Html.LabelFor(model => model.StreetAddress, "Street Address")</div>
-		<div>@Html.TextBoxFor(model => model.StreetAddress)</div>
-	</div>
-	<div>
-		<div>@Html.LabelFor(model => model.City)</div>
-		<div>@Html.TextBoxFor(model => model.City)</div>
-	</div>
-	<div>
-		<div>@Html.LabelFor(model => model.State)</div>
-		<div>@Html.TextBoxFor(model => model.State)</div>
-	</div>
-	<div>
-		<div>@Html.LabelFor(model => model.Zip)</div>
-		<div>@Html.TextBoxFor(model => model.Zip)</div>
-	</div>
-
-	<div class="some-spacing">
-		<div>@Html.LabelFor(m => Model.ContactPerson.strContactFirstName, "Contact First Name")</div>
-		<div>@Html.TextBoxFor(m => Model.ContactPerson.strContactFirstName, new { @autofocus = "autofocus" })</div>
-	</div>
-
-	<div class="some-spacing">
-		<div>@Html.LabelFor(m => Model.ContactPerson.strContactLastName, "Contact Last Name")</div>
-		<div>@Html.TextBoxFor(m => Model.ContactPerson.strContactLastName)</div>
-	</div>
-
-	<div class="some-spacing">
-		<div><label for="ContactPhone_AreaCode">Contact Phone Number</label></div>
 		<div>
-			(@Html.TextBoxFor(m => Model.ContactPerson.contactPhone.AreaCode, new { @class = "phone-area-code" })) @Html.TextBoxFor(m => Model.ContactPerson.contactPhone.Prefix, new { @class = "phone-prefix" }) - @Html.TextBoxFor(m => Model.ContactPerson.contactPhone.Suffix, new { @class = "phone-suffix" })
+			<div>@Html.LabelFor(model => model.LocationName, "Bakery Name")</div>
+			<div>@Html.TextBoxFor(model => model.LocationName, new { @autofocus = "autofocus" })</div>
+		</div>
+		<div>
+			<div>@Html.LabelFor(model => model.StreetAddress, "Street Address")</div>
+			<div>@Html.TextBoxFor(model => model.StreetAddress)</div>
+		</div>
+		<div>
+			<div>@Html.LabelFor(model => model.City)</div>
+			<div>@Html.TextBoxFor(model => model.City)</div>
+		</div>
+		<div>
+			<div>@Html.LabelFor(model => model.State)</div>
+			<div>@Html.TextBoxFor(model => model.State)</div>
+		</div>
+		<div>
+			<div>@Html.LabelFor(model => model.Zip)</div>
+			<div>@Html.TextBoxFor(model => model.Zip)</div>
 		</div>
 	</div>
 
+	<!--Business Contact Information-->
 	<div>
-		<div>@Html.LabelFor(m => Model.ContactPerson.strContactEmail, "Contact Email")</div>
-		<div>@Html.TextBoxFor(m => Model.ContactPerson.strContactEmail)</div>
-	</div>
+		<div class="some-spacing">
+			<div><label for="BusinessPhone_AreaCode">Business Phone Number</label></div>
+			<div>
+				(@Html.TextBoxFor(m => Model.BusinessPhone.AreaCode, new { @class = "phone-area-code" })) @Html.TextBoxFor(m => Model.BusinessPhone.Prefix, new { @class = "phone-prefix" }) - @Html.TextBoxFor(m => Model.BusinessPhone.Suffix, new { @class = "phone-suffix" })
+			</div>
+		</div>
 
-	<div class="some-spacing">
-		<div><label for="BusinessPhone_AreaCode">Business Phone Number</label></div>
 		<div>
-			(@Html.TextBoxFor(m => Model.BusinessPhone.AreaCode, new { @class = "phone-area-code" })) @Html.TextBoxFor(m => Model.BusinessPhone.Prefix, new { @class = "phone-prefix" }) - @Html.TextBoxFor(m => Model.BusinessPhone.Suffix, new { @class = "phone-suffix" })
+			<div>@Html.LabelFor(model => model.BusinessEmail, "Business Email")</div>
+			<div>@Html.TextBoxFor(model => model.BusinessEmail)</div>
 		</div>
 	</div>
 
+	<br />
+
+	<!--table for Bakery Specialty -->
 	<div>
-		<div>@Html.LabelFor(model => model.BusinessEmail, "Business Email")</div>
-		<div>@Html.TextBoxFor(model => model.BusinessEmail)</div>
+		<h7>Specialty Product Categories:</h7>
+		<br />
+
+		<div>
+			<table class="center">
+				<tr>
+					<td>
+						@Html.CheckBoxFor(models => models.Donuts.blnAvailable)
+					</td>
+					<td>
+						@Html.LabelFor(model => model.Donuts, "Donuts")
+					</td>
+					<td>
+						@Html.CheckBoxFor(models => models.Bagels.blnAvailable)
+					</td>
+					<td>
+						@Html.LabelFor(model => model.Bagels, "Bagels")
+					</td>
+					<td>
+						@Html.CheckBoxFor(models => models.Muffins.blnAvailable)
+					</td>
+					<td>
+						@Html.LabelFor(model => model.Muffins, "Muffins")
+					</td>
+					<td>
+						@Html.CheckBoxFor(models => models.IceCream.blnAvailable)
+					</td>
+					<td>
+						@Html.LabelFor(model => model.IceCream, "Ice Cream")
+					</td>
+					<td>
+						@Html.CheckBoxFor(models => models.FineCandies.blnAvailable)
+					</td>
+					<td>
+						@Html.LabelFor(model => model.FineCandies, "Fine Candies & Chocolates")
+					</td>
+					<td>
+						@Html.CheckBoxFor(models => models.WeddingCakes.blnAvailable)
+					</td>
+					<td>
+						@Html.LabelFor(model => model.WeddingCakes, "Wedding Cakes")
+				</tr>
+				<tr>
+					<td>
+						@Html.CheckBoxFor(models => models.Breads.blnAvailable)
+					</td>
+					<td>
+						@Html.LabelFor(model => model.Breads, "Breads")
+					</td>
+					<td>
+						@Html.CheckBoxFor(models => models.DecoratedCakes.blnAvailable)
+					</td>
+					<td>
+						@Html.LabelFor(model => model.DecoratedCakes, "Decorated Cakes")
+					</td>
+					<td>
+						@Html.CheckBoxFor(models => models.Cupcakes.blnAvailable)
+					</td>
+					<td>
+						@Html.LabelFor(model => model.Cupcakes, "Cupcakes")
+					</td>
+					<td>
+						@Html.CheckBoxFor(models => models.Cookies.blnAvailable)
+					</td>
+					<td>
+						@Html.LabelFor(model => model.Cookies, "Cookies")
+					</td>
+					<td>
+						@Html.CheckBoxFor(models => models.Desserts.blnAvailable)
+					</td>
+					<td>
+						@Html.LabelFor(model => model.Desserts, "Desserts/Tortes")
+					</td>
+					<td>
+						@Html.CheckBoxFor(models => models.Full.blnAvailable)
+					</td>
+					<td>
+						@Html.LabelFor(model => model.Full, "Full-line Bakery")
+					</td>
+				</tr>
+				<tr>
+					<td>
+						@Html.CheckBoxFor(models => models.Deli.blnAvailable)
+					</td>
+					<td>
+						@Html.LabelFor(model => model.Deli, "Deli/Catering")
+					</td>
+					<td>
+						@Html.CheckBoxFor(models => models.Other.blnAvailable)
+					</td>
+					<td>
+						@Html.LabelFor(model => model.Other, "Other Deli Carryout")
+					</td>
+					<td>
+						@Html.CheckBoxFor(models => models.Wholesale.blnAvailable)
+					</td>
+					<td>
+						@Html.LabelFor(model => model.Wholesale, "Wholesale")
+					</td>
+					<td>
+						@Html.CheckBoxFor(models => models.Delivery.blnAvailable)
+					</td>
+					<td>
+						@Html.LabelFor(model => model.Delivery, "Delivery (3rd Party)")
+					</td>
+					<td>
+						@Html.CheckBoxFor(models => models.Shipping.blnAvailable)
+					</td>
+					<td>
+						@Html.LabelFor(model => model.Shipping, "Shipping")
+					</td>
+					<td>
+						@Html.CheckBoxFor(models => models.Online.blnAvailable)
+					</td>
+					<td>
+						@Html.LabelFor(model => model.Online, "Online Ordering")
+					</td>
+				</tr>
+			</table>
+		</div>
 	</div>
 
+	<!-- table for Hours of Operation -->
 	<div>
-		<div>@Html.LabelFor(model => model.MainWeb, "Main Website URL")</div>
-		<div>@Html.TextBoxFor(model => model.MainWeb.strURL)</div>
+		<table class="center">
+			<tr>
+				Hours of Operation
+			</tr>
+			<tr>
+				<td>Days</td>
+				<td>(If closed, <br /> do not select)</td>
+				<td>Start Time</td>
+				<td>End Time</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.LabelFor(models => models.Sunday)
+				</td>
+				<td>
+					@Html.CheckBoxFor(models => models.Sunday.blnOperational)
+				</td>
+				<td>
+					<label>Opens:</label>
+					@Html.TextBoxFor(models => models.Sunday.strOpenTime, new { type = "time" })
+				</td>
+				<td>
+					<label>Closes:</label>
+					@Html.TextBoxFor(models => models.Sunday.strClosedTime, new { type = "time" })
+				</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.LabelFor(models => models.Monday)
+				</td>
+				<td>
+					@Html.CheckBoxFor(models => models.Monday.blnOperational)
+				</td>
+				<td>
+					<label>Opens:</label>
+					@Html.TextBoxFor(models => models.Monday.strOpenTime, new { type = "time" })
+				</td>
+				<td>
+					<label>Closes:</label>
+					@Html.TextBoxFor(models => models.Monday.strClosedTime, new { type = "time" })
+				</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.LabelFor(models => models.Tuesday)
+				</td>
+				<td>
+					@Html.CheckBoxFor(models => models.Tuesday.blnOperational)
+				</td>
+				<td>
+					<label>Opens:</label>
+					@Html.TextBoxFor(models => models.Tuesday.strOpenTime, new { type = "time" })
+				</td>
+				<td>
+					<label>Closes:</label>
+					@Html.TextBoxFor(models => models.Tuesday.strClosedTime, new { type = "time" })
+				</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.LabelFor(models => models.Wednesday)
+				</td>
+				<td>
+					@Html.CheckBoxFor(models => models.Wednesday.blnOperational)
+				</td>
+				<td>
+					<label>Opens:</label>
+					@Html.TextBoxFor(models => models.Wednesday.strOpenTime, new { type = "time" })
+				</td>
+				<td>
+					<label>Closes:</label>
+					@Html.TextBoxFor(models => models.Wednesday.strClosedTime, new { type = "time" })
+				</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.LabelFor(models => models.Thursday)
+				</td>
+				<td>
+					@Html.CheckBoxFor(models => models.Thursday.blnOperational)
+				</td>
+				<td>
+					<label>Opens:</label>
+					@Html.TextBoxFor(models => models.Thursday.strOpenTime, new { type = "time" })
+				</td>
+				<td>
+					<label>Closes:</label>
+					@Html.TextBoxFor(models => models.Thursday.strClosedTime, new { type = "time" })
+				</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.LabelFor(models => models.Friday)
+				</td>
+				<td>
+					@Html.CheckBoxFor(models => models.Friday.blnOperational)
+				</td>
+				<td>
+					<label>Opens:</label>
+					@Html.TextBoxFor(models => models.Friday.strOpenTime, new { type = "time" })
+				</td>
+				<td>
+					<label>Closes:</label>
+					@Html.TextBoxFor(models => models.Friday.strClosedTime, new { type = "time" })
+				</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.LabelFor(models => models.Saturday)
+				</td>
+				<td>
+					@Html.CheckBoxFor(models => models.Saturday.blnOperational)
+				</td>
+				<td>
+					<label>Opens:</label>
+					@Html.TextBoxFor(models => models.Saturday.strOpenTime, new { type = "time" })
+				</td>
+				<td>
+					<label>Closes:</label>
+					@Html.TextBoxFor(models => models.Saturday.strClosedTime, new { type = "time" })
+				</td>
+			</tr>
+		</table>
 	</div>
 
+	<!--About Business Extra Information-->
 	<div>
-		<div>@Html.LabelFor(model => model.OrderingWeb, "Ordering Webpage URL") </div>
-		<div>@Html.TextBoxFor(model => model.OrderingWeb.strURL) </div>
+		<div class="some-spacing">
+			@Html.LabelFor(model => model.BizYear, "Year Established:")
+			@Html.TextBoxFor(model => model.BizYear)
+		</div>
+
+		<div>
+			<div>@Html.LabelFor(model => model.Bio, "About us:")</div>
+			<div>@Html.TextAreaFor(model => model.Bio, new { @spellcheck = "true", rows = "5", style = "width: 500px;" })</div>
+		</div>
 	</div>
 
+	<!--Contact Person Information-->
 	<div>
-		<div>@Html.LabelFor(model => model.KettleWeb, "Donation Kettle URL") </div>
-		<div>@Html.TextBoxFor(model => model.KettleWeb.strURL) </div>
+		<div class="some-spacing">
+			<div>@Html.LabelFor(m => Model.ContactPerson.strContactFirstName, "Contact First Name")</div>
+			<div>@Html.TextBoxFor(m => Model.ContactPerson.strContactFirstName, new { @autofocus = "autofocus" })</div>
+		</div>
+
+		<div class="some-spacing">
+			<div>@Html.LabelFor(m => Model.ContactPerson.strContactLastName, "Contact Last Name")</div>
+			<div>@Html.TextBoxFor(m => Model.ContactPerson.strContactLastName)</div>
+		</div>
+
+		<div class="some-spacing">
+			<div><label for="ContactPhone_AreaCode">Contact Phone Number</label></div>
+			<div>
+				(@Html.TextBoxFor(m => Model.ContactPerson.contactPhone.AreaCode, new { @class = "phone-area-code" })) @Html.TextBoxFor(m => Model.ContactPerson.contactPhone.Prefix, new { @class = "phone-prefix" }) - @Html.TextBoxFor(m => Model.ContactPerson.contactPhone.Suffix, new { @class = "phone-suffix" })
+			</div>
+		</div>
+
+		<div>
+			<div>@Html.LabelFor(m => Model.ContactPerson.strContactEmail, "Contact Email")</div>
+			<div>@Html.TextBoxFor(m => Model.ContactPerson.strContactEmail)</div>
+		</div>
 	</div>
-	<br />	
-	<div class="some-spacing">
-		@Html.LabelFor(model => model.BizYear, "Year Established:") 
-		@Html.TextBoxFor(model => model.BizYear)
+
+	<!--Customer Service Person Information-->
+	<div>
+		<div class="some-spacing">
+			<div>@Html.LabelFor(m => Model.CustService.strContactFirstName, "Customer Service First Name")</div>
+			<div>@Html.TextBoxFor(m => Model.CustService.strContactFirstName, new { @autofocus = "autofocus" })</div>
+		</div>
+
+		<div class="some-spacing">
+			<div>@Html.LabelFor(m => Model.CustService.strContactLastName, "Customer Service Last Name")</div>
+			<div>@Html.TextBoxFor(m => Model.CustService.strContactLastName)</div>
+		</div>
+
+		<div class="some-spacing">
+			<div><label for="ContactPhone_AreaCode">Customer Service Phone Number</label></div>
+			<div>
+				(@Html.TextBoxFor(m => Model.CustService.contactPhone.AreaCode, new { @class = "phone-area-code" })) @Html.TextBoxFor(m => Model.ContactPerson.contactPhone.Prefix, new { @class = "phone-prefix" }) - @Html.TextBoxFor(m => Model.ContactPerson.contactPhone.Suffix, new { @class = "phone-suffix" })
+			</div>
+		</div>
+
+		<div>
+			<div>@Html.LabelFor(m => Model.CustService.strContactEmail, "Customer Service Email")</div>
+			<div>@Html.TextBoxFor(m => Model.CustService.strContactEmail)</div>
+		</div>
+	</div>
+
+	<!--Website Information-->
+	<div>
+		<div>
+			<div>@Html.LabelFor(model => model.MainWeb, "Main Website URL")</div>
+			<div>@Html.TextBoxFor(model => model.MainWeb.strURL)</div>
+		</div>
+
+		<div>
+			<div>@Html.LabelFor(model => model.OrderingWeb, "Ordering Webpage URL") </div>
+			<div>@Html.TextBoxFor(model => model.OrderingWeb.strURL) </div>
+		</div>
+
+		<div>
+			<div>@Html.LabelFor(model => model.KettleWeb, "Donation Kettle URL") </div>
+			<div>@Html.TextBoxFor(model => model.KettleWeb.strURL) </div>
+		</div>
+	</div>
+	<br />
+
+	<!--Web Admin Contact Information-->
+	<div>
+		<div class="some-spacing">
+			<div>@Html.LabelFor(m => Model.WebAdmin.strContactFirstName, "Web Admin First Name")</div>
+			<div>@Html.TextBoxFor(m => Model.WebAdmin.strContactFirstName, new { @autofocus = "autofocus" })</div>
+		</div>
+
+		<div class="some-spacing">
+			<div>@Html.LabelFor(m => Model.WebAdmin.strContactLastName, "Web Admin Last Name")</div>
+			<div>@Html.TextBoxFor(m => Model.WebAdmin.strContactLastName)</div>
+		</div>
+
+		<div class="some-spacing">
+			<div><label for="ContactPhone_AreaCode">Web Admin Phone Number</label></div>
+			<div>
+				(@Html.TextBoxFor(m => Model.WebAdmin.contactPhone.AreaCode, new { @class = "phone-area-code" })) @Html.TextBoxFor(m => Model.WebAdmin.contactPhone.Prefix, new { @class = "phone-prefix" }) - @Html.TextBoxFor(m => Model.WebAdmin.contactPhone.Suffix, new { @class = "phone-suffix" })
+			</div>
+		</div>
+
+		<div>
+			<div>@Html.LabelFor(m => Model.WebAdmin.strContactEmail, "Web Admin Email")</div>
+			<div>@Html.TextBoxFor(m => Model.WebAdmin.strContactEmail)</div>
+		</div>
 	</div>
 
 	<br />
-	<h7>Specialty Product Categories:</h7>
-	<br />
-
-	<div>
-		@Html.CheckBoxFor(models => models.Donuts.blnAvailable)
-		@Html.LabelFor(model => model.Donuts)
-
-		@Html.CheckBoxFor(models => models.Bagels.blnAvailable)
-		@Html.LabelFor(model => model.Bagels)
-
-		@Html.CheckBoxFor(models => models.Muffins.blnAvailable)
-		@Html.LabelFor(model => model.Muffins)
-
-		@Html.CheckBoxFor(models => models.IceCream.blnAvailable)
-		@Html.LabelFor(model => model.IceCream)
-
-		@Html.CheckBoxFor(models => models.FineCandies.blnAvailable)
-		@Html.LabelFor(model => model.FineCandies)
-
-		@Html.CheckBoxFor(models => models.WeddingCakes.blnAvailable)
-		@Html.LabelFor(model => model.WeddingCakes)
-	</div>
-	<div>
-		@Html.CheckBoxFor(models => models.Breads.blnAvailable)
-		@Html.LabelFor(model => model.Breads)
-
-		@Html.CheckBoxFor(models => models.DecoratedCakes.blnAvailable)
-		@Html.LabelFor(model => model.DecoratedCakes)
-
-		@Html.CheckBoxFor(models => models.Cupcakes.blnAvailable)
-		@Html.LabelFor(model => model.Cupcakes)
-
-		@Html.CheckBoxFor(models => models.Cookies.blnAvailable)
-		@Html.LabelFor(model => model.Cookies)
-
-		@Html.CheckBoxFor(models => models.Desserts.blnAvailable)
-		@Html.LabelFor(model => model.Desserts)
-
-		@Html.CheckBoxFor(models => models.Full.blnAvailable)
-		@Html.LabelFor(model => model.Full)
-	</div>
-	<div>
-		@Html.CheckBoxFor(models => models.Deli.blnAvailable)
-		@Html.LabelFor(model => model.Deli)
-
-		@Html.CheckBoxFor(models => models.Other.blnAvailable)
-		@Html.LabelFor(model => model.Other)
-
-		@Html.CheckBoxFor(models => models.Wholesale.blnAvailable)
-		@Html.LabelFor(model => model.Wholesale)
-
-		@Html.CheckBoxFor(models => models.Delivery.blnAvailable)
-		@Html.LabelFor(model => model.Delivery)
-
-		@Html.CheckBoxFor(models => models.Shipping.blnAvailable)
-		@Html.LabelFor(model => model.Shipping)
-
-		@Html.CheckBoxFor(models => models.Online.blnAvailable)
-		@Html.LabelFor(model => model.Online)
-	</div>
-
-	<div>
-		<table>
+	<!--table for Social Media-->
+	<div class="center">
+		<table class="center">
 			<tr>
 				Social Media Outlets
 			</tr>
 			<tr>
 				<td>Platform</td>
+				<td>
+					(Select to <br />
+					include on page)
+				</td>
 				<td>Link</td>
 			</tr>
 			<tr>
@@ -233,121 +507,12 @@
 					@Html.TextBoxFor(models => models.Facebook.strSocialMediaLink)
 				</td>
 			</tr>
-
 		</table>
 	</div>
 
-	<div>
-		<table>
-			<tr>
-				Hours of Operation
-			</tr>
-			<tr>
-				<td>Days</td>
-				<td>Start Time</td>
-				<td>End Time</td>
-			</tr>
-			<tr>
-				<td>
-					@Html.LabelFor(models => models.Sunday)
-					@Html.CheckBoxFor(models => models.Sunday.blnOperational)
-				</td>
-				<td>
-					<label>Opens:</label>
-					@Html.TextBoxFor(models => models.Sunday.strOpenTime, new { type = "time" })
-				</td>
-				<td>
-					<label>Closes:</label>
-					@Html.TextBoxFor(models => models.Sunday.strClosedTime, new { type = "time" })
-				</td>
-			</tr>
-			<tr>
-				<td>
-					@Html.LabelFor(models => models.Monday)
-					@Html.CheckBoxFor(models => models.Monday.blnOperational)
-				</td>
-				<td>
-					<label>Opens:</label>
-					@Html.TextBoxFor(models => models.Monday.strOpenTime, new { type = "time" })
-				</td>
-				<td>
-					<label>Closes:</label>
-					@Html.TextBoxFor(models => models.Monday.strClosedTime, new { type = "time" })
-				</td>
-			</tr>
-			<tr>
-				<td>
-					@Html.LabelFor(models => models.Tuesday)
-					@Html.CheckBoxFor(models => models.Tuesday.blnOperational)
-				</td>
-				<td>
-					<label>Opens:</label>
-					@Html.TextBoxFor(models => models.Tuesday.strOpenTime, new { type = "time" })
-				</td>
-				<td>
-					<label>Closes:</label>
-					@Html.TextBoxFor(models => models.Tuesday.strClosedTime, new { type = "time" })
-				</td>
-			</tr>
-			<tr>
-				<td>
-					@Html.LabelFor(models => models.Wednesday)
-					@Html.CheckBoxFor(models => models.Wednesday.blnOperational)
-				</td>
-				<td>
-					<label>Opens:</label>
-					@Html.TextBoxFor(models => models.Wednesday.strOpenTime, new { type = "time" })
-				</td>
-				<td>
-					<label>Closes:</label>
-					@Html.TextBoxFor(models => models.Wednesday.strClosedTime, new { type = "time" })
-				</td>
-			</tr>
-			<tr>
-				<td>
-					@Html.LabelFor(models => models.Thursday)
-					@Html.CheckBoxFor(models => models.Thursday.blnOperational)
-				</td>
-				<td>
-					<label>Opens:</label>
-					@Html.TextBoxFor(models => models.Thursday.strOpenTime, new { type = "time" })
-				</td>
-				<td>
-					<label>Closes:</label>
-					@Html.TextBoxFor(models => models.Thursday.strClosedTime, new { type = "time" })
-				</td>
-			</tr>
-			<tr>
-				<td>
-					@Html.LabelFor(models => models.Friday)
-					@Html.CheckBoxFor(models => models.Friday.blnOperational)
-				</td>
-				<td>
-					<label>Opens:</label>
-					@Html.TextBoxFor(models => models.Friday.strOpenTime, new { type = "time" })
-				</td>
-				<td>
-					<label>Closes:</label>
-					@Html.TextBoxFor(models => models.Friday.strClosedTime, new { type = "time" })
-				</td>
-			</tr>
-			<tr>
-				<td>
-					@Html.LabelFor(models => models.Saturday)
-					@Html.CheckBoxFor(models => models.Saturday.blnOperational)
-				</td>
-				<td>
-					<label>Opens:</label>
-					@Html.TextBoxFor(models => models.Saturday.strOpenTime, new { type = "time" })
-				</td>
-				<td>
-					<label>Closes:</label>
-					@Html.TextBoxFor(models => models.Saturday.strClosedTime, new { type = "time" })
-				</td>
-			</tr>
-		</table>
-	</div>
+	<br />
 
+	<br />
 	<div>
 		<div class="some-spacing">
 			<button class="button-action" id="btnAddLocation" name="btnSubmit" value="NewLocation">Enter New Location</button>

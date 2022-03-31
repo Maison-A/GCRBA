@@ -134,36 +134,59 @@ namespace GCRBA.Views.Bakery {
                     loc.ContactPerson.contactPhone.AreaCode = col["ContactPhone.AreaCode"];
                     loc.ContactPerson.contactPhone.Prefix = col["ContactPhone.Prefix"];
                     loc.ContactPerson.contactPhone.Suffix = col["ContactPhone.Suffix"];
-                    loc.ContactPerson.strContactEmail = col["contactEmail"];
+                    loc.ContactPerson.strContactEmail = col["ContactPerson.strContactEmail"];
+
+                    loc.WebAdmin.strContactFirstName = col["WebAdmin.strContactFirstName"];
+                    loc.WebAdmin.strContactLastName = col["WebAdmin.strContactLastName"];
+                    loc.WebAdmin.contactPhone = new Models.PhoneNumber();
+                    loc.WebAdmin.contactPhone.AreaCode = col["WebAdmin.AreaCode"];
+                    loc.WebAdmin.contactPhone.Prefix = col["WebAdmin.Prefix"];
+                    loc.WebAdmin.contactPhone.Suffix = col["WebAdmin.Suffix"];
+                    loc.WebAdmin.strContactEmail = col["WebAdmin.strContactEmail"];
+
+                    loc.CustService.strContactFirstName = col["CustService.strContactFirstName"];
+                    loc.CustService.strContactLastName = col["CustService.strContactLastName"];
+                    loc.CustService.contactPhone = new Models.PhoneNumber();
+                    loc.CustService.contactPhone.AreaCode = col["CustService.AreaCode"];
+                    loc.CustService.contactPhone.Prefix = col["CustService.Prefix"];
+                    loc.CustService.contactPhone.Suffix = col["CustService.Suffix"];
+                    loc.CustService.strContactEmail = col["CustService.strContactEmail"];
 
                     loc.MainWeb.strURL = col["MainWeb.strURL"];
                     loc.OrderingWeb.strURL = col["OrderingWeb.strURL"];
                     loc.KettleWeb.strURL = col["KettleWeb.strURL"];
 
-                    loc.Facebook.strSocialMediaLink = col["Facebook.strSocialMediaLink"];
-                    loc.Twitter.strSocialMediaLink = col["Twitter.strSocialMediaLink"];
-                    loc.Instagram.strSocialMediaLink = col["Instagram.strSocialMediaLink"];
-                    loc.Snapchat.strSocialMediaLink = col["Snapchat.strSocialMediaLink"];
-                    loc.TikTok.strSocialMediaLink = col["TikTok.strSocialMediaLink"];
-                    loc.Yelp.strSocialMediaLink = col["Yelp.strSocialMediaLink"];
+                    loc.Facebook = new Models.SocialMedia() { strSocialMediaLink = col["Facebook.strSocialMediaLink"], intSocialMediaID = 1 };
+                    loc.Instagram = new Models.SocialMedia() { strSocialMediaLink = col["Instagram.strSocialMediaLink"], intSocialMediaID = 2 };
+                    loc.Snapchat = new Models.SocialMedia() { strSocialMediaLink = col["Snapchat.strSocialMediaLink"], intSocialMediaID = 3 };
+                    loc.TikTok = new Models.SocialMedia() { strSocialMediaLink = col["TikTok.strSocialMediaLink"], intSocialMediaID = 4 };
+                    loc.Twitter = new Models.SocialMedia() { strSocialMediaLink = col["Twitter.strSocialMediaLink"], intSocialMediaID = 5 };                   
+                    loc.Yelp = new Models.SocialMedia() { strSocialMediaLink = col["Yelp.strSocialMediaLink"], intSocialMediaID = 6 };
+
 
                     loc.custServiceEmail = col["CustServEmail"];
+                    loc.BizYear = col["BizYear"];
                     loc.Bio = col["Bio"];
-                    
 
                     var location = new List<string>()
                     {
                         loc.LocationName, loc.StreetAddress + ' ' + loc.City + ' ' + loc.State + ' ' + loc.Zip
                     };
 
+                    //For GIS listing
                     var contact = new List<string>()
                     {
                         loc.ContactPerson.strContactLastName + ", " + loc.ContactPerson.strContactFirstName,
                         loc.ContactPerson.contactPhone.AreaCode + loc.ContactPerson.contactPhone.Prefix + loc.ContactPerson.contactPhone.Suffix,
-                        loc.BusinessPhone.AreaCode + loc.BusinessPhone.Prefix +loc.BusinessPhone.Suffix,
                         loc.ContactPerson.strContactEmail                        
                     };
 
+                    //Both GIS and Database listing
+                    var socialmedia = new List<Models.SocialMedia>() {
+                        loc.Facebook, loc.Twitter, loc.Instagram, loc.Snapchat, loc.TikTok, loc.Yelp
+                    };
+
+                    //For GIS listing
                     var specialties = new List<string>()
                     {
                         Convert.ToString(loc.Donuts.blnAvailable), Convert.ToString(loc.Bagels.blnAvailable), Convert.ToString(loc.Muffins.blnAvailable), Convert.ToString(loc.IceCream.blnAvailable),
@@ -173,11 +196,14 @@ namespace GCRBA.Views.Bakery {
                         Convert.ToString(loc.Shipping.blnAvailable), Convert.ToString(loc.Online.blnAvailable)
                     };
 
-                    var categories = new List<Models.CategoryItem>() {
+                    //For Database listing
+                    var categories = new List<Models.CategoryItem>() 
+                    {
                         loc.Donuts, loc.Bagels, loc.Muffins, loc.IceCream, loc.FineCandies, loc.WeddingCakes, loc.Breads, loc.DecoratedCakes, loc.Cupcakes, loc.Cookies, loc.Desserts, loc.Full,
                         loc.Deli, loc.Other, loc.Wholesale, loc.Delivery, loc.Shipping, loc.Online
                     };
 
+                    //For GIS listing
                     var operations = new List<string>()
                     {
                         loc.Sunday.strOpenTime +'-' + loc.Sunday.strClosedTime, loc.Monday.strOpenTime + '-' + loc.Monday.strClosedTime,
@@ -186,6 +212,7 @@ namespace GCRBA.Views.Bakery {
                         loc.Saturday.strOpenTime + '-' + loc.Saturday.strClosedTime
                     };
 
+                    //For Database listing
                     var LocationHours = new List<Models.Days>()
                     {
                         loc.Sunday, loc.Monday, loc.Tuesday, loc.Wednesday, loc.Thursday, loc.Friday, loc.Saturday
@@ -197,12 +224,12 @@ namespace GCRBA.Views.Bakery {
                     }
 
                     Models.NewLocation.ActionTypes at = Models.NewLocation.ActionTypes.NoType;
-                    at = loc.StoreNewLocation(categories, LocationHours);
+                    at = loc.StoreNewLocation(categories, LocationHours, socialmedia);
                     switch (at) {
                         case Models.NewLocation.ActionTypes.InsertSuccessful:
                             loc.ActionType = Models.NewLocation.ActionTypes.InsertSuccessful;
 
-                            ExportToCsv.Export(location, contact, specialties);
+                            ExportToCsv.Export(location, contact, specialties, socialmedia);
 
                             using (firstProcess = new Process()) {
                                 firstProcess.StartInfo.FileName = "C:\\Users\\winsl\\AppData\\Local\\ESRI\\conda\\envs\\myenv-py3v2\\python.exe";

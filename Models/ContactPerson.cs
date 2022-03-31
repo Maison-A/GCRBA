@@ -5,7 +5,7 @@ using System.Web;
 
 namespace GCRBA.Models {
 	public class ContactPerson {
-		public long intContactPersonID = 0;
+		public long lngContactPersonID = 0;
 		public string strContactFirstName = string.Empty;
 		public string strContactLastName = string.Empty;
 		public PhoneNumber contactPhone;
