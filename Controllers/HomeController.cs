@@ -26,7 +26,7 @@ namespace GCRBA.Controllers {
 
             if(col["btnSubmit"].ToString() == "login")
             {
-                return RedirectToAction("Index", "Login");
+                return RedirectToAction("Index", "Profile");
             }
 
             if (col["btnSubmit"].ToString() == "signup")

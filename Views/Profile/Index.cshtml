@@ -1,11 +1,11 @@
 ﻿@model GCRBA.Models.User
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Login";
 }
 
-<div class="container" id="login-container">
-    <h2>@ViewBag.Title</h2>
+<div class="container col-md-4">
+    <h2 class="mt-5">@ViewBag.Title</h2>
 
     <!--login form-->
     @using (Html.BeginForm(FormMethod.Post))
@@ -27,17 +27,17 @@
         }
 
 
-        <div>
+        <div class="mt-5 mb-4">
             @Html.LabelFor(model => model.Username, new { @class = "form-label" })
             @Html.TextBoxFor(model => model.Username, new { @autofocus = "autofocus", @class = "form-control" })
         </div>
-        <div>
+        <div class="mb-4">
             @Html.LabelFor(model => model.Password, new { @class = "form-label" })
             @Html.TextBoxFor(model => model.Password, new { type = "password", @class = "form-control" })
         </div>
-        <div>
-            <button id="btnLogin" name="btnSubmit" value="login" class="btn btn-danger">Login</button>
+        <div class="mb-3">
+            <button id="btnLogin" name="btnSubmit" value="login" class="btn btn-primary">Login</button>
         </div>
-}
+    }
 </div>
 

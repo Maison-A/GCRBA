@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GCRBA.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -6,8 +7,9 @@ using System.Web.Mvc;
 
 namespace GCRBA.Controllers
 {
-    public class LoginController : Controller
+    public class ProfileController : Controller
     {
+        // GET: Profile
         public ActionResult Index()
         {
             Models.User user = new Models.User();
@@ -49,12 +51,20 @@ namespace GCRBA.Controllers
 
                         if (user != null && user.UID > 0)
                         {
-                            // user is not null and is not 0 so we can save the current user session
+                            // user is not null and is not 0 so we can save the current user session 
                             user.SaveUserSession();
+                            Database db = new Database();
 
-                            // redirect to page for logged in members
-                            // NEED TO DIFFERENTIATE BETWEEN MEMBER AND NON-MEMBER USER FOR AFTER LOGIN 
-                            return RedirectToAction("Index", "Member");
+                            if (db.IsUserMember(user))
+                            {
+                                return RedirectToAction("MemberProfile", "Profile");
+                            }
+                            else
+                            {
+                                return RedirectToAction("NonMemberProfile", "Profile");
+                            }
+
+
                         }
                         else
                         {
@@ -74,5 +84,24 @@ namespace GCRBA.Controllers
             }
         }
 
+        public ActionResult MemberProfile()
+        {
+            // add more later but just return view for now to avoid error 
+            return View();
+        }
+
+        // for when a user logs in and isn't a member 
+        public ActionResult NonMemberProfile()
+        {
+            // add more but just return view for now to avoid error 
+            return View();
+        }
+
+        // for when a user logs in and is an admin 
+        public ActionResult AdminProfile()
+        {
+            // add more later but just return view for now to avoid error 
+            return View();
+        }
     }
 }

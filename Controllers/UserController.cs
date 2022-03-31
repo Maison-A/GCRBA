@@ -38,7 +38,10 @@ namespace GCRBA.Controllers
                 u.Password = col["Password"];
                 u.Address = string.Empty;
                 u.City = string.Empty;
-                u.intStateID = 0;
+                // I commented this out to avoid it throwing an error for now but in the User class, I changed
+                // intStateID to strState because I now added the ability for it to pull the state name in, not just the ID
+                // but I didn't want to change this without knowing if it would affect anything so let me know. -Katie 
+                //u.intStateID = 0;
                 u.Zip = string.Empty;
                 u.Phone = string.Empty;
                 u.MemberShipType = string.Empty;

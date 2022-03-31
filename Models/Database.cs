@@ -127,7 +127,7 @@ namespace GCRBA.Models
 						newUser.LastName = (string)dr["strLastName"];
 						newUser.Address = (string)dr["strAddress"];
 						newUser.City = (string)dr["strCity"];
-						newUser.intStateID = Convert.ToInt16(dr["intStateID"]);
+						newUser.State = (string)dr["strState"];
 						newUser.Zip = (string)dr["strZip"];
 						newUser.Phone = (string)dr["strPhone"];
 						newUser.Email = (string)dr["strEmail"];
@@ -142,6 +142,49 @@ namespace GCRBA.Models
 					CloseDBConnection(ref cn);
 				}
 				return newUser;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public bool IsUserMember(User u)
+		{
+			try
+			{
+				// create instance of SqlConnection object 
+				SqlConnection cn = new SqlConnection();
+
+				// throw error if database connection unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// create instance of SqlDataAdapter object 
+				SqlDataAdapter da = new SqlDataAdapter("VERIFY_MEMBER", cn);
+
+				// create instance of DataSet
+				DataSet ds;
+
+				// specify command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				// set parameters
+				SetParameter(ref da, "@intUserID", u.UID, SqlDbType.Int);
+
+				try
+				{
+					ds = new DataSet();
+					da.Fill(ds);
+					if (ds.Tables[0].Rows.Count > 0)
+					{
+						return true;
+					} else
+                    {
+						return false;
+                    }
+				}
+				catch (Exception ex) { throw new Exception(ex.Message); }
+				finally
+				{
+					CloseDBConnection(ref cn);
+				}
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}

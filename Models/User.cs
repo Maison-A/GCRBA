@@ -12,7 +12,7 @@ namespace GCRBA.Models
         public string LastName = string.Empty;
         public string Address = string.Empty;
         public string City = string.Empty;
-        public int intStateID = 0;
+        public string State = string.Empty;
         public string Zip = string.Empty;
         public string Phone = string.Empty;
         public string Email = string.Empty;
