@@ -180,6 +180,50 @@ namespace GCRBA.Models {
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+		public string GetMainBanner()
+        {
+			string banner = String.Empty;
+
+			try
+            {
+				// declare variable to hold banner string 
+				// create new instance of SqlConnection object 
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to DB 
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// create instance of SqlDataAdapter object 
+				SqlDataAdapter da = new SqlDataAdapter("GET_MAIN_BANNER", cn);
+
+				// create instance of DataSet
+				DataSet ds;
+
+				// specify command type as stored procedure 
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				try
+                {
+					ds = new DataSet();
+					da.Fill(ds);
+					if (ds.Tables[0].Rows.Count > 0)
+                    {
+						DataRow dr = ds.Tables[0].Rows[0];
+						banner = (string)dr["strBanner"];
+						return banner;
+                    }
+                }
+				catch (Exception ex) { throw new Exception(ex.Message); }
+				finally
+                {
+					CloseDBConnection(ref cn);
+                }
+            }
+			catch (Exception ex) { throw new Exception(ex.Message); }
+
+			return banner;
+        }
+
 		private int SetParameter(ref SqlCommand cm, string ParameterName, Object Value
 			, SqlDbType ParameterType, int FieldSize = -1
 			, ParameterDirection Direction = ParameterDirection.Input
