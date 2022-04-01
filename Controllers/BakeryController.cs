@@ -231,6 +231,8 @@ namespace GCRBA.Views.Bakery {
                         return View(loc);
                     }
 
+                    
+
                     Models.NewLocation.ActionTypes at = Models.NewLocation.ActionTypes.NoType;
                     at = loc.StoreNewLocation(categories, LocationHours, socialmedia, Websites, contacts);
                     switch (at) {
@@ -255,24 +257,6 @@ namespace GCRBA.Views.Bakery {
                             return View();
 
                     }
-
-
-                    /*
-                    using (secondProcess = new Process()) {
-                        secondProcess.StartInfo.FileName = "C:\\Program Files\\ArcGIS\\Pro\\bin\\Python\\envs\\arcgispro-py3\\python.exe"; 
-                        secondProcess.StartInfo.CreateNoWindow = true;
-                        secondProcess.StartInfo.Arguments = "C:\\Users\\winsl\\OneDrive\\Desktop\\Capstone\\MVC\\Python\\Scripts\\ZipFiles.py";
-                        secondProcess.Start();
-                        secondProcess.WaitForExit();
-                    }
-                    using (thirdProcess = new Process()) {
-                        thirdProcess.StartInfo.FileName = "C:\\Program Files\\ArcGIS\\Pro\\bin\\Python\\envs\\arcgispro-py3\\python.exe";
-                        thirdProcess.StartInfo.CreateNoWindow = true;
-                        thirdProcess.StartInfo.Arguments = "C:\\Users\\winsl\\OneDrive\\Desktop\\Capstone\\MVC\\Python\\Scripts\\connect2ArcgisOnline.py";
-                        thirdProcess.Start();
-                        thirdProcess.WaitForExit();
-                    }
-                    */
                 }
                 catch (Exception) {
                     Models.NewLocation loc = new Models.NewLocation();

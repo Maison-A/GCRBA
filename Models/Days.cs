@@ -7,8 +7,10 @@ namespace GCRBA.Models {
 	public class Days {
 		public long intLocationHoursID = 0;
 		public int intDayID = 0;
-		public string strClosedTime = string.Empty;
+		public DateTime dtClosedTime;
+		public DateTime dtOpenTime;
 		public string strOpenTime = string.Empty;
+		public string strClosedTime = string.Empty;
 		public string strDay = string.Empty;
 		public bool blnOperational = false;
 	}

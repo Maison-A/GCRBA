@@ -89,7 +89,7 @@ namespace GCRBA.Models {
 				this.ActionType = db.InsertCompany(this);
 				this.ActionType = db.InsertLocation(this);
 				this.ActionType = db.InsertSpecialties(this, categories);
-				this.ActionType = db.InsertLocationHours(this, LocationHours);
+				//this.ActionType = db.InsertLocationHours(this, LocationHours);
 				this.ActionType = db.InsertSocialMedia(this, socialMedias);
 				this.ActionType = db.InsertWebsite(this, websites);
 				this.ActionType = db.InsertContactPerson(this, contacts);

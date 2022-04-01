@@ -26,7 +26,12 @@ namespace GCRBA {
 
             var hourOperations = new List<string>();
             foreach (Models.Days item in operations) {
-                string schedule = item.strOpenTime + '-' + item.strClosedTime;
+                if (item.strOpenTime != string.Empty) item.dtOpenTime = Convert.ToDateTime(item.strOpenTime);
+                if (item.strClosedTime != string.Empty) item.dtClosedTime = Convert.ToDateTime(item.strClosedTime);
+
+                string schedule = string.Empty;
+                if (item.strOpenTime == string.Empty || item.strClosedTime == string.Empty) schedule = "Closed";  
+                else schedule = item.dtOpenTime.ToShortTimeString() + '-' + item.dtClosedTime.ToShortTimeString();
                 hourOperations.Add(schedule);
                };
 
@@ -44,8 +49,17 @@ namespace GCRBA {
 
             var contacts = new List<string>();
             foreach(Models.ContactPerson item in Contact) {
-                contacts.Add(item.strContactLastName + ',' + item.strContactFirstName);
-                contacts.Add('(' + item.contactPhone.AreaCode + ") " + item.contactPhone.Prefix + '-' + item.contactPhone.Suffix);
+                string contactName = string.Empty;
+                string phone = string.Empty;
+
+                if (item.strContactLastName != string.Empty && item.strContactFirstName != string.Empty) contacts.Add(item.strContactLastName + ',' + item.strContactFirstName);
+                else contacts.Add(contactName);
+
+                if (item.contactPhone.AreaCode != string.Empty && item.contactPhone.Prefix != string.Empty && item.contactPhone.Suffix != string.Empty) {
+                    contacts.Add('(' + item.contactPhone.AreaCode + ") " + item.contactPhone.Prefix + '-' + item.contactPhone.Suffix);
+                }
+                else contacts.Add(phone);
+
                 contacts.Add(item.strContactEmail);
 			}
 
@@ -54,7 +68,7 @@ namespace GCRBA {
         
         public static void Export(List<string> Location, List<string> businessInfo, List<string> SpecialtiesList, List<string> hourOperations, List<string> Contact, List<string> websiteLinks, List<string> socialMediaLinks) {
             int Index = 0;
-            using (StreamWriter streamWriter = new StreamWriter("C:\\Users\\winsl\\OneDrive\\Desktop\\Capstone\\MVC\\CSV_Folder\\LocationCSV.csv")) {
+            using (StreamWriter streamWriter = new StreamWriter("C:\\Users\\winsl\\OneDrive\\Desktop\\Capstone\\MVC\\CSV_Folder\\Bakery.csv")) {
                 using (CsvWriter csvWriter = new CsvWriter(streamWriter, CultureInfo.CurrentCulture)) {
                     //Write Location Information Headers
                     csvWriter.WriteField("Bakery_Name");
@@ -130,6 +144,7 @@ namespace GCRBA {
                     Index = 0;
                     while(Index < businessInfo.Count()) {
                         csvWriter.WriteField(businessInfo[Index]);
+                        Index +=1;
 					}
 
                     Index = 0;
@@ -168,7 +183,7 @@ namespace GCRBA {
                 }
                 //End StreamWriter Session
                 streamWriter.Close();
-		    }
+		        }
            
         }  
 	}

@@ -361,7 +361,7 @@ namespace GCRBA.Models {
 			catch (Exception ex) { throw new Exception(ex.Message); }
 
 		}
-
+		
 		public NewLocation.ActionTypes InsertLocationHours(NewLocation loc, List<Models.Days> LocationHours) {
 			try {
 				int[] arrReturnValue = new int[] { 1 };
@@ -372,10 +372,17 @@ namespace GCRBA.Models {
 					if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
 					SqlCommand cm = new SqlCommand("INSERT_LOCATIONHOURS", cn);
 
-					if (item.blnOperational == false) {
-						item.strOpenTime = "Closed";
-						item.strClosedTime = "Closed";
+					if (item.strOpenTime != string.Empty) {
+						item.dtOpenTime = Convert.ToDateTime(item.strOpenTime);
+						item.strOpenTime = item.dtOpenTime.ToShortTimeString();
 					}
+					else item.strOpenTime = "Closed";
+
+					if (item.strClosedTime != string.Empty) {
+						item.dtClosedTime = Convert.ToDateTime(item.strClosedTime);
+						item.strClosedTime = item.dtClosedTime.ToShortTimeString();
+					}
+					else item.strClosedTime = "Closed";
 
 					SetParameter(ref cm, "@intLocationHoursID", item.intLocationHoursID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
 					SetParameter(ref cm, "@intLocationID", loc.lngLocationID, SqlDbType.BigInt);
@@ -405,7 +412,7 @@ namespace GCRBA.Models {
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
-
+		
 		public NewLocation.ActionTypes InsertSocialMedia(NewLocation loc, List<Models.SocialMedia> socialMedias) {
 			try {
 				int[] arrReturnValue = new int[] { 1 };
@@ -455,8 +462,8 @@ namespace GCRBA.Models {
 					string phone = "(" + item.contactPhone.AreaCode + ") " + item.contactPhone.Prefix + "-" + item.contactPhone.Suffix ;
 
 
-					if (item.strContactFirstName == string.Empty || item.strContactLastName == string.Empty) continue;
-					if (item.contactPhone.AreaCode == string.Empty || item.contactPhone.Prefix == string.Empty) continue;
+					//if (item.strContactFirstName == string.Empty || item.strContactLastName == string.Empty) continue;
+					//if (item.contactPhone.AreaCode == string.Empty || item.contactPhone.Prefix == string.Empty) continue;
 
 					SqlConnection cn = null;
 					if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
