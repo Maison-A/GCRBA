@@ -1,7 +1,14 @@
 ﻿@model GCRBA.Models.User
 
 @{
-    ViewBag.Title = "Login";
+    if (Model.UID == 0)
+    {
+        ViewBag.Title = "Login";
+            }
+    else
+    {
+        ViewBag.Title = "Profile";
+    }
 }
 
 <div class="container col-md-4">
@@ -54,7 +61,7 @@
             if (Model.isMember ==  0)
                     {
                         // user is a member, so they see member modification interface 
-                        <p>You must be a member to view this page.</p>
+                        <p>You are logged in as a non-member!</p>
                     } 
             else
                     {
