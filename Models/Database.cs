@@ -130,7 +130,7 @@ namespace GCRBA.Models {
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public bool IsUserMember(User u)
+		public void IsUserMember(User u)
 		{
 			try
 			{
@@ -152,22 +152,29 @@ namespace GCRBA.Models {
 				// set parameters
 				SetParameter(ref da, "@intUserID", u.UID, SqlDbType.Int);
 
-				try
-				{
-					ds = new DataSet();
-					da.Fill(ds);
-					if (ds.Tables[0].Rows.Count > 0)
+				if (u.UID == 0)
+                {
+					u.isMember = 0;
+                } else
+                {
+					try
 					{
-						return true;
-					} else
-                    {
-						return false;
-                    }
-				}
-				catch (Exception ex) { throw new Exception(ex.Message); }
-				finally
-				{
-					CloseDBConnection(ref cn);
+						ds = new DataSet();
+						da.Fill(ds);
+						if (ds.Tables[0].Rows.Count > 0)
+						{
+							u.isMember = 1;
+						}
+						else
+						{
+							u.isMember = 0;
+						}
+					}
+					catch (Exception ex) { throw new Exception(ex.Message); }
+					finally
+					{
+						CloseDBConnection(ref cn);
+					}
 				}
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
