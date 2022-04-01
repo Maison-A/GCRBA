@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GCRBA.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -14,7 +15,15 @@ namespace GCRBA.Controllers {
     {
         public ActionResult Index()
         {
-            return View();
+            ViewBag.MainBanner = "";
+
+            try
+            {
+                Database db = new Database();
+                ViewBag.MainBanner = db.GetMainBanner();
+                return View();
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         [HttpPost]

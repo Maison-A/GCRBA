@@ -21,7 +21,18 @@ namespace GCRBA.Models
         public string Password = string.Empty;
         public string PaymentType = string.Empty;
         public int isAdmin = 0;
+        public int isMember = 0;
         public ActionTypes ActionType = ActionTypes.NoType;
+
+        // tells us if current user is logged in 
+        public bool IsAuthenticated
+        {
+            get
+            {
+                if (UID > 0) return true;
+                return false;
+            }
+        }
 
         // obtain current session status
         public User GetUserSession()

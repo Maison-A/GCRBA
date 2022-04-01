@@ -55,17 +55,12 @@ namespace GCRBA.Controllers
                             user.SaveUserSession();
                             Database db = new Database();
 
-                            if (db.IsUserMember(user))
-                            {
-                                return RedirectToAction("MemberProfile", "Profile");
-                            }
-                            else
-                            {
-                                return RedirectToAction("NonMemberProfile", "Profile");
-                            }
+                            // determine if current user object is also a member 
+                            // if 0 or if UID is not in member table in DB, user is not member
+                            db.IsUserMember(user);
 
-
-                        }
+                            return View(user);
+                         }
                         else
                         {
                             user = new Models.User();
@@ -84,24 +79,5 @@ namespace GCRBA.Controllers
             }
         }
 
-        public ActionResult MemberProfile()
-        {
-            // add more later but just return view for now to avoid error 
-            return View();
-        }
-
-        // for when a user logs in and isn't a member 
-        public ActionResult NonMemberProfile()
-        {
-            // add more but just return view for now to avoid error 
-            return View();
-        }
-
-        // for when a user logs in and is an admin 
-        public ActionResult AdminProfile()
-        {
-            // add more later but just return view for now to avoid error 
-            return View();
-        }
     }
 }

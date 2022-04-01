@@ -1,43 +1,75 @@
 ﻿@model GCRBA.Models.User
 
 @{
-    ViewBag.Title = "Login";
+    if (Model.UID == 0)
+    {
+        ViewBag.Title = "Login";
+            }
+    else
+    {
+        ViewBag.Title = "Profile";
+    }
 }
 
 <div class="container col-md-4">
     <h2 class="mt-5">@ViewBag.Title</h2>
 
-    <!--login form-->
-    @using (Html.BeginForm(FormMethod.Post))
+    <!--if UID is 0, user is not logged in, and will be shown login page-->
+    @if (Model.UID == 0)
     {
-        <!--only display if user tries to submit form with empty textbox(es)-->
-        if (Model.ActionType == GCRBA.Models.User.ActionTypes.RequiredFieldMissing)
-        {
-            <div class="missing-field">
-                <i class="fad fa-exclamation-triangle fa-2x"></i>"
-                All fields are required.
-            </div>
-        }
+        using (Html.BeginForm(FormMethod.Post))
+                {
+                    if (Model.ActionType == GCRBA.Models.User.ActionTypes.RequiredFieldMissing)
+                    {
+                        <div class="login-error">
+                            <i class="fad fa-exclamation-triangle fa-2x"></i>
+                            All fields are required.
+                        </div>
+                    }
+                    
+                    if (Model.ActionType == GCRBA.Models.User.ActionTypes.LoginFailed)
+                    {
+                        <div class="login-error">
+                            <i class="fad fa-exclamation-triangle fa-2x"></i>
+                            Invalid username and/or password.
+                        </div>
+                    }
 
-        if (Model.ActionType == GCRBA.Models.User.ActionTypes.LoginFailed)
-        {
-            <div class="missing-field">
-                Invalid Username and/or Password. Please try again.
-            </div>
-        }
-
-
-        <div class="mt-5 mb-4">
-            @Html.LabelFor(model => model.Username, new { @class = "form-label" })
-            @Html.TextBoxFor(model => model.Username, new { @autofocus = "autofocus", @class = "form-control" })
-        </div>
-        <div class="mb-4">
-            @Html.LabelFor(model => model.Password, new { @class = "form-label" })
-            @Html.TextBoxFor(model => model.Password, new { type = "password", @class = "form-control" })
-        </div>
-        <div class="mb-3">
-            <button id="btnLogin" name="btnSubmit" value="login" class="btn btn-primary">Login</button>
-        </div>
+                    <div class="mt-5 mb-4">
+                        @Html.LabelFor(model => model.Username, new { @class = "form-label" })
+                        @Html.TextBoxFor(model => model.Username, new { @autofocus = "autofocus", @class = "form-control" })
+                    </div>
+                    <div class="mb-4">
+                        @Html.LabelFor(model => model.Password, new { @class = "form-label" })
+                        @Html.TextBoxFor(model => model.Password, new { type = "password", @class = "form-control" })
+                    </div>
+                    <div class="mb-3">
+                        <button id="btnLogin" name="btnSubmit" value="login" class="btn btn-primary">Login</button>
+                    </div>
+                }
+    } else 
+    {
+        // is user an admin? 
+        if (Model.isAdmin == 1)
+                {
+                    // yes, user is admin so they see admin interface
+                    <p>You are logged in as an admin!</p>
+                } 
+        else
+                {
+            // user is not an admin, but we need to see if they are a member or general user
+            if (Model.isMember ==  0)
+                    {
+                        // user is a member, so they see member modification interface 
+                        <p>You are logged in as a non-member!</p>
+                    } 
+            else
+                    {
+                        // user is not a member, so they see general user interface
+                        <p>You are logged in as a member!</p>
+                    }
+                }
     }
+
 </div>
 
