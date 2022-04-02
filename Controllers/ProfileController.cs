@@ -13,11 +13,24 @@ namespace GCRBA.Controllers
         public ActionResult Index()
         {
             Models.User user = new Models.User();
+            user = user.GetUserSession();
+            if (user.IsAuthenticated)
+            {
+                ViewBag.Name = user.FirstName + " " + user.LastName;
+            }
             return View(user);
         }
 
+        
+
+        public ActionResult Login()
+        {
+            User u = new User();
+            return View(u);
+        }
+
         [HttpPost]
-        public ActionResult Index(FormCollection col)
+        public ActionResult Login(FormCollection col)
         {
             try
             {
@@ -53,14 +66,33 @@ namespace GCRBA.Controllers
                         {
                             // user is not null and is not 0 so we can save the current user session 
                             user.SaveUserSession();
+
+                            // create instance of datbase object 
                             Database db = new Database();
 
-                            // determine if current user object is also a member 
-                            // if 0 or if UID is not in member table in DB, user is not member
+                            // call method that determines if current user is member or not 
                             db.IsUserMember(user);
 
-                            return View(user);
-                         }
+                            // show logged in profile 
+                            if (user.isAdmin == 1)
+                            {
+                                // this login area is for members/non-members only, not admin 
+                                user.ActionType = Models.User.ActionTypes.LoginFailed;
+                            } 
+                            else
+                            {
+                                if (user.isMember == 0)
+                                {
+                                    // user is not a member, so send them to non-member interface
+                                    return RedirectToAction("NonMember");
+                                } 
+                                else
+                                {
+                                    // user is a member, so send them to the member interface
+                                    return RedirectToAction("Member");
+                                }
+                            }
+                        }
                         else
                         {
                             user = new Models.User();
@@ -69,7 +101,9 @@ namespace GCRBA.Controllers
                             return View(user);
                         }
                     }
-                    return View(user);
+
+                 return View(user);
+                    
                 }
             }
             catch (Exception)
@@ -77,6 +111,113 @@ namespace GCRBA.Controllers
                 Models.User user = new Models.User();
                 return View(user);
             }
+        }
+
+        public ActionResult AdminLogin()
+        {
+            User u = new User();
+            return View(u);
+        }
+
+        [HttpPost]
+        public ActionResult AdminLogin(FormCollection col)
+        {
+            try
+            {
+                // create instance of user object to pass to the view 
+                Models.User user = new Models.User();
+
+                // get whatever input is in the textboxes 
+                user.Username = col["Username"];
+                user.Password = col["Password"];
+
+                // are input fields empty? 
+                if (user.Username.Length == 0 || user.Password.Length == 0)
+                {
+                    // yes, change User ActionType and return View with User object as argument 
+                    user.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
+                    return View(user);
+                }
+                // no, fields aren't empty 
+                else
+                {
+                    // has submit button with value login been pressed?
+                    if (col["btnSubmit"] == "login")
+                    {
+                        // yes, assign Username and Password values to Username and Password properties in User object
+                        user.Username = col["Username"];
+                        user.Password = col["Password"];
+
+                        // call Login method on User object
+                        // method will either return a User object or null
+                        user = user.Login();
+
+                        if (user != null && user.UID > 0)
+                        {
+                            if (user.isAdmin == 1)
+                            {
+                                // user is not null and is not 0 so we can save the current user session 
+                                user.SaveUserSession();
+
+                                // user is an admin so send them to the admin interface 
+                                return RedirectToAction("Admin");
+                            } 
+                            else
+                            {
+                                user.ActionType = Models.User.ActionTypes.LoginFailed;
+                            }
+                        }
+                        else
+                        {
+                            user = new Models.User();
+                            user.Username = col["Username"];
+                            user.ActionType = Models.User.ActionTypes.LoginFailed;
+                            return View(user);
+                        }
+                    }
+
+                    return View(user);
+
+                }
+            }
+            catch (Exception)
+            {
+                Models.User user = new Models.User();
+                return View(user);
+            }
+        }
+
+        public ActionResult NonMember()
+        {
+            Models.User user = new Models.User();
+            user = user.GetUserSession();
+            if (user.IsAuthenticated)
+            {
+                ViewBag.Name = user.FirstName + " " + user.LastName;
+            }
+            return View(user);
+        }
+
+        public ActionResult Member()
+        {
+            Models.User user = new Models.User();
+            user = user.GetUserSession();
+            if (user.IsAuthenticated)
+            {
+                ViewBag.Name = user.FirstName + " " + user.LastName;
+            }
+            return View(user);
+        }
+
+        public ActionResult Admin()
+        {
+            Models.User user = new Models.User();
+            user = user.GetUserSession();
+            if (user.IsAuthenticated)
+            {
+                ViewBag.Name = user.FirstName + " " + user.LastName;
+            }
+            return View(user);
         }
 
     }

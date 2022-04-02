@@ -262,6 +262,11 @@
     <Content Include="Views\Profile\Index.cshtml" />
     <Content Include="Views\Shared\UserTabMenu.cshtml" />
     <Content Include="Views\Bakery\Map.cshtml" />
+    <Content Include="Views\Profile\Login.cshtml" />
+    <Content Include="Views\Profile\NonMember.cshtml" />
+    <Content Include="Views\Profile\Member.cshtml" />
+    <Content Include="Views\Profile\Admin.cshtml" />
+    <Content Include="Views\Profile\AdminLogin.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -272,6 +277,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Default\" />
+    <Folder Include="Views\IndexViewModel\" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
