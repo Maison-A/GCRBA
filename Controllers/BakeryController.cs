@@ -267,5 +267,9 @@ namespace GCRBA.Views.Bakery {
                 return View();
             }
         }
+        
+        public ActionResult Map() {
+            return View();
+		}
     }
 }

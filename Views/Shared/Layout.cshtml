@@ -9,7 +9,7 @@
     @Scripts.Render("~/bundles/jquery")
     <script src="https://kit.fontawesome.com/a75ff89abd.js" crossorigin="anonymous"></script>
     <!-- this is the style sheet to be used -->
-    @Styles.Render("~/Content/Site.css")
+    @Styles.Render("~/Content/css")
     @Styles.Render("~/Content/bootstrap.css")
 </head>
 <body>
@@ -17,5 +17,6 @@
         <!-- all code in every cshtml page is run through this div -->
         @RenderBody()
     </div>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>
