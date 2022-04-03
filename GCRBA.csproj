@@ -213,6 +213,7 @@
     <Compile Include="Models\Days.cs" />
     <Compile Include="Models\NewLocation.cs" />
     <Compile Include="Models\PhoneNumber.cs" />
+    <Compile Include="Models\SearchResults.cs" />
     <Compile Include="Models\SocialMedia.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\Website.cs" />
