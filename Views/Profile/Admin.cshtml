@@ -15,6 +15,15 @@ else
 
         @using (Html.BeginForm(FormMethod.Post))
                 {
+                   <!--display dropdown list of main banners-->
+                   <select name="mainBanners">
+                       @foreach (MainBanner mb in ViewBag.MainBanners)
+                        {
+                           <option value="@mb.BannerID">@mb.Banner</option>
+                        }
+                   </select>
+                    
+                   <!--display dropdown list of companies-->
                    <select name="companies">
                        @foreach (Company c in ViewBag.Companies)
                         {

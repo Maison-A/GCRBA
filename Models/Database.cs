@@ -224,6 +224,50 @@ namespace GCRBA.Models {
 			return banner;
         }
 
+		public List<MainBanner> GetMainBanners()
+		{
+			try
+			{
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to database -- throw error if unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// specify which stored procedure we are using 
+				SqlDataAdapter da = new SqlDataAdapter("GET_ALL_MAIN_BANNERS", cn);
+
+				// create new list object with type string  
+				List<MainBanner> banners = new List<MainBanner>();
+
+				// set command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				try { da.Fill(ds); }
+				catch (Exception ex) { throw new Exception(ex.Message); }
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0)
+                {
+					// loop through results and add to list 
+					foreach (DataRow dr in ds.Tables[0].Rows)
+                    {
+						// create new MainBanner object
+						MainBanner mb = new MainBanner();
+
+						// add values to BannerID and Banner
+						mb.BannerID = Convert.ToInt16(dr["intMainBannerID"]);
+						mb.Banner = (string)dr["strBanner"];
+
+						// add MainBanner object (mb) to MainBanner list (banners)
+						banners.Add(mb);
+                    }
+                }
+				return banners;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
 		public List<Company> GetCompanies()
         {
 			try
@@ -243,18 +287,10 @@ namespace GCRBA.Models {
 				// set command type as stored procedure
 				da.SelectCommand.CommandType = CommandType.StoredProcedure;
 
-				try
-                {
-					da.Fill(ds);
-                }
-				catch (Exception ex)
-                {
-					throw new Exception(ex.Message);
-                }
-				finally
-                {
-					CloseDBConnection(ref cn);
-                }
+				try { da.Fill(ds); }
+				catch (Exception ex) { throw new Exception(ex.Message); }
+				finally { CloseDBConnection(ref cn); }
+
 				if (ds.Tables[0].Rows.Count != 0)
                 {
 					// loop through results and add to list 

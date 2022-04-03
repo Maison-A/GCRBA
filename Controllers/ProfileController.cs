@@ -218,8 +218,8 @@ namespace GCRBA.Controllers
             // create new instance of Database 
             Database db = new Database();
 
-            // get current main banner and add to viewbag 
-            ViewBag.Banner = db.GetMainBanner();
+            // get list of banner IDs and strings, and add to viewbag
+            ViewBag.MainBanners = db.GetMainBanners();
 
             // get list of company IDs and names, and add to viewbag
             ViewBag.Companies = db.GetCompanies();

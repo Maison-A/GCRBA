@@ -211,6 +211,7 @@
     <Compile Include="Models\ContactPerson.cs" />
     <Compile Include="Models\Database.cs" />
     <Compile Include="Models\Days.cs" />
+    <Compile Include="Models\MainBanner.cs" />
     <Compile Include="Models\NewLocation.cs" />
     <Compile Include="Models\PhoneNumber.cs" />
     <Compile Include="Models\SearchResults.cs" />
