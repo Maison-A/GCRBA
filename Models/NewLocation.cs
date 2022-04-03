@@ -20,6 +20,7 @@ namespace GCRBA.Models {
 
 		//Contact Information
 		public PhoneNumber BusinessPhone;
+		public string strFullPhone = string.Empty;
 		public string BusinessEmail = string.Empty;
 
 		//Bakery Specialty Information
@@ -41,6 +42,8 @@ namespace GCRBA.Models {
 		public CategoryItem Delivery = new CategoryItem();
 		public CategoryItem Shipping = new CategoryItem();
 		public CategoryItem Online = new CategoryItem();
+
+		public string selectedGood = string.Empty;
 
 		//Bakery Days/Times Hours of Operation
 		public Days Sunday = new Days();
