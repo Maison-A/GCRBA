@@ -211,12 +211,19 @@ namespace GCRBA.Controllers
 
         public ActionResult Admin()
         {
+            // get current user to pass to the view 
             Models.User user = new Models.User();
             user = user.GetUserSession();
-            if (user.IsAuthenticated)
-            {
-                ViewBag.Name = user.FirstName + " " + user.LastName;
-            }
+
+            // create new instance of Database 
+            Database db = new Database();
+
+            // get current main banner and add to viewbag 
+            ViewBag.Banner = db.GetMainBanner();
+
+            // get list of company IDs and names, and add to viewbag
+            ViewBag.Companies = db.GetCompanies();
+
             return View(user);
         }
 
