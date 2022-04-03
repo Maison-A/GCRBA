@@ -1,0 +1,13 @@
+﻿
+@{
+    ViewBag.Title = "Member";
+}
+
+@if (Model.isMember == 0)
+{
+    <p>This page is for members only.</p>
+}
+else
+{
+    <p>Hello,  @Model.FirstName, you are logged in as a member.</p>
+}

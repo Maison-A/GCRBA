@@ -36,7 +36,8 @@ IF OBJECT_ID('INSERT_SOCIALMEDIA')		IS NOT NULL DROP PROCEDURE INSERT_SOCIALMEDI
 IF OBJECT_ID('INSERT_LOCATION')			IS NOT NULL DROP PROCEDURE INSERT_LOCATION
 IF OBJECT_ID('INSERT_COMPANY')			IS NOT NULL DROP PROCEDURE INSERT_COMPANY
 IF OBJECT_ID('INSERT_CATEGORYLOCATION') IS NOT NULL DROP PROCEDURE INSERT_CATEGORYLOCATION
-IF OBJECT_ID('INSERT_LOCATIONHOURS') IS NOT NULL DROP PROCEDURE INSERT_LOCATIONHOURS
+IF OBJECT_ID('INSERT_LOCATIONHOURS')	IS NOT NULL DROP PROCEDURE INSERT_LOCATIONHOURS
+IF OBJECT_ID('GET_MAIN_BANNER')			IS NOT NULL DROP PROCEDURE GET_MAIN_BANNER
 
 CREATE TABLE tblState
 (
@@ -100,7 +101,7 @@ CREATE TABLE tblCompany
 (
 	intCompanyID			BIGINT IDENTITY(1,1)	NOT NULL, 
 	strCompanyName			NVARCHAR(50)		NOT NULL, 
-	strAbout			NVARCHAR(2000),
+	strAbout			NVARCHAR(2000)			NOT NULL, 
 	strBizYear			NVARCHAR(10),
 	CONSTRAINT tblCompany_PK PRIMARY KEY (intCompanyID)
 )
@@ -650,6 +651,17 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [db_owner].[GET_MAIN_BANNER]
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT	strBanner 
+	FROM	tblMainBanner 
+	WHERE	intMainBannerID IN (SELECT MAX(intMainBannerID) FROM tblMainBanner)
+END
+GO
+
 -- -----------------------------------------------------------------------------------------
 -- ADD TEST DATA
 -- -----------------------------------------------------------------------------------------
@@ -704,8 +716,9 @@ VALUES	('Monday'),
 
 -- COMPANY INFORMATION FOR THE BONBONERIE
 INSERT INTO tblCompany (strCompanyName, strAbout, strBizYear)
-VALUES	('The Bonbonerie', 'In Business Since 1983<br /><br />At BonBonerie, our rule is that everything we make must be two things: beautiful and delicious. That means using quality ingredients like sweet cream butter, cane sugar, fresh lemon juice and zest, Belgian chocolate, and real vanilla from Madagascar. We create everything by hand in the BonBonerie kitchens, including all our doughs, icings, syrups, batters, and fillings.<br /><br />Each of our original recipes have been reworked and refined over years to create pastry that is unique, perfected, and delicious.<br /><br />Our extremely talented staff of bakers and decorators can customize almost anything for your special event. From astonishing cake centerpieces to hand-cut cookies, everything is crafted with the utmost care by true artists in their field.<br /><br />We are proud to be your award-winning choice for all pastries Beautiful and Delicious since 1983.', '1963'),
-	('Wyoming Pastry Shop', 'In Business Since 1934<br /><br />Welcome to Wyoming Pastry Shop<br /><br />Our bakery has been serving the Village of Wyoming and surrounding areas since 1934. Phillip and Kimberly Reschke are the fifth owners of this hometown bakery. Phillip is a second generation Master Baker, working with his father, a Master Baker from Germany, he has learned all aspects of the bakery and pastry trade and takes pride in all of the products he crafts. Kimberly has been decorating cakes for 30 years, spending time in Cincinnati and Las Vegas perfecting her skills and creativity in a variety of pastry and cake design. We strive for complete customer satisfaction. We want you to think of us whenever you have a craving for something sweet, a special cake or cookie, or one of our many products we offer. We are a small business and will keep it small so we can control our quality to provide the best product to you.', '1972')
+VALUES	('The Bonbonerie', 'At BonBonerie, our rule is that everything we make must be two things: beautiful and delicious. That means using quality ingredients like sweet cream butter, cane sugar, fresh lemon juice and zest, Belgian chocolate, and real vanilla from Madagascar. We create everything by hand in the BonBonerie kitchens, including all our doughs, icings, syrups, batters, and fillings.<br /><br />Each of our original recipes have been reworked and refined over years to create pastry that is unique, perfected, and delicious.<br /><br />Our extremely talented staff of bakers and decorators can customize almost anything for your special event. From astonishing cake centerpieces to hand-cut cookies, everything is crafted with the utmost care by true artists in their field.<br /><br />We are proud to be your award-winning choice for all pastries Beautiful and Delicious since 1983.', '1963'),
+	('Wyoming Pastry Shop', 'Welcome to Wyoming Pastry Shop<br /><br />Our bakery has been serving the Village of Wyoming and surrounding areas since 1934. Phillip and Kimberly Reschke are the fifth owners of this hometown bakery. Phillip is a second generation Master Baker, working with his father, a Master Baker from Germany, he has learned all aspects of the bakery and pastry trade and takes pride in all of the products he crafts. Kimberly has been decorating cakes for 30 years, spending time in Cincinnati and Las Vegas perfecting her skills and creativity in a variety of pastry and cake design. We strive for complete customer satisfaction. We want you to think of us whenever you have a craving for something sweet, a special cake or cookie, or one of our many products we offer. We are a small business and will keep it small so we can control our quality to provide the best product to you.', '1972'),
+	('Servatii Pastry Shop', 'Who We Are and What We Do<br /><br />Wilhelm Gottenbusch, a German immigrant, came to the United States after traveling around the world on an international freighter. In 1963, Wilhelm opened his first bakery on Observatory Avenue in Hyde Park. In a one man shop, with a bakery in the back, he made a name for himself by focusing on one thing - quality. Focusong on the quality of his products, Wilhelm and his sons have expanded and grown over the last 50 years. Wilhelm brought the traditions of his father and grandfather over from Muenster, Germany. His grandfather, George, started out driving a horse drawn wagon door to door selling his fresh baked goods. Wilhelm''s father, George, attended Germany''s most recognizable baking school and received his "Konditor Meister" status - Master Pastry Chef. His father opened Cafe Servatii, on Servatii Platz, in the hear of Muenster, Germany. Wilhelm followed in his father''s footsteps by earning his "Master Baker" status and starting his own business in Cincinnati, Ohio.<br /><br />Wilhelm''s sons Gary and Greg have both apprenticed in Germany earning their journeyman status - Greg in pastry and Gary in baking. Gary continued in his father and grandfather''s footsteps by earning his Master Baker certification in 2001. In turn, the Gottenbusch''s have acquired some of the most talented bakers, decorators and pastry chefs in America. All together they work to uphold the values set forth by Wilhelm Gottenbusch 50 years ago.<br /><br />Today Gary runs a pretzel company from Germany called Pretzel Baron and Greg Gottenbusch runs the day to day business of Servatii. Mr. Gottenbusch still comes in and does his quality checks and keeps everyone in line. Paul, Gary''s son, is now the head night baker learning the family business.<br /><br />The future is bright and we appreciate all of our customers who have made Servatii their tradition.', '1963')
 
 INSERT INTO tblCompanyAward (intCompanyID, strFrom, strAward)
 VALUES	(1, 'Best of City Search', 'Best of City'),
@@ -731,8 +744,10 @@ INSERT INTO tblContactPerson (strContactName, strContactPhone, strContactEmail, 
 VALUES					('Briggs, Randall', '5555555555', 'briggs.r@gmail.com', 1, 1)
 
 INSERT INTO tblLocation (intCompanyID, strAddress, strCity, intStateID, strZip, strPhone, strEmail)
-VALUES	(1, '2030 Madison Rd', 'Cincinnati', 3, '45208-3289', '513-321-3399', 1),
-	(2, '505 Wyoming Ave', 'Wyoming', 3, '45215-4578', '513-821-0742', 1)
+VALUES	(1, '2030 Madison Rd', 'Cincinnati', 3, '45208-3289', '513-321-3399', 'customerservice@bonbonerie.com'),
+	(2, '505 Wyoming Ave', 'Wyoming', 3, '45215-4578', '513-821-0742', 'reschke@wyomingpastryshop.com'),
+	(3, '3824 Paxton Ave', 'Cincinnati', 3, '45209-2399', '513-871-3244', 'servatiipastryshop@gmail.com'),
+	(3, '2010 Anderson Ferry Rd', 'Cincinnati', 3, '45238-3398', '513-922-0033', 'servatiipastryshop@gmail.com')
 
 INSERT INTO tblLocationHours (intLocationID, intDayID, strOpen, strClose)
 VALUES	(1, 1, '10:00am', '4:00pm'),
@@ -748,22 +763,54 @@ VALUES	(1, 1, '10:00am', '4:00pm'),
 	(2, 4, '6:00am', '6:00pm'),
 	(2, 5, '6:00am', '6:00pm'),
 	(2, 6, '6:00am', '4:00pm'),
-	(2, 7, 'Closed', null)
+	(2, 7, 'Closed', null),
+	(3, 1, 'Closed', null),
+	(3, 2, '7:00am', '3:00pm'),
+	(3, 3, '7:00am', '3:00pm'),
+	(3, 4, '7:00am', '3:00pm'),
+	(3, 5, '7:00am', '3:00pm'),
+	(3, 6, '7:00am', '3:00pm'),
+	(3, 7, '7:30am', '2:00pm'),
+	(4, 1, '6:30am', '6:30pm'),
+	(4, 2, '6:30am', '6:30pm'),
+	(4, 3, '6:30am', '6:30pm'),
+	(4, 4, '6:30am', '6:30pm'),
+	(4, 5, '6:30am', '6:30pm'),
+	(4, 6, '6:30am', '5:30pm'),
+	(4, 7, '7:30am', '2:00pm')
 
 INSERT INTO tblWebsiteType(strWebsiteType)
 VALUES				('Main')
 					,('Ordering')
 					,('Kettle')
 
+INSERT INTO tblSocialMedia (strPlatform)
+VALUES		('Facebook')
+			,('Instagram')
+			,('Snapchat')
+			,('TikTok')
+			,('Twitter')
+			,('Yelp')
+
 INSERT INTO tblWebsite (intCompanyID, strURL, intWebsiteTypeID)
-VALUES	(1, 'https://twitter.com/bonbonerie', 1),
-	(1, 'https://www.facebook.com/bonbonerie?ref=m', 1),
-	(1, 'https://www.instagram.com/bonboneriecincy/', 2),
-	(1, 'https://www.yelp.ca/biz/the-bonbonerie-cincinnati-2', 2),
-	(2, 'https://mobile.twitter.com/wyomingpastry', 3),
-	(2, 'https://www.facebook.com/Wyoming-Pastry-Shop-104461259599883/', 2),
-	(2, 'https://www.instagram.com/wyomingpastryshop/?hl=en', 1),
-	(2, 'https://www.yelp.com/biz/wyoming-pastry-shop-cincinnati', 1)
+VALUES		(3, 'https://give.salvationarmy.org/team/353650', 3),
+			(3, 'https://www.servatii.com/online-orders', 2),
+			(2, 'http://www.wyomingpastryshop.com/', 1),
+			(1, 'https://www.bonbonerie.com/', 1),
+			(1, 'https://cincyfavorites.com/shop/bonbonerie-bakery/', 2)
+
+INSERT INTO tblCompanySocialMedia (strSocialMediaLink, intCompanyID, intSocialMediaID)
+VALUES		('https://twitter.com/servatiipastry', 3, 5),
+			('https://facebook.com/servatii', 3, 1),
+			('https://www.instagram.com/servatiipastry/?hl=en', 3, 2),
+			('https://mobile.twitter.com/wyomingpastry', 2, 5),
+			('https://www.facebook.com/Wyoming-Pastry-Shop-104461259599883/', 2, 1),
+			('https://www.instagram.com/wyomingpastryshop/?hl=en', 2, 2),
+			('https://www.yelp.com/biz/wyoming-pastry-shop-cincinnati', 2, 6),
+			('https://twitter.com/bonbonerie', 1, 5),
+			('https://www.facebook.com/bonbonerie?ref=m', 1, 1),
+			('https://www.instagram.com/bonboneriecincy/', 1, 2),
+			('https://www.yelp.ca/biz/the-bonbonerie-cincinnati-2', 1, 6)
 
 -- NON-ADMIN USER 
 INSERT INTO tblUser (strFirstName, strLastName, strAddress, strCity, intStateID, strZip, strPhone, strEmail, strUsername, strPassword, isAdmin)
@@ -779,16 +826,48 @@ INSERT INTO  tblMember (intUserID, intMemberLevelID, intPaymentTypeID)
 VALUES	(1, 1, 2)
 
 INSERT INTO tblMainBanner (strBanner)
-VALUES	('This is an example of the main banner. This will hold information relevant to the GCRBA.')
+VALUES	('This is an example of the main banner. This will hold information relevant to the GCRBA.'),
+		('This is an example of the most up-to-date banner in this database. This will hold information relevant to the GCRBA')
 
-INSERT INTO tblSocialMedia (strPlatform)
-VALUES		('Facebook')
-			,('Instagram')
-			,('Snapchat')
-			,('TikTok')
-			,('Twitter')
-			,('Yelp')
-
-
-
-
+INSERT INTO tblCategoryLocation (intCategoryID, intLocationID, blnAvailable)
+VALUES		(6, 1, 1),
+			(8, 1, 1),
+			(9, 1, 1),
+			(10, 1, 1), 
+			(11, 1, 1),
+			(13,  1, 1),
+			(15, 1, 1),
+			(1, 2, 1),
+			(6, 2, 1),
+			(7, 2, 1),
+			(8, 2, 1),
+			(9, 2, 1),
+			(10, 2, 1),
+			(11, 2, 1),
+			(12, 2, 1),
+			(1, 3, 1),
+			(2, 3, 1),
+			(3, 3, 1),
+			(6, 3, 1),
+			(7, 3, 1),
+			(8, 3, 1),
+			(9, 3, 1),
+			(10, 3, 1),
+			(11, 3, 1),
+			(12, 3, 1),
+			(13, 3, 1),
+			(15, 3, 1),
+			(16, 3, 1),
+			(1, 4, 1),
+			(2, 4, 1),
+			(3, 4, 1),
+			(6, 4, 1),
+			(7, 4, 1),
+			(8, 4, 1),
+			(9, 4, 1),
+			(10, 4, 1),
+			(11, 4, 1),
+			(12, 4, 1),
+			(13, 4, 1),
+			(15, 4, 1),
+			(16, 4, 1)

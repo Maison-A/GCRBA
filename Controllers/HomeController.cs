@@ -19,8 +19,13 @@ namespace GCRBA.Controllers {
 
             try
             {
+                // create instance of Database 
                 Database db = new Database();
+
+                // set MainBanner string so we can use it in the view 
                 ViewBag.MainBanner = db.GetMainBanner();
+
+                // return view 
                 return View();
             }
             catch (Exception ex) { throw new Exception(ex.Message); }
@@ -35,7 +40,12 @@ namespace GCRBA.Controllers {
 
             if(col["btnSubmit"].ToString() == "login")
             {
-                return RedirectToAction("Index", "Profile");
+                return RedirectToAction("Login", "Profile");
+            }
+
+            if(col["btnSubmit"].ToString() == "admin")
+            {
+                return RedirectToAction("AdminLogin", "Profile");
             }
 
             if (col["btnSubmit"].ToString() == "signup")

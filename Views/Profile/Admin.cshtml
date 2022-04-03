@@ -1,0 +1,13 @@
+﻿
+@{
+    ViewBag.Title = "Admin";
+}
+
+@if (Model.isAdmin == 0)
+{
+    <p>This page is for admins only.</p>
+}
+else
+{
+    <p>Hello,  @Model.FirstName, you are logged in as an admin.</p>
+}
