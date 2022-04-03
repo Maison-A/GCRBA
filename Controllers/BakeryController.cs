@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
-using System.Web;
+using System.Web.Routing;
 using System.Web.Mvc;
 using System.IO;
 using System.Text;
@@ -16,21 +16,77 @@ using GCRBA;
 namespace GCRBA.Views.Bakery {
     public class BakeryController : Controller {
         private Process firstProcess;
-        //private Process secondProcess;
-        //private Process thirdProcess;
 
         // GET: Bakery
         public ActionResult Index() {
-            return View();
+            Models.SearchResults results = new Models.SearchResults();
+            return View(results);
         }
 
         [HttpPost]
         public ActionResult Index(FormCollection col) {
+            Models.SearchResults results = new Models.SearchResults();
+            
             if (col["btnSubmit"].ToString() == "addLocation") {
                 return RedirectToAction("AddNewLocation");
             }
-            else return View();
+            
+            if(col["btnSubmit"].ToString() == "search") {
+                results.Donuts = new Models.CategoryItem() { ItemID = 1, ItemDesc = "Donuts", blnAvailable = Convert.ToBoolean(col["Donuts.blnAvailable"].Split(',')[0]) };
+                results.Bagels = new Models.CategoryItem() { ItemID = 2, ItemDesc = "Bagels", blnAvailable = Convert.ToBoolean(col["Bagels.blnAvailable"].Split(',')[0]) };
+                results.Muffins = new Models.CategoryItem() { ItemID = 3, ItemDesc = "Muffins", blnAvailable = Convert.ToBoolean(col["Muffins.blnAvailable"].Split(',')[0]) };
+                results.IceCream = new Models.CategoryItem() { ItemID = 4, ItemDesc = "Ice Cream", blnAvailable = Convert.ToBoolean(col["IceCream.blnAvailable"].Split(',')[0]) };
+                results.FineCandies = new Models.CategoryItem() { ItemID = 5, ItemDesc = "Fine Candies & Chocolates", blnAvailable = Convert.ToBoolean(col["FineCandies.blnAvailable"].Split(',')[0]) };
+                results.WeddingCakes = new Models.CategoryItem() { ItemID = 6, ItemDesc = "Wedding Cakes", blnAvailable = Convert.ToBoolean(col["WeddingCakes.blnAvailable"].Split(',')[0]) };
+                results.Breads = new Models.CategoryItem() { ItemID = 7, ItemDesc = "Breads", blnAvailable = Convert.ToBoolean(col["Breads.blnAvailable"].Split(',')[0]) };
+                results.DecoratedCakes = new Models.CategoryItem() { ItemID = 8, ItemDesc = "Decorated Cakes", blnAvailable = Convert.ToBoolean(col["DecoratedCakes.blnAvailable"].Split(',')[0]) };
+                results.Cupcakes = new Models.CategoryItem() { ItemID = 9, ItemDesc = "Cupcakes", blnAvailable = Convert.ToBoolean(col["Cupcakes.blnAvailable"].Split(',')[0]) };
+                results.Cookies = new Models.CategoryItem() { ItemID = 10, ItemDesc = "Cookies", blnAvailable = Convert.ToBoolean(col["Cookies.blnAvailable"].Split(',')[0]) };
+                results.Desserts = new Models.CategoryItem() { ItemID = 11, ItemDesc = "Desserts/Tortes", blnAvailable = Convert.ToBoolean(col["Desserts.blnAvailable"].Split(',')[0]) };
+                results.Full = new Models.CategoryItem() { ItemID = 12, ItemDesc = "Full-line Bakery", blnAvailable = Convert.ToBoolean(col["Full.blnAvailable"].Split(',')[0]) };
+                results.Deli = new Models.CategoryItem() { ItemID = 13, ItemDesc = "Deli/Catering", blnAvailable = Convert.ToBoolean(col["Deli.blnAvailable"].Split(',')[0]) };
+                results.Other = new Models.CategoryItem() { ItemID = 14, ItemDesc = "Other Carryout Deli", blnAvailable = Convert.ToBoolean(col["Other.blnAvailable"].Split(',')[0]) };
+                results.Wholesale = new Models.CategoryItem() { ItemID = 15, ItemDesc = "Wholesale", blnAvailable = Convert.ToBoolean(col["Wholesale.blnAvailable"].Split(',')[0]) };
+                results.Delivery = new Models.CategoryItem() { ItemID = 16, ItemDesc = "Delivery (3rd Party)", blnAvailable = Convert.ToBoolean(col["Delivery.blnAvailable"].Split(',')[0]) };
+                results.Shipping = new Models.CategoryItem() { ItemID = 17, ItemDesc = "Shipping", blnAvailable = Convert.ToBoolean(col["Shipping.blnAvailable"].Split(',')[0]) };
+                results.Online = new Models.CategoryItem() { ItemID = 18, ItemDesc = "Online Ordering", blnAvailable = Convert.ToBoolean(col["Online.blnAvailable"].Split(',')[0]) };
+
+                List<Models.CategoryItem> lstSearchBySpecialty = new List<Models.CategoryItem>() {
+                    results.Donuts, results.Bagels, results.Muffins, results.IceCream, results.FineCandies, results.WeddingCakes, results.Breads, results.DecoratedCakes, results.Cupcakes,
+                    results.Cookies, results.Desserts, results.Full, results.Deli, results.Other, results.Wholesale, results.Delivery, results.Shipping, results.Online
+                };
+
+                Models.Database db = new Models.Database();
+                results.lstLocations = db.GetLocations(lstSearchBySpecialty);
+                return View(results);
+			}
+
+            try {
+                long lngSelectedLocID = Convert.ToInt64(col["btnSubmit"]);
+                return RedirectToAction("TestLandingPage", new { id = lngSelectedLocID});
+            }
+            catch {
+                return View();
+            }
         }
+
+        public ActionResult TestLandingPage(long Id) {
+            Models.Database db = new Models.Database();
+            Models.SearchResults results = new Models.SearchResults();
+            Models.NewLocation loc = new Models.NewLocation();
+            results.landingLocation = db.GetLandingLocation(Id);
+            loc.LocationName = results.landingLocation.LocationName;
+            loc.City = results.landingLocation.City;
+            loc.StreetAddress = results.landingLocation.StreetAddress;
+            loc.State = results.landingLocation.State;
+            loc.Zip = results.landingLocation.Zip;
+
+            return View(loc);
+        }
+
+        public ActionResult MemberBakery(long Id) {
+            return View();
+		}
 
         public ActionResult AddNewLocation() {
 
@@ -270,6 +326,6 @@ namespace GCRBA.Views.Bakery {
         
         public ActionResult Map() {
             return View();
-		}
+		} 
     }
 }

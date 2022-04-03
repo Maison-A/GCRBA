@@ -590,6 +590,83 @@ namespace GCRBA.Models {
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+		public List<Models.NewLocation> GetLocations(List<Models.CategoryItem> categoryItems) {
 
+			List<Models.NewLocation> locs = new List<Models.NewLocation>();
+			foreach (Models.CategoryItem item in categoryItems) {
+				try {
+					DataSet ds = new DataSet();
+					SqlConnection cn = new SqlConnection();
+					if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+					SqlDataAdapter da = new SqlDataAdapter("SELECT_CATEGORYLOCATION", cn);
+
+					da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+					if (item.blnAvailable == true) SetParameter(ref da, "@intCategoryID", item.ItemID, SqlDbType.SmallInt);
+					else continue;
+					try {
+						da.Fill(ds);
+					}
+					catch (Exception ex2) {
+						throw new Exception(ex2.Message);
+					}
+					finally { CloseDBConnection(ref cn); }
+
+					if (ds.Tables[0].Rows.Count != 0) {
+						foreach (DataRow dr in ds.Tables[0].Rows) {
+							NewLocation loc = new NewLocation();
+							loc.lngLocationID = (long)dr["intLocationID"];
+							loc.lngCompanyID = (long)dr["intCompanyID"];
+							loc.LocationName = (string)dr["strCompanyName"];
+							loc.StreetAddress = (string)dr["strAddress"];
+							loc.City = (string)dr["strCity"];
+							loc.State = (string)dr["strState"];
+							loc.Zip = (string)dr["strZip"];
+							loc.selectedGood = (string)dr["strCategory"];
+							locs.Add(loc);
+						}
+					}
+				}
+				catch (Exception ex) { throw new Exception(ex.Message); }
+			}
+			return locs;
+		}
+
+		public Models.NewLocation GetLandingLocation(long lngLocationID = 0) {
+			try {
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlDataAdapter da = new SqlDataAdapter("SELECT_LOCATION", cn);
+				Models.NewLocation loc = new Models.NewLocation();
+
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				if (lngLocationID > 0) SetParameter(ref da, "@intLocationID", lngLocationID, SqlDbType.BigInt);
+				try {
+					da.Fill(ds);
+				}
+				catch (Exception ex2) {
+					throw new Exception(ex2.Message);
+				}
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0) {
+					foreach (DataRow dr in ds.Tables[0].Rows) {
+						loc.lngLocationID = (long)dr["intLocationID"];
+						loc.lngCompanyID = (long)dr["intCompanyID"];
+						loc.LocationName = (string)dr["strCompanyName"];
+						loc.StreetAddress = (string)dr["strAddress"];
+						loc.City = (string)dr["strCity"];
+						loc.State = (string)dr["strState"];
+						loc.Zip = (string)dr["strZip"];
+						loc.strFullPhone = (string)dr["strPhone"];
+						loc.BusinessEmail = (string)dr["strEmail"];
+					}
+				}
+				return loc;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
 	}
 }

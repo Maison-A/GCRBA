@@ -1,4 +1,12 @@
-﻿
+﻿@model GCRBA.Models.SearchResults
+
+<style>
+	.center {
+		margin-left: auto;
+		margin-right: auto;
+	}
+</style>
+
 @{
 	ViewBag.Title = "Search By Category";
 }
@@ -11,17 +19,151 @@
 <h4>Search the Tri-State for your Favorite Bakeries!</h4>
 @using (Html.BeginForm("Index", "Bakery", FormMethod.Post)) {
 
-	<br />
-	<div>
-		<button class="border-3" id="btnSearch" name="btnSubmit" value="search">Search</button>
-	</div>
-	<br />
+
+	if (Model.lstLocations == null) {
+		<div>
+			<h7>Specialty Product Categories:</h7>
+			<br />
+
+			<div>
+				<table class="center">
+					<tr>
+						<td>
+							@Html.CheckBoxFor(models => models.Donuts.blnAvailable)
+						</td>
+						<td>
+							@Html.LabelFor(model => model.Donuts, "Donuts")
+						</td>
+						<td>
+							@Html.CheckBoxFor(models => models.Bagels.blnAvailable)
+						</td>
+						<td>
+							@Html.LabelFor(model => model.Bagels, "Bagels")
+						</td>
+						<td>
+							@Html.CheckBoxFor(models => models.Muffins.blnAvailable)
+						</td>
+						<td>
+							@Html.LabelFor(model => model.Muffins, "Muffins")
+						</td>
+						<td>
+							@Html.CheckBoxFor(models => models.IceCream.blnAvailable)
+						</td>
+						<td>
+							@Html.LabelFor(model => model.IceCream, "Ice Cream")
+						</td>
+						<td>
+							@Html.CheckBoxFor(models => models.FineCandies.blnAvailable)
+						</td>
+						<td>
+							@Html.LabelFor(model => model.FineCandies, "Fine Candies & Chocolates")
+						</td>
+						<td>
+							@Html.CheckBoxFor(models => models.WeddingCakes.blnAvailable)
+						</td>
+						<td>
+							@Html.LabelFor(model => model.WeddingCakes, "Wedding Cakes")
+					</tr>
+					<tr>
+						<td>
+							@Html.CheckBoxFor(models => models.Breads.blnAvailable)
+						</td>
+						<td>
+							@Html.LabelFor(model => model.Breads, "Breads")
+						</td>
+						<td>
+							@Html.CheckBoxFor(models => models.DecoratedCakes.blnAvailable)
+						</td>
+						<td>
+							@Html.LabelFor(model => model.DecoratedCakes, "Decorated Cakes")
+						</td>
+						<td>
+							@Html.CheckBoxFor(models => models.Cupcakes.blnAvailable)
+						</td>
+						<td>
+							@Html.LabelFor(model => model.Cupcakes, "Cupcakes")
+						</td>
+						<td>
+							@Html.CheckBoxFor(models => models.Cookies.blnAvailable)
+						</td>
+						<td>
+							@Html.LabelFor(model => model.Cookies, "Cookies")
+						</td>
+						<td>
+							@Html.CheckBoxFor(models => models.Desserts.blnAvailable)
+						</td>
+						<td>
+							@Html.LabelFor(model => model.Desserts, "Desserts/Tortes")
+						</td>
+						<td>
+							@Html.CheckBoxFor(models => models.Full.blnAvailable)
+						</td>
+						<td>
+							@Html.LabelFor(model => model.Full, "Full-line Bakery")
+						</td>
+					</tr>
+					<tr>
+						<td>
+							@Html.CheckBoxFor(models => models.Deli.blnAvailable)
+						</td>
+						<td>
+							@Html.LabelFor(model => model.Deli, "Deli/Catering")
+						</td>
+						<td>
+							@Html.CheckBoxFor(models => models.Other.blnAvailable)
+						</td>
+						<td>
+							@Html.LabelFor(model => model.Other, "Other Deli Carryout")
+						</td>
+						<td>
+							@Html.CheckBoxFor(models => models.Wholesale.blnAvailable)
+						</td>
+						<td>
+							@Html.LabelFor(model => model.Wholesale, "Wholesale")
+						</td>
+						<td>
+							@Html.CheckBoxFor(models => models.Delivery.blnAvailable)
+						</td>
+						<td>
+							@Html.LabelFor(model => model.Delivery, "Delivery (3rd Party)")
+						</td>
+						<td>
+							@Html.CheckBoxFor(models => models.Shipping.blnAvailable)
+						</td>
+						<td>
+							@Html.LabelFor(model => model.Shipping, "Shipping")
+						</td>
+						<td>
+							@Html.CheckBoxFor(models => models.Online.blnAvailable)
+						</td>
+						<td>
+							@Html.LabelFor(model => model.Online, "Online Ordering")
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+
+		<br />
+		<div>
+			<button class="border-3" id="btnSearch" name="btnSubmit" value="search">Search</button>
+		</div>
+		<br />
+	}
+	else {
+		foreach (GCRBA.Models.NewLocation item in Model.lstLocations) {
+			<div>
+				<button name="btnSubmit" value=@item.lngLocationID>@item.LocationName | @item.StreetAddress, @item.City @item.State | @item.selectedGood</button>
+			</div>
+
+		}
+	}
 }
 
 @using (Html.BeginForm()) {
-<div class="some-spacing">
-	<button class="button-action" id="btnJoin" name="btnSubmit" value="addLocation">Add a Bakery!</button>
-</div>
+	<div class="some-spacing">
+		<button class="button-action" id="btnAdd" name="btnSubmit" value="addLocation">Add a Bakery!</button>
+	</div>
 }
 
 

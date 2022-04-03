@@ -212,6 +212,7 @@
     <Compile Include="Models\Days.cs" />
     <Compile Include="Models\NewLocation.cs" />
     <Compile Include="Models\PhoneNumber.cs" />
+    <Compile Include="Models\SearchResults.cs" />
     <Compile Include="Models\SocialMedia.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\Website.cs" />
@@ -262,6 +263,7 @@
     <Content Include="Views\Profile\Index.cshtml" />
     <Content Include="Views\Shared\UserTabMenu.cshtml" />
     <Content Include="Views\Bakery\Map.cshtml" />
+    <Content Include="Views\Bakery\TestLandingPage.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
