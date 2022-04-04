@@ -285,18 +285,18 @@ namespace GCRBA.Views.Bakery {
                     if (loc.LocationName.Length == 0 || loc.StreetAddress.Length == 0 || loc.City.Length == 0 || loc.State.Length == 0 || loc.Zip.Length == 0) {
                         loc.ActionType = Models.NewLocation.ActionTypes.RequiredFieldsMissing;
                         return View(loc);
-                    }
-
-                    
+                    }                    
 
                     Models.NewLocation.ActionTypes at = Models.NewLocation.ActionTypes.NoType;
                     at = loc.StoreNewLocation(categories, LocationHours, socialmedia, Websites, contacts);
                     switch (at) {
                         case Models.NewLocation.ActionTypes.InsertSuccessful:
-                            loc.ActionType = Models.NewLocation.ActionTypes.InsertSuccessful;
+                           
 
                             ExportToCsv.StartExport(location, businessInfo, categories, LocationHours, contacts, socialmedia, Websites);
 
+
+                            /*
                             using (firstProcess = new Process()) {
                                 firstProcess.StartInfo.FileName = "C:\\Users\\winsl\\AppData\\Local\\ESRI\\conda\\envs\\myenv-py3v2\\python.exe";
                                 firstProcess.StartInfo.CreateNoWindow = true;
@@ -304,8 +304,9 @@ namespace GCRBA.Views.Bakery {
                                 firstProcess.Start();
                                 firstProcess.WaitForExit();
                             }
+                            */
 
-                            return RedirectToAction("Index");
+                            return RedirectToAction("Index", "SendMailer");
                         case Models.NewLocation.ActionTypes.DeleteSuccessful:
                             loc.ActionType = Models.NewLocation.ActionTypes.DeleteSuccessful;
                             return RedirectToAction("Index");

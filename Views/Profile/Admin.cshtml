@@ -1,13 +1,35 @@
-﻿
+﻿@using GCRBA.Models
+
 @{
-    ViewBag.Title = "Admin";
+    ViewBag.Title = "Admin Portal";
 }
 
 @if (Model.isAdmin == 0)
 {
-    <p>This page is for admins only.</p>
+    <p>This page is for admins only. If you are an admin, please log in and try again.</p>
 }
 else
 {
-    <p>Hello,  @Model.FirstName, you are logged in as an admin.</p>
+    <div class="container">
+        <h2>@ViewBag.Title</h2>
+
+        @using (Html.BeginForm(FormMethod.Post))
+                {
+                   <!--display dropdown list of main banners-->
+                   <select name="mainBanners">
+                       @foreach (MainBanner mb in ViewBag.MainBanners)
+                        {
+                           <option value="@mb.BannerID">@mb.Banner</option>
+                        }
+                   </select>
+                    
+                   <!--display dropdown list of companies-->
+                   <select name="companies">
+                       @foreach (Company c in ViewBag.Companies)
+                        {
+                           <option value="@c.CompanyID">@c.Name</option>
+                        }
+                   </select>
+                }
+    </div>
 }

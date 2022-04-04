@@ -21,11 +21,11 @@ IF OBJECT_ID('tblMember')				IS NOT NULL DROP TABLE tblMember
 IF OBJECT_ID('tblMemberLevel')			IS NOT NULL DROP TABLE tblMemberLevel 
 IF OBJECT_ID('tblPaymentType')			IS NOT NULL DROP TABLE tblPaymentType 
 IF OBJECT_ID('tblApprovalStatus')		IS NOT NULL DROP TABLE tblApprovalStatus 
-IF OBJECT_ID('tblUser')					IS NOT NULL DROP TABLE tblUser 
-IF OBJECT_ID('tblState')				IS NOT NULL DROP TABLE tblState 
 IF OBJECT_ID('tblDay')					IS NOT NULL DROP TABLE tblDay
 IF OBJECT_ID('tblMainBanner')			IS NOT NULL DROP TABLE tblMainBanner
 IF OBJECT_ID('tblAboutGCRBA')			IS NOT NULL DROP TABLE tblAboutGCRBA
+IF OBJECT_ID('tblUser')					IS NOT NULL DROP TABLE tblUser 
+IF OBJECT_ID('tblState')				IS NOT NULL DROP TABLE tblState 
 
 --DROP STORED PROCEDURES
 IF OBJECT_ID('LOGIN')					IS NOT NULL DROP PROCEDURE LOGIN 
@@ -38,6 +38,8 @@ IF OBJECT_ID('INSERT_COMPANY')			IS NOT NULL DROP PROCEDURE INSERT_COMPANY
 IF OBJECT_ID('INSERT_CATEGORYLOCATION') IS NOT NULL DROP PROCEDURE INSERT_CATEGORYLOCATION
 IF OBJECT_ID('INSERT_LOCATIONHOURS')	IS NOT NULL DROP PROCEDURE INSERT_LOCATIONHOURS
 IF OBJECT_ID('GET_MAIN_BANNER')			IS NOT NULL DROP PROCEDURE GET_MAIN_BANNER
+IF OBJECT_ID('GET_COMPANY_INFO')		IS NOT NULL DROP PROCEDURE GET_COMPANY_INFO
+IF OBJECT_ID('GET_ALL_MAIN_BANNERS')	IS NOT NULL DROP PROCEDURE GET_ALL_MAIN_BANNERS
 
 CREATE TABLE tblState
 (
@@ -389,6 +391,7 @@ FOREIGN KEY (intCompanyID) REFERENCES tblCompany (intCompanyID)
 ALTER TABLE tblContactPerson ADD CONSTRAINT tblContactPerson_tblContactPersonType_FK
 FOREIGN KEY (intContactPersonTypeID) REFERENCES tblContactPersonType (intContactPersonTypeID)
 
+
 -- -----------------------------------------------------------------------------------------
 -- STORED PROCEDURES 
 -- -----------------------------------------------------------------------------------------
@@ -660,6 +663,26 @@ BEGIN
 	FROM	tblMainBanner 
 	WHERE	intMainBannerID IN (SELECT MAX(intMainBannerID) FROM tblMainBanner)
 END
+GO
+
+CREATE PROCEDURE [db_owner].[GET_ALL_MAIN_BANNERS]
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT	intMainBannerID, strBanner 
+	FROM	tblMainBanner 
+END
+GO
+
+CREATE PROCEDURE [db_owner].[GET_COMPANY_INFO]
+AS 
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT	intCompanyID, strCompanyName
+	FROM	tblCompany 
+END 
 GO
 
 -- -----------------------------------------------------------------------------------------
