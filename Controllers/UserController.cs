@@ -25,7 +25,6 @@ namespace GCRBA.Controllers
             {
                 Models.User u = new Models.User();
                 u = u.GetUserSession();
-
                 u.FirstName = col["FirstName"];
                 u.LastName = col["LastName"];
                 u.Email = col["Email"];
@@ -39,7 +38,26 @@ namespace GCRBA.Controllers
                 }
                 else
                 {
-                    return View(u);
+                    if (col["btnSubmit"] == "newuser")
+                    { //sign up button pressed
+                        Models.User.ActionTypes at = Models.User.ActionTypes.NoType;
+                        at = u.Save();
+                        switch (at)
+                        {
+                            case Models.User.ActionTypes.InsertSuccessful:
+                                u.SaveUserSession();
+                                // TODO: return to user profile page/index
+                                return RedirectToAction("Home","Index");
+                            //break;
+                            default:
+                                return View(u);
+                                //break;
+                        }
+                    }
+                    else
+                    {
+                        return View(u);
+                    }
                 }
             }
             catch (Exception)
@@ -47,7 +65,6 @@ namespace GCRBA.Controllers
                 Models.User u = new Models.User();
                 return View(u);
             }
-
         }
 
         public ActionResult AddNewUser()
