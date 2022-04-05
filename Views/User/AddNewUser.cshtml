@@ -8,17 +8,14 @@
 @using (Html.BeginForm(FormMethod.Post))
 {
 
-    //if the aqction type is the missing fields then execute the warning
+    //if the action type is the missing fields then execute the warning
     if (Model.ActionType == GCRBA.Models.User.ActionTypes.Unknown)
     {
         <div id="content-locked">
-
             <i class="fad fa-exclamation-trangle fa-2x"></i>
-            <span>Please check your passwords match.</span>
+            <span>Please ensure your passwords match.</span>
         </div>
     }
-
-    <div>
 
         <div class="section">
             <div>
@@ -63,17 +60,15 @@
             @Html.CheckBox("IsChecked", false)@Html.Label("Would you like to join the GCRBA?")
         </div>
 
-
-
         <div>
             <button id="btnNewUser" name="btnSubmit" value="newuser" class="button-action"><i class="fas fa-user-plus"></i> Sign-Up</button>
         </div>
-
-
-
-
-    </div>
-
 }
+
+<script>
+    $(document).ready(function () {
+        SetActiveMenus('signup');
+    });
+</script>
 
 

@@ -12,13 +12,48 @@ namespace GCRBA.Controllers
 
         public ActionResult Index()
         {
-            return View();
+            Models.User u = new Models.User();
+            u = u.GetUserSession();
+           
+            return View(u);
         }
 
+        [HttpPost]
+        public ActionResult Index(FormCollection col)
+        {
+            try
+            {
+                Models.User u = new Models.User();
+                u = u.GetUserSession();
+
+                u.FirstName = col["FirstName"];
+                u.LastName = col["LastName"];
+                u.Email = col["Email"];
+                //u.UserID = col["UserID"];
+                u.Password = col["Password"];
+
+                if (u.FirstName.Length == 0 || u.LastName.Length == 0 || u.Email.Length == 0 || u.Password.Length == 0)
+                {
+                    u.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
+                    return View(u);
+                }
+                else
+                {
+                    return View(u);
+                }
+            }
+            catch (Exception)
+            {
+                Models.User u = new Models.User();
+                return View(u);
+            }
+
+        }
 
         public ActionResult AddNewUser()
         {
-            return View();
+            Models.User u = new Models.User();
+            return View(u);
         }
 
 
