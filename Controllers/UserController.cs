@@ -132,10 +132,15 @@ namespace GCRBA.Controllers
         }
 
 
-
+        // TODO: bring up how to manage initilization
+        // will we be forcing members to become Users? 
         public ActionResult AddNewMember()
         {
-            return View();
+            // if user exists: update user value to member
+            Models.User u = new Models.User();
+            return View(u);
+
+            // if user doesnt exist - redirect to sign up?
         }
 
 

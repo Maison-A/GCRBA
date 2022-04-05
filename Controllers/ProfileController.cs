@@ -251,28 +251,28 @@ namespace GCRBA.Controllers
             return View();
         }
 
-        [HttpPost]
-        public ActionResult EditMainBanner(FormCollection col)
-        {
-            // submit button pressed
-            if (col["btnSubmit"].ToString() == "submitNewBanner")
-            {
-                try
-                {
-                    MainBanner mb = new MainBanner();
+        //[HttpPost]
+        //public ActionResult EditMainBanner(FormCollection col)
+        //{
+        //    // submit button pressed
+        //    if (col["btnSubmit"].ToString() == "submitNewBanner")
+        //    {
+        //        try
+        //        {
+        //            MainBanner mb = new MainBanner();
 
-                    mb.BannerID = 
-                }
-            }
+        //            mb.BannerID = 
+        //        }
+        //    }
 
             // cancel button pressed
-            if (col["btnSubmit"].ToString() == "cancel")
-            {
-                return RedirectToAction("Admin", "Profile");
-            }
+            //if (col["btnSubmit"].ToString() == "cancel")
+            //{
+            //    return RedirectToAction("Admin", "Profile");
+            //}
 
-            return View();
-        }
+            //return View();
+       // }
 
     }
 }
