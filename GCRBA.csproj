@@ -270,6 +270,7 @@
     <Content Include="Views\Profile\Member.cshtml" />
     <Content Include="Views\Profile\Admin.cshtml" />
     <Content Include="Views\Profile\AdminLogin.cshtml" />
+    <Content Include="Views\Profile\EditMainBanner.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -212,19 +212,66 @@ namespace GCRBA.Controllers
         public ActionResult Admin()
         {
             // get current user to pass to the view 
-            Models.User user = new Models.User();
-            user = user.GetUserSession();
+            Models.User u = new Models.User();
+            u = u.GetUserSession();
 
-            // create new instance of Database 
             Database db = new Database();
-
-            // get list of banner IDs and strings, and add to viewbag
-            ViewBag.MainBanners = db.GetMainBanners();
-
             // get list of company IDs and names, and add to viewbag
             ViewBag.Companies = db.GetCompanies();
 
-            return View(user);
+            return View(u);
+        }
+
+        [HttpPost]
+        public ActionResult Admin(FormCollection col)
+        {
+            if (col["btnSubmit"].ToString() == "editMainBanner")
+            {
+                return RedirectToAction("EditMainBanner", "Profile");
+            }
+
+            return View();
+        }
+
+        public ActionResult EditMainBanner()
+        {
+            // initialize variable(s)/create new object(s)
+            ViewBag.isAdmin = false;
+            User u = new User();
+
+            // get current session of user
+            ViewBag.isAdmin = u.GetAdminStatus();
+
+            // create new database object
+            Database db = new Database();
+
+            // get main banner list (bannerID, banner string)
+            ViewBag.Banners = db.GetMainBanners();
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult EditMainBanner(FormCollection col)
+        {
+            // submit button pressed
+            if (col["btnSubmit"].ToString() == "submitNewBanner")
+            {
+                try
+                {
+                    MainBanner mb = new MainBanner();
+
+                    mb.BannerID = 
+                }
+            }
+
+            // cancel button pressed
+            if (col["btnSubmit"].ToString() == "cancel")
+            {
+                return RedirectToAction("Admin", "Profile");
+            }
+
+            return View();
         }
 
     }

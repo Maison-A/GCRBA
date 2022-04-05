@@ -78,6 +78,29 @@ namespace GCRBA.Models
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
+        public bool GetAdminStatus()
+        {
+            // declare variable
+            User u = new User();
+
+            try
+            {
+                // get current user
+                u = u.GetUserSession();
+
+                // is user admin?
+                if (u.isAdmin == 1)
+                {
+                    // yes, return true
+                    return true;
+                }
+
+                // user is not admin, return false
+                return false;
+            } 
+            catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
         // succesful login -  return User object
         // unsuccessful login - return null 
         public User Login()

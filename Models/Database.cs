@@ -313,6 +313,35 @@ namespace GCRBA.Models {
 			catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
+		public MainBanner.ActionTypes InsertNewMainBanner(MainBanner mb)
+        {
+			try
+            {
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+				SqlCommand cm = new SqlCommand("INSERT_NEW_MAIN_BANNER", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intMainBannerID", mb.BannerID, SqlDbType.SmallInt, Direction: ParameterDirection.Output);
+				SetParameter(ref cm, "@strBanner", mb.Banner, SqlDbType.NVarChar);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1)
+                {
+					mb.BannerID = (int)cm.Parameters["@intMainBannerID"].Value;
+					return MainBanner.ActionTypes.InsertSuccessful;
+                } else
+                {
+					return MainBanner.ActionTypes.Unknown;
+                }
+			}
+        }
+
 		private int SetParameter(ref SqlCommand cm, string ParameterName, Object Value
 			, SqlDbType ParameterType, int FieldSize = -1
 			, ParameterDirection Direction = ParameterDirection.Input
