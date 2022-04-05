@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Net.Mail;
+using System.Net.Mime;
 
 
 namespace GCRBA.Controllers
@@ -17,7 +18,7 @@ namespace GCRBA.Controllers
         }
 
         [HttpPost]
-        public ViewResult Index(GCRBA.Models.MailModel _objModelMail) {
+        public ActionResult Index(GCRBA.Models.MailModel _objModelMail) {
             if (ModelState.IsValid) {
                 MailMessage mail = new MailMessage();
                 mail.To.Add(_objModelMail.To);
@@ -25,20 +26,22 @@ namespace GCRBA.Controllers
                 mail.Subject = _objModelMail.Subject;
                 string Body = _objModelMail.Body;
                 mail.Body = Body;
-                var attachment = new Attachment("C:\\Users\\winsl\\OneDrive\\Desktop\\Capstone\\MVC\\CSV_Folder\\Bakery.csv", mediaType: "csv");
+                string file = "C:\\Users\\winsl\\OneDrive\\Desktop\\Capstone\\MVC\\CSV_Folder\\Bakery.csv";
+                var attachment = new Attachment(file, MediaTypeNames.Application.Octet);
                 mail.IsBodyHtml = true;
+                mail.Attachments.Add(attachment);
                 SmtpClient smtp = new SmtpClient();
                 smtp.Host = "smtp.gmail.com";
                 smtp.Port = 587;
                 smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new System.Net.NetworkCredential("winslow.shane2@gmail.com", "NuevoEstudiante#3");
+                smtp.Credentials = new System.Net.NetworkCredential("gcrbadata@gmail.com", "sazjptmmfdiyebom");
                 smtp.EnableSsl = true;
                 smtp.Send(mail);
-                return View("Index", _objModelMail);
+                return RedirectToAction("Index", "Bakery");
             }
             else {
                 return View();
 			}
-		}
+        }
     }
 }

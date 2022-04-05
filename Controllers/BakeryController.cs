@@ -15,7 +15,7 @@ using GCRBA;
 
 namespace GCRBA.Views.Bakery {
     public class BakeryController : Controller {
-        private Process firstProcess;
+        //private Process firstProcess;
 
         // GET: Bakery
         public ActionResult Index() {
