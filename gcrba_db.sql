@@ -40,6 +40,8 @@ IF OBJECT_ID('INSERT_LOCATIONHOURS')	IS NOT NULL DROP PROCEDURE INSERT_LOCATIONH
 IF OBJECT_ID('GET_MAIN_BANNER')			IS NOT NULL DROP PROCEDURE GET_MAIN_BANNER
 IF OBJECT_ID('GET_COMPANY_INFO')		IS NOT NULL DROP PROCEDURE GET_COMPANY_INFO
 IF OBJECT_ID('GET_ALL_MAIN_BANNERS')	IS NOT NULL DROP PROCEDURE GET_ALL_MAIN_BANNERS
+IF OBJECT_ID('SELECT_LOCATION')			IS NOT NULL DROP PROC SELECT_LOCATION
+IF OBJECT_ID('SELECT_CATEGORYLOCATION') IS NOT NULL DROP PROC SELECT_CATEGORYLOCATION
 
 CREATE TABLE tblState
 (
@@ -683,6 +685,55 @@ BEGIN
 	SELECT	intCompanyID, strCompanyName
 	FROM	tblCompany 
 END 
+GO
+
+CREATE PROCEDURE [dbo].[SELECT_LOCATION]
+@intLocationID BIGINT = NULL
+AS 
+BEGIN
+	SET NOCOUNT ON;
+	
+	IF @intLocationID IS NOT NULL
+	BEGIN
+		SELECT *
+		FROM db_owner.tblLocation as Loc
+		JOIN db_owner.tblCompany as Comp
+		ON Comp.intCompanyID = Loc.intCompanyID
+		JOIN db_owner.tblState as St
+		ON St.intStateID = Loc.intStateID
+		WHERE [intLocationID] = @intLocationID
+	END
+END
+GO
+
+CREATE PROCEDURE [dbo].[SELECT_CATEGORYLOCATION]
+@intCategoryID SMALLINT = NULL
+AS 
+BEGIN
+	SET NOCOUNT ON;
+	
+	IF @intCategoryID IS NOT NULL
+	BEGIN
+		SELECT Loc.intLocationID,
+		Comp.intCompanyID,
+		Comp.strCompanyName,
+		Loc.strAddress,
+		Loc.strCity,
+		St.strState,
+		Loc.strZip,
+		Kind.strCategory
+		FROM db_owner.tblCategoryLocation As Catloc
+		JOIN db_owner.tblLocation AS Loc
+		ON Catloc.intLocationID = Loc.intLocationID
+		JOIN db_owner.tblState As St
+		ON St.intStateID = Loc.intStateID
+		JOIN db_owner.tblCategory AS Kind
+		ON Kind.intCategoryID = Catloc.intCategoryID
+		JOIN db_owner.tblCompany AS Comp
+		ON Comp.intCompanyID = Loc.intCompanyID
+		WHERE Catloc.intCategoryID = @intCategoryID;
+	END
+END
 GO
 
 -- -----------------------------------------------------------------------------------------

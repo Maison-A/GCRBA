@@ -1,0 +1,23 @@
+﻿@model GCRBA.Models.MailModel
+
+@{
+    ViewBag.Title = "Mail GCRBA";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<fieldset>
+	<legend>
+		Send Email
+	</legend>
+	@using (Html.BeginForm()) {
+		@Html.ValidationSummary()
+		<p>From: </p>
+		<p>@Html.TextBoxFor(model => model.From)</p>
+		<p>Subject: </p>
+		<p>@Html.TextBoxFor(model => model.Subject)</p>
+		<p>Body: </p>
+		<p>@Html.TextAreaFor(models=>models.Body)</p>
+	<input type="submit" value="Send" />
+	}
+</fieldset>
