@@ -9,5 +9,13 @@ namespace GCRBA.Models
     {
         public int BannerID = 0;
         public string Banner = string.Empty;
+        public ActionTypes ActionType = ActionTypes.NoType;
+    }
+
+    public enum ActionTypes
+    {
+        NoType = 0,
+        InsertSuccessful = 1,
+        Unknown = 2
     }
 }

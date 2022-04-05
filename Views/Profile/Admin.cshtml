@@ -10,26 +10,22 @@
 }
 else
 {
-    <div class="container">
-        <h2>@ViewBag.Title</h2>
+<div class="container w-75">
+    <h2>@ViewBag.Title</h2>
 
-        @using (Html.BeginForm(FormMethod.Post))
-                {
-                   <!--display dropdown list of main banners-->
-                   <select name="mainBanners">
-                       @foreach (MainBanner mb in ViewBag.MainBanners)
-                        {
-                           <option value="@mb.BannerID">@mb.Banner</option>
-                        }
-                   </select>
-                    
-                   <!--display dropdown list of companies-->
-                   <select name="companies">
-                       @foreach (Company c in ViewBag.Companies)
-                        {
-                           <option value="@c.CompanyID">@c.Name</option>
-                        }
-                   </select>
-                }
-    </div>
+    @using (Html.BeginForm(FormMethod.Post))
+    {
+
+        <button name="btnSubmit" value="editMainBanner">Edit Homepage Banner</button>
+
+        <!--display dropdown list of companies-->
+        <select name="companies" class="form-select">
+            @foreach (Company c in ViewBag.Companies)
+            {
+                <option value="@c.CompanyID">@c.Name</option>
+            }
+        </select>
+    }
+
+</div>
 }

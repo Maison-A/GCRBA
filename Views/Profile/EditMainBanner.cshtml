@@ -1,0 +1,42 @@
+﻿@using GCRBA.Models
+
+@{
+    ViewBag.Title = "Edit Homepage Banner";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (ViewBag.isAdmin == false)
+{
+    <p>This page can only be view by admin. Please log in as an admin and try again.</p>
+}
+else
+{
+    <div class="container w-50">
+        @using (Html.BeginForm(FormMethod.Post))
+        {
+        <label for="mainBanners" class="mt-5">Select what you would like the main banner to say below:</label>
+
+        <!--display dropdown list of main banners-->
+        <select name="mainBanners" id="mainBanners" class="form-select mt-1 mb-4">
+            @foreach (MainBanner mb in ViewBag.Banners)
+            {
+                <option value="@mb.BannerID">@mb.Banner</option>
+            }
+            <option value="new">Enter a new banner</option>
+        </select>
+
+        <textarea id="newBanner" style="display:none" class="form-control mt-2 mb-4"></textarea>
+
+        <button name="btnSubmit" value="submitNewBanner">Submit Change</button>
+        <button name="btnSubmit" value="cancel">Cancel</button>
+
+        }
+
+        <script>
+            $('#mainBanners').on('change', function () {
+                $('#newBanner').css('display', (this.value === 'new') ? 'block' : 'none');
+            });
+        </script>
+    </div>
+}
