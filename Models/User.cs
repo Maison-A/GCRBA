@@ -33,6 +33,30 @@ namespace GCRBA.Models
                 return false;
             }
         }
+  
+        // will return action type
+        // ----------------------------------------------------------- //
+        // Name:
+        // Desc:
+        // ----------------------------------------------------------- //
+        public User.ActionTypes Save()
+        {
+            try
+            {
+                Database db = new Database();
+                if (UID == 0)
+                { //insert new user
+                    this.ActionType = db.InsertUser(this);
+                }
+                // TODO: handle duplicate sign up creds
+                else
+                {
+                    this.ActionType = db.UpdateUser(this);
+                }
+                return this.ActionType;
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
+        }
 
         // obtain current session status
         public User GetUserSession()

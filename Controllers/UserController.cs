@@ -12,13 +12,65 @@ namespace GCRBA.Controllers
 
         public ActionResult Index()
         {
-            return View();
+            Models.User u = new Models.User();
+            u = u.GetUserSession();
+           
+            return View(u);
         }
 
+        [HttpPost]
+        public ActionResult Index(FormCollection col)
+        {
+            try
+            {
+                Models.User u = new Models.User();
+                u = u.GetUserSession();
+                u.FirstName = col["FirstName"];
+                u.LastName = col["LastName"];
+                u.Email = col["Email"];
+                //u.UserID = col["UserID"];
+                u.Password = col["Password"];
+
+                if (u.FirstName.Length == 0 || u.LastName.Length == 0 || u.Email.Length == 0 || u.Password.Length == 0)
+                {
+                    u.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
+                    return View(u);
+                }
+                else
+                {
+                    if (col["btnSubmit"] == "newuser")
+                    { //sign up button pressed
+                        Models.User.ActionTypes at = Models.User.ActionTypes.NoType;
+                        at = u.Save();
+                        switch (at)
+                        {
+                            case Models.User.ActionTypes.InsertSuccessful:
+                                u.SaveUserSession();
+                                // TODO: return to user profile page/index
+                                return RedirectToAction("Home","Index");
+                            //break;
+                            default:
+                                return View(u);
+                                //break;
+                        }
+                    }
+                    else
+                    {
+                        return View(u);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                Models.User u = new Models.User();
+                return View(u);
+            }
+        }
 
         public ActionResult AddNewUser()
         {
-            return View();
+            Models.User u = new Models.User();
+            return View(u);
         }
 
 
@@ -80,10 +132,15 @@ namespace GCRBA.Controllers
         }
 
 
-
+        // TODO: bring up how to manage initilization
+        // will we be forcing members to become Users? 
         public ActionResult AddNewMember()
         {
-            return View();
+            // if user exists: update user value to member
+            Models.User u = new Models.User();
+            return View(u);
+
+            // if user doesnt exist - redirect to sign up?
         }
 
 

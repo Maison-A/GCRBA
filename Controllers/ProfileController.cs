@@ -261,13 +261,13 @@ namespace GCRBA.Controllers
             }
 
             // cancel button pressed
-            if (col["btnSubmit"].ToString() == "cancel")
-            {
-                return RedirectToAction("Admin", "Profile");
-            }
+            //if (col["btnSubmit"].ToString() == "cancel")
+            //{
+            //    return RedirectToAction("Admin", "Profile");
+            //}
 
-            return View();
-        }
+            //return View();
+       // }
 
     }
 }
