@@ -257,12 +257,7 @@ namespace GCRBA.Controllers
             // submit button pressed
             if (col["btnSubmit"].ToString() == "submitNewBanner")
             {
-                try
-                {
-                    MainBanner mb = new MainBanner();
-
-                    mb.BannerID = 
-                }
+                // INSERT NEW BANNER TO DATABASE
             }
 
             // cancel button pressed
