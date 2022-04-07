@@ -30,33 +30,33 @@
             <!-- User First Name -->
             <div>
                 <div>@Html.Label("First Name")</div>
-                <div>@Html.TextBoxFor(model => model.FirstName, new { @autofocus = "autofocus" })</div>
+                <div>@Html.TextBoxFor(model => model.FirstName, new {@name = "FirstName", @autofocus = "autofocus" })</div>
             </div>
 
             <!-- User Last Name -->
             <div>
                 <div>@Html.Label("Last Name")</div>
-                <div>@Html.TextBoxFor(model => model.LastName)</div>
+                <div>@Html.TextBoxFor(model => model.LastName, new { @Name = "LastName" })</div>
             </div>
         </div>
 
         <!-- Email -->
         <div>
             <div>@Html.Label("E-mail")</div>
-            <div>@Html.TextBoxFor(model => model.Email)</div>
+            <div>@Html.TextBoxFor(model => model.Email, new { @Name = "Email" })</div>
         </div>
 
         <!-- Username -->
         <div>
             <div>@Html.Label("Username")</div>
-            <div>@Html.TextBoxFor(model => model.Username)</div>
+            <div>@Html.TextBoxFor(model => model.Username, new { @Name = "Username" })</div>
         </div>
     </div>
 
     <!-- Password -->
     <div class="section">
         <div>@Html.Label("Password")</div>
-        <div>@Html.TextBoxFor(model => model.Password, new { @Name = "passver1" })</div>
+        <div>@Html.TextBoxFor(model => model.Password, new { type = "password", @Name = "Password" })</div>
 
         <!-- Password verify -->
         <!--<div>@Html.Label("Verify Password")</div>
