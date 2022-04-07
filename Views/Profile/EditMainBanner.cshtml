@@ -1,4 +1,4 @@
-﻿@using GCRBA.Models
+﻿@using GCRBA.ViewModels
 
 @{
     ViewBag.Title = "Edit Homepage Banner";
@@ -19,9 +19,9 @@ else
 
         <!--display dropdown list of main banners-->
         <select name="mainBanners" id="mainBanners" class="form-select mt-1 mb-4">
-            @foreach (MainBanner mb in ViewBag.Banners)
+            @foreach (var item in Model.MainBanners)
             {
-                <option value="@mb.BannerID">@mb.Banner</option>
+                <option value="@item.BannerID">@item.Banner</option>
             }
             <option value="new">Enter a new banner</option>
         </select>

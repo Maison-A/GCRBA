@@ -7,22 +7,22 @@ namespace GCRBA.Models
 {
     public class User
     {
-        public int UID = 0;
-        public string FirstName = string.Empty;
-        public string LastName = string.Empty;
-        public string Address = string.Empty;
-        public string City = string.Empty;
-        public string State = string.Empty;
-        public string Zip = string.Empty;
-        public string Phone = string.Empty;
-        public string Email = string.Empty;
+        public int UID { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Address { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string Zip { get; set; }
+        public string Phone { get; set; }
+        public string Email { get; set; }
         public string MemberShipType = string.Empty;    
-        public string Username = string.Empty;
-        public string Password = string.Empty;
-        public string PaymentType = string.Empty;
-        public int isAdmin = 0;
-        public int isMember = 0;
-        public ActionTypes ActionType = ActionTypes.NoType;
+        public string Username { get; set; }
+        public string Password { get; set; }
+    public string PaymentType = string.Empty;
+        public int isAdmin { get; set; }
+        public int isMember { get; set; }
+        public ActionTypes ActionType { get; set; } = ActionTypes.NoType;
 
         // tells us if current user is logged in 
         public bool IsAuthenticated
