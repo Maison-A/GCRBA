@@ -1,4 +1,5 @@
 ﻿using GCRBA.Models;
+using GCRBA.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -235,40 +236,29 @@ namespace GCRBA.Controllers
 
         public ActionResult EditMainBanner()
         {
-            // initialize variable(s)/create new object(s)
-            ViewBag.isAdmin = false;
-            User u = new User();
+
+            AdminBannerViewModel vm = new AdminBannerViewModel();
+
+            vm.CurrentUser = new User();
 
             // get current session of user
-            ViewBag.isAdmin = u.GetAdminStatus();
+            //ViewBag.isAdmin = u.GetAdminStatus();
 
             // create new database object
             Database db = new Database();
 
-            // get main banner list (bannerID, banner string)
-            ViewBag.Banners = db.GetMainBanners();
+            // create list to hold banners 
+            List<MainBanner> listOfMainBanners = new List<MainBanner>();
 
-            return View();
+            // add previous + current banners to list 
+            listOfMainBanners = db.GetMainBanners();
+
+            // add list of banners to view model 
+            vm.MainBanners = listOfMainBanners;
+
+            // return view with view model object passed as argument so we can access it in view
+            return View(vm);
         }
 
-        //    [HttpPost]
-        //    public ActionResult EditMainBanner(FormCollection col)
-        //    {
-        //        // submit button pressed
-        //        if (col["btnSubmit"].ToString() == "submitNewBanner")
-        //        {
-        //            // INSERT NEW BANNER TO DATABASE
-        //        }
-
-        //        // cancel button pressed
-        //        //if (col["btnSubmit"].ToString() == "cancel")
-        //        //{
-        //        //    return RedirectToAction("Admin", "Profile");
-        //        //}
-
-        //        //return View();
-        //   // }
-
-        //}
     }
 }
