@@ -73,7 +73,6 @@ namespace GCRBA.Controllers
             return View(u);
         }
 
-
         [HttpPost]
         public ActionResult AddNewUser(FormCollection col)
         {
@@ -90,15 +89,12 @@ namespace GCRBA.Controllers
                 u.Password = col["Password"];
                 u.Address = string.Empty;
                 u.City = string.Empty;
-                // I commented this out to avoid it throwing an error for now but in the User class, I changed
-                // intStateID to strState because I now added the ability for it to pull the state name in, not just the ID
-                // but I didn't want to change this without knowing if it would affect anything so let me know. -Katie 
-                //u.intStateID = 0;
                 u.Zip = string.Empty;
                 u.Phone = string.Empty;
                 u.MemberShipType = string.Empty;
                 u.PaymentType = string.Empty;
 
+                // make sure fields are filled out
                 if (u.FirstName.Length == 0 || u.LastName.Length == 0 || u.Email.Length == 0 || u.Username.Length == 0
                        || u.Password.Length == 0)
                 {
@@ -112,12 +108,13 @@ namespace GCRBA.Controllers
                     if (col["btnSubmit"].ToString() == "newuser")
                     {
                         Models.User.ActionTypes at = Models.User.ActionTypes.NoType;
+                        // adjust - make sure to push to db and not save (waiting for katie)
                         at = u.Save();
                         switch (at)
                         {
                             case Models.User.ActionTypes.InsertSuccessful:
                                 u.SaveUserSession();
-                                return RedirectToAction("Home","Index");
+                                return RedirectToAction("Index","Home");
 
                             default:
                                 return View(u);
@@ -126,8 +123,7 @@ namespace GCRBA.Controllers
                     else
                     {
                         return View(u);
-                    }
-                    
+                    }      
                 }
             }
             catch (Exception)
@@ -156,7 +152,8 @@ namespace GCRBA.Controllers
             if (col["btnSignUp"].ToString() == "submit")
             {
                 //validate data
-
+                // if user exists set value to memeber
+                // 
                 // send data if valid to db
 
                 // return to member page - use generated user id as 

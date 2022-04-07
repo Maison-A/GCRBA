@@ -33,12 +33,7 @@ namespace GCRBA.Models
                 return false;
             }
         }
-  
-        // will return action type
-        // ----------------------------------------------------------- //
-        // Name:
-        // Desc:
-        // ----------------------------------------------------------- //
+
         public User.ActionTypes Save()
         {
             try
