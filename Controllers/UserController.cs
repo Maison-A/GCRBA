@@ -98,31 +98,37 @@ namespace GCRBA.Controllers
                 u.Phone = string.Empty;
                 u.MemberShipType = string.Empty;
                 u.PaymentType = string.Empty;
-                
-                if (col["btnSubmit"].ToString() == "newuser")
-                {
-                    if (u.FirstName.Length == 0 || u.LastName.Length == 0 || u.Email.Length == 0 || u.Username.Length == 0
-                        || u.Password.Length == 0)
-                    {
-                        u.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
-                        return View(u);
-                    }
 
-                    //validate data - trying to check pass values match
-                    //if (col["passver1"].ToString() != col["passver2"].ToString())
-                    //{
-                    //    u.ActionType = Models.User.ActionTypes.Unknown;
-                    //    return View(u);
-                    //}
+                if (u.FirstName.Length == 0 || u.LastName.Length == 0 || u.Email.Length == 0 || u.Username.Length == 0
+                       || u.Password.Length == 0)
+                {
+                    u.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
+                    return View(u);
                 }
+
                 // send data if valid to db
                 else
                 {
+                    if (col["btnSubmit"].ToString() == "newuser")
+                    {
+                        Models.User.ActionTypes at = Models.User.ActionTypes.NoType;
+                        at = u.Save();
+                        switch (at)
+                        {
+                            case Models.User.ActionTypes.InsertSuccessful:
+                                u.SaveUserSession();
+                                return RedirectToAction("Home","Index");
 
-                    // return to member page - be sure to maintain current user
-                    return RedirectToAction("Index", "Home");
+                            default:
+                                return View(u);
+                        }
+                    }
+                    else
+                    {
+                        return View(u);
+                    }
+                    
                 }
-                return View(u);
             }
             catch (Exception)
             {

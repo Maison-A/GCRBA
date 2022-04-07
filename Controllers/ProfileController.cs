@@ -22,7 +22,7 @@ namespace GCRBA.Controllers
             return View(user);
         }
 
-        
+
 
         public ActionResult Login()
         {
@@ -79,14 +79,14 @@ namespace GCRBA.Controllers
                             {
                                 // this login area is for members/non-members only, not admin 
                                 user.ActionType = Models.User.ActionTypes.LoginFailed;
-                            } 
+                            }
                             else
                             {
                                 if (user.isMember == 0)
                                 {
                                     // user is not a member, so send them to non-member interface
                                     return RedirectToAction("NonMember");
-                                } 
+                                }
                                 else
                                 {
                                     // user is a member, so send them to the member interface
@@ -103,8 +103,8 @@ namespace GCRBA.Controllers
                         }
                     }
 
-                 return View(user);
-                    
+                    return View(user);
+
                 }
             }
             catch (Exception)
@@ -162,7 +162,7 @@ namespace GCRBA.Controllers
 
                                 // user is an admin so send them to the admin interface 
                                 return RedirectToAction("Admin");
-                            } 
+                            }
                             else
                             {
                                 user.ActionType = Models.User.ActionTypes.LoginFailed;

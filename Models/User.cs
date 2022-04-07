@@ -146,7 +146,8 @@ namespace GCRBA.Models
             DuplicateUserID = 4,
             Unknown = 5,
             RequiredFieldMissing = 6,
-            LoginFailed = 7
+            LoginFailed = 7,
+         
             
         }
     }
