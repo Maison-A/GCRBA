@@ -1,4 +1,5 @@
 ﻿using GCRBA.Models;
+using GCRBA.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace GCRBA.Controllers
             return View(user);
         }
 
-        
+
 
         public ActionResult Login()
         {
@@ -78,14 +79,14 @@ namespace GCRBA.Controllers
                             {
                                 // this login area is for members/non-members only, not admin 
                                 user.ActionType = Models.User.ActionTypes.LoginFailed;
-                            } 
+                            }
                             else
                             {
                                 if (user.isMember == 0)
                                 {
                                     // user is not a member, so send them to non-member interface
                                     return RedirectToAction("NonMember");
-                                } 
+                                }
                                 else
                                 {
                                     // user is a member, so send them to the member interface
@@ -102,8 +103,8 @@ namespace GCRBA.Controllers
                         }
                     }
 
-                 return View(user);
-                    
+                    return View(user);
+
                 }
             }
             catch (Exception)
@@ -161,7 +162,7 @@ namespace GCRBA.Controllers
 
                                 // user is an admin so send them to the admin interface 
                                 return RedirectToAction("Admin");
-                            } 
+                            }
                             else
                             {
                                 user.ActionType = Models.User.ActionTypes.LoginFailed;
@@ -212,19 +213,51 @@ namespace GCRBA.Controllers
         public ActionResult Admin()
         {
             // get current user to pass to the view 
-            Models.User user = new Models.User();
-            user = user.GetUserSession();
+            Models.User u = new Models.User();
+            u = u.GetUserSession();
 
-            // create new instance of Database 
             Database db = new Database();
-
-            // get list of banner IDs and strings, and add to viewbag
-            ViewBag.MainBanners = db.GetMainBanners();
-
             // get list of company IDs and names, and add to viewbag
             ViewBag.Companies = db.GetCompanies();
 
-            return View(user);
+            return View(u);
+        }
+
+        [HttpPost]
+        public ActionResult Admin(FormCollection col)
+        {
+            if (col["btnSubmit"].ToString() == "editMainBanner")
+            {
+                return RedirectToAction("EditMainBanner", "Profile");
+            }
+
+            return View();
+        }
+
+        public ActionResult EditMainBanner()
+        {
+
+            AdminBannerViewModel vm = new AdminBannerViewModel();
+
+            vm.CurrentUser = new User();
+
+            // get current session of user
+            //ViewBag.isAdmin = u.GetAdminStatus();
+
+            // create new database object
+            Database db = new Database();
+
+            // create list to hold banners 
+            List<MainBanner> listOfMainBanners = new List<MainBanner>();
+
+            // add previous + current banners to list 
+            listOfMainBanners = db.GetMainBanners();
+
+            // add list of banners to view model 
+            vm.MainBanners = listOfMainBanners;
+
+            // return view with view model object passed as argument so we can access it in view
+            return View(vm);
         }
 
     }

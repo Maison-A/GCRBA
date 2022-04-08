@@ -7,22 +7,22 @@ namespace GCRBA.Models
 {
     public class User
     {
-        public int UID = 0;
-        public string FirstName = string.Empty;
-        public string LastName = string.Empty;
-        public string Address = string.Empty;
-        public string City = string.Empty;
-        public string State = string.Empty;
-        public string Zip = string.Empty;
-        public string Phone = string.Empty;
-        public string Email = string.Empty;
+        public int UID { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Address { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string Zip { get; set; }
+        public string Phone { get; set; }
+        public string Email { get; set; }
         public string MemberShipType = string.Empty;    
-        public string Username = string.Empty;
-        public string Password = string.Empty;
-        public string PaymentType = string.Empty;
-        public int isAdmin = 0;
-        public int isMember = 0;
-        public ActionTypes ActionType = ActionTypes.NoType;
+        public string Username { get; set; }
+        public string Password { get; set; }
+    public string PaymentType = string.Empty;
+        public int isAdmin { get; set; }
+        public int isMember { get; set; }
+        public ActionTypes ActionType { get; set; } = ActionTypes.NoType;
 
         // tells us if current user is logged in 
         public bool IsAuthenticated
@@ -32,6 +32,25 @@ namespace GCRBA.Models
                 if (UID > 0) return true;
                 return false;
             }
+        }
+
+        public User.ActionTypes Save()
+        {
+            try
+            {
+                Database db = new Database();
+                if (UID == 0)
+                { //insert new user
+                    this.ActionType = db.InsertUser(this);
+                }
+                // TODO: handle duplicate sign up creds
+                else
+                {
+                    this.ActionType = db.UpdateUser(this);
+                }
+                return this.ActionType;
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         // obtain current session status
@@ -78,6 +97,29 @@ namespace GCRBA.Models
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
+        public bool GetAdminStatus()
+        {
+            // declare variable
+            User u = new User();
+
+            try
+            {
+                // get current user
+                u = u.GetUserSession();
+
+                // is user admin?
+                if (u.isAdmin == 1)
+                {
+                    // yes, return true
+                    return true;
+                }
+
+                // user is not admin, return false
+                return false;
+            } 
+            catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
         // succesful login -  return User object
         // unsuccessful login - return null 
         public User Login()
@@ -99,7 +141,8 @@ namespace GCRBA.Models
             DuplicateUserID = 4,
             Unknown = 5,
             RequiredFieldMissing = 6,
-            LoginFailed = 7
+            LoginFailed = 7,
+         
             
         }
     }

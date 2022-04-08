@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace GCRBA.Models {
+
 	public class Database {
 
 		public List<Models.State> GetStates() {
@@ -372,6 +373,38 @@ namespace GCRBA.Models {
             }
 			catch (Exception ex) { throw new Exception(ex.Message); }
         }
+
+		public bool InsertHomepageBanner()
+        {
+			MainBanner mb = new MainBanner();
+
+			try
+			{
+				SqlConnection cn = null; // inside System.Data.SqlClient
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("INSERT_NEW_MAIN_BANNER", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intMainBannerID", mb.BannerID, SqlDbType.SmallInt, Direction: ParameterDirection.Output);
+				SetParameter(ref cm, "@strBanner", mb.Banner, SqlDbType.NVarChar);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1)
+                {
+					mb.BannerID = (int)cm.Parameters["@intMainBannerID"].Value;
+					return true;
+                } else
+                {
+					return false;
+                }
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
 
 		private int SetParameter(ref SqlCommand cm, string ParameterName, Object Value
 			, SqlDbType ParameterType, int FieldSize = -1

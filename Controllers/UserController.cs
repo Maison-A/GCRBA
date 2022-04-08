@@ -12,15 +12,66 @@ namespace GCRBA.Controllers
 
         public ActionResult Index()
         {
-            return View();
+            Models.User u = new Models.User();
+            u = u.GetUserSession();
+           
+            return View(u);
         }
 
+        [HttpPost]
+        public ActionResult Index(FormCollection col)
+        {
+            try
+            {
+                Models.User u = new Models.User();
+                u = u.GetUserSession();
+                u.FirstName = col["FirstName"];
+                u.LastName = col["LastName"];
+                u.Email = col["Email"];
+                //u.UserID = col["UserID"];
+                u.Password = col["Password"];
+
+                if (u.FirstName.Length == 0 || u.LastName.Length == 0 || u.Email.Length == 0 || u.Password.Length == 0)
+                {
+                    u.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
+                    return View(u);
+                }
+                else
+                {
+                    if (col["btnSubmit"] == "newuser")
+                    { //sign up button pressed
+                        Models.User.ActionTypes at = Models.User.ActionTypes.NoType;
+                        at = u.Save();
+                        switch (at)
+                        {
+                            case Models.User.ActionTypes.InsertSuccessful:
+                                u.SaveUserSession();
+                                // TODO: return to user profile page/index
+                                return RedirectToAction("Home","Index");
+                            //break;
+                            default:
+                                return View(u);
+                                //break;
+                        }
+                    }
+                    else
+                    {
+                        return View(u);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                Models.User u = new Models.User();
+                return View(u);
+            }
+        }
 
         public ActionResult AddNewUser()
         {
-            return View();
+            Models.User u = new Models.User();
+            return View(u);
         }
-
 
         [HttpPost]
         public ActionResult AddNewUser(FormCollection col)
@@ -38,39 +89,42 @@ namespace GCRBA.Controllers
                 u.Password = col["Password"];
                 u.Address = string.Empty;
                 u.City = string.Empty;
-                // I commented this out to avoid it throwing an error for now but in the User class, I changed
-                // intStateID to strState because I now added the ability for it to pull the state name in, not just the ID
-                // but I didn't want to change this without knowing if it would affect anything so let me know. -Katie 
-                //u.intStateID = 0;
                 u.Zip = string.Empty;
                 u.Phone = string.Empty;
                 u.MemberShipType = string.Empty;
                 u.PaymentType = string.Empty;
-                
-                if (col["btnSubmit"].ToString() == "newuser")
-                {
-                    if (u.FirstName.Length == 0 || u.LastName.Length == 0 || u.Email.Length == 0 || u.Username.Length == 0
-                        || u.Password.Length == 0)
-                    {
-                        u.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
-                        return View(u);
-                    }
 
-                    //validate data - trying to check pass values match
-                    //if (col["passver1"].ToString() != col["passver2"].ToString())
-                    //{
-                    //    u.ActionType = Models.User.ActionTypes.Unknown;
-                    //    return View(u);
-                    //}
+                // make sure fields are filled out
+                if (u.FirstName.Length == 0 || u.LastName.Length == 0 || u.Email.Length == 0 || u.Username.Length == 0
+                       || u.Password.Length == 0)
+                {
+                    u.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
+                    return View(u);
                 }
+
                 // send data if valid to db
                 else
                 {
+                    if (col["btnSubmit"].ToString() == "newuser")
+                    {
+                        Models.User.ActionTypes at = Models.User.ActionTypes.NoType;
+                        // adjust - make sure to push to db and not save (waiting for katie)
+                        at = u.Save();
+                        switch (at)
+                        {
+                            case Models.User.ActionTypes.InsertSuccessful:
+                                u.SaveUserSession();
+                                return RedirectToAction("Index","Home");
 
-                    // return to member page - be sure to maintain current user
-                    return RedirectToAction("Index", "Home");
+                            default:
+                                return View(u);
+                        }
+                    }
+                    else
+                    {
+                        return View(u);
+                    }      
                 }
-                return View(u);
             }
             catch (Exception)
             {
@@ -80,10 +134,15 @@ namespace GCRBA.Controllers
         }
 
 
-
+        // TODO: bring up how to manage initilization
+        // will we be forcing members to become Users? 
         public ActionResult AddNewMember()
         {
-            return View();
+            // if user exists: update user value to member
+            Models.User u = new Models.User();
+            return View(u);
+
+            // if user doesnt exist - redirect to sign up?
         }
 
 
@@ -93,7 +152,8 @@ namespace GCRBA.Controllers
             if (col["btnSignUp"].ToString() == "submit")
             {
                 //validate data
-
+                // if user exists set value to memeber
+                // 
                 // send data if valid to db
 
                 // return to member page - use generated user id as 

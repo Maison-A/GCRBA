@@ -225,6 +225,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controllers\BakeryController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="ViewModels\AdminBannerViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
@@ -275,6 +276,7 @@
     <Content Include="Views\Profile\Admin.cshtml" />
     <Content Include="Views\Profile\AdminLogin.cshtml" />
     <Content Include="Views\SendMailer\Index.cshtml" />
+    <Content Include="Views\Profile\EditMainBanner.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
