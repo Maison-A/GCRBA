@@ -7,20 +7,32 @@ namespace GCRBA.Models
 {
     public class User
     {
-        public int UID = 0;
-        public string FirstName = string.Empty;
-        public string LastName = string.Empty;
-        public string Address = string.Empty;
-        public string City = string.Empty;
-        public int intStateID = 0;
-        public string Zip = string.Empty;
-        public string Phone = string.Empty;
-        public string Email = string.Empty;
-        public string Username = string.Empty;
-        public string Password = string.Empty;
-        public int isAdmin = 0;
+        public int UID { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Address { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string Zip { get; set; }
+        public string Phone { get; set; }
+        public string Email { get; set; }
+        public string MemberShipType = string.Empty;    
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string PaymentType = string.Empty;
+        public int isAdmin { get; set; }
+        public int isMember { get; set; }
+        public ActionTypes ActionType { get; set; } = ActionTypes.NoType;
 
-        public ActionTypes ActionType = ActionTypes.NoType;
+        // tells us if current user is logged in 
+        public bool IsAuthenticated
+        {
+            get
+            {
+                if (UID > 0) return true;
+                return false;
+            }
+        }
 
         // obtain current session status
         public User GetUserSession()
@@ -66,6 +78,29 @@ namespace GCRBA.Models
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
+        public bool GetAdminStatus()
+        {
+            // declare variable
+            User u = new User();
+
+            try
+            {
+                // get current user
+                u = u.GetUserSession();
+
+                // is user admin?
+                if (u.isAdmin == 1)
+                {
+                    // yes, return true
+                    return true;
+                }
+
+                // user is not admin, return false
+                return false;
+            } 
+            catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
         // succesful login -  return User object
         // unsuccessful login - return null 
         public User Login()
@@ -78,18 +113,40 @@ namespace GCRBA.Models
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
+        public User.ActionTypes Save()
+        {
+            try
+            {
+                // create database object 
+                Database db = new Database();
+
+                // if current user object UID is 0
+                if (UID == 0)
+                {
+                    // call method to insert user to database
+                    this.ActionType = db.AddNewUser(this);
+                }
+
+                // return status of insert (success, duplicate email, duplicate username, unknown)
+                return this.ActionType;
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
         public enum ActionTypes
         {
             NoType = 0,
             InsertSuccessful = 1,
             UpdateSuccessful = 2,
             DuplicateEmail = 3,
-            DuplicateUserID = 4,
-            Unknown = 5, 
+            DuplicateUsername = 4,
+            Unknown = 5,
             RequiredFieldMissing = 6,
-            LoginFailed = 7
+            LoginFailed = 7,
+         
+            
         }
     }
 
-    
+
 }

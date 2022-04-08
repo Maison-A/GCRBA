@@ -47,6 +47,53 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
+		public User.ActionTypes AddNewUser(User u)
+        {
+			try
+            {
+				// initialize return value 
+				int intReturnValue = -1;
+
+				// create instance of SqlConnection object 
+				SqlConnection cn = null;
+
+				// throw error if database connection unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// specify which stored procedure is being used 
+				SqlCommand cm = new SqlCommand("INSERT_NEW_USER", cn);
+
+				// set parameters
+				SetParameter(ref cm, "@intNewUserID", u.UID, SqlDbType.SmallInt, Direction: ParameterDirection.Output);
+				SetParameter(ref cm, "@strFirstName", u.FirstName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strLastName", u.LastName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strEmail", u.Email, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strUsername", u.Username, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strPassword", u.Password, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@isAdmin", u.isAdmin, SqlDbType.Bit);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				// return user action type based on return value 
+				switch (intReturnValue)
+                {
+					case 1:
+						u.UID = Convert.ToInt16(cm.Parameters["@intNewUserID"].Value);
+						return User.ActionTypes.InsertSuccessful;
+					case -1:
+						return User.ActionTypes.DuplicateEmail;
+					case -2:
+						return User.ActionTypes.DuplicateUsername;
+					default:
+						return User.ActionTypes.Unknown;
+                }
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
 		// log in user
 		public User Login(User user)
         {
