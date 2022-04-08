@@ -7,8 +7,8 @@ namespace GCRBA.Models
 {
     public class Company
     {
-        public int CompanyID = 0;
-        public string Name = string.Empty;
+        public int intCompanyID { get; set; }
+        public string strCompanyName { get; set; }
         public string About = string.Empty;
         public string Year = string.Empty;
 

@@ -7,16 +7,19 @@ namespace GCRBA.Models {
 	public class NewLocation {
 		public long lngLocationID = 0;
 		public long lngCompanyID = 0;
+		public List<Models.Company> lstCompanies = new List<Models.Company>();
 
 		//Address Information
-		public string LocationName = string.Empty;
-		public string StreetAddress = string.Empty;
-		public string City = string.Empty;
-		public string State = string.Empty;
-		public string Zip = string.Empty;
+		public string CompanyName = string.Empty;
+		public string LocationName = "Grottees Bakery";//string.Empty;
+		public string StreetAddress = "292 Rampart Ct."; //string.Empty;
+		public string City = "Ft. Mitchell"; // string.Empty;
+		public string State = "OH"; //string.Empty;
+		public string Zip = "41017"; //string.Empty;
 
 		//NEED TO CHANGE TO INT FOR STATE
-		public int intState = 0;
+		public short intState = 0;
+		public List<Models.State> lstStates = new List<Models.State>();
 
 		//Contact Information
 		public PhoneNumber BusinessPhone;
@@ -63,8 +66,8 @@ namespace GCRBA.Models {
 		public string custServiceEmail = string.Empty;
 
 		//Some variables related to Current Promotional Information
-		public string Bio = string.Empty;
-		public string BizYear = string.Empty;
+		public string Bio = "This is a test of your regular broadcasting service. This is only a test. So don't freak out man!"; //HttpContext.Current.Server.MapPath("/Bakery.csv");
+		public string BizYear = "1988";  //string.Empty;
 		public Website MainWeb;
 		public Website OrderingWeb;
 		public Website KettleWeb;
@@ -90,12 +93,12 @@ namespace GCRBA.Models {
 			try {
 				Database db = new Database();
 				this.ActionType = db.InsertCompany(this);
-				this.ActionType = db.InsertLocation(this);
-				this.ActionType = db.InsertSpecialties(this, categories);
-				//this.ActionType = db.InsertLocationHours(this, LocationHours);
-				this.ActionType = db.InsertSocialMedia(this, socialMedias);
-				this.ActionType = db.InsertWebsite(this, websites);
-				this.ActionType = db.InsertContactPerson(this, contacts);
+				if(this.ActionType != ActionTypes.Unknown) this.ActionType = db.InsertLocation(this);
+				if(this.ActionType != ActionTypes.Unknown) //this.ActionType = db.InsertLocationHours(this, LocationHours);
+				if(this.ActionType != ActionTypes.Unknown) this.ActionType = db.InsertSpecialties(this, categories);
+				if(this.ActionType != ActionTypes.Unknown) this.ActionType = db.InsertSocialMedia(this, socialMedias);
+				if(this.ActionType != ActionTypes.Unknown) this.ActionType = db.InsertWebsite(this, websites);
+				if(this.ActionType != ActionTypes.Unknown) this.ActionType = db.InsertContactPerson(this, contacts);
 				return this.ActionType;
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }

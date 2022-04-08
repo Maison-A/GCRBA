@@ -6,24 +6,31 @@
 <h2>@ViewBag.Title</h2>
 
 <p>This is a test for how a landing page function might work.</p>
+
+
 <div>
 @Html.LabelFor(models => models.LocationName, "Bakery Name")
-@Html.TextBoxFor(models => models.LocationName)
+@Html.DisplayFor(models => models.LocationName)
 </div>
 <div>
 @Html.LabelFor(models => models.StreetAddress, "Street Address")
-@Html.TextBoxFor(models => models.StreetAddress)
+@Html.DisplayFor(models => models.StreetAddress)
 </div>
 <div>
 @Html.LabelFor(models => models.City)
-@Html.TextBoxFor(models => models.City)
+@Html.DisplayFor(models => models.City)
 </div>
 <div>
 @Html.LabelFor(models => models.State)
-@Html.TextBoxFor(models => models.State)
+@Html.DisplayFor(models => models.State)
 </div>
 <div>
 @Html.LabelFor(models => models.Zip)
-@Html.TextBoxFor(models => models.Zip)
+@Html.DisplayFor(models => models.Zip)
 </div>
 
+
+@using(Html.BeginForm(FormMethod.Post)) {
+	@Html.HiddenFor(model=>model.lngLocationID, new { Value = Model.lngLocationID})
+				<button name="btnSubmit" value="delete">Delete Location</button>
+			}

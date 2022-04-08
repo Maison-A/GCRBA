@@ -7,6 +7,66 @@ using System.Linq;
 
 namespace GCRBA.Models {
 	public class Database {
+
+		public List<Models.State> GetStates() {
+			try {
+				List<Models.State> lstStates = new List<Models.State>();
+				try {
+					DataSet ds = new DataSet();
+					SqlConnection cn = new SqlConnection();
+					if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+					SqlDataAdapter da = new SqlDataAdapter("SELECT_STATES", cn);
+
+					da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+					try {
+						da.Fill(ds);
+					}
+					catch (Exception ex2) {
+						throw new Exception(ex2.Message);
+					}
+					finally { CloseDBConnection(ref cn); }
+
+					if (ds.Tables[0].Rows.Count != 0) {
+						foreach (DataRow dr in ds.Tables[0].Rows) {
+							State state = new State();
+							state.intStateID = (short)dr["intStateID"];
+							state.strState = (string)dr["strState"];
+							lstStates.Add(state);
+						}
+					}
+				}
+				catch (Exception ex) { throw new Exception(ex.Message); }
+
+				return lstStates;
+			}
+			catch (Exception ex) {
+				throw new Exception(ex.Message);
+			}
+		}
+
+		public NewLocation.ActionTypes DeleteLocation(long lngLocationID) {
+			try {
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("DELETE_LOCATION", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@lngLocationID", lngLocationID, SqlDbType.BigInt);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1) return NewLocation.ActionTypes.DeleteSuccessful;
+				return NewLocation.ActionTypes.Unknown;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+
 		// this user object will be retrieved from where the user types in their data
 		public User.ActionTypes InsertUser(User u) {
 			try {
@@ -300,8 +360,8 @@ namespace GCRBA.Models {
 						Company c = new Company();
 
 						// add values to CompanyID and Name properties 
-						c.CompanyID = Convert.ToInt16(dr["intCompanyID"]);
-						c.Name = (string)dr["strCompanyName"];
+						c.intCompanyID = Convert.ToInt16(dr["intCompanyID"]);
+						c.strCompanyName = (string)dr["strCompanyName"];
 
 						// add Company object (c) to Company list (companies) 
 						companies.Add(c);
@@ -396,7 +456,7 @@ namespace GCRBA.Models {
 				int intReturnValue = -1;
 
 				SetParameter(ref cm, "@intCompanyID", loc.lngCompanyID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
-				SetParameter(ref cm, "@strCompanyName", loc.LocationName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strCompanyName", loc.CompanyName, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strAbout", loc.Bio, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strBizYear", loc.BizYear, SqlDbType.NVarChar);
 
@@ -422,9 +482,6 @@ namespace GCRBA.Models {
 			try {
 				//Convert Phone Class to Concat String
 				string PhoneNumber = loc.BusinessPhone.AreaCode + loc.BusinessPhone.Prefix + loc.BusinessPhone.Suffix;
-
-				//ONLY DELETE intState!!!!!!!!!!!!!!!!!!
-				loc.intState = 1;
 
 				SqlConnection cn = null;
 				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");

@@ -1,23 +1,111 @@
 ﻿@model GCRBA.Models.MailModel
+<!--model GCRBA.Models.MailModel
 
-@{
-    ViewBag.Title = "Mail GCRBA";
+{
+	ViewBag.Title = "Mail GCRBA";
 }
 
-<h2>@ViewBag.Title</h2>
+<h2>ViewBag.Title</h2>
 
 <fieldset>
 	<legend>
 		Send Email
 	</legend>
-	@using (Html.BeginForm()) {
-		@Html.ValidationSummary()
+	using (Html.BeginForm()) {
+		Html.ValidationSummary()
 		<p>From: </p>
-		<p>@Html.TextBoxFor(model => model.From)</p>
+		<p>Html.TextBoxFor(model => model.From)</p>
 		<p>Subject: </p>
-		<p>@Html.TextBoxFor(model => model.Subject)</p>
+		<p>Html.TextBoxFor(model => model.Subject)</p>
 		<p>Body: </p>
-		<p>@Html.TextAreaFor(models=>models.Body)</p>
+		<p>Bakery Name:</p>
+		<p>Html.DisplayFor(models => models.content.LocationName)</p>
 	<input type="submit" value="Send" />
 	}
 </fieldset>
+-->
+<style>
+	td {
+		vertical-align: top;
+	}
+	.center{
+		margin-left: auto;
+		margin-right: auto;
+	}
+</style>
+
+@using (Html.BeginForm("SendEmail", "SendMailer", FormMethod.Post)) {
+	<table class="center">
+	<tr>
+		<td>
+			@Html.LabelFor(model => model.Subject)
+		</td>
+		<td>
+			@Html.TextAreaFor(model => model.Subject)
+		</td>
+	</tr>
+	<tr>
+		<td>
+			@Html.LabelFor(model => model.UserName)
+		</td>
+		<td>
+			@Html.DropDownListFor(m => m.UserName,
+			new List<SelectListItem>
+				{
+				new SelectListItem{Text="GCRBAWebApp@donotreply.com", Value="GCRBAWebApp@donotreply.com", Selected = true},
+				new SelectListItem{Text="sender2@gmail.com", Value="sender2@gmail.com"}
+				}, "Please select")
+		</td>
+	</tr>
+	<tr>
+		<td>
+			@Html.LabelFor(model => model.Title)
+		</td>
+		<td>
+			@Html.TextBoxFor(model => model.Title)
+		</td>
+	</tr>
+	</table>
+	<table style="width: 500px; border: 1px solid black; text-align: left; vertical-align:top" class="center">
+		<tr>
+			<td>
+				@Html.LabelFor(model => model.Content.LocationName, "Bakery:")
+			</td>
+			<td>
+				@Html.DisplayFor(model => model.Content.LocationName)
+				@Html.HiddenFor(model => model.Content.LocationName)
+			</td>
+		</tr>
+		<tr>
+			<td>
+				@Html.LabelFor(model => model.Content.StreetAddress, "Address:")
+			</td>
+			<td>
+				@Html.DisplayFor(model => model.Content.StreetAddress) <br />@Html.DisplayFor(model => model.Content.City), @Html.DisplayFor(model => model.Content.State) @Html.DisplayFor(model => model.Content.Zip)
+				@Html.HiddenFor(model => model.Content.StreetAddress)	@Html.HiddenFor(model => model.Content.City) @Html.HiddenFor(model => model.Content.State) @Html.HiddenFor(model => model.Content.Zip)
+			</td>
+		</tr>
+		<tr>
+			<td>
+				@Html.LabelFor(model => model.Content.BusinessPhone, "Business Information:")
+			</td>
+			<td>
+				Business Phone: (@Html.DisplayFor(model => model.Content.BusinessPhone.AreaCode)) @Html.DisplayFor(model => model.Content.BusinessPhone.Prefix)-@Html.DisplayFor(model => model.Content.BusinessPhone.Suffix)
+				@Html.HiddenFor(model => model.Content.BusinessPhone.AreaCode)	@Html.HiddenFor(model => model.Content.BusinessPhone.Prefix) @Html.HiddenFor(model => model.Content.BusinessPhone.Suffix)
+				<br />
+				Business Email: @Html.DisplayFor(model => model.Content.BusinessEmail)
+				@Html.HiddenFor(model => model.Content.BusinessEmail)
+				<br />
+				Business Year: @Html.DisplayFor(model => model.Content.BizYear)
+				@Html.HiddenFor(model => model.Content.BizYear)
+				<br />
+				Business Bio: @Html.DisplayFor(model => model.Content.Bio)
+				@Html.HiddenFor(model => model.Content.Bio)
+			</td>
+		</tr>
+	</table>
+	<br />
+<input type="submit" value="Send Email" />
+			
+	
+}

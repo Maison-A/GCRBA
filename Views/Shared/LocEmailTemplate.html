@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<style>
+    td {
+        vertical-align: top;
+    }
+
+    .center {
+        margin-left: auto;
+        margin-right: auto;
+    }
+</style>
+<head>
+    <title></title>
+</head>
+<body>
+    <img src="https://www.aspsnippets.com/images/Blue/Logo.png" /><br />
+    <br />
+    <div style="border-top: 3px solid #22BCE5">
+        &nbsp;
+    </div>
+    <span style="font-family: Arial; font-size: 10pt">
+        Hello,
+
+        There is a new location add request, see details:
+    </span>
+        <table style="width: 500px; border: 1px solid black; text-align: left; vertical-align:top" class="center">
+            <tr>
+                <td>
+                    Location Name:
+                </td>
+                <td>
+                    {LocationName}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Address:
+                </td>
+                <td>
+                    <b>{Address} {City}, <br /> {State} {Zip}</b>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Business Information:
+                </td>
+                <td>
+                    <p>Business Phone: {BizPhone}</p>
+                    <p>Business Email: {BizEmail}</p>
+                    <p>Business Year: {BizYear}</p>
+                    <p>Business Bio: {BizBio}</p>
+                </td>
+            </tr>
+        </table>
+        <br />
+        <span style="font-family: Arial; font-size: 10pt">
+            
+       
+        <br />
+        <a style="color: #22BCE5" href="{Url}">{Title}</a><br />
+        {Description}
+        <br />
+        <br />
+        Thanks,<br />
+        GCRBA Web App
+        </span>
+</body>
+</html>

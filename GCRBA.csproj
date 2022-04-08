@@ -192,6 +192,7 @@
     <Content Include="Scripts\jquery-3.6.0.js" />
     <Content Include="Scripts\jquery.filedrop.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Views\Shared\LocEmailTemplate.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -203,7 +204,7 @@
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\SendMailerController.cs" />
     <Compile Include="Controllers\VendorController.cs" />
-    <Compile Include="ExportToCsv.cs" />
+    <Compile Include="Models\ExportToCsv.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -218,6 +219,7 @@
     <Compile Include="Models\PhoneNumber.cs" />
     <Compile Include="Models\SearchResults.cs" />
     <Compile Include="Models\SocialMedia.cs" />
+    <Compile Include="Models\State.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\Website.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -226,7 +228,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
-    <Content Include="CSV_Folder\LocationCSV.csv" />
     <Content Include="Content\bootstrap.rtl.min.css.map" />
     <Content Include="Content\bootstrap.rtl.css.map" />
     <Content Include="Content\bootstrap.min.css.map" />
@@ -254,6 +255,7 @@
     <Content Include="Views\Vendor\Index.cshtml" />
     <Content Include="Views\Bakery\AddNewLocation.cshtml" />
     <Content Include="Views\Bakery\MemberBakery.cshtml" />
+    <Content Include="Views\Bakery\TestLandingPage.cshtml" />
     <Content Include="Views\User\AddNewUser.cshtml" />
     <Content Include="Python\Scripts\.idea\.name" />
     <Content Include="Python\Scripts\.idea\Scripts.iml" />
@@ -303,16 +305,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
-          <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>62536</DevelopmentServerPort>
-          <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>https://localhost:44324/</IISUrl>
-          <NTLMAuthentication>False</NTLMAuthentication>
-          <UseCustomServer>False</UseCustomServer>
-          <CustomServerUrl>
-          </CustomServerUrl>
-          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+          <SaveServerSettingsInUserFile>True</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
     </VisualStudio>

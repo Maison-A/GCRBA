@@ -5,7 +5,7 @@ import pandas as pd
 
 gis = GIS("https://www.arcgis.com/", 'winslows2', 'NuevoEstudiante#1')
 
-item_search = gis.content.search(query='title:"appendBakery"', item_type="csv")
+item_search = gis.content.search(query='title:"append"', item_type="csv")
 print(item_search)
 
 for i in item_search:
@@ -15,7 +15,7 @@ for i in item_search:
     except Exception as err:
         print(err)
 
-item_search = gis.content.search(query='title:"appendBakery"', item_type="Feature *")
+item_search = gis.content.search(query='title:"append"', item_type="Feature *")
 print(item_search)
 
 for i in item_search:
@@ -25,7 +25,17 @@ for i in item_search:
     except Exception as err:
         print(err)
 
-Locations = "C://Users/winsl/OneDrive/Desktop/Capstone/MVC/CSV_Folder/Bakery.csv"
+item_search = gis.content.search(query='title:"Bakery"', item_type="Feature *")
+print(item_search)
+
+for i in item_search:
+    try:
+        i.delete()
+        print("item deleted: " + str(i))
+    except Exception as err:
+        print(err)
+
+Locations = "C://Users/winsl/OneDrive/Desktop/Locations/Bakery.csv"
 
 location_data = pd.read_csv(Locations)
 print(location_data)

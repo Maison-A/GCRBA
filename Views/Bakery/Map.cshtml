@@ -1,24 +1,48 @@
 ﻿
 @{
-	ViewBag.Title = "Search By Location";
+	ViewBag.Title = "Find Your Next Favorite Bakery";
 }
-<h2>@ViewBag.Title</h2>
+<h2 class="some-spacing">@ViewBag.Title</h2>
 
 <style>
-	.user-image-container img {
-		height: 100px;
-		position: absolute;
+	.center {
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	#content-locked {
+		border: 1px solid gray;
+		-webkit-border-radius: 0.3em;
+		-moz-border-radius: 0.3em;
+		border-radius: 0.3em;
+		background-color: lightyellow;
+		padding: 1em;
+		margin-bottom: 1em;
+	}
+
+	#label {
+		font-weight: bold;
 	}
 </style>
 
 @if (true) {
 	@Html.Partial("UserTabMenu")
 
-	<div>
-		<h4>Search the Tri-state for your Favorite Bakeries!</h4>
-		<iframe width="900" height="700" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
-				src="https://cstatebakers.maps.arcgis.com/apps/webappviewer/index.html?id=29fe9a50bad04e0086dd0d399d1a5c2d" allow='geolocation'>
-		</iframe>
+	<div class="some-spacing">
+		<table class="center">
+			<tr>
+				<td>
+					<h5 id="label">Locations of Bakeries</h5>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<iframe width="900" height="700" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+						src="https://cstatebakers.maps.arcgis.com/apps/webappviewer/index.html?id=29fe9a50bad04e0086dd0d399d1a5c2d" allow='geolocation'>
+					</iframe>
+				</td>
+			</tr>
+		</table>
 	</div>
 }
 

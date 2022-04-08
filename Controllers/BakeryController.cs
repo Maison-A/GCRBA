@@ -75,22 +75,39 @@ namespace GCRBA.Views.Bakery {
             Models.SearchResults results = new Models.SearchResults();
             Models.NewLocation loc = new Models.NewLocation();
             results.landingLocation = db.GetLandingLocation(Id);
+            loc.lngLocationID = Id;
             loc.LocationName = results.landingLocation.LocationName;
             loc.City = results.landingLocation.City;
             loc.StreetAddress = results.landingLocation.StreetAddress;
             loc.State = results.landingLocation.State;
             loc.Zip = results.landingLocation.Zip;
-
             return View(loc);
         }
+
+        [HttpPost]
+        public ActionResult TestLandingPage(FormCollection col) {
+            Models.NewLocation loc = new Models.NewLocation();
+            loc.lngLocationID = Convert.ToInt64(col["lngLocationID"]);
+            Models.Database db = new Models.Database();
+            loc.ActionType = Models.NewLocation.ActionTypes.NoType;
+            loc.ActionType = db.DeleteLocation(loc.lngLocationID);
+            return RedirectToAction("Index", "Bakery");
+		}
 
         public ActionResult MemberBakery(long Id) {
             return View();
 		}
 
         public ActionResult AddNewLocation() {
-
+            Models.Database db = new Models.Database();
             Models.NewLocation loc = new Models.NewLocation();
+
+            loc.lstStates = db.GetStates();
+
+            loc.lstCompanies = db.GetCompanies();
+            Models.Company nonValue = new Models.Company { intCompanyID = 0, strCompanyName = "Select Existing Company" };
+            loc.lstCompanies.Add(nonValue);
+
             loc.Donuts = new Models.CategoryItem() { ItemID = 1, ItemDesc = "Donuts" };
             loc.Bagels = new Models.CategoryItem() { ItemID = 2, ItemDesc = "Bagels" };
             loc.Muffins = new Models.CategoryItem() { ItemID = 3, ItemDesc = "Muffins" };
@@ -143,11 +160,15 @@ namespace GCRBA.Views.Bakery {
             if (col["btnSubmit"].ToString() == "NewLocation") {
                 try {
                     Models.NewLocation loc = new Models.NewLocation();
-                    //Location
+                    if(Convert.ToInt64(col["lngCompanyID"]) != 0) {
+						loc.lngCompanyID = Convert.ToInt64(col["lngCompanyID"]);
+					}
+
+					loc.CompanyName = col["CompanyName"];
                     loc.LocationName = col["LocationName"];
                     loc.StreetAddress = col["StreetAddress"];
                     loc.City = col["City"];
-                    loc.State = col["State"];
+                    loc.intState = Convert.ToInt16(col["intState"]);
                     loc.Zip = col["Zip"];
 
                     //Hours of Operation
@@ -245,6 +266,9 @@ namespace GCRBA.Views.Bakery {
                     loc.BizYear = col["BizYear"];
                     loc.Bio = col["Bio"];
 
+                    TempData["location"] = new Models.NewLocation();
+                    TempData["location"] = loc;
+
                     //LIST MOST IMPORTANT TO GEOCODE
                     var location = new List<string>()
                     {
@@ -282,7 +306,19 @@ namespace GCRBA.Views.Bakery {
                         loc.MainWeb, loc.OrderingWeb, loc.KettleWeb
                     };
 
-                    if (loc.LocationName.Length == 0 || loc.StreetAddress.Length == 0 || loc.City.Length == 0 || loc.State.Length == 0 || loc.Zip.Length == 0) {
+                    Models.Database db = new Models.Database();
+                    loc.lstStates = db.GetStates();
+
+                    loc.lstCompanies = db.GetCompanies();
+                    Models.Company nonValue = new Models.Company { intCompanyID = 0, strCompanyName = "Select Existing Company" };
+                    loc.lstCompanies.Add(nonValue);
+
+                    if (loc.CompanyName.Length == 0 && loc.lngCompanyID == 0) {
+                        loc.ActionType = Models.NewLocation.ActionTypes.RequiredFieldsMissing;
+                        return View(loc);
+                    }
+
+                    if (loc.LocationName.Length == 0 || loc.StreetAddress.Length == 0 || loc.City.Length == 0 || loc.intState == 0 || loc.Zip.Length == 0 ) {
                         loc.ActionType = Models.NewLocation.ActionTypes.RequiredFieldsMissing;
                         return View(loc);
                     }                    
@@ -291,10 +327,8 @@ namespace GCRBA.Views.Bakery {
                     at = loc.StoreNewLocation(categories, LocationHours, socialmedia, Websites, contacts);
                     switch (at) {
                         case Models.NewLocation.ActionTypes.InsertSuccessful:
-                           
 
                             ExportToCsv.StartExport(location, businessInfo, categories, LocationHours, contacts, socialmedia, Websites);
-
 
                             /*
                             using (firstProcess = new Process()) {
@@ -306,17 +340,24 @@ namespace GCRBA.Views.Bakery {
                             }
                             */
 
-                            return RedirectToAction("Index", "SendMailer");
+                            return RedirectToAction("Index", "SendMailer", "location");
                         case Models.NewLocation.ActionTypes.DeleteSuccessful:
                             loc.ActionType = Models.NewLocation.ActionTypes.DeleteSuccessful;
                             return RedirectToAction("Index");
                         default:
-                            return View();
+                            return View(loc);
 
                     }
                 }
                 catch (Exception) {
                     Models.NewLocation loc = new Models.NewLocation();
+                    Models.Database db = new Models.Database();
+                    loc.lstStates = db.GetStates();
+
+                    loc.lstCompanies = db.GetCompanies();
+                    Models.Company nonValue = new Models.Company { intCompanyID = 0, strCompanyName = "Select Existing Company" };
+                    loc.lstCompanies.Add(nonValue);
+
                     return View(loc);
                 }
             }
