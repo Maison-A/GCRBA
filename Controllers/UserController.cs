@@ -109,6 +109,7 @@ namespace GCRBA.Controllers
                     {
                         Models.User.ActionTypes at = Models.User.ActionTypes.NoType;
                         // adjust - make sure to push to db and not save (waiting for katie)
+                        // if uid == 0 insert user
                         at = u.Save();
                         switch (at)
                         {
@@ -133,7 +134,6 @@ namespace GCRBA.Controllers
             }
         }
 
-
         // TODO: bring up how to manage initilization
         // will we be forcing members to become Users? 
         public ActionResult AddNewMember()
@@ -144,7 +144,6 @@ namespace GCRBA.Controllers
 
             // if user doesnt exist - redirect to sign up?
         }
-
 
         [HttpPost]
         public ActionResult AddNewMember(FormCollection col)

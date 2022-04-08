@@ -75,13 +75,22 @@ namespace GCRBA.Models {
 				SqlConnection cn = null;
 
 				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
-				SqlCommand cm = new SqlCommand("INSERT_USER", cn);
+				SqlCommand cm = new SqlCommand("INSERT_NEW_USER", cn);
 				int intReturnValue = -1;
 
 				// passing in the comand, name of what to mod, the value, the data type and where it's putting the 
 				// data which is only pertnant to the first param (big int is an output param)
-				SetParameter(ref cm, "@uid", u.UID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
-				SetParameter(ref cm, "@user_id", u.Username, SqlDbType.NVarChar);
+				//SetParameter(ref cm, "@uid", u.UID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+				SetParameter(ref cm, "@intNewUserID", u.UID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+				//SetParameter(ref cm, "@user_id", u.Username, SqlDbType.NVarChar);
+
+				// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
+				// Maison: Added parameters to pass into db - please let me know if i break anything
+				SetParameter(ref cm, "@strFirstName", u.FirstName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strLastName", u.LastName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strEmail", u.Email, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strUsername", u.Username, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strPassword", u.Password, SqlDbType.NVarChar);
 
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
 
