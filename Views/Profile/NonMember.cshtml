@@ -4,21 +4,28 @@
     ViewBag.Title = "NonMember";
 }
 
-@if (Model.isMember == 1)
+@if (!Model.IsAuthenticated)
 {
-    if (Model.isAdmin == 1)
-    {
-        <p>This page is for non</p>
-    }
     <p>This page is for non-members only.</p>
 }
 else
 {
-    <div>
-        <button class="button-action"  name="btnSubmit" value="join">Join the GCRBA!</button>
-    </div>
+    if (Model.isMember == 1 || Model.isAdmin == 1)
+    {
+        <p>This page is for non-members only.</p>
+    }
+    else
+    {
+        using (Html.BeginForm(FormMethod.Post))
+        {
+            <div>
+                <button name="btnSubmit" value="join">Join the GCRBA!</button>
+            </div>
 
-    <p>Hello,  @Model.FirstName, you are logged in as a non-member.</p>
-    <p>You can join the GCRBA by clicking the button above!</p>
+            <p>You can join the GCRBA by clicking the button above!</p>
+
+            <p>Hello, @Model.FirstName, you are logged in as a non-member.</p>
+
+        }
+    }
 }
-

@@ -192,9 +192,7 @@ namespace GCRBA.Controllers
             user = user.GetUserSession();
             if (user.IsAuthenticated)
             {
-                ViewBag.Name = user.FirstName + " " + user.LastName;
-               
-              
+                ViewBag.Name = user.FirstName + " " + user.LastName;              
             }
             return View(user);
         }
@@ -209,11 +207,11 @@ namespace GCRBA.Controllers
                 ViewBag.Name = user.FirstName + " " + user.LastName;
                 if (col["btnSubmit"].ToString() == "join")
                 {
-                   return RedirectToAction("AddNewMember","User");
+                    return RedirectToAction("AddNewMember", "User");
                 }
 
             }
-            return View(user);
+            return View();
         }
 
         public ActionResult Member()
