@@ -103,12 +103,22 @@ namespace GCRBA.Models
 
         // succesful login -  return User object
         // unsuccessful login - return null 
-        public User Login()
+        public User NonAdminLogin()
         {
             try
             {
                 Database db = new Database();
-                return db.Login(this);
+                return db.NonAdminLogin(this);
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        public User AdminLogin()
+        {
+            try
+            {
+                Database db = new Database();
+                return db.AdminLogin(this);
             }
             catch (Exception ex) { throw new Exception(ex.Message); }
         }

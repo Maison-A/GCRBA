@@ -157,9 +157,10 @@ namespace GCRBA.Models {
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		// log in user
-		public User Login(User user) {
-			try {
+		public User NonAdminLogin(User user)
+        {
+			try
+			{
 				// create instance of SqlConnection object 
 				SqlConnection cn = new SqlConnection();
 
@@ -180,34 +181,204 @@ namespace GCRBA.Models {
 				SetParameter(ref da, "@strUsername", user.Username, SqlDbType.NVarChar);
 				SetParameter(ref da, "@strPassword", user.Password, SqlDbType.NVarChar);
 
-				try {
-					ds = new DataSet();
-					da.Fill(ds);
-					if (ds.Tables[0].Rows.Count > 0) {
-						newUser = new User();
-						DataRow dr = ds.Tables[0].Rows[0];
-						newUser.UID = Convert.ToInt16(dr["intUserID"]);
-						newUser.FirstName = (string)dr["strFirstName"];
-						newUser.LastName = (string)dr["strLastName"];
-						newUser.Address = (string)dr["strAddress"];
-						newUser.City = (string)dr["strCity"];
-						newUser.State = (string)dr["strState"];
-						newUser.Zip = (string)dr["strZip"];
-						newUser.Phone = (string)dr["strPhone"];
-						newUser.Email = (string)dr["strEmail"];
-						newUser.Username = user.Username;
-						newUser.Password = user.Password;
-						newUser.isAdmin = Convert.ToInt16(dr["isAdmin"]);
+				if (IsUserAdmin(user) == false)
+				{
+					try
+					{
+						ds = new DataSet();
+						da.Fill(ds);
+						if (ds.Tables[0].Rows.Count > 0)
+						{
+							newUser = new User();
+							DataRow dr = ds.Tables[0].Rows[0];
+							newUser.UID = Convert.ToInt16(dr["intUserID"]);
+							newUser.FirstName = (string)dr["strFirstName"];
+							newUser.LastName = (string)dr["strLastName"];
+							newUser.Address = (string)dr["strAddress"];
+							newUser.City = (string)dr["strCity"];
+							newUser.State = (string)dr["strState"];
+							newUser.Zip = (string)dr["strZip"];
+							newUser.Phone = (string)dr["strPhone"];
+							newUser.Email = (string)dr["strEmail"];
+							newUser.Username = user.Username;
+							newUser.Password = user.Password;
+							newUser.isAdmin = Convert.ToInt16(dr["isAdmin"]);
+						}
 					}
+					catch (Exception ex) { throw new Exception(ex.Message); }
+					finally { CloseDBConnection(ref cn); }
+					return newUser;
 				}
-				catch (Exception ex) { throw new Exception(ex.Message); }
-				finally {
-					CloseDBConnection(ref cn);
+				else
+				{
+					return newUser;
 				}
-				return newUser;
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
+
 		}
+
+		public User AdminLogin(User user)
+		{
+			try
+			{
+				// create instance of SqlConnection object 
+				SqlConnection cn = new SqlConnection();
+
+				// throw error if database connection unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// create instance of SqlDataAdapter object 
+				SqlDataAdapter da = new SqlDataAdapter("LOGIN", cn);
+
+				// create instance of DataSet
+				DataSet ds;
+				User newUser = null;
+
+				// specify command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				// set parameters
+				SetParameter(ref da, "@strUsername", user.Username, SqlDbType.NVarChar);
+				SetParameter(ref da, "@strPassword", user.Password, SqlDbType.NVarChar);
+
+				if (IsUserAdmin(user) == true)
+				{
+					try
+					{
+						ds = new DataSet();
+						da.Fill(ds);
+						if (ds.Tables[0].Rows.Count > 0)
+						{
+							newUser = new User();
+							DataRow dr = ds.Tables[0].Rows[0];
+							newUser.UID = Convert.ToInt16(dr["intUserID"]);
+							newUser.FirstName = (string)dr["strFirstName"];
+							newUser.LastName = (string)dr["strLastName"];
+							newUser.Address = (string)dr["strAddress"];
+							newUser.City = (string)dr["strCity"];
+							newUser.State = (string)dr["strState"];
+							newUser.Zip = (string)dr["strZip"];
+							newUser.Phone = (string)dr["strPhone"];
+							newUser.Email = (string)dr["strEmail"];
+							newUser.Username = user.Username;
+							newUser.Password = user.Password;
+							newUser.isAdmin = Convert.ToInt16(dr["isAdmin"]);
+						}
+					}
+					catch (Exception ex) { throw new Exception(ex.Message); }
+					finally { CloseDBConnection(ref cn); }
+					return newUser;
+				}
+				else
+				{
+					return newUser;
+				}
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+
+		}
+
+		public bool IsUserAdmin(User user)
+        {
+			try
+            {
+				// create instance of SqlConnection object 
+				SqlConnection cn = new SqlConnection();
+
+				// throw error if database connection unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// create instance of SqlDataAdapter object 
+				SqlDataAdapter da = new SqlDataAdapter("LOGIN", cn);
+
+				// create instance of DataSet
+				DataSet ds;
+				User newUser = null;
+
+				// specify command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				// set parameters
+				SetParameter(ref da, "@strUsername", user.Username, SqlDbType.NVarChar);
+				SetParameter(ref da, "@strPassword", user.Password, SqlDbType.NVarChar);
+
+				try
+                {
+					ds = new DataSet();
+					da.Fill(ds);
+					if (ds.Tables[0].Rows.Count > 0)
+                    {
+						newUser = new User();
+						DataRow dr = ds.Tables[0].Rows[0];
+						newUser.isAdmin = Convert.ToInt16(dr["isAdmin"]);
+                    }
+
+					if (newUser.isAdmin == 0)
+                    {
+						return false;
+                    } else
+                    {
+						return true;
+                    }
+                }
+				catch (Exception ex) { throw new Exception(ex.Message); }
+				finally { CloseDBConnection(ref cn); }
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+		// log in user
+		//public User Login(User user) {
+		//	try {
+		//		// create instance of SqlConnection object 
+		//		SqlConnection cn = new SqlConnection();
+
+		//		// throw error if database connection unsuccessful
+		//		if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+		//		// create instance of SqlDataAdapter object 
+		//		SqlDataAdapter da = new SqlDataAdapter("LOGIN", cn);
+
+		//		// create instance of DataSet
+		//		DataSet ds;
+		//		User newUser = null;
+
+		//		// specify command type as stored procedure
+		//		da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+		//		// set parameters
+		//		SetParameter(ref da, "@strUsername", user.Username, SqlDbType.NVarChar);
+		//		SetParameter(ref da, "@strPassword", user.Password, SqlDbType.NVarChar);
+
+		//		try {
+		//			ds = new DataSet();
+		//			da.Fill(ds);
+		//			if (ds.Tables[0].Rows.Count > 0) {
+		//				newUser = new User();
+		//				DataRow dr = ds.Tables[0].Rows[0];
+		//				newUser.UID = Convert.ToInt16(dr["intUserID"]);
+		//				newUser.FirstName = (string)dr["strFirstName"];
+		//				newUser.LastName = (string)dr["strLastName"];
+		//				newUser.Address = (string)dr["strAddress"];
+		//				newUser.City = (string)dr["strCity"];
+		//				newUser.State = (string)dr["strState"];
+		//				newUser.Zip = (string)dr["strZip"];
+		//				newUser.Phone = (string)dr["strPhone"];
+		//				newUser.Email = (string)dr["strEmail"];
+		//				newUser.Username = user.Username;
+		//				newUser.Password = user.Password;
+		//				newUser.isAdmin = Convert.ToInt16(dr["isAdmin"]);
+		//			}
+		//		}
+		//		catch (Exception ex) { throw new Exception(ex.Message); }
+		//		finally {
+		//			CloseDBConnection(ref cn);
+		//		}
+		//		return newUser;
+		//	}
+		//	catch (Exception ex) { throw new Exception(ex.Message); }
+		//}
 
 		public void IsUserMember(User u)
 		{
@@ -234,7 +405,8 @@ namespace GCRBA.Models {
 				if (u.UID == 0)
                 {
 					u.isMember = 0;
-                } else
+                } 
+				else
                 {
 					try
 					{

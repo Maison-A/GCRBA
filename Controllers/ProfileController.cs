@@ -61,7 +61,7 @@ namespace GCRBA.Controllers
 
                         // call Login method on User object
                         // method will either return a User object or null
-                        user = user.Login();
+                        user = user.NonAdminLogin();
 
                         if (user != null && user.UID > 0)
                         {
@@ -151,7 +151,7 @@ namespace GCRBA.Controllers
 
                         // call Login method on User object
                         // method will either return a User object or null
-                        user = user.Login();
+                        user = user.AdminLogin();
 
                         if (user != null && user.UID > 0)
                         {
@@ -259,6 +259,18 @@ namespace GCRBA.Controllers
 
             // return view with view model object passed as argument so we can access it in view
             return View(vm);
+        }
+
+        public ActionResult Logout()
+        {
+            // create user object
+            User u = new User();
+
+            // remove current session, which "logs them out"
+            u.RemoveUserSession();
+
+            // redirect to main page
+            return RedirectToAction("Index", "Home");
         }
 
     }
