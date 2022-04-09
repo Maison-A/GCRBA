@@ -75,6 +75,7 @@ namespace GCRBA {
                 int Index = 0;
                 LocateFile file = new LocateFile();
                 string file_path = file.GetFilePath();
+                //"C:/Users/winsl/OneDrive/Desktop/Capstone/MVC/Views/SendMailer/Bakery.csv"; //"E:/Web-Folders/Students/Spring/CPDM-290-200/CPDM-WinslowS/Views/SendMailer/Bakery.csv";
                 using (StreamWriter streamWriter = new StreamWriter(file_path)) {
                     using (CsvWriter csvWriter = new CsvWriter(streamWriter, CultureInfo.CurrentCulture)) {
                         //Write Location Information Headers

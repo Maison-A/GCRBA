@@ -7,15 +7,15 @@ namespace GCRBA.Models {
 	public class NewLocation {
 		public long lngLocationID = 0;
 		public long lngCompanyID = 0;
-		public List<Models.Company> lstCompanies = new List<Models.Company>();
+		public List<Models.Company> lstCompanies { get; set; }
 
 		//Address Information
 		public string CompanyName = string.Empty;
-		public string LocationName = "Grottees Bakery";//string.Empty;
-		public string StreetAddress = "292 Rampart Ct."; //string.Empty;
-		public string City = "Ft. Mitchell"; // string.Empty;
-		public string State = "OH"; //string.Empty;
-		public string Zip = "41017"; //string.Empty;
+		public string LocationName = string.Empty;
+		public string StreetAddress = string.Empty;
+		public string City = string.Empty;
+		public string State = string.Empty;
+		public string Zip = string.Empty;
 
 		//NEED TO CHANGE TO INT FOR STATE
 		public short intState = 0;
@@ -66,8 +66,8 @@ namespace GCRBA.Models {
 		public string custServiceEmail = string.Empty;
 
 		//Some variables related to Current Promotional Information
-		public string Bio = "This is a test of your regular broadcasting service. This is only a test. So don't freak out man!"; //HttpContext.Current.Server.MapPath("/Bakery.csv");
-		public string BizYear = "1988";  //string.Empty;
+		public string Bio = string.Empty; //HttpContext.Current.Server.MapPath("/Bakery.csv");
+		public string BizYear = string.Empty;  //string.Empty;
 		public Website MainWeb;
 		public Website OrderingWeb;
 		public Website KettleWeb;

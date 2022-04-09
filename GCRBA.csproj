@@ -213,6 +213,7 @@
     <Compile Include="Models\ContactPerson.cs" />
     <Compile Include="Models\Database.cs" />
     <Compile Include="Models\Days.cs" />
+    <Compile Include="Models\LocationList.cs" />
     <Compile Include="Models\MailModel.cs" />
     <Compile Include="Models\MainBanner.cs" />
     <Compile Include="Models\NewLocation.cs" />
@@ -220,6 +221,7 @@
     <Compile Include="Models\SearchResults.cs" />
     <Compile Include="Models\SocialMedia.cs" />
     <Compile Include="Models\State.cs" />
+    <Compile Include="Controllers\TroubleshootController.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\Website.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -277,6 +279,8 @@
     <Content Include="Views\Profile\AdminLogin.cshtml" />
     <Content Include="Views\SendMailer\Index.cshtml" />
     <Content Include="Views\Profile\EditMainBanner.cshtml" />
+    <Content Include="Views\Troubleshoot\Index.cshtml" />
+    <Content Include="Views\Troubleshoot\EmailIssue.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
