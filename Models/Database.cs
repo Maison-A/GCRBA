@@ -89,6 +89,74 @@ namespace GCRBA.Models {
 			catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
+		public List<Models.State> GetStates()
+		{
+			try
+			{
+				List<Models.State> lstStates = new List<Models.State>();
+				try
+				{
+					DataSet ds = new DataSet();
+					SqlConnection cn = new SqlConnection();
+					if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+					SqlDataAdapter da = new SqlDataAdapter("SELECT_STATES", cn);
+
+					da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+					try
+					{
+						da.Fill(ds);
+					}
+					catch (Exception ex2)
+					{
+						throw new Exception(ex2.Message);
+					}
+					finally { CloseDBConnection(ref cn); }
+
+					if (ds.Tables[0].Rows.Count != 0)
+					{
+						foreach (DataRow dr in ds.Tables[0].Rows)
+						{
+							State state = new State();
+							state.intStateID = (short)dr["intStateID"];
+							state.strState = (string)dr["strState"];
+							lstStates.Add(state);
+						}
+					}
+				}
+				catch (Exception ex) { throw new Exception(ex.Message); }
+
+				return lstStates;
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
+		}
+
+		public NewLocation.ActionTypes DeleteLocation(long lngLocationID)
+		{
+			try
+			{
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("DELETE_LOCATION", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@lngLocationID", lngLocationID, SqlDbType.BigInt);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1) return NewLocation.ActionTypes.DeleteSuccessful;
+				return NewLocation.ActionTypes.Unknown;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
 		// log in user
 		public User Login(User user) {
 			try {
