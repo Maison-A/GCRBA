@@ -79,9 +79,10 @@ namespace GCRBA.Controllers
         public ActionResult AddNewUser(FormCollection col)
         {
             try
-            { 
+            {
                 // check if checkbox is checked, if so then submit all data and redirect to new member form?
                 // or maybe pull a partial view up?
+               
                 Models.User u = new Models.User();
 
                 // only using FirstName, LastName, Email, Username, and Password because
@@ -101,7 +102,7 @@ namespace GCRBA.Controllers
                     return View(u);
                 }
 
-                // send data if valid to db
+             // send data if valid to db
                 else
                 {
                     // submit new user button pressed
@@ -154,7 +155,7 @@ namespace GCRBA.Controllers
             }
         }
 
-
+       
         // TODO: bring up how to manage initilization
         // will we be forcing members to become Users? 
         public ActionResult AddNewMember()
@@ -166,21 +167,91 @@ namespace GCRBA.Controllers
             // if user doesnt exist - redirect to sign up?
         }
 
-
+        //wip
         [HttpPost]
         public ActionResult AddNewMember(FormCollection col)
         {
-            if (col["btnSignUp"].ToString() == "submit")
+            try
             {
-                //validate data
+                // get current user session
+                Models.User user = new Models.User();
+                user = user.GetUserSession();
+                // if user data exists - populate within form
+                if (user.UID > 0)
+                {
+                    col[ "Firstname"] = user.FirstName;
+                    col["Lastname"] = user.LastName;
+                    col["Email"] = user.Email;
+                }
+                else
+                {
+                    user.FirstName = col["Firstname"];
+                    user.LastName = col["Lastname"];
+                    user.Email = col["Email"];
+                }
+                // once submit is hit, process member data
+                if (col["btnSubmit"].ToString() == "submit")
+                {
 
-                // send data if valid to db
+                    //validate data
+                    if (user.FirstName.Length == 0 || user.LastName.Length == 0 || user.Email.Length == 0)
+                    {
+                        // empty field(s), access action type on view to display relevant error message
+                        user.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
+                        return View(user);
+                    }
+                    // send data if valid to db
+                    else
+                    {
+                        // initialize action type
+                        Models.User.ActionTypes at = Models.User.ActionTypes.NoType;
 
-                // return to member page - use generated user id as 
-                // param
-                return RedirectToAction("Index", "Member");
+                        // create database object 
+                        Database db = new Database();
+
+                        // save action type based on what Save() returns 
+                        at = user.Save();
+
+                        switch (at)
+                        {
+                            // insert successful
+                            // save user session so they are logged in 
+                            // redirect to interface based on member/nonmember
+                            case Models.User.ActionTypes.InsertSuccessful:
+                                user.SaveUserSession();
+
+                                // check to see if user is a member or not 
+                                db.IsUserMember(user);
+
+                                if (user.isMember == 0)
+                                {
+                                    return RedirectToAction("NonMember", "Profile");
+                                }
+                                else
+                                {
+                                    return RedirectToAction("Member", "Profile");
+                                }
+
+                            default:
+                                return View(user);
+                        }
+                    }
+                        
+                }
+            }
+            catch (Exception)
+            {
+                Models.User u = new Models.User();
+                return View(u);
             }
             return View();
         }
+
+         
+      
+
+
     }
+
+
 }
