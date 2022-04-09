@@ -12,18 +12,18 @@
     <!-- Member First Name -->
     <div>
         <div>@Html.Label("First Name")</div>
-        <div>@Html.TextBoxFor(model => model.FirstName, new { @autofocus = "autofocus" })</div>
+        <div>@Html.TextBoxFor(model => model.FirstName, new {@name="Firstname", @autofocus = "autofocus" })</div>
     </div>
     <!-- Member Last Name -->
     <div>
         <div>@Html.Label("Last Name")</div>
-        <div>@Html.TextBoxFor(model => model.LastName)</div>
+        <div>@Html.TextBoxFor(model => model.LastName, new { @name = "Lastname"})</div>
     </div>
 
     <!-- Email -->
     <div>
         <div>@Html.Label("E-mail")</div>
-        <div>@Html.TextBoxFor(model => model.Email)</div>
+        <div>@Html.TextBoxFor(model => model.Email, new { @name = "Email" })</div>
     </div>
 
 

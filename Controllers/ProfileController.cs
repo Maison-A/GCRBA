@@ -22,8 +22,6 @@ namespace GCRBA.Controllers
             return View(user);
         }
 
-
-
         public ActionResult Login()
         {
             User u = new User();
@@ -209,9 +207,9 @@ namespace GCRBA.Controllers
             if (user.IsAuthenticated)
             {
                 ViewBag.Name = user.FirstName + " " + user.LastName;
-                if (col["btnSubmit"] == "btnJoin")
+                if (col["btnSubmit"].ToString() == "join")
                 {
-                    RedirectToAction("AddNewMember", "User");
+                   return RedirectToAction("AddNewMember","User");
                 }
 
             }
