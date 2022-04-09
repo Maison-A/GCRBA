@@ -105,7 +105,7 @@ namespace GCRBA.Views.Bakery {
             loc.lstStates = db.GetStates();
 
             loc.lstCompanies = db.GetCompanies();
-            Models.Company nonValue = new Models.Company { intCompanyID = 0, strCompanyName = "Select Existing Company" };
+            Models.Company nonValue = new Models.Company { CompanyID = 0, Name = "Select Existing Company" };
             loc.lstCompanies.Add(nonValue);
 
             loc.Donuts = new Models.CategoryItem() { ItemID = 1, ItemDesc = "Donuts" };
@@ -310,7 +310,7 @@ namespace GCRBA.Views.Bakery {
                     loc.lstStates = db.GetStates();
 
                     loc.lstCompanies = db.GetCompanies();
-                    Models.Company nonValue = new Models.Company { intCompanyID = 0, strCompanyName = "Select Existing Company" };
+                    Models.Company nonValue = new Models.Company { CompanyID = 0, Name = "Select Existing Company" };
                     loc.lstCompanies.Add(nonValue);
 
                     if (loc.CompanyName.Length == 0 && loc.lngCompanyID == 0) {
@@ -355,7 +355,7 @@ namespace GCRBA.Views.Bakery {
                     loc.lstStates = db.GetStates();
 
                     loc.lstCompanies = db.GetCompanies();
-                    Models.Company nonValue = new Models.Company { intCompanyID = 0, strCompanyName = "Select Existing Company" };
+                    Models.Company nonValue = new Models.Company { CompanyID = 0, Name = "Select Existing Company" };
                     loc.lstCompanies.Add(nonValue);
 
                     return View(loc);
