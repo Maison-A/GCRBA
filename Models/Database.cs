@@ -601,7 +601,7 @@ namespace GCRBA.Models {
 			{
 				SqlConnection cn = null; // inside System.Data.SqlClient
 				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
-				SqlCommand cm = new SqlCommand("REUSE_MAIN_BANNER", cn);
+				SqlCommand cm = new SqlCommand("INSERT_", cn);
 				int intReturnValue = -1;
 
 				SetParameter(ref cm, "@intMainBannerID", mb.BannerID, SqlDbType.SmallInt);

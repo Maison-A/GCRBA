@@ -296,24 +296,44 @@ namespace GCRBA.Controllers
             // add list of banners to view model 
             vm.MainBanners = listOfMainBanners;
 
+            // button to submit new banner is selected 
             if (col["btnSubmit"].ToString() == "submitNewBanner")
             {
+                // drop down option with value = "new" selected 
                 if (col["mainBanners"].ToString() == "new")
                 {
+                    // add text from textarea to view model's banner property
                     vm.MainBanner.Banner = col["newBanner"];
+
+                    // try to add new banner to database
                     if (db.InsertNewMainBanner(vm.MainBanner) == true)
                     {
+                        // banner successfully added, use this flag so we know what to show on view
+                        // 0 - unsuccessful
+                        // 1 - successful
                         ViewBag.Flag = 1;
                     }
+                    // return view with view model as argument 
                     return View(vm);                   
                 } 
+                // one of the previous banners in the drop down selected to use for new banner
                 else
                 {
+                    // set view model's BannerID property to value (ID from database) of selected option
                     vm.MainBanner.BannerID = Convert.ToInt16(col["mainBanners"].ToString());
-                    if (db.ReuseMainBanner(vm.MainBanner) == true)
+
+                    // get banner text from list of banners
+                    vm.MainBanner.Banner = listOfMainBanners[vm.MainBanner.BannerID - 1].Banner;
+
+                    // try to add banner to newest row in table in db 
+                    if (db.InsertNewMainBanner(vm.MainBanner) == true)
                     {
+                        // banner successfully added, use this flag so we know what to show on view 
+                        // 0 - unsuccessful
+                        // 1 - successful
                         ViewBag.Flag = 1;
                     }
+                    // return view with view model as argument 
                     return View(vm);
                 }
             }
