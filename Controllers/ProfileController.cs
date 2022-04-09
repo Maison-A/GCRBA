@@ -261,6 +261,50 @@ namespace GCRBA.Controllers
             return View(vm);
         }
 
+        [HttpPost]
+        public ActionResult EditMainBanner(FormCollection col)
+        {
+            AdminBannerViewModel vm = new AdminBannerViewModel();
+            vm.CurrentUser = new User();
+            vm.CurrentUser = vm.CurrentUser.GetUserSession();
+            vm.MainBanner = new MainBanner();
+            // create variable to hold new banner if that option is chosen 
+            Database db = new Database();
+            ViewBag.Flag = 0;
+
+            // create list to hold banners 
+            List<MainBanner> listOfMainBanners = new List<MainBanner>();
+
+            // add previous + current banners to list 
+            listOfMainBanners = db.GetMainBanners();
+
+            // add list of banners to view model 
+            vm.MainBanners = listOfMainBanners;
+
+            if (col["btnSubmit"].ToString() == "submitNewBanner")
+            {
+                if (col["mainBanners"].ToString() == "new")
+                {
+                    vm.MainBanner.Banner = col["newBanner"];
+                    if (db.InsertNewMainBanner(vm.MainBanner) == true)
+                    {
+                        ViewBag.Flag = 1;
+                    }
+                    return View(vm);                   
+                } 
+                else
+                {
+                    vm.MainBanner.BannerID = Convert.ToInt16(col["mainBanners"].ToString());
+                    if (db.ReuseMainBanner(vm.MainBanner) == true)
+                    {
+                        ViewBag.Flag = 1;
+                    }
+                    return View(vm);
+                }
+            }
+            return View(vm);
+        }
+
         public ActionResult Logout()
         {
             // create user object

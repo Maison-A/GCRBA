@@ -16,15 +16,14 @@ else
     @using (Html.BeginForm(FormMethod.Post))
     {
 
+        <button name="btnSubmit" value="viewEditRequests">View Edit Requests</button>
         <button name="btnSubmit" value="editMainBanner">Edit Homepage Banner</button>
+        <button name="btnSubmit" value="editCompanies">Edit Companies</button>
+        <button name="btnSubmit" value="editCategories">Edit Categories</button>
+        <button name="btnSubmit" value="editUsers">Edit Users</button>
+        <button name="btnSubmit" value="editEvents">Edit Events</button>
+        <button name="btnSubmit" value="editSpecials">Edit Specials</button>
 
-        <!--display dropdown list of companies-->
-        <select name="companies" class="form-select">
-            @foreach (Company c in ViewBag.Companies)
-            {
-                <option value="@c.CompanyID">@c.Name</option>
-            }
-        </select>
     }
 
 </div>

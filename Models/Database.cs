@@ -564,9 +564,8 @@ namespace GCRBA.Models {
 			catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
-		public bool InsertHomepageBanner()
+		public bool InsertNewMainBanner(MainBanner mb)
         {
-			MainBanner mb = new MainBanner();
 
 			try
 			{
@@ -575,7 +574,7 @@ namespace GCRBA.Models {
 				SqlCommand cm = new SqlCommand("INSERT_NEW_MAIN_BANNER", cn);
 				int intReturnValue = -1;
 
-				SetParameter(ref cm, "@intMainBannerID", mb.BannerID, SqlDbType.SmallInt, Direction: ParameterDirection.Output);
+				SetParameter(ref cm, "@intNewBannerID", "null", SqlDbType.SmallInt, Direction: ParameterDirection.Output);
 				SetParameter(ref cm, "@strBanner", mb.Banner, SqlDbType.NVarChar);
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
 
@@ -586,12 +585,44 @@ namespace GCRBA.Models {
 
 				if (intReturnValue == 1)
                 {
-					mb.BannerID = (int)cm.Parameters["@intMainBannerID"].Value;
+					mb.BannerID = Convert.ToInt16(cm.Parameters["@intNewBannerID"].Value);
 					return true;
                 } else
                 {
 					return false;
                 }
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public bool ReuseMainBanner(MainBanner mb)
+        {
+			try
+			{
+				SqlConnection cn = null; // inside System.Data.SqlClient
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("REUSE_MAIN_BANNER", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intMainBannerID", mb.BannerID, SqlDbType.SmallInt);
+				SetParameter(ref cm, "@intNewBannerID", mb.BannerID, SqlDbType.SmallInt, Direction: ParameterDirection.Output);
+				SetParameter(ref cm, "@strBanner", mb.Banner, SqlDbType.NVarChar);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1)
+				{
+					mb.BannerID = (int)cm.Parameters["@intNewBannerID"].Value;
+					return true;
+				}
+				else
+				{
+					return false;
+				}
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
