@@ -6,7 +6,7 @@
 
 <h2>@ViewBag.Title</h2>
 
-@if (ViewBag.isAdmin == false)
+@if (Model.CurrentUser.isAdmin == 0)
 {
     <p>This page can only be view by admin. Please log in as an admin and try again.</p>
 }

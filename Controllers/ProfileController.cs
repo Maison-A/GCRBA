@@ -236,13 +236,14 @@ namespace GCRBA.Controllers
 
         public ActionResult EditMainBanner()
         {
-
+            // create view model object 
             AdminBannerViewModel vm = new AdminBannerViewModel();
 
+            // create user objects and populate 
             vm.CurrentUser = new User();
 
-            // get current session of user
-            //ViewBag.isAdmin = u.GetAdminStatus();
+            // get admin status because page should only be viewable by admin
+            vm.CurrentUser = vm.CurrentUser.GetUserSession();
 
             // create new database object
             Database db = new Database();

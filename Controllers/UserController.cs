@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.IO;
+using GCRBA.Models;
 
 namespace GCRBA.Controllers
 {
@@ -73,6 +74,7 @@ namespace GCRBA.Controllers
             return View(u);
         }
 
+
         [HttpPost]
         public ActionResult AddNewUser(FormCollection col)
         {
@@ -82,22 +84,19 @@ namespace GCRBA.Controllers
                 // or maybe pull a partial view up?
                 Models.User u = new Models.User();
 
+                // only using FirstName, LastName, Email, Username, and Password because
+                // those are the only ones on the form for a new user 
                 u.FirstName = col["FirstName"];
                 u.LastName = col["LastName"];
                 u.Email = col["Email"];
                 u.Username = col["Username"];
                 u.Password = col["Password"];
-                u.Address = string.Empty;
-                u.City = string.Empty;
-                u.Zip = string.Empty;
-                u.Phone = string.Empty;
-                u.MemberShipType = string.Empty;
-                u.PaymentType = string.Empty;
 
-                // make sure fields are filled out
+                // make sure none of the fields are empty
                 if (u.FirstName.Length == 0 || u.LastName.Length == 0 || u.Email.Length == 0 || u.Username.Length == 0
                        || u.Password.Length == 0)
                 {
+                    // empty field(s), access action type on view to display relevant error message
                     u.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
                     return View(u);
                 }
@@ -105,17 +104,37 @@ namespace GCRBA.Controllers
                 // send data if valid to db
                 else
                 {
+                    // submit new user button pressed
                     if (col["btnSubmit"].ToString() == "newuser")
                     {
+                        // initialize action type
                         Models.User.ActionTypes at = Models.User.ActionTypes.NoType;
-                        // adjust - make sure to push to db and not save (waiting for katie)
-                        // if uid == 0 insert user
+
+                        // create database object 
+                        Database db = new Database();
+
+                        // save action type based on what Save() returns 
                         at = u.Save();
+
                         switch (at)
                         {
+                            // insert successful
+                            // save user session so they are logged in 
+                            // redirect to interface based on member/nonmember
                             case Models.User.ActionTypes.InsertSuccessful:
                                 u.SaveUserSession();
-                                return RedirectToAction("Index","Home");
+
+                                // check to see if user is a member or not 
+                                db.IsUserMember(u);
+
+                                if (u.isMember == 0)
+                                {
+                                    return RedirectToAction("NonMember", "Profile");
+                                } 
+                                else
+                                {
+                                    return RedirectToAction("Member", "Profile");
+                                }
 
                             default:
                                 return View(u);
@@ -124,7 +143,8 @@ namespace GCRBA.Controllers
                     else
                     {
                         return View(u);
-                    }      
+                    }
+                    
                 }
             }
             catch (Exception)
@@ -133,6 +153,7 @@ namespace GCRBA.Controllers
                 return View(u);
             }
         }
+
 
         // TODO: bring up how to manage initilization
         // will we be forcing members to become Users? 
@@ -145,14 +166,14 @@ namespace GCRBA.Controllers
             // if user doesnt exist - redirect to sign up?
         }
 
+
         [HttpPost]
         public ActionResult AddNewMember(FormCollection col)
         {
             if (col["btnSignUp"].ToString() == "submit")
             {
                 //validate data
-                // if user exists set value to memeber
-                // 
+
                 // send data if valid to db
 
                 // return to member page - use generated user id as 
