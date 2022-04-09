@@ -19,7 +19,7 @@ namespace GCRBA.Models
         public string MemberShipType = string.Empty;    
         public string Username { get; set; }
         public string Password { get; set; }
-    public string PaymentType = string.Empty;
+        public string PaymentType = string.Empty;
         public int isAdmin { get; set; }
         public int isMember { get; set; }
         public ActionTypes ActionType { get; set; } = ActionTypes.NoType;
@@ -32,25 +32,6 @@ namespace GCRBA.Models
                 if (UID > 0) return true;
                 return false;
             }
-        }
-
-        public User.ActionTypes Save()
-        {
-            try
-            {
-                Database db = new Database();
-                if (UID == 0)
-                { //insert new user
-                    this.ActionType = db.InsertUser(this);
-                }
-                // TODO: handle duplicate sign up creds
-                else
-                {
-                    this.ActionType = db.UpdateUser(this);
-                }
-                return this.ActionType;
-            }
-            catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         // obtain current session status
@@ -122,12 +103,42 @@ namespace GCRBA.Models
 
         // succesful login -  return User object
         // unsuccessful login - return null 
-        public User Login()
+        public User NonAdminLogin()
         {
             try
             {
                 Database db = new Database();
-                return db.Login(this);
+                return db.NonAdminLogin(this);
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        public User AdminLogin()
+        {
+            try
+            {
+                Database db = new Database();
+                return db.AdminLogin(this);
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        public User.ActionTypes Save()
+        {
+            try
+            {
+                // create database object 
+                Database db = new Database();
+
+                // if current user object UID is 0
+                if (UID == 0)
+                {
+                    // call method to insert user to database
+                    this.ActionType = db.AddNewUser(this);
+                }
+
+                // return status of insert (success, duplicate email, duplicate username, unknown)
+                return this.ActionType;
             }
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
@@ -138,7 +149,7 @@ namespace GCRBA.Models
             InsertSuccessful = 1,
             UpdateSuccessful = 2,
             DuplicateEmail = 3,
-            DuplicateUserID = 4,
+            DuplicateUsername = 4,
             Unknown = 5,
             RequiredFieldMissing = 6,
             LoginFailed = 7,
