@@ -79,9 +79,10 @@ namespace GCRBA.Controllers
         public ActionResult AddNewUser(FormCollection col)
         {
             try
-            { 
+            {
                 // check if checkbox is checked, if so then submit all data and redirect to new member form?
                 // or maybe pull a partial view up?
+               
                 Models.User u = new Models.User();
 
                 // only using FirstName, LastName, Email, Username, and Password because
@@ -101,7 +102,7 @@ namespace GCRBA.Controllers
                     return View(u);
                 }
 
-                // send data if valid to db
+             // send data if valid to db
                 else
                 {
                     // submit new user button pressed
@@ -154,7 +155,7 @@ namespace GCRBA.Controllers
             }
         }
 
-
+       
         // TODO: bring up how to manage initilization
         // will we be forcing members to become Users? 
         public ActionResult AddNewMember()
@@ -182,5 +183,12 @@ namespace GCRBA.Controllers
             }
             return View();
         }
+
+         
+      
+
+
     }
+
+
 }

@@ -195,6 +195,25 @@ namespace GCRBA.Controllers
             if (user.IsAuthenticated)
             {
                 ViewBag.Name = user.FirstName + " " + user.LastName;
+               
+              
+            }
+            return View(user);
+        }
+
+        [HttpPost]
+        public ActionResult NonMember(FormCollection col)
+        {
+            Models.User user = new Models.User();
+            user = user.GetUserSession();
+            if (user.IsAuthenticated)
+            {
+                ViewBag.Name = user.FirstName + " " + user.LastName;
+                if (col["btnSubmit"] == "btnJoin")
+                {
+                    RedirectToAction("AddNewMember", "User");
+                }
+
             }
             return View(user);
         }
