@@ -132,6 +132,9 @@ namespace GCRBA.Controllers
 
             string body = string.Empty;
             using (StreamReader reader = new StreamReader(Server.MapPath("~/Views/Shared/LocEmailTemplate.html"))) {
+                //"C:/Users/winsl/OneDrive/Desktop/Capstone/MVC/Views/Shared/LocEmailTemplate.html"
+                //"E:/Web-Folders/Students/Spring/CPDM-290-200/CPDM-WinslowS/Views/Shared/LocEmailTemplate.html"
+                
                 body = reader.ReadToEnd();
             }
 
@@ -158,6 +161,7 @@ namespace GCRBA.Controllers
                 mailMessage.IsBodyHtml = true;
                 LocateFile file = new LocateFile();
                 string file_path = file.GetFilePath();
+                //string file_path = "E:/Web-Folders/Students/Spring/CPDM-290-200/CPDM-WinslowS/Views/SendMailer/Bakery.csv"; //"C:/Users/winsl/OneDrive/Desktop/Capstone/MVC/Views/SendMailer/Bakery.csv"; //"E:/Web-Folders/Students/Spring/CPDM-290-200/CPDM-WinslowS/Views/SendMailer/Bakery.csv";
                 mailMessage.Attachments.Add(new Attachment(file_path));
                 mailMessage.To.Add(new MailAddress(email.Recipient));
                 SmtpClient smtp = new SmtpClient();
