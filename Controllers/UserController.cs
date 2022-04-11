@@ -37,6 +37,7 @@ namespace GCRBA.Controllers
                     u.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
                     return View(u);
                 }
+
                 else
                 {
                     if (col["btnSubmit"] == "newuser")
@@ -73,7 +74,6 @@ namespace GCRBA.Controllers
             Models.User u = new Models.User();
             return View(u);
         }
-
 
         [HttpPost]
         public ActionResult AddNewUser(FormCollection col)
@@ -154,20 +154,13 @@ namespace GCRBA.Controllers
                 return View(u);
             }
         }
-
        
-        // TODO: bring up how to manage initilization
-        // will we be forcing members to become Users? 
         public ActionResult AddNewMember()
-        {
-            // if user exists: update user value to member
+        {     
             Models.User u = new Models.User();
             return View(u);
-
-            // if user doesnt exist - redirect to sign up?
         }
 
-        //wip
         [HttpPost]
         public ActionResult AddNewMember(FormCollection col)
         {
@@ -176,30 +169,38 @@ namespace GCRBA.Controllers
                 // get current user session
                 Models.User user = new Models.User();
                 user = user.GetUserSession();
-                // if user data exists - populate within form
-                if (user.UID > 0)
+                
+                // check if authenticated - redirect to log in
+                if (user.UID != 0)
                 {
-                    col[ "Firstname"] = user.FirstName;
-                    col["Lastname"] = user.LastName;
-                    col["Email"] = user.Email;
-                }
-                else
-                {
+              
                     user.FirstName = col["Firstname"];
                     user.LastName = col["Lastname"];
                     user.Email = col["Email"];
+                    user.Address = col["Address"];
+                    user.City = col["City"];
+                    user.State = col["State"];
+                    user.Zip = col["Zip"];
                 }
+                else
+                {
+                    RedirectToAction("Login","Profile");
+                }
+
                 // once submit is hit, process member data
                 if (col["btnSubmit"].ToString() == "submit")
                 {
 
                     //validate data
-                    if (user.FirstName.Length == 0 || user.LastName.Length == 0 || user.Email.Length == 0)
+                    if (user.FirstName.Length == 0 || user.LastName.Length == 0 || user.Email.Length == 0 ||
+                        user.Address.Length == 0 || user.City.Length == 0 || user.State.Length == 0 ||
+                        user.Zip.Length == 0)
                     {
                         // empty field(s), access action type on view to display relevant error message
                         user.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
                         return View(user);
                     }
+
                     // send data if valid to db
                     else
                     {
@@ -215,11 +216,11 @@ namespace GCRBA.Controllers
                         switch (at)
                         {
                             // insert successful
-                            // save user session so they are logged in 
+                            // save user session so they are logged in
                             // redirect to interface based on member/nonmember
                             case Models.User.ActionTypes.InsertSuccessful:
+                                
                                 user.SaveUserSession();
-
                                 // check to see if user is a member or not 
                                 db.IsUserMember(user);
 
@@ -246,12 +247,11 @@ namespace GCRBA.Controllers
             }
             return View();
         }
-
-         
-      
+    
 
 
+
+
+    
     }
-
-
 }

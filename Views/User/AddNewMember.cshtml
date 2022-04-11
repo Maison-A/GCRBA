@@ -7,45 +7,107 @@
 
 @using (Html.BeginForm(FormMethod.Post))
 {
+        if (Model.ActionType == GCRBA.Models.User.ActionTypes.RequiredFieldMissing)
+        {
+            <div id="content-locked">
+                <i class="fad fa-exclamation-trangle fa-2x"></i>
+                <span>Please enter data in all fields.</span>
+            </div>
+        }
 
 <div class="section">
     <!-- Member First Name -->
     <div>
         <div>@Html.Label("First Name")</div>
-        <div>@Html.TextBoxFor(model => model.FirstName, new {@name="Firstname", @autofocus = "autofocus" })</div>
-    </div>
-    <!-- Member Last Name -->
-    <div>
-        <div>@Html.Label("Last Name")</div>
-        <div>@Html.TextBoxFor(model => model.LastName, new { @name = "Lastname"})</div>
-    </div>
-
-    <!-- Email -->
-    <div>
-        <div>@Html.Label("E-mail")</div>
-        <div>@Html.TextBoxFor(model => model.Email, new { @name = "Email" })</div>
-    </div>
-
-
-    <!-- Membership Type -->
-    <div class="section">
-        <div>@Html.Label("Membership Type")</div>
-        <div class="some-spacing">
-            @Html.RadioButtonFor(model => model.MemberShipType, "A", false)@Html.Label("A - $10")
-            @Html.RadioButtonFor(model => model.MemberShipType, "B", false)@Html.Label("B - $20")
-            @Html.RadioButtonFor(model => model.MemberShipType, "C", false)@Html.Label("C - $100")
-        </div>
-    </div>
-    <!-- payment type -->
-    <div class="some-spacing">
-        @Html.RadioButtonFor(model => model.PaymentType, "A", false)@Html.Label("Zelle")
-        @Html.RadioButtonFor(model => model.PaymentType, "B", false)@Html.Label("Check")
+        <div>
+            @Html.TextBoxFor(model => model.FirstName, new {
+            @name="Firstname",
+            @Value = "First",
+            @autofocus = "autofocus" })
     </div>
 </div>
 
+<!-- Member Last Name -->
+<div>
+    <div>@Html.Label("Last Name")</div>
     <div>
-        <button id="btnSignUp" name="btnSubmit" value="submit" class="button-action"><i class="fas fa-user-plus"></i> Submit </button>
+        @Html.TextBoxFor(model => model.LastName, new {
+        @name = "Lastname",
+        @Value = @Model.LastName})
+</div>
+</div>
+
+<!-- Email -->
+<div>
+    <div>@Html.Label("E-mail")</div>
+    <div>
+        @Html.TextBoxFor(model => model.Email, new {
+        @name = "Email",
+        @Value = @Model.Email })
+</div>
+</div>
+
+<!-- Address -->
+<div>
+    <div>@Html.Label("Address")</div>
+    <div>
+        @Html.TextBoxFor(model => model.Address, new {
+        @name = "Address",
+        @Value = @Model.Address })
+</div>
+</div>
+
+<!-- City -->
+<div>
+    <div>@Html.Label("City")</div>
+    <div>
+        @Html.TextBoxFor(model => model.City, new {
+        @name = "City",
+        @Value = @Model.City })
+</div>
+</div>
+
+<!-- State -->
+<div>
+    <div>@Html.Label("State")</div>
+    <div>
+        @Html.TextBoxFor(model => model.State, new {
+        @name = "State",
+        @Value = @Model.State })
+</div>
+</div>
+
+
+<!-- Zip -->
+<div>
+    <div>@Html.Label("Zip")</div>
+    <div>
+        @Html.TextBoxFor(model => model.Zip, new {
+        @name = "Zip",
+        @Value = @Model.Zip })
+</div>
+</div>
+
+
+<!-- Membership Type -->
+<div class="section">
+    <div>@Html.Label("Membership Type")</div>
+    <div class="some-spacing">
+        @Html.RadioButtonFor(model => model.MemberShipType, "Associate", false)@Html.Label("Associate - $10")
+        @Html.RadioButtonFor(model => model.MemberShipType, "Business", false)@Html.Label("Business - $20")
+        @Html.RadioButtonFor(model => model.MemberShipType, "Allied", false)@Html.Label("Allied - $100")
     </div>
+</div>
+<!-- payment type -->
+<div class="some-spacing">
+    @Html.RadioButtonFor(model => model.PaymentType, "A", false)@Html.Label("Zelle")
+    @Html.RadioButtonFor(model => model.PaymentType, "B", false)@Html.Label("Check")
+</div>
+</div>
+
+<div>
+    <button id="btnSignUp" name="btnSubmit" value="submit" class="button-action"><i class="fas fa-user-plus"></i> Submit </button>
+</div>
 }
 
 
