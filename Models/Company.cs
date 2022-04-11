@@ -19,17 +19,29 @@ namespace GCRBA.Models
             NoType = 0, 
             InsertSuccessful = 1,
             UpdateSuccessful = 2,
-            DuplicateName = 3,
-            Unknown = 4,
-            RequiredFieldMissing = 5
+            DeleteSuccessful = 3, 
+            DuplicateName = 4, 
+            Unknown = 5,
+            RequiredFieldMissing = 6
         }
 
-        public Company.ActionTypes Save()
+        public Company.ActionTypes SaveInsert()
         {
             try
             {
                 Database db = new Database();
                 this.ActionType = db.InsertNewCompany(this);
+                return this.ActionType;
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        public Company.ActionTypes SaveDelete()
+        {
+            try
+            {
+                Database db = new Database();
+                this.ActionType = db.DeleteCompany(this);
                 return this.ActionType;
             }
             catch (Exception ex) { throw new Exception(ex.Message); }

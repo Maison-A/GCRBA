@@ -565,6 +565,35 @@ namespace GCRBA.Models {
 			catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
+		public Company.ActionTypes DeleteCompany(Company c)
+        {
+			try
+            {
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("DELETE_COMPANY", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intCompanyID", c.CompanyID, SqlDbType.BigInt);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				switch (intReturnValue)
+                {
+					case 1:
+						return Company.ActionTypes.DeleteSuccessful;
+					default:
+						return Company.ActionTypes.Unknown;
+						
+                }
+            }
+			catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
 		public bool InsertNewMainBanner(MainBanner mb)
         {
 

@@ -4,6 +4,7 @@
     ViewBag.Title = "Login";
 }
 
+<!--if user is authenticated, they're already logged in, so don't show log in interface again-->
 @if (Model.IsAuthenticated) 
 {
     <p>You are already logged in.</p>

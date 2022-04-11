@@ -255,25 +255,10 @@ namespace GCRBA.Controllers
         public ActionResult EditMainBanner()
         {
             // create view model object 
-            AdminBannerViewModel vm = new AdminBannerViewModel();
+            AdminBannerViewModel vm = InitializeAdminBannerVM();
 
-            // create user objects and populate 
-            vm.CurrentUser = new User();
-
-            // get admin status because page should only be viewable by admin
-            vm.CurrentUser = vm.CurrentUser.GetUserSession();
-
-            // create new database object
-            Database db = new Database();
-
-            // create list to hold banners 
-            List<MainBanner> listOfMainBanners = new List<MainBanner>();
-
-            // add previous + current banners to list 
-            listOfMainBanners = db.GetMainBanners();
-
-            // add list of banners to view model 
-            vm.MainBanners = listOfMainBanners;
+            // get banners list 
+            vm.MainBanners = GetBannersList(vm);
 
             // return view with view model object passed as argument so we can access it in view
             return View(vm);
@@ -284,31 +269,19 @@ namespace GCRBA.Controllers
         {
             // create view model object so that we can show data from more than one
             // model in the view 
-            AdminBannerViewModel vm = new AdminBannerViewModel();
-            
-            // create view model user object 
-            vm.CurrentUser = new User();
+            AdminBannerViewModel vm = InitializeAdminBannerVM();
 
-            // is user logged in?
-            vm.CurrentUser = vm.CurrentUser.GetUserSession();
+            // create new database object
+            Database db = new Database();
+
+            // get banners list 
+            vm.MainBanners = GetBannersList(vm);
             
             // get current main banner 
             vm.MainBanner = new MainBanner();
 
-            // create variable to hold new banner if that option is chosen 
-            Database db = new Database();
-
             // set default to 0
             ViewBag.Flag = 0;
-
-            // create list to hold banners 
-            List<MainBanner> listOfMainBanners = new List<MainBanner>();
-
-            // add previous + current banners to list 
-            listOfMainBanners = db.GetMainBanners();
-
-            // add list of banners to view model 
-            vm.MainBanners = listOfMainBanners;
 
             // return to main admin portal if user selects cancel  button 
             if (col["btnSubmit"].ToString() == "cancel")
@@ -343,7 +316,7 @@ namespace GCRBA.Controllers
                     vm.MainBanner.BannerID = Convert.ToInt16(col["mainBanners"].ToString());
 
                     // get banner text from list of banners
-                    vm.MainBanner.Banner = listOfMainBanners[vm.MainBanner.BannerID - 1].Banner;
+                    vm.MainBanner.Banner = vm.MainBanners[vm.MainBanner.BannerID - 1].Banner;
 
                     // try to add banner to newest row in table in db 
                     if (db.InsertNewMainBanner(vm.MainBanner) == true)
@@ -388,7 +361,7 @@ namespace GCRBA.Controllers
 
             if (col["btnSubmit"].ToString() == "deleteCompany")
             {
-                return RedirectToAction("DeleteCompany", "Profile/Admin");
+                return RedirectToAction("DeleteCompany", "Profile");
             }
 
             if (col["btnSubmit"].ToString() == "editCompany")
@@ -418,13 +391,9 @@ namespace GCRBA.Controllers
         public ActionResult AddCompany(FormCollection col)
         {
             // create objects of what we will use 
-            EditCompaniesViewModel vm = new EditCompaniesViewModel();
-            vm.CurrentUser = new User();
+            EditCompaniesViewModel vm = InitializeEditCompaniesVM();
             vm.CurrentCompany = new Company();
             Database db = new Database();
-
-            // get current user session
-            vm.CurrentUser = vm.CurrentUser.GetUserSession();
 
             // get input from form 
             if (col["btnSubmit"].ToString() == "submit")
@@ -435,18 +404,58 @@ namespace GCRBA.Controllers
             }
 
             // add to database
-            vm.CurrentCompany.ActionType = vm.CurrentCompany.Save();
+            vm.CurrentCompany.ActionType = vm.CurrentCompany.SaveInsert();
 
-            return RedirectToAction("Admin", "Profile"); 
+            return View(vm); 
         }
 
         public ActionResult DeleteCompany()
         {
-            return View();
+            // create VM object
+            EditCompaniesViewModel vm = InitializeEditCompaniesVM();
+
+            vm.Companies = GetCompaniesList(vm);
+
+            // return view 
+            return View(vm);
+        }
+
+        [HttpPost]
+        public ActionResult DeleteCompany(FormCollection col)
+        {
+            // set initial flag value to 0
+            ViewBag.Flag = 0;
+
+            // create VM object
+            EditCompaniesViewModel vm = InitializeEditCompaniesVM();
+
+            // get list of companies
+            vm.Companies = GetCompaniesList(vm);
+
+            // get selection 
+            vm.CurrentCompany.CompanyID = Convert.ToInt16(col["companies"].ToString());
+
+            // delete button pressed
+            if (col["btnSubmit"].ToString() == "delete")
+            {
+                // save action type correlating to success of deletion from database
+                vm.CurrentCompany.ActionType = vm.CurrentCompany.SaveDelete();
+
+                return View(vm);
+            }
+
+            // cancel button pressed
+            if (col["btnSubmit"].ToString() == "cancel")
+            {
+                // redirect to admin portal
+                return RedirectToAction("Admin", "Profile");
+            }
+
+            return View(vm);
         }
 
         public ActionResult EditExistingCompany()
-        {
+        {           
             return View();
         }
 
@@ -460,6 +469,66 @@ namespace GCRBA.Controllers
 
             // redirect to main page
             return RedirectToAction("Index", "Home");
+        }
+
+
+        public List<Company> GetCompaniesList(EditCompaniesViewModel vm)
+        {
+            // create database object
+            Database db = new Database();
+
+            // create VM company list object 
+            vm.Companies = new List<Company>();
+
+            // get list of companies
+            vm.Companies = db.GetCompanies();
+
+            return vm.Companies;
+        }
+
+        private EditCompaniesViewModel InitializeEditCompaniesVM()
+        {
+            // create EditCompaniesVM object 
+            EditCompaniesViewModel vm = new EditCompaniesViewModel();
+
+            // create VM user object
+            vm.CurrentUser = new User();
+
+            // get current user session
+            vm.CurrentUser = vm.CurrentUser.GetUserSession();
+
+            // create new VM company object 
+            vm.CurrentCompany = new Company();
+
+            return vm;
+        }
+
+        private AdminBannerViewModel InitializeAdminBannerVM()
+        {
+            // create view model object
+            AdminBannerViewModel vm = new AdminBannerViewModel();
+
+            // create user objects and populate 
+            vm.CurrentUser = new User();
+
+            // get admin status because page should only be viewable by admin
+            vm.CurrentUser = vm.CurrentUser.GetUserSession();
+
+            return vm;
+        }
+
+        private List<MainBanner> GetBannersList(AdminBannerViewModel vm)
+        {
+            // create new database object 
+            Database db = new Database();
+
+            // create VM banner list object 
+            vm.MainBanners = new List<MainBanner>();
+
+            // get list of banners
+            vm.MainBanners = db.GetMainBanners();
+
+            return vm.MainBanners;
         }
 
     }

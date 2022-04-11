@@ -286,6 +286,8 @@
     <Content Include="Views\Profile\AddCompany.cshtml" />
     <Content Include="Views\Profile\EditExistingCompany.cshtml" />
     <Content Include="Views\Profile\DeleteCompany.cshtml" />
+    <Content Include="Views\Shared\UpdateSuccessful.cshtml" />
+    <Content Include="Views\Shared\AdminOnly.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

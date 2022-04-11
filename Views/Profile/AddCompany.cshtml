@@ -21,7 +21,7 @@ else
 
         if (Model.CurrentCompany.ActionType == GCRBA.Models.Company.ActionTypes.InsertSuccessful)
         {
-            <p>Company successfully added to the database. Navigate to the Admin Portal and click on Edit Existing Companies to add more information for this company.</p>
+            @Html.Partial("UpdateSuccessful");
         }
     }
 

@@ -1,7 +1,38 @@
-﻿
+﻿@using GCRBA.ViewModels
+@model EditCompaniesViewModel
+
 @{
-    ViewBag.Title = "DeleteCompany";
+    ViewBag.Title = "Delete Company";
 }
 
-<h2>DeleteCompany</h2>
+<h2>@ViewBag.Title</h2>
 
+@if (Model.CurrentUser.isAdmin == 0) 
+{
+    <p>This page is for admins only. If you are an admin, please log in and try again.</p>
+}
+else 
+{
+    if (Model.CurrentCompany != null) 
+    {
+        if (Model.CurrentCompany.ActionType == GCRBA.Models.Company.ActionTypes.DeleteSuccessful) 
+        {
+            @Html.Partial("UpdateSuccessful");
+        }
+    }
+
+    using (Html.BeginForm(FormMethod.Post)) 
+    {
+        <label for="companies">Select a company to delete from the GCRBA website</label>
+
+        <select name="companies">
+            @foreach (var item in Model.Companies) 
+            {
+                <option value="@item.CompanyID">@item.Name</option>
+            }
+        </select>
+
+        <button name="btnSubmit" value="delete">Delete Company</button>
+        <button name="btnSubmit" value="cancel">Return to Admin Portal</button>
+    }
+}
