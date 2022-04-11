@@ -80,9 +80,6 @@ namespace GCRBA.Controllers
         {
             try
             {
-                // check if checkbox is checked, if so then submit all data and redirect to new member form?
-                // or maybe pull a partial view up?
-               
                 Models.User u = new Models.User();
 
                 // only using FirstName, LastName, Email, Username, and Password because
@@ -92,6 +89,8 @@ namespace GCRBA.Controllers
                 u.Email = col["Email"];
                 u.Username = col["Username"];
                 u.Password = col["Password"];
+                u.isMember = 0;
+                u.isAdmin = 0;
 
                 // make sure none of the fields are empty
                 if (u.FirstName.Length == 0 || u.LastName.Length == 0 || u.Email.Length == 0 || u.Username.Length == 0
@@ -101,7 +100,6 @@ namespace GCRBA.Controllers
                     u.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
                     return View(u);
                 }
-
              // send data if valid to db
                 else
                 {
@@ -124,10 +122,8 @@ namespace GCRBA.Controllers
                             // redirect to interface based on member/nonmember
                             case Models.User.ActionTypes.InsertSuccessful:
                                 u.SaveUserSession();
-
                                 // check to see if user is a member or not 
                                 db.IsUserMember(u);
-
                                 if (u.isMember == 0)
                                 {
                                     return RedirectToAction("NonMember", "Profile");
@@ -136,7 +132,6 @@ namespace GCRBA.Controllers
                                 {
                                     return RedirectToAction("Member", "Profile");
                                 }
-
                             default:
                                 return View(u);
                         }
@@ -144,8 +139,7 @@ namespace GCRBA.Controllers
                     else
                     {
                         return View(u);
-                    }
-                    
+                    }                    
                 }
             }
             catch (Exception)
@@ -154,7 +148,7 @@ namespace GCRBA.Controllers
                 return View(u);
             }
         }
-       
+        
         public ActionResult AddNewMember()
         {     
             Models.User u = new Models.User();
@@ -170,10 +164,9 @@ namespace GCRBA.Controllers
                 Models.User user = new Models.User();
                 user = user.GetUserSession();
                 
-                // check if authenticated - redirect to log in
-                if (user.UID != 0)
+                // check if not authenticated - create new user
+                if (user.UID == 0)
                 {
-              
                     user.FirstName = col["Firstname"];
                     user.LastName = col["Lastname"];
                     user.Email = col["Email"];
@@ -181,16 +174,15 @@ namespace GCRBA.Controllers
                     user.City = col["City"];
                     user.State = col["State"];
                     user.Zip = col["Zip"];
+                    user.MemberShipType = col[""];
+                    user.isMember = 1;
+                    user.isAdmin = 0;
+                    
                 }
-                else
-                {
-                    RedirectToAction("Login","Profile");
-                }
-
+               
                 // once submit is hit, process member data
                 if (col["btnSubmit"].ToString() == "submit")
                 {
-
                     //validate data
                     if (user.FirstName.Length == 0 || user.LastName.Length == 0 || user.Email.Length == 0 ||
                         user.Address.Length == 0 || user.City.Length == 0 || user.State.Length == 0 ||

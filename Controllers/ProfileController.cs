@@ -28,9 +28,7 @@ namespace GCRBA.Controllers
             u = u.GetUserSession();
             return View(u);
         }
-        // -------------------------------------------------------- //
-        // placed validation within login button condition - maison
-        // -------------------------------------------------------- //
+
         [HttpPost]
         public ActionResult Login(FormCollection col)
         {

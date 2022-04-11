@@ -1,6 +1,6 @@
 ﻿@model GCRBA.Models.User
 @{
-    ViewBag.Title = "New GCRBA Member Form";
+    ViewBag.Title = "GCRBA Member Form";
 }
 
 <h2>@ViewBag.Title</h2>
@@ -70,11 +70,10 @@
 <!-- State -->
 <div>
     <div>@Html.Label("State")</div>
-    <div>
-        @Html.TextBoxFor(model => model.State, new {
-        @name = "State",
-        @Value = @Model.State })
-</div>
+    <div><!--View model?-->
+        @*<div id="label">@Html.LabelFor(model => model.lstLocations[index].intState, "State")*</div>
+        <div>@Html.DropDownListFor(model => model.LocationList.lstLocations[index].intState, new SelectList(Model.Locationlist.lstLocations[index].lstStates, "intStateID", "strState")) </div>*@
+    </div>
 </div>
 
 
@@ -93,7 +92,7 @@
 <div class="section">
     <div>@Html.Label("Membership Type")</div>
     <div class="some-spacing">
-        @Html.RadioButtonFor(model => model.MemberShipType, "Associate", false)@Html.Label("Associate - $10")
+        @Html.RadioButtonFor(model => model.MemberShipType,"Associate",false)@Html.Label("Associate - $10")
         @Html.RadioButtonFor(model => model.MemberShipType, "Business", false)@Html.Label("Business - $20")
         @Html.RadioButtonFor(model => model.MemberShipType, "Allied", false)@Html.Label("Allied - $100")
     </div>
