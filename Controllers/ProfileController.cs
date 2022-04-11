@@ -25,6 +25,7 @@ namespace GCRBA.Controllers
         public ActionResult Login()
         {
             User u = new User();
+            u = u.GetUserSession();
             return View(u);
         }
 
@@ -115,6 +116,7 @@ namespace GCRBA.Controllers
         public ActionResult AdminLogin()
         {
             User u = new User();
+            u = u.GetUserSession();
             return View(u);
         }
 

@@ -4,6 +4,12 @@
     ViewBag.Title = "Login";
 }
 
+@if (Model.IsAuthenticated) 
+{
+    <p>You are already logged in.</p>
+}
+else 
+{
 <div class="container col-md-4">
     <h2 class="mt-5">@ViewBag.Title</h2>
 
@@ -38,3 +44,4 @@
         </div>
     }
 </div>
+}
