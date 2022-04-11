@@ -228,13 +228,9 @@ namespace GCRBA.Controllers
         public ActionResult Admin()
         {
             // get current user to pass to the view 
-            Models.User u = new Models.User();
+            User u = new User();
             u = u.GetUserSession();
-
-            Database db = new Database();
-            // get list of company IDs and names, and add to viewbag
-            ViewBag.Companies = db.GetCompanies();
-
+           
             return View(u);
         }
 
@@ -244,6 +240,11 @@ namespace GCRBA.Controllers
             if (col["btnSubmit"].ToString() == "editMainBanner")
             {
                 return RedirectToAction("EditMainBanner", "Profile");
+            }
+
+            if (col["btnSubmit"].ToString() == "editCompanies")
+            {
+                return RedirectToAction("EditCompanies", "Profile");
             }
 
             return View();
@@ -279,12 +280,23 @@ namespace GCRBA.Controllers
         [HttpPost]
         public ActionResult EditMainBanner(FormCollection col)
         {
+            // create view model object so that we can show data from more than one
+            // model in the view 
             AdminBannerViewModel vm = new AdminBannerViewModel();
+            
+            // create view model user object 
             vm.CurrentUser = new User();
+
+            // is user logged in?
             vm.CurrentUser = vm.CurrentUser.GetUserSession();
+            
+            // get current main banner 
             vm.MainBanner = new MainBanner();
+
             // create variable to hold new banner if that option is chosen 
             Database db = new Database();
+
+            // set default to 0
             ViewBag.Flag = 0;
 
             // create list to hold banners 
@@ -295,6 +307,12 @@ namespace GCRBA.Controllers
 
             // add list of banners to view model 
             vm.MainBanners = listOfMainBanners;
+
+            // return to main admin portal if user selects cancel  button 
+            if (col["btnSubmit"].ToString() == "cancel")
+            {
+                return RedirectToAction("Admin", "Profile");
+            }
 
             // button to submit new banner is selected 
             if (col["btnSubmit"].ToString() == "submitNewBanner")
@@ -338,6 +356,96 @@ namespace GCRBA.Controllers
                 }
             }
             return View(vm);
+        }
+
+        public ActionResult EditCompanies()
+        {
+            // create new user object
+            User u = new User();
+
+            // get current user session 
+            u = u.GetUserSession();
+
+            // return view 
+            return View(u);
+        }
+
+        [HttpPost]
+        public ActionResult EditCompanies(FormCollection col)
+        {
+            // create new user object
+            User u = new User();
+
+            // get current user session
+            u = u.GetUserSession();
+
+            if (col["btnSubmit"].ToString() == "addCompany")
+            {
+                return RedirectToAction("AddCompany", "Profile");
+            }
+
+            if (col["btnSubmit"].ToString() == "deleteCompany")
+            {
+                return RedirectToAction("DeleteCompany", "Profile/Admin");
+            }
+
+            if (col["btnSubmit"].ToString() == "editCompany")
+            {
+                return RedirectToAction("EditExistingCompany", "Profile");
+            }
+
+            return View(u);
+
+        }
+
+        public ActionResult AddCompany()
+        {
+            // create object of view model
+            EditCompaniesViewModel vm = new EditCompaniesViewModel();
+
+            // create new user object with vm 
+            vm.CurrentUser = new User();
+
+            // get current user session
+            vm.CurrentUser = vm.CurrentUser.GetUserSession();
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        public ActionResult AddCompany(FormCollection col)
+        {
+            // create objects of what we will use 
+            EditCompaniesViewModel vm = new EditCompaniesViewModel();
+            vm.CurrentUser = new User();
+            vm.CurrentCompany = new Company();
+            Database db = new Database();
+
+            // get current user session
+            vm.CurrentUser = vm.CurrentUser.GetUserSession();
+
+            // get input from form 
+            if (col["btnSubmit"].ToString() == "submit")
+            {
+                vm.CurrentCompany.Name = col["CurrentCompany.Name"];
+                vm.CurrentCompany.About = col["CurrentCompany.About"];
+                vm.CurrentCompany.Year = col["CurrentCompany.Year"];
+            }
+
+            // add to database
+            vm.CurrentCompany.ActionType = vm.CurrentCompany.Save();
+
+            return RedirectToAction("Admin", "Profile"); 
+        }
+
+        public ActionResult DeleteCompany()
+        {
+            return View();
+        }
+
+        public ActionResult EditExistingCompany()
+        {
+            return View();
         }
 
         public ActionResult Logout()

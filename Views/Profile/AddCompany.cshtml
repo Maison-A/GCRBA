@@ -1,0 +1,69 @@
+﻿@using GCRBA.ViewModels
+@model EditCompaniesViewModel
+
+@{
+    ViewBag.Title = "Add/Delete Company";
+}
+
+@if (Model.CurrentUser.isAdmin == 0)
+{
+    <p>This page is for admins only. If you are an admin, please log in and try again.</p>
+}
+else
+{
+    if (Model.CurrentCompany != null)
+    {
+
+        if (Model.CurrentCompany.ActionType == GCRBA.Models.Company.ActionTypes.DuplicateName)
+        {
+            <p>This company name already exists in the GCRBA database. If you would like to edit information about this company, go back to the Admin Portal, click on "Edit Existing Company" and choose this company.</p>
+        }
+
+        if (Model.CurrentCompany.ActionType == GCRBA.Models.Company.ActionTypes.InsertSuccessful)
+        {
+            <p>Company successfully added to the database. Navigate to the Admin Portal and click on Edit Existing Companies to add more information for this company.</p>
+        }
+    }
+
+    using (Html.BeginForm(FormMethod.Post))
+    {
+        <div class="container">
+            <h2>@ViewBag.Title</h2>
+
+            <p>Once you add a company to the database, you can click on Edit Existing Companies in the Admin Portal to add more detailed information, such as locations or categories.</p>
+
+            <div>
+                <div id="info" class="container text-center" style="display:none">
+                    Once you add a company, you can click on Edit Existing Company in the Admin Portal to add more detailed information, such as location, for that specific company.
+                </div>
+                @Html.LabelFor(model => model.CurrentCompany.Name, new { @class = "form-label" })
+                @Html.TextBoxFor(model => model.CurrentCompany.Name, new { @autofocus = "autofocus", @class = "form-control", maxlength = "20", @required = "required" })
+            </div>
+
+            <div>
+                @Html.LabelFor(model => model.CurrentCompany.About, new { @class = "form-label" })
+                @Html.TextAreaFor(model => model.CurrentCompany.About, new { @class = "form-control", maxlength = "2000", @required = "required" })
+            </div>
+
+            <div>
+                @Html.LabelFor(model => model.CurrentCompany.Year, new { @class = "form-label" })
+                @Html.TextBoxFor(model => model.CurrentCompany.Year, new { @class = "form-control", maxlength = "4", placeholder = "YYYY" })
+            </div>
+
+            <button name="btnSubmit" value="submit">Add New Company</button>
+
+        </div>
+    }
+
+    <script>
+        function displayInfo() {
+            var x = document.getElementById("info");
+
+            if (x.style.display == "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+    </script>
+}

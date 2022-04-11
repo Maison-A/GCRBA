@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Configuration;
 using System.Collections.Generic;
 using System.Linq;
+using GCRBA.ViewModels;
 
 namespace GCRBA.Models {
 
@@ -314,7 +315,7 @@ namespace GCRBA.Models {
 						newUser.isAdmin = Convert.ToInt16(dr["isAdmin"]);
                     }
 
-					if (newUser.isAdmin == 0)
+					if (newUser == null || newUser.isAdmin == 0)
                     {
 						return false;
                     } else
@@ -702,7 +703,43 @@ namespace GCRBA.Models {
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public NewLocation.ActionTypes InsertCompany(NewLocation loc) {
+        public Company.ActionTypes InsertNewCompany(Company c)
+        {
+			try
+            {
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("INSERT_COMPANY", cn);
+				int intReturnValue = -1;
+				
+				SetParameter(ref cm, "@intCompanyID", null, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+				SetParameter(ref cm, "@strCompanyName", c.Name, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strAbout", c.About, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strBizYear", c.Year, SqlDbType.NVarChar);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				switch (intReturnValue)
+				{
+					case -1:
+						return Company.ActionTypes.DuplicateName;
+					case 1: // new user created
+						c.CompanyID = Convert.ToInt16(cm.Parameters["@intCompanyID"].Value);
+						return Company.ActionTypes.InsertSuccessful;
+					default:
+						return Company.ActionTypes.Unknown;
+				}
+
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+
+		}
+
+        public NewLocation.ActionTypes InsertCompany(NewLocation loc) {
 			try {
 				SqlConnection cn = null;
 				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");

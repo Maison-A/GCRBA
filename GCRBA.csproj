@@ -226,6 +226,7 @@
     <Compile Include="Controllers\BakeryController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="ViewModels\AdminBannerViewModel.cs" />
+    <Compile Include="ViewModels\EditCompaniesViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
@@ -277,6 +278,10 @@
     <Content Include="Views\Profile\AdminLogin.cshtml" />
     <Content Include="Views\SendMailer\Index.cshtml" />
     <Content Include="Views\Profile\EditMainBanner.cshtml" />
+    <Content Include="Views\Profile\EditCompanies.cshtml" />
+    <Content Include="Views\Profile\AddCompany.cshtml" />
+    <Content Include="Views\Profile\EditExistingCompany.cshtml" />
+    <Content Include="Views\Profile\DeleteCompany.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
