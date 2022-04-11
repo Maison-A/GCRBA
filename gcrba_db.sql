@@ -47,6 +47,9 @@ IF OBJECT_ID('SELECT_STATES')			IS NOT NULL	DROP PROCEDURE SELECT_STATES
 IF OBJECT_ID('DELETE_LOCATION')			IS NOT NULL	DROP PROCEDURE DELETE_LOCATION
 IF OBJECT_ID('INSERT_NEW_MAIN_BANNER')	IS NOT NULL	DROP PROCEDURE INSERT_NEW_MAIN_BANNER
 IF OBJECT_ID('REUSE_MAIN_BANNER')		IS NOT NULL	DROP PROCEDURE REUSE_MAIN_BANNER
+IF OBJECT_ID('DELETE_COMPANY')			IS NOT NULL	DROP PROCEDURE DELETE_COMPANY
+IF OBJECT_ID('GET_LOCATIONS')			IS NOT NULL	DROP PROCEDURE GET_LOCATIONS
+IF OBJECT_ID('GET_SPECIFIC_COMPANY')	IS NOT NULL DROP PROCEDURE GET_SPECIFIC_COMPANY
 
 CREATE TABLE tblState
 (
@@ -193,7 +196,6 @@ CREATE TABLE tblCategoryLocation
 	intCategoryLocationID		BIGINT IDENTITY(1,1)	NOT NULL,
 	intCategoryID			SMALLINT		NOT NULL,
 	intLocationID			BIGINT			NOT NULL,
-	blnAvailable			BIT			NOT NULL,
 	CONSTRAINT tblCategoryLocation_PK PRIMARY KEY (intCategoryLocationID)
 )
 
@@ -642,7 +644,6 @@ CREATE PROCEDURE [dbo].[INSERT_CATEGORYLOCATION]
 @intCategoryLocationID AS BIGINT OUTPUT
 ,@intCategoryID AS SMALLINT
 ,@intLocationID AS BIGINT
-,@blnAvailable AS BIT
 AS
 SET NOCOUNT ON
 SET XACT_ABORT ON
@@ -656,12 +657,10 @@ BEGIN
 
 	INSERT INTO [db_owner].[tblCategoryLocation] WITH (TABLOCKX)
 				([intCategoryID]
-				,[intLocationID]
-				,[blnAvailable])
+				,[intLocationID])
 			VALUES
 				(@intCategoryID
-				,@intLocationID
-				,@blnAvailable)
+				,@intLocationID)
 	SELECT @intCategoryLocationID=@@IDENTITY
 	RETURN 1
 
@@ -722,6 +721,18 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [db_owner].[GET_LOCATIONS]
+@intCompanyID BIGINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT l.intLocationID, l.strAddress, l.strCity, s.strState, l.strZip, l.strPhone, l.strEmail
+	FROM tblLocation AS l JOIN tblState AS s ON s.intStateID = l.intStateID
+	WHERE l.intCompanyID = @intCompanyID
+END
+GO
+
 CREATE PROCEDURE [db_owner].[GET_COMPANY_INFO]
 AS 
 BEGIN
@@ -731,6 +742,19 @@ BEGIN
 	FROM	tblCompany 
 END 
 GO
+
+CREATE PROCEDURE [db_owner].[GET_SPECIFIC_COMPANY]
+@intCompanyID BIGINT
+AS 
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT	intCompanyID, strCompanyName, strAbout, strBizYear 
+	FROM	tblCompany 
+	WHERE	intCompanyID = @intCompanyID
+END
+GO
+
 
 CREATE PROCEDURE [dbo].[SELECT_LOCATION]
 @intLocationID BIGINT = NULL
@@ -847,6 +871,26 @@ BEGIN
 
 	SELECT @intNewBannerID=@@IDENTITY
 	RETURN 1
+END
+GO
+
+CREATE PROCEDURE [db_owner].[DELETE_COMPANY]
+@intCompanyID BIGINT
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+	
+	DELETE FROM tblCompanyMember WHERE intCompanyID = @intCompanyID 
+	DELETE FROM tblCategoryLocation WHERE intLocationID IN (SELECT intLocationID FROM tblLocation WHERE intCompanyID = @intCompanyID)
+	DELETE FROM tblLocationHours WHERE intLocationID IN (SELECT intLocationID FROM  tblLocation WHERE intCompanyID = @intCompanyID)
+	DELETE FROM tblLocation WHERE intCompanyID = @intCompanyID
+	DELETE FROM tblCompanyAward WHERE intCompanyID = @intCompanyID
+	DELETE FROM tblCompanySocialMedia WHERE intCompanyID = @intCompanyID
+	DELETE FROM tblContactPerson WHERE intCompanyID = @intCompanyID
+	DELETE FROM tblWebsite WHERE intCompanyID = @intCompanyID
+	DELETE FROM tblCompany WHERE intCompanyID = @intCompanyID
+	RETURN @@rowcount
 END
 GO
 
@@ -1017,45 +1061,45 @@ INSERT INTO tblMainBanner (strBanner)
 VALUES	('This is an example of the main banner. This will hold information relevant to the GCRBA.'),
 		('This is an example of the most up-to-date banner in this database. This will hold information relevant to the GCRBA')
 
-INSERT INTO tblCategoryLocation (intCategoryID, intLocationID, blnAvailable)
-VALUES		(6, 1, 1),
-			(8, 1, 1),
-			(9, 1, 1),
-			(10, 1, 1), 
-			(11, 1, 1),
-			(13,  1, 1),
-			(15, 1, 1),
-			(1, 2, 1),
-			(6, 2, 1),
-			(7, 2, 1),
-			(8, 2, 1),
-			(9, 2, 1),
-			(10, 2, 1),
-			(11, 2, 1),
-			(12, 2, 1),
-			(1, 3, 1),
-			(2, 3, 1),
-			(3, 3, 1),
-			(6, 3, 1),
-			(7, 3, 1),
-			(8, 3, 1),
-			(9, 3, 1),
-			(10, 3, 1),
-			(11, 3, 1),
-			(12, 3, 1),
-			(13, 3, 1),
-			(15, 3, 1),
-			(16, 3, 1),
-			(1, 4, 1),
-			(2, 4, 1),
-			(3, 4, 1),
-			(6, 4, 1),
-			(7, 4, 1),
-			(8, 4, 1),
-			(9, 4, 1),
-			(10, 4, 1),
-			(11, 4, 1),
-			(12, 4, 1),
-			(13, 4, 1),
-			(15, 4, 1),
-			(16, 4, 1)
+INSERT INTO tblCategoryLocation (intCategoryID, intLocationID)
+VALUES		(6, 1),
+			(8, 1),
+			(9, 1),
+			(10, 1), 
+			(11, 1),
+			(13,  1),
+			(15, 1),
+			(1, 2),
+			(6, 2),
+			(7, 2),
+			(8, 2),
+			(9, 2),
+			(10, 2),
+			(11, 2),
+			(12, 2),
+			(1, 3),
+			(2, 3),
+			(3, 3),
+			(6, 3),
+			(7, 3),
+			(8, 3),
+			(9, 3),
+			(10, 3),
+			(11, 3),
+			(12, 3),
+			(13, 3),
+			(15, 3),
+			(16, 3),
+			(1, 4),
+			(2, 4),
+			(3, 4),
+			(6, 4),
+			(7, 4),
+			(8, 4),
+			(9, 4),
+			(10, 4),
+			(11, 4),
+			(12, 4),
+			(13, 4),
+			(15, 4),
+			(16, 4)
