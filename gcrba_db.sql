@@ -47,6 +47,8 @@ IF OBJECT_ID('SELECT_STATES')			IS NOT NULL	DROP PROCEDURE SELECT_STATES
 IF OBJECT_ID('DELETE_LOCATION')			IS NOT NULL	DROP PROCEDURE DELETE_LOCATION
 IF OBJECT_ID('INSERT_NEW_MAIN_BANNER')	IS NOT NULL	DROP PROCEDURE INSERT_NEW_MAIN_BANNER
 IF OBJECT_ID('REUSE_MAIN_BANNER')		IS NOT NULL	DROP PROCEDURE REUSE_MAIN_BANNER
+IF OBJECT_ID('DELETE_COMPANY')			IS NOT NULL	DROP PROCEDURE DELETE_COMPANY
+IF OBJECT_ID('GET_LOCATIONS')			IS NOT NULL	DROP PROCEDURE GET_LOCATIONS
 
 CREATE TABLE tblState
 (
@@ -722,6 +724,18 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [db_owner].[GET_LOCATIONS]
+@intCompanyID BIGINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT l.intLocationID, l.strAddress, l.strCity, s.strState, l.strZip, l.strPhone, l.strEmail
+	FROM tblLocation AS l JOIN tblState AS s ON s.intStateID = l.intStateID
+	WHERE l.intCompanyID = @intCompanyID
+END
+GO
+
 CREATE PROCEDURE [db_owner].[GET_COMPANY_INFO]
 AS 
 BEGIN
@@ -847,6 +861,26 @@ BEGIN
 
 	SELECT @intNewBannerID=@@IDENTITY
 	RETURN 1
+END
+GO
+
+CREATE PROCEDURE [db_owner].[DELETE_COMPANY]
+@intCompanyID BIGINT
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+	
+	DELETE FROM tblCompanyMember WHERE intCompanyID = @intCompanyID 
+	DELETE FROM tblCategoryLocation WHERE intLocationID IN (SELECT intLocationID FROM tblLocation WHERE intCompanyID = @intCompanyID)
+	DELETE FROM tblLocationHours WHERE intLocationID IN (SELECT intLocationID FROM  tblLocation WHERE intCompanyID = @intCompanyID)
+	DELETE FROM tblLocation WHERE intCompanyID = @intCompanyID
+	DELETE FROM tblCompanyAward WHERE intCompanyID = @intCompanyID
+	DELETE FROM tblCompanySocialMedia WHERE intCompanyID = @intCompanyID
+	DELETE FROM tblContactPerson WHERE intCompanyID = @intCompanyID
+	DELETE FROM tblWebsite WHERE intCompanyID = @intCompanyID
+	DELETE FROM tblCompany WHERE intCompanyID = @intCompanyID
+	RETURN @@rowcount
 END
 GO
 
