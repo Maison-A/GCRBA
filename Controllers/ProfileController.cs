@@ -455,8 +455,62 @@ namespace GCRBA.Controllers
         }
 
         public ActionResult EditExistingCompany()
-        {           
-            return View();
+        {
+            // create EditCompaniesVM object 
+            EditCompaniesViewModel vm = new EditCompaniesViewModel();
+
+            // create VM user object
+            vm.CurrentUser = new User();
+
+            // get current user session
+            vm.CurrentUser = vm.CurrentUser.GetUserSession();
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        public ActionResult EditExistingCompany(FormCollection col)
+        {
+            // create EditCompaniesVM object 
+            EditCompaniesViewModel vm = new EditCompaniesViewModel();
+
+            // create VM user object
+            vm.CurrentUser = new User();
+
+            // get current user session
+            vm.CurrentUser = vm.CurrentUser.GetUserSession();
+
+            if (col["btnSubmit"].ToString() == "editLocationInfo")
+            {
+                return RedirectToAction("EditLocationInfo", "Profile");
+            }
+
+            if (col["btnSubmit"].ToString() == "editGeneralInfo")
+            {
+                return RedirectToAction("EditGeneralInfo", "Profile");
+            }
+
+            return View(vm);
+        }
+
+        public ActionResult EditCompanyInfo()
+        {
+            // initialize EditCompaniesVM object
+            EditCompaniesViewModel vm = InitializeEditCompaniesVM();
+
+            // get companyID that was selected from  dropdown on previous page and saved in company session
+            vm.CurrentCompany = vm.CurrentCompany.GetCompanySession();
+
+            // create database object
+            Database db = new Database();
+
+            // get current company info based on selected company from previous page
+            vm.CurrentCompany = db.GetCompanyInfo(vm);
+
+            // get locations list
+            vm.Locations = db.GetLocations(vm);
+
+            return View(vm);
         }
 
         public ActionResult Logout()

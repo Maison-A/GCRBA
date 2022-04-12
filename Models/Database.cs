@@ -432,6 +432,47 @@ namespace GCRBA.Models {
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+		public Company GetCompanyInfo(EditCompaniesViewModel vm)
+        {
+			try
+            {
+				// create new instance of SqlConnection object 
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to DB 
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// create instance of SqlDataAdapter object 
+				SqlDataAdapter da = new SqlDataAdapter("GET_SPECIFIC_COMPANY", cn);
+
+				// create instance of DataSet
+				DataSet ds;
+
+				// specify command type as stored procedure 
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				SetParameter(ref da, "@intCompanyID", vm.CurrentCompany.CompanyID, SqlDbType.BigInt);
+
+				try
+                {
+					ds = new DataSet();
+					da.Fill(ds);
+					if (ds.Tables[0].Rows.Count > 0)
+                    {
+						DataRow dr = ds.Tables[0].Rows[0];
+						vm.CurrentCompany.Name = (string)dr["strCompanyName"];
+						vm.CurrentCompany.About = (string)dr["strAbout"];
+						vm.CurrentCompany.Year = (string)dr["strBizYear"];
+						return vm.CurrentCompany;
+                    }
+					return vm.CurrentCompany;
+                }
+				catch (Exception ex) { throw new Exception(ex.Message); }
+				finally { CloseDBConnection(ref cn); }
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
 		public string GetMainBanner()
         {
 			string banner = String.Empty;
@@ -519,6 +560,57 @@ namespace GCRBA.Models {
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
+
+		public List<Location> GetLocations(EditCompaniesViewModel vm)
+        {
+			try
+            {
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to database -- throw error if unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// specify which stored procedure we are using 
+				SqlDataAdapter da = new SqlDataAdapter("GET_LOCATIONS", cn);
+
+				SetParameter(ref da, "@intCompanyID", vm.CurrentCompany.CompanyID, SqlDbType.BigInt);
+
+				// create new list object with type string  
+				List<Location> locations = new List<Location>();
+
+				// set command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				try { da.Fill(ds); }
+				catch (Exception ex) { throw new Exception(ex.Message); }
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0)
+                {
+					// loop through results and add to list 
+					foreach (DataRow dr in ds.Tables[0].Rows)
+                    {
+						// create location object 
+						Location l = new Location();
+
+						// add values to LocationID and Location string
+						l.LocationID = Convert.ToInt16(dr["intLocationID"]);
+						l.Address = (string)dr["strAddress"];
+						l.City = (string)dr["strCity"];
+						l.State = (string)dr["strState"];
+						l.Zip = (string)dr["strZip"];
+						l.Phone = (string)dr["strPhone"];
+						l.Email = (string)dr["strEmail"];
+
+						// add location object to list of location objects 
+						locations.Add(l);
+					}
+                }
+				return locations;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+        }
 
 		public List<Company> GetCompanies()
         {
@@ -1137,5 +1229,6 @@ namespace GCRBA.Models {
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
+		
 	}
 }

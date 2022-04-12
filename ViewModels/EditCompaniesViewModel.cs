@@ -11,5 +11,7 @@ namespace GCRBA.ViewModels
         public User CurrentUser { get; set; }
         public Company CurrentCompany { get; set; }
         public List<Company> Companies { get; set; }
+        public Location CurrentLocation { get; set; }
+        public List<Location> Locations { get; set; }
     }
 }
