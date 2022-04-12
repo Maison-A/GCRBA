@@ -37,6 +37,7 @@ namespace GCRBA.Controllers
                     u.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
                     return View(u);
                 }
+
                 else
                 {
                     if (col["btnSubmit"] == "newuser")
@@ -74,15 +75,11 @@ namespace GCRBA.Controllers
             return View(u);
         }
 
-
         [HttpPost]
         public ActionResult AddNewUser(FormCollection col)
         {
             try
             {
-                // check if checkbox is checked, if so then submit all data and redirect to new member form?
-                // or maybe pull a partial view up?
-               
                 Models.User u = new Models.User();
 
                 // only using FirstName, LastName, Email, Username, and Password because
@@ -92,6 +89,8 @@ namespace GCRBA.Controllers
                 u.Email = col["Email"];
                 u.Username = col["Username"];
                 u.Password = col["Password"];
+                u.isMember = 0;
+                u.isAdmin = 0;
 
                 // make sure none of the fields are empty
                 if (u.FirstName.Length == 0 || u.LastName.Length == 0 || u.Email.Length == 0 || u.Username.Length == 0
@@ -101,7 +100,6 @@ namespace GCRBA.Controllers
                     u.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
                     return View(u);
                 }
-
              // send data if valid to db
                 else
                 {
@@ -124,10 +122,8 @@ namespace GCRBA.Controllers
                             // redirect to interface based on member/nonmember
                             case Models.User.ActionTypes.InsertSuccessful:
                                 u.SaveUserSession();
-
                                 // check to see if user is a member or not 
                                 db.IsUserMember(u);
-
                                 if (u.isMember == 0)
                                 {
                                     return RedirectToAction("NonMember", "Profile");
@@ -136,7 +132,6 @@ namespace GCRBA.Controllers
                                 {
                                     return RedirectToAction("Member", "Profile");
                                 }
-
                             default:
                                 return View(u);
                         }
@@ -144,8 +139,7 @@ namespace GCRBA.Controllers
                     else
                     {
                         return View(u);
-                    }
-                    
+                    }                    
                 }
             }
             catch (Exception)
@@ -154,20 +148,13 @@ namespace GCRBA.Controllers
                 return View(u);
             }
         }
-
-       
-        // TODO: bring up how to manage initilization
-        // will we be forcing members to become Users? 
+        
         public ActionResult AddNewMember()
-        {
-            // if user exists: update user value to member
+        {     
             Models.User u = new Models.User();
             return View(u);
-
-            // if user doesnt exist - redirect to sign up?
         }
 
-        //wip
         [HttpPost]
         public ActionResult AddNewMember(FormCollection col)
         {
@@ -176,30 +163,36 @@ namespace GCRBA.Controllers
                 // get current user session
                 Models.User user = new Models.User();
                 user = user.GetUserSession();
-                // if user data exists - populate within form
-                if (user.UID > 0)
-                {
-                    col[ "Firstname"] = user.FirstName;
-                    col["Lastname"] = user.LastName;
-                    col["Email"] = user.Email;
-                }
-                else
+                
+                // check if not authenticated - create new user
+                if (user.UID == 0)
                 {
                     user.FirstName = col["Firstname"];
                     user.LastName = col["Lastname"];
                     user.Email = col["Email"];
+                    user.Address = col["Address"];
+                    user.City = col["City"];
+                    user.State = col["State"];
+                    user.Zip = col["Zip"];
+                    user.MemberShipType = col[""];
+                    user.isMember = 1;
+                    user.isAdmin = 0;
+                    
                 }
+               
                 // once submit is hit, process member data
                 if (col["btnSubmit"].ToString() == "submit")
                 {
-
                     //validate data
-                    if (user.FirstName.Length == 0 || user.LastName.Length == 0 || user.Email.Length == 0)
+                    if (user.FirstName.Length == 0 || user.LastName.Length == 0 || user.Email.Length == 0 ||
+                        user.Address.Length == 0 || user.City.Length == 0 || user.State.Length == 0 ||
+                        user.Zip.Length == 0)
                     {
                         // empty field(s), access action type on view to display relevant error message
                         user.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
                         return View(user);
                     }
+
                     // send data if valid to db
                     else
                     {
@@ -215,11 +208,11 @@ namespace GCRBA.Controllers
                         switch (at)
                         {
                             // insert successful
-                            // save user session so they are logged in 
+                            // save user session so they are logged in
                             // redirect to interface based on member/nonmember
                             case Models.User.ActionTypes.InsertSuccessful:
+                                
                                 user.SaveUserSession();
-
                                 // check to see if user is a member or not 
                                 db.IsUserMember(user);
 
@@ -246,12 +239,11 @@ namespace GCRBA.Controllers
             }
             return View();
         }
-
-         
-      
+    
 
 
+
+
+    
     }
-
-
 }
