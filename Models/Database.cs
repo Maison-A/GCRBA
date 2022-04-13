@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Configuration;
 using System.Collections.Generic;
 using System.Linq;
+using GCRBA.ViewModels;
 
 namespace GCRBA.Models
 {
@@ -113,7 +114,7 @@ namespace GCRBA.Models
 					case -1:
 						return User.ActionTypes.DuplicateEmail;
 					case -2:
-						return User.ActionTypes.DuplicateUserID;
+						return User.ActionTypes.DuplicateUsername;
 					default:
 						return User.ActionTypes.Unknown;
 				}
@@ -156,6 +157,53 @@ namespace GCRBA.Models
 				}
 				// connection closed successfully
 				return true;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public User.ActionTypes AddNewUser(User u)
+		{
+			try
+			{
+				// initialize return value 
+				int intReturnValue = -1;
+
+				// create instance of SqlConnection object 
+				SqlConnection cn = null;
+
+				// throw error if database connection unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// specify which stored procedure is being used 
+				SqlCommand cm = new SqlCommand("INSERT_NEW_USER", cn);
+
+				// set parameters
+				SetParameter(ref cm, "@intNewUserID", u.UID, SqlDbType.SmallInt, Direction: ParameterDirection.Output);
+				SetParameter(ref cm, "@strFirstName", u.FirstName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strLastName", u.LastName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strEmail", u.Email, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strUsername", u.Username, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strPassword", u.Password, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@isAdmin", u.isAdmin, SqlDbType.Bit);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				// return user action type based on return value 
+				switch (intReturnValue)
+				{
+					case 1:
+						u.UID = Convert.ToInt16(cm.Parameters["@intNewUserID"].Value);
+						return User.ActionTypes.InsertSuccessful;
+					case -1:
+						return User.ActionTypes.DuplicateEmail;
+					case -2:
+						return User.ActionTypes.DuplicateUsername;
+					default:
+						return User.ActionTypes.Unknown;
+				}
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
@@ -212,7 +260,182 @@ namespace GCRBA.Models
 				{
 					CloseDBConnection(ref cn);
 				}
-				return newUser;
+				
+					return newUser;
+				
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+
+		}
+
+		public User NonAdminLogin(User user)
+		{
+			try
+			{
+				// create instance of SqlConnection object 
+				SqlConnection cn = new SqlConnection();
+
+				// throw error if database connection unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// create instance of SqlDataAdapter object 
+				SqlDataAdapter da = new SqlDataAdapter("LOGIN", cn);
+
+				// create instance of DataSet
+				DataSet ds;
+				User newUser = null;
+
+				// specify command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				// set parameters
+				SetParameter(ref da, "@strUsername", user.Username, SqlDbType.NVarChar);
+				SetParameter(ref da, "@strPassword", user.Password, SqlDbType.NVarChar);
+
+				if (IsUserAdmin(user) == false)
+				{
+					try
+					{
+						ds = new DataSet();
+						da.Fill(ds);
+						if (ds.Tables[0].Rows.Count > 0)
+						{
+							newUser = new User();
+							DataRow dr = ds.Tables[0].Rows[0];
+							newUser.UID = Convert.ToInt16(dr["intUserID"]);
+							newUser.FirstName = (string)dr["strFirstName"];
+							newUser.LastName = (string)dr["strLastName"];
+							newUser.Address = (string)dr["strAddress"];
+							newUser.City = (string)dr["strCity"];
+							newUser.State = (string)dr["strState"];
+							newUser.Zip = (string)dr["strZip"];
+							newUser.Phone = (string)dr["strPhone"];
+							newUser.Email = (string)dr["strEmail"];
+							newUser.Username = user.Username;
+							newUser.Password = user.Password;
+							newUser.isAdmin = Convert.ToInt16(dr["isAdmin"]);
+						}
+					}
+					catch (Exception ex) { throw new Exception(ex.Message); }
+					finally { CloseDBConnection(ref cn); }
+					return newUser;
+				}
+				else
+				{
+					return newUser;
+				}
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+
+		}
+
+		public User AdminLogin(User user)
+		{
+			try
+			{
+				// create instance of SqlConnection object 
+				SqlConnection cn = new SqlConnection();
+
+				// throw error if database connection unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// create instance of SqlDataAdapter object 
+				SqlDataAdapter da = new SqlDataAdapter("LOGIN", cn);
+
+				// create instance of DataSet
+				DataSet ds;
+				User newUser = null;
+
+				// specify command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				// set parameters
+				SetParameter(ref da, "@strUsername", user.Username, SqlDbType.NVarChar);
+				SetParameter(ref da, "@strPassword", user.Password, SqlDbType.NVarChar);
+
+				if (IsUserAdmin(user) == true)
+				{
+					try
+					{
+						ds = new DataSet();
+						da.Fill(ds);
+						if (ds.Tables[0].Rows.Count > 0)
+						{
+							newUser = new User();
+							DataRow dr = ds.Tables[0].Rows[0];
+							newUser.UID = Convert.ToInt16(dr["intUserID"]);
+							newUser.FirstName = (string)dr["strFirstName"];
+							newUser.LastName = (string)dr["strLastName"];
+							newUser.Address = (string)dr["strAddress"];
+							newUser.City = (string)dr["strCity"];
+							newUser.State = (string)dr["strState"];
+							newUser.Zip = (string)dr["strZip"];
+							newUser.Phone = (string)dr["strPhone"];
+							newUser.Email = (string)dr["strEmail"];
+							newUser.Username = user.Username;
+							newUser.Password = user.Password;
+							newUser.isAdmin = Convert.ToInt16(dr["isAdmin"]);
+						}
+					}
+					catch (Exception ex) { throw new Exception(ex.Message); }
+					finally { CloseDBConnection(ref cn); }
+					return newUser;
+				}
+				else
+				{
+					return newUser;
+				}
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+
+		}
+		
+		public bool IsUserAdmin(User user)
+		{
+			try
+			{
+				// create instance of SqlConnection object 
+				SqlConnection cn = new SqlConnection();
+
+				// throw error if database connection unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// create instance of SqlDataAdapter object 
+				SqlDataAdapter da = new SqlDataAdapter("LOGIN", cn);
+
+				// create instance of DataSet
+				DataSet ds;
+				User newUser = null;
+
+				// specify command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				// set parameters
+				SetParameter(ref da, "@strUsername", user.Username, SqlDbType.NVarChar);
+				SetParameter(ref da, "@strPassword", user.Password, SqlDbType.NVarChar);
+
+				try
+				{
+					ds = new DataSet();
+					da.Fill(ds);
+					if (ds.Tables[0].Rows.Count > 0)
+					{
+						newUser = new User();
+						DataRow dr = ds.Tables[0].Rows[0];
+						newUser.isAdmin = Convert.ToInt16(dr["isAdmin"]);
+					}
+
+					if (newUser == null || newUser.isAdmin == 0)
+					{
+						return false;
+					}
+					else
+					{
+						return true;
+					}
+				}
+				catch (Exception ex) { throw new Exception(ex.Message); }
+				finally { CloseDBConnection(ref cn); }
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
@@ -264,6 +487,47 @@ namespace GCRBA.Models
 						CloseDBConnection(ref cn);
 					}
 				}
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public Company GetCompanyInfo(EditCompaniesViewModel vm)
+		{
+			try
+			{
+				// create new instance of SqlConnection object 
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to DB 
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// create instance of SqlDataAdapter object 
+				SqlDataAdapter da = new SqlDataAdapter("GET_SPECIFIC_COMPANY", cn);
+
+				// create instance of DataSet
+				DataSet ds;
+
+				// specify command type as stored procedure 
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				SetParameter(ref da, "@intCompanyID", vm.CurrentCompany.CompanyID, SqlDbType.BigInt);
+
+				try
+				{
+					ds = new DataSet();
+					da.Fill(ds);
+					if (ds.Tables[0].Rows.Count > 0)
+					{
+						DataRow dr = ds.Tables[0].Rows[0];
+						vm.CurrentCompany.Name = (string)dr["strCompanyName"];
+						vm.CurrentCompany.About = (string)dr["strAbout"];
+						vm.CurrentCompany.Year = (string)dr["strBizYear"];
+						return vm.CurrentCompany;
+					}
+					return vm.CurrentCompany;
+				}
+				catch (Exception ex) { throw new Exception(ex.Message); }
+				finally { CloseDBConnection(ref cn); }
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
@@ -356,6 +620,57 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+		public List<Location> GetLocations(EditCompaniesViewModel vm)
+		{
+			try
+			{
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to database -- throw error if unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// specify which stored procedure we are using 
+				SqlDataAdapter da = new SqlDataAdapter("GET_LOCATIONS", cn);
+
+				SetParameter(ref da, "@intCompanyID", vm.CurrentCompany.CompanyID, SqlDbType.BigInt);
+
+				// create new list object with type string  
+				List<Location> locations = new List<Location>();
+
+				// set command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				try { da.Fill(ds); }
+				catch (Exception ex) { throw new Exception(ex.Message); }
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0)
+				{
+					// loop through results and add to list 
+					foreach (DataRow dr in ds.Tables[0].Rows)
+					{
+						// create location object 
+						Location l = new Location();
+
+						// add values to LocationID and Location string
+						l.LocationID = Convert.ToInt16(dr["intLocationID"]);
+						l.Address = (string)dr["strAddress"];
+						l.City = (string)dr["strCity"];
+						l.State = (string)dr["strState"];
+						l.Zip = (string)dr["strZip"];
+						l.Phone = (string)dr["strPhone"];
+						l.Email = (string)dr["strEmail"];
+
+						// add location object to list of location objects 
+						locations.Add(l);
+					}
+				}
+				return locations;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
 		public List<Company> GetCompanies()
 		{
 			try
@@ -397,6 +712,35 @@ namespace GCRBA.Models
 				}
 				// return list of companies 
 				return companies;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public Company.ActionTypes DeleteCompany(Company c)
+		{
+			try
+			{
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("DELETE_COMPANY", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intCompanyID", c.CompanyID, SqlDbType.BigInt);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				switch (intReturnValue)
+				{
+					case 1:
+						return Company.ActionTypes.DeleteSuccessful;
+					default:
+						return Company.ActionTypes.Unknown;
+
+				}
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
@@ -514,6 +858,42 @@ namespace GCRBA.Models
 				}
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public Company.ActionTypes InsertNewCompany(Company c)
+		{
+			try
+			{
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("INSERT_COMPANY", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intCompanyID", null, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+				SetParameter(ref cm, "@strCompanyName", c.Name, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strAbout", c.About, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strBizYear", c.Year, SqlDbType.NVarChar);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				switch (intReturnValue)
+				{
+					case -1:
+						return Company.ActionTypes.DuplicateName;
+					case 1: // new user created
+						c.CompanyID = Convert.ToInt16(cm.Parameters["@intCompanyID"].Value);
+						return Company.ActionTypes.InsertSuccessful;
+					default:
+						return Company.ActionTypes.Unknown;
+				}
+
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+
 		}
 
 		public LocationList.ActionTypes InsertCompany(LocationList locList)
