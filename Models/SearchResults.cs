@@ -9,6 +9,15 @@ namespace GCRBA.Models
 	{
 		public int test2 = 0;
 		public int test = 0;
+	{/// <summary>
+	/// ///////////////////////////////////////////
+	/// 
+	/// 
+	/// 
+	/// 
+	/// 
+	/// </summary>
+		// hi shane this is the newest push
 		public List<Models.NewLocation> lstLocations;
 		public int testLocationSearch = 1;
 		public Models.NewLocation landingLocation;
