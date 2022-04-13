@@ -66,45 +66,52 @@
 		</td>
 	</tr>
 	</table>
+
+	int i = 0;
+	//foreach (GCRBA.Models.NewLocation item in Model.Content.lstLocations) {
+	do {
+
 	<table style="width: 500px; border: 1px solid black; text-align: left; vertical-align:top" class="center">
 		<tr>
 			<td>
-				@Html.LabelFor(model => model.Content.LocationName, "Bakery:")
+				@Html.LabelFor(model => model.Content.lstLocations[i].LocationName, "Bakery:")
 			</td>
 			<td>
-				@Html.DisplayFor(model => model.Content.LocationName)
-				@Html.HiddenFor(model => model.Content.LocationName)
-			</td>
-		</tr>
-		<tr>
-			<td>
-				@Html.LabelFor(model => model.Content.StreetAddress, "Address:")
-			</td>
-			<td>
-				@Html.DisplayFor(model => model.Content.StreetAddress) <br />@Html.DisplayFor(model => model.Content.City), @Html.DisplayFor(model => model.Content.State) @Html.DisplayFor(model => model.Content.Zip)
-				@Html.HiddenFor(model => model.Content.StreetAddress)	@Html.HiddenFor(model => model.Content.City) @Html.HiddenFor(model => model.Content.State) @Html.HiddenFor(model => model.Content.Zip)
+				@Html.DisplayFor(model => model.Content.lstLocations[i].LocationName)
+				@Html.HiddenFor(model => model.Content.lstLocations[i].LocationName)
 			</td>
 		</tr>
 		<tr>
 			<td>
-				@Html.LabelFor(model => model.Content.BusinessPhone, "Business Information:")
+				@Html.LabelFor(model => model.Content.lstLocations[i].StreetAddress, "Address:")
 			</td>
 			<td>
-				Business Phone: (@Html.DisplayFor(model => model.Content.BusinessPhone.AreaCode)) @Html.DisplayFor(model => model.Content.BusinessPhone.Prefix)-@Html.DisplayFor(model => model.Content.BusinessPhone.Suffix)
-				@Html.HiddenFor(model => model.Content.BusinessPhone.AreaCode)	@Html.HiddenFor(model => model.Content.BusinessPhone.Prefix) @Html.HiddenFor(model => model.Content.BusinessPhone.Suffix)
+				@Html.DisplayFor(model => model.Content.lstLocations[i].StreetAddress) <br />@Html.DisplayFor(model => model.Content.lstLocations[i].City), @Html.DisplayFor(model => model.Content.lstLocations[i].State) @Html.DisplayFor(model => model.Content.lstLocations[i].Zip)
+				@Html.HiddenFor(model => model.Content.lstLocations[i].StreetAddress)	@Html.HiddenFor(model => model.Content.lstLocations[i].City) @Html.HiddenFor(model => model.Content.lstLocations[i].State) @Html.HiddenFor(model => model.Content.lstLocations[i].Zip)
+			</td>
+		</tr>
+		<tr>
+			<td>
+				@Html.LabelFor(model => model.Content.lstLocations[i].BusinessPhone, "Business Information:")
+			</td>
+			<td>
+				Business Phone: (@Html.DisplayFor(model => model.Content.lstLocations[i].BusinessPhone.AreaCode)) @Html.DisplayFor(model => model.Content.lstLocations[i].BusinessPhone.Prefix)-@Html.DisplayFor(model => model.Content.lstLocations[i].BusinessPhone.Suffix)
+				@Html.HiddenFor(model => model.Content.lstLocations[i].BusinessPhone.AreaCode)	@Html.HiddenFor(model => model.Content.lstLocations[i].BusinessPhone.Prefix) @Html.HiddenFor(model => model.Content.lstLocations[i].BusinessPhone.Suffix)
 				<br />
-				Business Email: @Html.DisplayFor(model => model.Content.BusinessEmail)
-				@Html.HiddenFor(model => model.Content.BusinessEmail)
+				Business Email: @Html.DisplayFor(model => model.Content.lstLocations[i].BusinessEmail)
+				@Html.HiddenFor(model => model.Content.lstLocations[i].BusinessEmail)
 				<br />
-				Business Year: @Html.DisplayFor(model => model.Content.BizYear)
-				@Html.HiddenFor(model => model.Content.BizYear)
+				Business Year: @Html.DisplayFor(model => model.Content.lstLocations[i].BizYear)
+				@Html.HiddenFor(model => model.Content.lstLocations[i].BizYear)
 				<br />
-				Business Bio: @Html.DisplayFor(model => model.Content.Bio)
-				@Html.HiddenFor(model => model.Content.Bio)
+				Business Bio: @Html.DisplayFor(model => model.Content.lstLocations[i].Bio)
+				@Html.HiddenFor(model => model.Content.lstLocations[i].Bio)
 			</td>
 		</tr>
 	</table>
 	<br />
+		i += 1;
+	} while (Model.Content.lstLocations[i] != null);
 
 <input type="submit" name="btnSubmit" value="Send Email" />
 			

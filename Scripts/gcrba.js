@@ -7,11 +7,3 @@
 	}
 	catch (Exception) { /* ignore errors here */ }
 }
-
-
-//function NewMemberCheckbox() {
-//	if ($('#IsChecked').is(":checked"))
-		
-//	else
-//		$("#MyTxt").hide();
-//}

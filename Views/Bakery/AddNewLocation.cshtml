@@ -758,13 +758,15 @@
 	var locSnapchatCheckHtml = '@Html.CheckBox("lstLocations[{id}].Snapchat.blnAvailable", false)';
 	var locTikTokCheckHtml = '@Html.CheckBox("lstLocations[{id}].TikTok.blnAvailable", false)';
 	var locYelpCheckHtml = '@Html.CheckBox("lstLocations[{id}].Yelp.blnAvailable", false)';
-	var locSundayCheckHtml = '@Html.CheckBox("lstLocations[{id}].Sunday.blnOperational", false)';
+	var locSundayCheckHtml = '@Html.CheckBox("lstLocations[{id}].Sunday.blnOperational")';
 	var locMondayCheckHtml = '@Html.CheckBox("lstLocations[{id}].Monday.blnOperational", false)';
-	var locTuesdayCheckHtml = '@Html.CheckBox("lstLocations[{id}].Tuesday.blnOperational", false)';
-	var locWednesdayCheckHtml = '@Html.CheckBox("lstLocations[{id}].Wednesday.blnOperational", false)';
-	var locThursdayCheckHtml = '@Html.CheckBox("lstLocations[{id}].Thursday.blnOperational", false)';
-	var locFridayCheckHtml = '@Html.CheckBox("lstLocations[{id}].Friday.blnOperational", false)';
-	var locSaturdayCheckHtml = '@Html.CheckBox("lstLocations[{id}].Saturday.blnOperational", false)';
+	var locTuesdayCheckHtml = '@Html.CheckBox("lstLocations[{id}].Tuesday.blnOperational")';
+	var locWednesdayCheckHtml = '@Html.CheckBox("lstLocations[{id}].Wednesday.blnOperational")';
+	var locThursdayCheckHtml = '@Html.CheckBox("lstLocations[{id}].Thursday.blnOperational")';
+	var locFridayCheckHtml = '@Html.CheckBox("lstLocations[{id}].Friday.blnOperational")';
+	var locSaturdayCheckHtml = '@Html.CheckBox("lstLocations[{id}].Saturday.blnOperational")';
+
+
 
 	//var streetAddressHtml = 'Html.DropDownList("lstLocations[{id}].StreetAddress")';
 	//var compListLabelHtml = 'Html.Label("lstLocations[{id}].lngCompanyID")';
@@ -785,12 +787,12 @@
 		var deleteHtml = "<button type='button'>Delete</button>";
 
 		$(".mainTable").after($("</br><table class='center'>" +
-			'<tr><td>' + hidden.replace('{id}', index) + deleteHtml + '</td>'+
+			'<tr><td>' + hidden.replace('{id}', index) + deleteHtml + '</td>' +
 			"<tr><td><div><strong>" + locLabelLocationNameHtml + '*</strong></div><div>' + locTextLocationNameHtml.replace('{id}', index) + '</div></td></tr>' +
 			"<tr><td><div><strong>" + locLabelStreetAddressHtml + '*</strong></div><div>' + locTextStreetAddressHtml.replace('{id}', index) + '</div></td></tr>' +
 			"<tr><td><div><strong>" + locLabelCityHtml + '*</strong></div><div>' + locTextCityHtml.replace('{id}', index) + '</div></td></tr>' +
 			'<tr><td><div><strong>' + locLabelStateHtml + '*</strong></div><div>' +
-			'<select class= "form-control" id = "State" name = "lstLocation[1].StateID" > ' +
+			'<select class= "form-control" id = "State" name = "lstLocations[' + index + '].intState" > ' +
 			'<option> Select State</option>' +
 			'<option value="1">Indiana</option>' +
 			'<option value="2">Kentucky</option>' +
@@ -798,88 +800,88 @@
 			'</select></div>' +
 			"<tr><td><div><strong>" + locLabelZipHtml + '*</strong></div><div>' + locTextZipHtml.replace('{id}', index) + '</div></td></tr>' +
 			"<tr><td><div class='some-spacing'><div><h5 id='label'><strong> Specialty Product Categories* </strong></h5><table class='center'>" +
-			"<tr><td>" + locDonutsCheckHtml + "</td><td>" + locLabelDonutsHtml + "</td>" +
-			"<td>" + locBagelsCheckHtml + "</td><td>" + locLabelBagelsHtml + "</td>" +
-			"<td>" + locMuffinsCheckHtml + "</td><td>" + locLabelMuffinsHtml + "</td>" +
-			"<td>" + locIceCreamCheckHtml + "</td><td>" + locLabelIceCreamHtml + "</td>" +
-			"<td>" + locFineCandiesCheckHtml + "</td><td>" + locLabelFineCandiesHtml + "</td>" +
-			"<td>" + locWeddingCakesCheckHtml + "</td><td>" + locLabelWeddingCakesHtml + "</td></tr>" +
-			"<tr><td>" + locBreadsCheckHtml + "</td><td>" + locLabelBreadsHtml + "</td>" +
-			"<td>" + locDecoratedCakesCheckHtml + "</td><td>" + locLabelDecoratedCakesHtml + "</td>" +
-			"<td>" + locCupcakesCheckHtml + "</td><td>" + locLabelCupcakesHtml + "</td>" +
-			"<td>" + locCookiesCheckHtml + "</td><td>" + locLabelCookiesHtml + "</td>" +
-			"<td>" + locDessertsCheckHtml + "</td><td>" + locLabelDessertsHtml + "</td>" +
-			"<td>" + locFullCheckHtml + "</td><td>" + locLabelFullHtml + "</td></tr>" +
-			"<tr><td>" + locDeliCheckHtml + "</td><td>" + locLabelDeliHtml + "</td>" +
-			"<td>" + locOtherCheckHtml + "</td><td>" + locLabelOtherHtml + "</td>" +
-			"<td>" + locWholesaleCheckHtml + "</td><td>" + locLabelWholeSaleHtml + "</td>" +
-			"<td>" + locDeliveryCheckHtml + "</td><td>" + locLabelDeliveryHtml + "</td>" +
-			"<td>" + locShippingCheckHtml + "</td><td>" + locLabelShippingHtml + "</td>" +
-			"<td>" + locOnlineCheckHtml + "</td><td>" + locLabelOnlineHtml + "</td></tr>" +
+			"<tr><td>" + locDonutsCheckHtml.replace('{id}', index) + "</td><td>" + locLabelDonutsHtml + "</td>" +
+			"<td>" + locBagelsCheckHtml.replace('{id}', index) + "</td><td>" + locLabelBagelsHtml + "</td>" +
+			"<td>" + locMuffinsCheckHtml.replace('{id}', index) + "</td><td>" + locLabelMuffinsHtml + "</td>" +
+			"<td>" + locIceCreamCheckHtml.replace('{id}', index) + "</td><td>" + locLabelIceCreamHtml + "</td>" +
+			"<td>" + locFineCandiesCheckHtml.replace('{id}', index) + "</td><td>" + locLabelFineCandiesHtml + "</td>" +
+			"<td>" + locWeddingCakesCheckHtml.replace('{id}', index) + "</td><td>" + locLabelWeddingCakesHtml + "</td></tr>" +
+			"<tr><td>" + locBreadsCheckHtml.replace('{id}', index) + "</td><td>" + locLabelBreadsHtml + "</td>" +
+			"<td>" + locDecoratedCakesCheckHtml.replace('{id}', index) + "</td><td>" + locLabelDecoratedCakesHtml + "</td>" +
+			"<td>" + locCupcakesCheckHtml.replace('{id}', index) + "</td><td>" + locLabelCupcakesHtml + "</td>" +
+			"<td>" + locCookiesCheckHtml.replace('{id}', index) + "</td><td>" + locLabelCookiesHtml + "</td>" +
+			"<td>" + locDessertsCheckHtml.replace('{id}', index) + "</td><td>" + locLabelDessertsHtml + "</td>" +
+			"<td>" + locFullCheckHtml.replace('{id}', index) + "</td><td>" + locLabelFullHtml + "</td></tr>" +
+			"<tr><td>" + locDeliCheckHtml.replace('{id}', index) + "</td><td>" + locLabelDeliHtml + "</td>" +
+			"<td>" + locOtherCheckHtml.replace('{id}', index) + "</td><td>" + locLabelOtherHtml + "</td>" +
+			"<td>" + locWholesaleCheckHtml.replace('{id}', index) + "</td><td>" + locLabelWholeSaleHtml + "</td>" +
+			"<td>" + locDeliveryCheckHtml.replace('{id}', index) + "</td><td>" + locLabelDeliveryHtml + "</td>" +
+			"<td>" + locShippingCheckHtml.replace('{id}', index) + "</td><td>" + locLabelShippingHtml + "</td>" +
+			"<td>" + locOnlineCheckHtml.replace('{id}', index) + "</td><td>" + locLabelOnlineHtml + "</td></tr>" +
 			"</table></div></div></td></tr>" +
 			'<tr><td><div class="some-spacing"><h5 id="label">Hours of Operation</h5><table class="center"><tr style="text-align:center">' +
 			'<td><b>Days</b></td>' +
 			'<td style="text-align: center"><b>(Check if Open)</b></td>' +
 			'<td style="text-align: center"><b>Start Time</b></td>' +
 			'<td style="text-align: center"><b>End Time</b></td></tr>' +
-			'<tr><td>' + locLabelSundayHtml + '</td><td style="text-align: center">' + locSundayCheckHtml + '</td><td>' +
-			'<input name="lstLocations[{i}].Sunday.strOpenTime" type="time" value="">' + '</td><td>' +
-			'<input name="lstLocations[{i}].Sunday.strClosedTime" type="time" value="">' + '</td><td>' +
-			'<tr><td>' + locLabelMondayHtml + '</td><td style="text-align: center">' + locMondayCheckHtml + '</td><td>' +
-			'<input name="lstLocations[{i}].Monday.strOpenTime" type="time" value="">' + '</td><td>' +
-			'<input name="lstLocations[{i}].Monday.strClosedTime" type="time" value="">' + '</td><td>' +
-			'<tr><td>' + locLabelTuesdayHtml + '</td><td style="text-align: center">' + locTuesdayCheckHtml + '</td><td>' +
-			'<input name="lstLocations[{i}].Tuesday.strOpenTime" type="time" value="">' + '</td><td>' +
-			'<input name="lstLocations[{i}].Tuesday.strClosedTime" type="time" value="">' + '</td><td>' +
-			'<tr><td>' + locLabelWednesdayHtml + '</td><td style="text-align: center">' + locWednesdayCheckHtml + '</td><td>' +
-			'<input name="lstLocations[{i}].Wednesday.strOpenTime" type="time" value="">' + '</td><td>' +
-			'<input name="lstLocations[{i}].Wednesday.strClosedTime" type="time" value="">' + '</td><td>' +
-			'<tr><td>' + locLabelThursdayHtml + '</td><td style="text-align: center">' + locThursdayCheckHtml + '</td><td>' +
-			'<input name="lstLocations[{i}].Thursday.strOpenTime" type="time" value="">' + '</td><td>' +
-			'<input name="lstLocations[{i}].Thursday.strClosedTime" type="time" value="">' + '</td><td>' +
-			'<tr><td>' + locLabelFridayHtml + '</td><td style="text-align: center">' + locFridayCheckHtml + '</td><td>' +
-			'<input name="lstLocations[{i}].Friday.strOpenTime" type="time" value="">' + '</td><td>' +
-			'<input name="lstLocations[{i}].Friday.strClosedTime" type="time" value="">' + '</td><td>' +
-			'<tr><td>' + locLabelSaturdayHtml + '</td><td style="text-align: center">' + locSaturdayCheckHtml + '</td><td>' +
-			'<input name="lstLocations[{i}].Saturday.strOpenTime" type="time" value="">' + '</td><td>' +
-			'<input name="lstLocations[{i}].Saturday.strClosedTime" type="time" value="">' + '</td><td>' +
+			'<tr><td>' + locLabelSundayHtml + '</td><td style="text-align: center">' + locSundayCheckHtml.replace('{id}', index) + '</td><td>' +
+			'<input name="lstLocations[' + index + '].Sunday.strOpenTime" type="time" value="">' + '</td><td>' +
+			'<input name="lstLocations[' + index + '].Sunday.strClosedTime" type="time" value="">' + '</td><td>' +
+			'<tr><td>' + locLabelMondayHtml + '</td><td style="text-align: center">' + locMondayCheckHtml.replace('{id}', index) + '</td><td>' +
+			'<input name="lstLocations[' + index + '].Monday.strOpenTime" type="time" value="">' + '</td><td>' +
+			'<input name="lstLocations[' + index + '].Monday.strClosedTime" type="time" value="">' + '</td><td>' +
+			'<tr><td>' + locLabelTuesdayHtml + '</td><td style="text-align: center">' + locTuesdayCheckHtml.replace('{id}', index) + '</td><td>' +
+			'<input name="lstLocations[' + index + '].Tuesday.strOpenTime" type="time" value="">' + '</td><td>' +
+			'<input name="lstLocations[' + index + '].Tuesday.strClosedTime" type="time" value="">' + '</td><td>' +
+			'<tr><td>' + locLabelWednesdayHtml + '</td><td style="text-align: center">' + locWednesdayCheckHtml.replace('{id}', index) + '</td><td>' +
+			'<input name="lstLocations[' + index + '].Wednesday.strOpenTime" type="time" value="">' + '</td><td>' +
+			'<input name="lstLocations[' + index + '].Wednesday.strClosedTime" type="time" value="">' + '</td><td>' +
+			'<tr><td>' + locLabelThursdayHtml + '</td><td style="text-align: center">' + locThursdayCheckHtml.replace('{id}', index) + '</td><td>' +
+			'<input name="lstLocations[' + index + '].Thursday.strOpenTime" type="time" value="">' + '</td><td>' +
+			'<input name="lstLocations[' + index + '].Thursday.strClosedTime" type="time" value="">' + '</td><td>' +
+			'<tr><td>' + locLabelFridayHtml + '</td><td style="text-align: center">' + locFridayCheckHtml.replace('{id}', index) + '</td><td>' +
+			'<input name="lstLocations[' + index + '].Friday.strOpenTime" type="time" value="">' + '</td><td>' +
+			'<input name="lstLocations[' + index + '].Friday.strClosedTime" type="time" value="">' + '</td><td>' +
+			'<tr><td>' + locLabelSaturdayHtml + '</td><td style="text-align: center">' + locSaturdayCheckHtml.replace('{id}', index) + '</td><td>' +
+			'<input name="lstLocations[' + index + '].Saturday.strOpenTime" type="time" value="">' + '</td><td>' +
+			'<input name="lstLocations[' + index + '].Saturday.strClosedTime" type="time" value="">' + '</td><td>' +
 			'</table></div></td></tr>' +
 			'<tr><td><div><div><div id="label">' + locLabelBizPhoneHtml + '</div>' +
-			'<div>(' + locTextBizPhoneAreaHtml + ') ' + locTextBizPhonePrefixHtml + '-' + locTextBizPhoneSuffixHtml + '</div>' +
-			'<div><div id="label">' + locLabelBizEmailHtml + '</div><div>' + locTextBizEmailHtml + '</div></div></td></tr>' +
-			'<tr><td><div><div class="some-spacing"><div id="label">' + locLabelBizYearHtml + '</div>' + locTextBizYearHtml + '</div>' +
-			'<div class="some-spacing"><div id="label">' + locLabelBioHtml + '</div><div>' + '<textarea cols="20" name="lstLocations[{i}].Bio" rows="5" spellcheck="true" style="width: 500px;"></textarea>' + '</div></div ></td ></tr>' +
+			'<div>(' + locTextBizPhoneAreaHtml.replace('{id}', index) + ') ' + locTextBizPhonePrefixHtml.replace('{id}', index) + '-' + locTextBizPhoneSuffixHtml.replace('{id}', index) + '</div>' +
+			'<div><div id="label">' + locLabelBizEmailHtml + '</div><div>' + locTextBizEmailHtml.replace('{id}', index) + '</div></div></td></tr>' +
+			'<tr><td><div><div class="some-spacing"><div id="label">' + locLabelBizYearHtml + '</div>' + locTextBizYearHtml.replace('{id}', index) + '</div>' +
+			'<div class="some-spacing"><div id="label">' + locLabelBioHtml + '</div><div>' + '<textarea cols="20" name="lstLocations[' + index + '].Bio" rows="5" spellcheck="true" style="width: 500px;"></textarea>' + '</div></div ></td ></tr>' +
 			'<tr><td><div>' +
-			'<div class="some-spacing"><div id="label">' + locLabelContactFirstHtml + '</div><div>' + locTextContactFirstHtml + '</div></div>' +
-			'<div class="some-spacing"><div id="label">' + locLabelContactLastHtml + '</div><div>' + locTextContactLastHtml + '</div></div>' +
+			'<div class="some-spacing"><div id="label">' + locLabelContactFirstHtml + '</div><div>' + locTextContactFirstHtml.replace('{id}', index) + '</div></div>' +
+			'<div class="some-spacing"><div id="label">' + locLabelContactLastHtml + '</div><div>' + locTextContactLastHtml.replace('{id}', index) + '</div></div>' +
 			'<div class="some-spacing"><div id="label">' + locLabelContactPhoneHtml + '</div>' +
-			'<div class="some-spacing">(' + locTextContactPhoneAreaHtml + ') ' + locTextContactPhonePrefixHtml + '-' + locTextContactPhoneSuffixHtml + '</div>' +
-			'<div class="some-spacing"><div id="label">' + locLabelContactEmailHtml + '</div><div>' + locTextContactEmailHtml + '</div></div>' +
-			'<div class="some-spacing"><div id="label">' + locLabelCustServFirstHtml + '</div><div>' + locTextCustServFirstHtml + '</div></div>' +
-			'<div class="some-spacing"><div id="label">' + locLabelCustServLastHtml + '</div><div>' + locTextCustServLastHtml + '</div></div>' +
+			'<div class="some-spacing">(' + locTextContactPhoneAreaHtml.replace('{id}', index) + ') ' + locTextContactPhonePrefixHtml.replace('{id}', index) + '-' + locTextContactPhoneSuffixHtml.replace('{id}', index) + '</div>' +
+			'<div class="some-spacing"><div id="label">' + locLabelContactEmailHtml + '</div><div>' + locTextContactEmailHtml.replace('{id}', index) + '</div></div>' +
+			'<div class="some-spacing"><div id="label">' + locLabelCustServFirstHtml + '</div><div>' + locTextCustServFirstHtml.replace('{id}', index) + '</div></div>' +
+			'<div class="some-spacing"><div id="label">' + locLabelCustServLastHtml + '</div><div>' + locTextCustServLastHtml.replace('{id}', index) + '</div></div>' +
 			'<div class="some-spacing"><div id="label">' + locLabelCustServPhoneHtml + '</div>' +
-			'<div class="some-spacing">(' + locTextCustServPhoneAreaHtml + ') ' + locTextCustServPhonePrefixHtml + '-' + locTextCustServPhoneSuffixHtml + '</div>' +
-			'<div class="some-spacing"><div id="label">' + locLabelCustServEmailHtml + '</div><div>' + locTextCustServEmailHtml + '</div></div>' +
+			'<div class="some-spacing">(' + locTextCustServPhoneAreaHtml.replace('{id}', index) + ') ' + locTextCustServPhonePrefixHtml.replace('{id}', index) + '-' + locTextCustServPhoneSuffixHtml.replace('{id}', index) + '</div>' +
+			'<div class="some-spacing"><div id="label">' + locLabelCustServEmailHtml + '</div><div>' + locTextCustServEmailHtml.replace('{id}', index) + '</div></div>' +
 
-			'<div class="some-spacing"><div id="label">' + locLabelMainWebHtml + '</div><div>' + locTextMainURIHtml + '</div></div>' +
-			'<div class="some-spacing"><div id="label">' + locLabelOrderingWebHtml + '</div><div>' + locTextOrderingURIHtml + '</div></div>' +
-			'<div class="some-spacing"><div id="label">' + locLabelKettleWebHtml + '</div><div>' + locTextKettleURIHtml + '</div></div>' +
+			'<div class="some-spacing"><div id="label">' + locLabelMainWebHtml + '</div><div>' + locTextMainURIHtml.replace('{id}', index) + '</div></div>' +
+			'<div class="some-spacing"><div id="label">' + locLabelOrderingWebHtml + '</div><div>' + locTextOrderingURIHtml.replace('{id}', index) + '</div></div>' +
+			'<div class="some-spacing"><div id="label">' + locLabelKettleWebHtml + '</div><div>' + locTextKettleURIHtml.replace('{id}', index) + '</div></div>' +
 
-			'<div class="some-spacing"><div id="label">' + locLabelWebAdminFirstHtml + '</div><div>' + locTextWebAdminFirstHtml + '</div></div>' +
-			'<div class="some-spacing"><div id="label">' + locLabelWebAdminLastHtml + '</div><div>' + locTextWebAdminLastHtml + '</div></div>' +
+			'<div class="some-spacing"><div id="label">' + locLabelWebAdminFirstHtml + '</div><div>' + locTextWebAdminFirstHtml.replace('{id}', index) + '</div></div>' +
+			'<div class="some-spacing"><div id="label">' + locLabelWebAdminLastHtml + '</div><div>' + locTextWebAdminLastHtml.replace('{id}', index) + '</div></div>' +
 			'<div class="some-spacing"><div id="label">' + locLabelWebAdminPhoneHtml + '</div>' +
-			'<div class="some-spacing">(' + locTextWebAdminPhoneAreaHtml + ') ' + locTextWebAdminPhonePrefixHtml + '-' + locTextWebAdminPhoneSuffixHtml + '</div>' +
-			'<div class="some-spacing"><div id="label">' + locLabelWebAdminEmailHtml + '</div><div>' + locTextWebAdminEmailHtml + '</div></div>' +
+			'<div class="some-spacing">(' + locTextWebAdminPhoneAreaHtml.replace('{id}', index) + ') ' + locTextWebAdminPhonePrefixHtml.replace('{id}', index) + '-' + locTextWebAdminPhoneSuffixHtml.replace('{id}', index) + '</div>' +
+			'<div class="some-spacing"><div id="label">' + locLabelWebAdminEmailHtml + '</div><div>' + locTextWebAdminEmailHtml.replace('{id}', index) + '</div></div>' +
 			'</div></td></tr>' +
 			'<tr><td><div class="some-spacing"><h5><strong>Social Media Outlets</strong></h5>' +
 			'<table class="center">' +
 			'<tr><td><b>Platform</b></td><td><b>(Check to Include)</b></td><td style="text-align: center"><b>Link</b></td>' +
-			'<tr><td>' + locLabelFacebookHtml + '</td><td style="text-align: center">' + locFacebookCheckHtml + '</td><td><label>URL: </label>' + locTextFacebookURIHtml + '</td></tr>' +
-			'<tr><td>' + locLabelTwitterHtml + '</td><td style="text-align: center">' + locTwitterCheckHtml + '</td><td><label>URL: </label>' + locTextTwitterURIHtml + '</td></tr>' +
-			'<tr><td>' + locLabelInstagramHtml + '</td><td style="text-align: center">' + locInstagramCheckHtml + '</td><td><label>URL: </label>' + locTextInstagramURIHtml + '</td></tr>' +
-			'<tr><td>' + locLabelSnapchatHtml + '</td><td style="text-align: center">' + locSnapchatCheckHtml + '</td><td><label>URL: </label>' + locTextSnapchatURIHtml + '</td></tr>' +
-			'<tr><td>' + locLabelTikTokHtml + '</td><td style="text-align: center">' + locTikTokCheckHtml + '</td><td><label>URL: </label>' + locTextTikTokURIHtml + '</td></tr>' +
-			'<tr><td>' + locLabelYelpHtml + '</td><td style="text-align: center">' + locYelpCheckHtml + '</td><td><label>URL: </label>' + locTextYelpURIHtml + '</td></tr>' +
+			'<tr><td>' + locLabelFacebookHtml + '</td><td style="text-align: center">' + locFacebookCheckHtml.replace('{id}', index) + '</td><td><label>URL: </label>' + locTextFacebookURIHtml.replace('{id}', index) + '</td></tr>' +
+			'<tr><td>' + locLabelTwitterHtml + '</td><td style="text-align: center">' + locTwitterCheckHtml.replace('{id}', index) + '</td><td><label>URL: </label>' + locTextTwitterURIHtml.replace('{id}', index) + '</td></tr>' +
+			'<tr><td>' + locLabelInstagramHtml + '</td><td style="text-align: center">' + locInstagramCheckHtml.replace('{id}', index) + '</td><td><label>URL: </label>' + locTextInstagramURIHtml.replace('{id}', index) + '</td></tr>' +
+			'<tr><td>' + locLabelSnapchatHtml + '</td><td style="text-align: center">' + locSnapchatCheckHtml.replace('{id}', index) + '</td><td><label>URL: </label>' + locTextSnapchatURIHtml.replace('{id}', index) + '</td></tr>' +
+			'<tr><td>' + locLabelTikTokHtml + '</td><td style="text-align: center">' + locTikTokCheckHtml.replace('{id}', index) + '</td><td><label>URL: </label>' + locTextTikTokURIHtml.replace('{id}', index) + '</td></tr>' +
+			'<tr><td>' + locLabelYelpHtml + '</td><td style="text-align: center">' + locYelpCheckHtml.replace('{id}', index) + '</td><td><label>URL: </label>' + locTextYelpURIHtml.replace('{id}', index) + '</td></tr>' +
 			'</table></div></td></tr></table></div>' +
 			'<br/>'));
 

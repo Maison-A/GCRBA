@@ -22,6 +22,8 @@ namespace GCRBA.Controllers
             return View(user);
         }
 
+
+
         public ActionResult Login()
         {
             User u = new User();
@@ -150,7 +152,7 @@ namespace GCRBA.Controllers
 
                         // call Login method on User object
                         // method will either return a User object or null
-                        user = user.AdminLogin();
+                        user = user.Login();
 
                         if (user != null && user.UID > 0)
                         {
@@ -193,26 +195,9 @@ namespace GCRBA.Controllers
             user = user.GetUserSession();
             if (user.IsAuthenticated)
             {
-                ViewBag.Name = user.FirstName + " " + user.LastName;              
+                ViewBag.Name = user.FirstName + " " + user.LastName;
             }
             return View(user);
-        }
-
-        [HttpPost]
-        public ActionResult NonMember(FormCollection col)
-        {
-            Models.User user = new Models.User();
-            user = user.GetUserSession();
-            if (user.IsAuthenticated)
-            {
-                ViewBag.Name = user.FirstName + " " + user.LastName;
-                if (col["btnSubmit"].ToString() == "join")
-                {
-                    return RedirectToAction("AddNewMember", "User");
-                }
-
-            }
-            return View();
         }
 
         public ActionResult Member()

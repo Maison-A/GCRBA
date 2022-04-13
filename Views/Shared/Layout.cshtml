@@ -1,9 +1,4 @@
 @using System.Web.Optimization;
-@{ 
-    // get current user session and see if they are logged in 
-    GCRBA.Models.User currentUser = new GCRBA.Models.User();
-    currentUser = currentUser.GetUserSession();
-}
 
 <!DOCTYPE html>
 
@@ -19,11 +14,6 @@
 </head>
 <body>
     <div class="container text-center">
-        <!--sign out button-->
-        @if (currentUser.IsAuthenticated)
-            {
-                 <a href="/Profile/Logout">Log Out</a>
-            }
         <!-- all code in every cshtml page is run through this div -->
         @RenderBody()
     </div>

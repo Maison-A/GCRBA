@@ -83,8 +83,6 @@ namespace GCRBA.Controllers
             {
                 Models.User u = new Models.User();
 
-                // only using FirstName, LastName, Email, Username, and Password because
-                // those are the only ones on the form for a new user 
                 u.FirstName = col["FirstName"];
                 u.LastName = col["LastName"];
                 u.Email = col["Email"];
@@ -92,12 +90,17 @@ namespace GCRBA.Controllers
                 u.Password = col["Password"];
                 u.isMember = 0;
                 u.isAdmin = 0;
+                u.Address = string.Empty;
+                u.City = string.Empty;
+                u.Zip = string.Empty;
+                u.Phone = string.Empty;
+                u.MemberShipType = string.Empty;
+                u.PaymentType = string.Empty;
 
-                // make sure none of the fields are empty
+                // make sure fields are filled out
                 if (u.FirstName.Length == 0 || u.LastName.Length == 0 || u.Email.Length == 0 || u.Username.Length == 0
                        || u.Password.Length == 0)
                 {
-                    // empty field(s), access action type on view to display relevant error message
                     u.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
                     return View(u);
                 }
@@ -142,7 +145,7 @@ namespace GCRBA.Controllers
                     else
                     {
                         return View(u);
-                    }                    
+                    }      
                 }
             }
             catch (Exception)
@@ -255,11 +258,5 @@ namespace GCRBA.Controllers
             }
             return View();
         }
-    
-
-
-
-
-    
     }
 }

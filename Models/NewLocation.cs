@@ -89,20 +89,6 @@ namespace GCRBA.Models {
 			Unknown = 5
 		}
 
-		public NewLocation.ActionTypes StoreNewLocation(List<Models.CategoryItem> categories, List<Models.Days> LocationHours, List<Models.SocialMedia> socialMedias, List<Models.Website> websites, List<Models.ContactPerson> contacts) {
-			try {
-				Database db = new Database();
-				this.ActionType = db.InsertCompany(this);
-				if(this.ActionType != ActionTypes.Unknown) this.ActionType = db.InsertLocation(this);
-				if(this.ActionType != ActionTypes.Unknown) //this.ActionType = db.InsertLocationHours(this, LocationHours);
-				if(this.ActionType != ActionTypes.Unknown) this.ActionType = db.InsertSpecialties(this, categories);
-				if(this.ActionType != ActionTypes.Unknown) this.ActionType = db.InsertSocialMedia(this, socialMedias);
-				if(this.ActionType != ActionTypes.Unknown) this.ActionType = db.InsertWebsite(this, websites);
-				if(this.ActionType != ActionTypes.Unknown) this.ActionType = db.InsertContactPerson(this, contacts);
-				return this.ActionType;
-			}
-			catch (Exception ex) { throw new Exception(ex.Message); }
 
-		}
 	}
 }
