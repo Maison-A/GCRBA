@@ -6,6 +6,8 @@ using System.Web;
 namespace GCRBA.Models
 {
 	public class SearchResults
+	{
+		public int test = 0;
 	{/// <summary>
 	/// ///////////////////////////////////////////
 	/// 
