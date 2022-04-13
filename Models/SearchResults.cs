@@ -7,17 +7,9 @@ namespace GCRBA.Models
 {
 	public class SearchResults
 	{
-		public int test2 = 0;
+		public int test2 = 1;
 		public int test = 0;
-	{/// <summary>
-	/// ///////////////////////////////////////////
-	/// 
-	/// 
-	/// 
-	/// 
-	/// 
-	/// </summary>
-		// hi shane this is the newest push
+	
 		public List<Models.NewLocation> lstLocations;
 		public int testLocationSearch = 1;
 		public Models.NewLocation landingLocation;
