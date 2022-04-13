@@ -13,6 +13,6 @@ namespace GCRBA.Models {
 		public string Url = "Testing.com"; // { get; set; }
 		public string Description = "Testing"; //{ get; set; }
 		public string Recipient = "gcrbadata@gmail.com";
-		public Models.NewLocation Content { get; set; }
+		public Models.LocationList Content { get; set; }
 	}
 }

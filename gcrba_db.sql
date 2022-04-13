@@ -40,13 +40,8 @@ IF OBJECT_ID('INSERT_LOCATIONHOURS')	IS NOT NULL DROP PROCEDURE INSERT_LOCATIONH
 IF OBJECT_ID('GET_MAIN_BANNER')			IS NOT NULL DROP PROCEDURE GET_MAIN_BANNER
 IF OBJECT_ID('GET_COMPANY_INFO')		IS NOT NULL DROP PROCEDURE GET_COMPANY_INFO
 IF OBJECT_ID('GET_ALL_MAIN_BANNERS')	IS NOT NULL DROP PROCEDURE GET_ALL_MAIN_BANNERS
-IF OBJECT_ID('SELECT_LOCATION')			IS NOT NULL DROP PROCEDURE SELECT_LOCATION
-IF OBJECT_ID('SELECT_CATEGORYLOCATION') IS NOT NULL DROP PROCEDURE SELECT_CATEGORYLOCATION
-IF OBJECT_ID('INSERT_NEW_USER')			IS NOT NULL	DROP PROCEDURE INSERT_NEW_USER
-IF OBJECT_ID('SELECT_STATES')			IS NOT NULL	DROP PROCEDURE SELECT_STATES
-IF OBJECT_ID('DELETE_LOCATION')			IS NOT NULL	DROP PROCEDURE DELETE_LOCATION
-IF OBJECT_ID('INSERT_NEW_MAIN_BANNER')	IS NOT NULL	DROP PROCEDURE INSERT_NEW_MAIN_BANNER
-IF OBJECT_ID('REUSE_MAIN_BANNER')		IS NOT NULL	DROP PROCEDURE REUSE_MAIN_BANNER
+IF OBJECT_ID('SELECT_LOCATION')			IS NOT NULL DROP PROC SELECT_LOCATION
+IF OBJECT_ID('SELECT_CATEGORYLOCATION') IS NOT NULL DROP PROC SELECT_CATEGORYLOCATION
 
 CREATE TABLE tblState
 (
@@ -431,7 +426,7 @@ BEGIN
 
 	SELECT		intMemberID 
 	FROM		tblMember
-	WHERE		intUserID = @intUserID
+	WHERE		intUserID = @intUserID 
 END
 GO
 
@@ -464,46 +459,6 @@ BEGIN
 
 END
 GO
-
-CREATE PROCEDURE [dbo].[INSERT_NEW_USER]
-@intNewUserID SMALLINT  = null OUTPUT, 
-@strFirstName NVARCHAR(25), 
-@strLastName NVARCHAR(25),
-@strEmail NVARCHAR(50),
-@strUsername NVARCHAR (15),
-@strPassword NVARCHAR(15),
-@isAdmin BIT
-AS
-SET NOCOUNT ON
-SET XACT_ABORT ON 
-BEGIN
-	DECLARE @COUNT AS TINYINT 
-
-	SELECT @COUNT=COUNT(*) FROM db_owner.tblUser WHERE strUsername = @strUsername
-	IF @COUNT > 0 RETURN -2 -- user with this username already exists 
-	
-	SELECT @COUNT=COUNT(*)FROM db_owner.tblUser WHERE strEmail = @strEmail
-	IF @COUNT > 0 RETURN -1 -- user with this email already exists 
-
-	INSERT INTO [db_owner].[tblUser]
-			([strFirstName],
-			 [strLastName],
-			 [strEmail],
-			 [strUsername],
-			 [strPassword],
-			 [isAdmin])
-		VALUES
-			(@strFirstName, 
-			 @strLastName, 
-			 @strEmail,
-			 @strUsername, 
-			 @strPassword,
-			 @isAdmin)
-	SELECT @intNewUserID=@@IDENTITY
-	RETURN 1
-END 
-GO
-
 
 CREATE PROCEDURE [dbo].[INSERT_CONTACTPERSON]
 @intContactPersonID AS BIGINT OUTPUT
@@ -778,75 +733,6 @@ BEGIN
 		ON Comp.intCompanyID = Loc.intCompanyID
 		WHERE Catloc.intCategoryID = @intCategoryID;
 	END
-END
-GO
-
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [db_owner].[SELECT_STATES]
-AS
-BEGIN
-	SET NOCOUNT ON;
-
-    -- Insert statements for procedure here
-	SELECT *
-	FROM tblState
-END
-GO
-
-CREATE PROCEDURE [dbo].[DELETE_LOCATION]
-@lngLocationID AS BIGINT = 1
-AS
-BEGIN
-	SET NOCOUNT ON;
-
-	DELETE FROM db_owner.tblCategoryLocation WHERE intLocationID = @lngLocationID
-	DELETE FROM db_owner.tblEventLocation WHERE intLocationID = @lngLocationID
-	DELETE FROM db_owner.tblLocationHours WHERE intLocationID = @lngLocationID
-	DELETE FROM db_owner.tblContactPerson WHERE intLocationID = @lngLocationID
-	DELETE FROM db_owner.tblSpecialLocation WHERE intLocationID = @lngLocationID
-	DELETE FROM db_owner.tblLocation WHERE intLocationID = @lngLocationID
-
-	RETURN @@ROWCOUNT
-END
-GO
-
-CREATE PROCEDURE [dbo].[INSERT_NEW_MAIN_BANNER]
-@intNewBannerID SMALLINT = null OUTPUT, 
-@strBanner NVARCHAR(2000)
-AS
-SET NOCOUNT ON
-SET XACT_ABORT ON
-BEGIN
-	INSERT INTO [db_owner].[tblMainBanner]
-		([strBanner])
-	VALUES	
-		(@strBanner)
-	SELECT @intNewBannerID=@@IDENTITY
-	RETURN 1
-END
-GO
-
-
-CREATE PROCEDURE [dbo].[REUSE_MAIN_BANNER]
-@intMainBannerID SMALLINT,
-@intNewBannerID	SMALLINT = null OUTPUT,
-@strBanner NVARCHAR(2000)
-AS
-SET NOCOUNT ON 
-SET XACT_ABORT ON 
-BEGIN
-	SELECT @strBanner=strBanner FROM db_owner.tblMainBanner WHERE intMainBannerID = @intMainBannerID
-
-	INSERT INTO [db_owner].[tblMainBanner] WITH (TABLOCKX)
-					([strBanner])	
-	VALUES			(@strBanner)
-
-	SELECT @intNewBannerID=@@IDENTITY
-	RETURN 1
 END
 GO
 

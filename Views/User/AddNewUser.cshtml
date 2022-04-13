@@ -25,14 +25,12 @@
             <span>Please enter data in all fields.</span>
         </div>
     }
-
-
     <div class="section">
         <div>
             <!-- User First Name -->
             <div>
                 <div>@Html.Label("First Name")</div>
-                <div>@Html.TextBoxFor(model => model.FirstName, new { @name = "FirstName", @autofocus = "autofocus" })</div>
+                <div>@Html.TextBoxFor(model => model.FirstName, new {@name = "FirstName", @autofocus = "autofocus" })</div>
             </div>
 
             <!-- User Last Name -->
@@ -66,6 +64,10 @@
 
     </div>
 
+    <div class="some-spacing">
+        @Html.CheckBox("IsChecked", false)@Html.Label("Would you like to join the GCRBA?")
+    </div>
+
     <div>
         <button id="btnNewUser" name="btnSubmit" value="newuser" class="button-action"><i class="fas fa-user-plus"></i> Sign-Up</button>
     </div>
@@ -75,6 +77,6 @@
     $(document).ready(function () {
         SetActiveMenus('signup');
     });
-
 </script>
+
 

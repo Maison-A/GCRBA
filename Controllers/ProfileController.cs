@@ -22,6 +22,8 @@ namespace GCRBA.Controllers
             return View(user);
         }
 
+
+
         public ActionResult Login()
         {
             User u = new User();
@@ -59,7 +61,7 @@ namespace GCRBA.Controllers
 
                         // call Login method on User object
                         // method will either return a User object or null
-                        user = user.NonAdminLogin();
+                        user = user.Login();
 
                         if (user != null && user.UID > 0)
                         {
@@ -149,7 +151,7 @@ namespace GCRBA.Controllers
 
                         // call Login method on User object
                         // method will either return a User object or null
-                        user = user.AdminLogin();
+                        user = user.Login();
 
                         if (user != null && user.UID > 0)
                         {
@@ -192,26 +194,9 @@ namespace GCRBA.Controllers
             user = user.GetUserSession();
             if (user.IsAuthenticated)
             {
-                ViewBag.Name = user.FirstName + " " + user.LastName;              
+                ViewBag.Name = user.FirstName + " " + user.LastName;
             }
             return View(user);
-        }
-
-        [HttpPost]
-        public ActionResult NonMember(FormCollection col)
-        {
-            Models.User user = new Models.User();
-            user = user.GetUserSession();
-            if (user.IsAuthenticated)
-            {
-                ViewBag.Name = user.FirstName + " " + user.LastName;
-                if (col["btnSubmit"].ToString() == "join")
-                {
-                    return RedirectToAction("AddNewMember", "User");
-                }
-
-            }
-            return View();
         }
 
         public ActionResult Member()
@@ -251,14 +236,13 @@ namespace GCRBA.Controllers
 
         public ActionResult EditMainBanner()
         {
-            // create view model object 
+
             AdminBannerViewModel vm = new AdminBannerViewModel();
 
-            // create user objects and populate 
             vm.CurrentUser = new User();
 
-            // get admin status because page should only be viewable by admin
-            vm.CurrentUser = vm.CurrentUser.GetUserSession();
+            // get current session of user
+            //ViewBag.isAdmin = u.GetAdminStatus();
 
             // create new database object
             Database db = new Database();
@@ -274,82 +258,6 @@ namespace GCRBA.Controllers
 
             // return view with view model object passed as argument so we can access it in view
             return View(vm);
-        }
-
-        [HttpPost]
-        public ActionResult EditMainBanner(FormCollection col)
-        {
-            AdminBannerViewModel vm = new AdminBannerViewModel();
-            vm.CurrentUser = new User();
-            vm.CurrentUser = vm.CurrentUser.GetUserSession();
-            vm.MainBanner = new MainBanner();
-            // create variable to hold new banner if that option is chosen 
-            Database db = new Database();
-            ViewBag.Flag = 0;
-
-            // create list to hold banners 
-            List<MainBanner> listOfMainBanners = new List<MainBanner>();
-
-            // add previous + current banners to list 
-            listOfMainBanners = db.GetMainBanners();
-
-            // add list of banners to view model 
-            vm.MainBanners = listOfMainBanners;
-
-            // button to submit new banner is selected 
-            if (col["btnSubmit"].ToString() == "submitNewBanner")
-            {
-                // drop down option with value = "new" selected 
-                if (col["mainBanners"].ToString() == "new")
-                {
-                    // add text from textarea to view model's banner property
-                    vm.MainBanner.Banner = col["newBanner"];
-
-                    // try to add new banner to database
-                    if (db.InsertNewMainBanner(vm.MainBanner) == true)
-                    {
-                        // banner successfully added, use this flag so we know what to show on view
-                        // 0 - unsuccessful
-                        // 1 - successful
-                        ViewBag.Flag = 1;
-                    }
-                    // return view with view model as argument 
-                    return View(vm);                   
-                } 
-                // one of the previous banners in the drop down selected to use for new banner
-                else
-                {
-                    // set view model's BannerID property to value (ID from database) of selected option
-                    vm.MainBanner.BannerID = Convert.ToInt16(col["mainBanners"].ToString());
-
-                    // get banner text from list of banners
-                    vm.MainBanner.Banner = listOfMainBanners[vm.MainBanner.BannerID - 1].Banner;
-
-                    // try to add banner to newest row in table in db 
-                    if (db.InsertNewMainBanner(vm.MainBanner) == true)
-                    {
-                        // banner successfully added, use this flag so we know what to show on view 
-                        // 0 - unsuccessful
-                        // 1 - successful
-                        ViewBag.Flag = 1;
-                    }
-                    // return view with view model as argument 
-                    return View(vm);
-                }
-            }
-            return View(vm);
-        }
-
-        public ActionResult Logout()
-        {
-            // create user object
-            User u = new User();
-
-            // remove current session, which "logs them out"
-            u.RemoveUserSession();
-
-            // redirect to main page
-            return RedirectToAction("Index", "Home");
         }
 
     }

@@ -204,6 +204,7 @@
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\SendMailerController.cs" />
     <Compile Include="Controllers\VendorController.cs" />
+    <Compile Include="Models\Awards.cs" />
     <Compile Include="Models\ExportToCsv.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -218,8 +219,10 @@
     <Compile Include="Models\MainBanner.cs" />
     <Compile Include="Models\NewLocation.cs" />
     <Compile Include="Models\PhoneNumber.cs" />
+    <Compile Include="Models\SaleSpecial.cs" />
     <Compile Include="Models\SearchResults.cs" />
     <Compile Include="Models\SocialMedia.cs" />
+    <Compile Include="Models\CategoryList.cs" />
     <Compile Include="Models\State.cs" />
     <Compile Include="Controllers\TroubleshootController.cs" />
     <Compile Include="Models\User.cs" />
@@ -258,7 +261,7 @@
     <Content Include="Views\Vendor\Index.cshtml" />
     <Content Include="Views\Bakery\AddNewLocation.cshtml" />
     <Content Include="Views\Bakery\MemberBakery.cshtml" />
-    <Content Include="Views\Bakery\TestLandingPage.cshtml" />
+    <Content Include="Views\Bakery\LandingPage.cshtml" />
     <Content Include="Views\User\AddNewUser.cshtml" />
     <Content Include="Python\Scripts\.idea\.name" />
     <Content Include="Python\Scripts\.idea\Scripts.iml" />
@@ -281,6 +284,7 @@
     <Content Include="Views\Profile\EditMainBanner.cshtml" />
     <Content Include="Views\Troubleshoot\Index.cshtml" />
     <Content Include="Views\Troubleshoot\EmailIssue.cshtml" />
+    <Content Include="Views\Bakery\TestDynamicPage.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -292,6 +296,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Views\Default\" />
     <Folder Include="Views\IndexViewModel\" />
+    <Folder Include="Views\SendMailer\CSV_Folder\" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

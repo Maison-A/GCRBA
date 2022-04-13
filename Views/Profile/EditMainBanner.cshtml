@@ -6,7 +6,7 @@
 
 <h2>@ViewBag.Title</h2>
 
-@if (Model.CurrentUser.isAdmin == 0)
+@if (ViewBag.isAdmin == false)
 {
     <p>This page can only be view by admin. Please log in as an admin and try again.</p>
 }
@@ -15,11 +15,6 @@ else
     <div class="container w-50">
         @using (Html.BeginForm(FormMethod.Post))
         {
-
-        if (ViewBag.Flag == 1) 
-            {
-                <p>The homepage banner has been successfully updated! Go to the homepage to view the change.</p>
-            }
         <label for="mainBanners" class="mt-5">Select what you would like the main banner to say below:</label>
 
         <!--display dropdown list of main banners-->
@@ -31,7 +26,7 @@ else
             <option value="new">Enter a new banner</option>
         </select>
 
-        <textarea name="newBanner" id="newBanner" style="display:none" class="form-control mt-2 mb-4"></textarea>
+        <textarea id="newBanner" style="display:none" class="form-control mt-2 mb-4"></textarea>
 
         <button name="btnSubmit" value="submitNewBanner">Submit Change</button>
         <button name="btnSubmit" value="cancel">Cancel</button>

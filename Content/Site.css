@@ -12,9 +12,18 @@
 	padding: 20px 0px 20px 20px;
 }
 
+#label {
+    font-weight: bold;
+}
+
 .some-spacing {
     margin-bottom: 1em;
+}
 
+.center {
+    margin-left: auto;
+    margin-right: auto;
+}
 
 .topcorner {
     position: absolute;
@@ -133,42 +142,57 @@ button i {
     margin-right: auto;
 }
 
-@media only screen and (max-width : 30em) {
-	.item {
-		width: 90%;
-		display: block;
-	}
+#topleft {
+	text-align: left;
+	vertical-align: top;
 }
 
-@media only screen and (max-width : 48em) {
+#text-center {
+	text-align: center;
+}
 
-    h2 {
-        margin-top: 0.5em;
-    }
+#label-1 {
+	font-weight: bold;
+	text-decoration: underline;
+}
 
-    #workspace {
-        padding-left: 1em;
-    }
+* {
+	box-sizing: border-box;
+}
 
-    #site-header {
-        font-size: 1.75em;
-        padding: 10px 0px 10px 10px;
-    }
+.row {
+	margin-left: -5px;
+	margin-right: -5px
+}
 
-    p {
-        margin-bottom: 1em;
-    }
+.column {
+	float: left;
+	width: 50%;
+	padding: 5px;
+}
 
-    .full-content {
-        display: none;
-    }
+/* Clearfix (clear floats) */
+.row::after {
+	content: "";
+	clear: both;
+	display: table;
+}
 
-    .mobile-content {
-        display: inline;
-    }
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+	width: 100%;
+	border: 1px solid #ddd;
+}
 
-    .icon-bar a {
-        padding: 10px;
-        font-size: 20px;
+th, td {
+	text-align: left;
+	padding: 16px;
+}
+
+@media screen and (max-width : 600 px) {
+
+    .column {
+        width: 100%;
     }
 }

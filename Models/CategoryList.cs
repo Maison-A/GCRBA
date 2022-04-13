@@ -3,19 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace GCRBA.Models
-{
-	public class SearchResults
-	{
-
-		public List<Models.NewLocation> lstLocations;
-		public int testLocationSearch = 1;
-		public Models.NewLocation landingLocation;
-		public List<Models.CategoryItem> landingCategories;
-		public List<Models.Awards> landingAwards;
-		public List<Models.SaleSpecial> landingSpecials;
-
-		//Bakery Good For User Search
+namespace GCRBA.Models {
+	public class CategoryList {
 		public CategoryItem Donuts = new CategoryItem();
 		public CategoryItem Bagels = new CategoryItem();
 		public CategoryItem Muffins = new CategoryItem();
