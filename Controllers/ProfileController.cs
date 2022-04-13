@@ -10,7 +10,7 @@ namespace GCRBA.Controllers
 {
     public class ProfileController : Controller
     {
-   
+
         public ActionResult Index()
         {
             Models.User user = new Models.User();
@@ -21,8 +21,6 @@ namespace GCRBA.Controllers
             }
             return View(user);
         }
-
-
 
         public ActionResult Login()
         {
@@ -45,7 +43,7 @@ namespace GCRBA.Controllers
                     // yes, assign Username and Password values to Username and Password properties in User object
                     user.Username = col["Username"];
                     user.Password = col["Password"];
-                    
+
                     // are input fields empty? 
                     if (user.Username.Length == 0 || user.Password.Length == 0)
                     {
@@ -53,7 +51,7 @@ namespace GCRBA.Controllers
                         user.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
                         return View(user);
                     }
-                   
+
                     // call Login method on User object
                     // method will either return a User object or null
                     //user = user.NonAdminLogin();
@@ -97,15 +95,15 @@ namespace GCRBA.Controllers
                         return View(user);
                     }
                 }
-               
+
                 // redirect to AddNewUser form if signup clicked
-                else if(col["btnSubmit"] == "signup")
+                else if (col["btnSubmit"] == "signup")
                 {
-                    return RedirectToAction("AddNewUser","User");
+                    return RedirectToAction("AddNewUser", "User");
                 }
 
                 return View(user);
-                
+
             }
             catch (Exception)
             {
@@ -152,7 +150,7 @@ namespace GCRBA.Controllers
 
                         // call Login method on User object
                         // method will either return a User object or null
-                        user = user.Login();
+                        user = user.AdminLogin();
 
                         if (user != null && user.UID > 0)
                         {
@@ -200,6 +198,23 @@ namespace GCRBA.Controllers
             return View(user);
         }
 
+        [HttpPost]
+        public ActionResult NonMember(FormCollection col)
+        {
+            Models.User user = new Models.User();
+            user = user.GetUserSession();
+            if (user.IsAuthenticated)
+            {
+                ViewBag.Name = user.FirstName + " " + user.LastName;
+                if (col["btnSubmit"].ToString() == "join")
+                {
+                    return RedirectToAction("AddNewMember", "User");
+                }
+
+            }
+            return View();
+        }
+
         public ActionResult Member()
         {
             Models.User user = new Models.User();
@@ -216,7 +231,7 @@ namespace GCRBA.Controllers
             // get current user to pass to the view 
             User u = new User();
             u = u.GetUserSession();
-           
+
             return View(u);
         }
 
@@ -260,7 +275,7 @@ namespace GCRBA.Controllers
 
             // get banners list 
             vm.MainBanners = GetBannersList(vm);
-            
+
             // get current main banner 
             vm.MainBanner = new MainBanner();
 
@@ -291,8 +306,8 @@ namespace GCRBA.Controllers
                         //ViewBag.Flag = 1;
                     //}
                     // return view with view model as argument 
-                    return View(vm);                   
-                } 
+                    return View(vm);
+                }
                 // one of the previous banners in the drop down selected to use for new banner
                 else
                 {
@@ -392,7 +407,7 @@ namespace GCRBA.Controllers
             // add to database
             vm.CurrentCompany.ActionType = vm.CurrentCompany.SaveInsert();
 
-            return View(vm); 
+            return View(vm);
         }
 
         public ActionResult DeleteCompany()
@@ -442,61 +457,7 @@ namespace GCRBA.Controllers
 
         public ActionResult EditExistingCompany()
         {
-            // create EditCompaniesVM object 
-            EditCompaniesViewModel vm = new EditCompaniesViewModel();
-
-            // create VM user object
-            vm.CurrentUser = new User();
-
-            // get current user session
-            vm.CurrentUser = vm.CurrentUser.GetUserSession();
-
-            return View(vm);
-        }
-
-        [HttpPost]
-        public ActionResult EditExistingCompany(FormCollection col)
-        {
-            // create EditCompaniesVM object 
-            EditCompaniesViewModel vm = new EditCompaniesViewModel();
-
-            // create VM user object
-            vm.CurrentUser = new User();
-
-            // get current user session
-            vm.CurrentUser = vm.CurrentUser.GetUserSession();
-
-            if (col["btnSubmit"].ToString() == "editLocationInfo")
-            {
-                return RedirectToAction("EditLocationInfo", "Profile");
-            }
-
-            if (col["btnSubmit"].ToString() == "editGeneralInfo")
-            {
-                return RedirectToAction("EditGeneralInfo", "Profile");
-            }
-
-            return View(vm);
-        }
-
-        public ActionResult EditCompanyInfo()
-        {
-            // initialize EditCompaniesVM object
-            EditCompaniesViewModel vm = InitializeEditCompaniesVM();
-
-            // get companyID that was selected from  dropdown on previous page and saved in company session
-            vm.CurrentCompany = vm.CurrentCompany.GetCompanySession();
-
-            // create database object
-            Database db = new Database();
-
-            // get current company info based on selected company from previous page
-            vm.CurrentCompany = db.GetCompanyInfo(vm);
-
-            // get locations list
-            vm.Locations = db.GetLocations(vm);
-
-            return View(vm);
+            return View();
         }
 
         public ActionResult Logout()
