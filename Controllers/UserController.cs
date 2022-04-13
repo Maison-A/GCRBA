@@ -36,6 +36,7 @@ namespace GCRBA.Controllers
                     u.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
                     return View(u);
                 }
+
                 else
                 {
                     if (col["btnSubmit"] == "newuser")
@@ -87,6 +88,8 @@ namespace GCRBA.Controllers
                 u.Email = col["Email"];
                 u.Username = col["Username"];
                 u.Password = col["Password"];
+                u.isMember = 0;
+                u.isAdmin = 0;
                 u.Address = string.Empty;
                 u.City = string.Empty;
                 u.Zip = string.Empty;
@@ -114,8 +117,16 @@ namespace GCRBA.Controllers
                         {
                             case Models.User.ActionTypes.InsertSuccessful:
                                 u.SaveUserSession();
-                                return RedirectToAction("Index","Home");
-
+                                // check to see if user is a member or not 
+                                db.IsUserMember(u);
+                                if (u.isMember == 0)
+                                {
+                                    return RedirectToAction("NonMember", "Profile");
+                                } 
+                                else
+                                {
+                                    return RedirectToAction("Member", "Profile");
+                                }
                             default:
                                 return View(u);
                         }
@@ -137,12 +148,9 @@ namespace GCRBA.Controllers
         // TODO: bring up how to manage initilization
         // will we be forcing members to become Users? 
         public ActionResult AddNewMember()
-        {
-            // if user exists: update user value to member
+        {     
             Models.User u = new Models.User();
             return View(u);
-
-            // if user doesnt exist - redirect to sign up?
         }
 
 
@@ -151,14 +159,82 @@ namespace GCRBA.Controllers
         {
             if (col["btnSignUp"].ToString() == "submit")
             {
-                //validate data
-                // if user exists set value to memeber
-                // 
-                // send data if valid to db
+                // get current user session
+                Models.User user = new Models.User();
+                user = user.GetUserSession();
+                
+                // check if not authenticated - create new user
+                if (user.UID == 0)
+                {
+                    user.FirstName = col["Firstname"];
+                    user.LastName = col["Lastname"];
+                    user.Email = col["Email"];
+                    user.Address = col["Address"];
+                    user.City = col["City"];
+                    user.State = col["State"];
+                    user.Zip = col["Zip"];
+                    user.MemberShipType = col[""];
+                    user.isMember = 1;
+                    user.isAdmin = 0;
+                    
+                }
+               
+                // once submit is hit, process member data
+                if (col["btnSubmit"].ToString() == "submit")
+                {
+                    //validate data
+                    if (user.FirstName.Length == 0 || user.LastName.Length == 0 || user.Email.Length == 0 ||
+                        user.Address.Length == 0 || user.City.Length == 0 || user.State.Length == 0 ||
+                        user.Zip.Length == 0)
+                    {
+                        // empty field(s), access action type on view to display relevant error message
+                        user.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
+                        return View(user);
+                    }
 
-                // return to member page - use generated user id as 
-                // param
-                return RedirectToAction("Index", "Member");
+                    // send data if valid to db
+                    else
+                    {
+                        // initialize action type
+                        Models.User.ActionTypes at = Models.User.ActionTypes.NoType;
+
+                        // create database object 
+                        Database db = new Database();
+
+                        // save action type based on what Save() returns 
+                        at = user.Save();
+
+                        switch (at)
+                        {
+                            // insert successful
+                            // save user session so they are logged in
+                            // redirect to interface based on member/nonmember
+                            case Models.User.ActionTypes.InsertSuccessful:
+                                
+                                user.SaveUserSession();
+                                // check to see if user is a member or not 
+                                db.IsUserMember(user);
+
+                                if (user.isMember == 0)
+                                {
+                                    return RedirectToAction("NonMember", "Profile");
+                                }
+                                else
+                                {
+                                    return RedirectToAction("Member", "Profile");
+                                }
+
+                            default:
+                                return View(user);
+                        }
+                    }
+                        
+                }
+            }
+            catch (Exception)
+            {
+                Models.User u = new Models.User();
+                return View(u);
             }
             return View();
         }

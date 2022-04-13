@@ -15,6 +15,14 @@ else
     <div class="container w-50">
         @using (Html.BeginForm(FormMethod.Post))
         {
+
+        // if Flag == 1, banner has successfully been added to database
+        if (ViewBag.Flag == 1) 
+            {
+                // let admin know banner was successfully added to db 
+                <p id="newBannerSuccess">The homepage banner has been successfully updated! Go to the homepage to view the change.</p>
+            }
+
         <label for="mainBanners" class="mt-5">Select what you would like the main banner to say below:</label>
 
         <!--display dropdown list of main banners-->
@@ -29,11 +37,19 @@ else
         <textarea id="newBanner" style="display:none" class="form-control mt-2 mb-4"></textarea>
 
         <button name="btnSubmit" value="submitNewBanner">Submit Change</button>
+
         <button name="btnSubmit" value="cancel">Cancel</button>
 
         }
 
         <script>
+            // get id of new banner message
+            let x = document.getElementById("newBannerSuccess");
+
+            // remove new banner message after it has displayed for 5 seconds 
+            setTimeout(function () { x.style.display = 'none' }, 5000);
+
+            // display textarea if option with value "new" is chosen in drop down 
             $('#mainBanners').on('change', function () {
                 $('#newBanner').css('display', (this.value === 'new') ? 'block' : 'none');
             });

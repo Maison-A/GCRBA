@@ -4,39 +4,46 @@
     ViewBag.Title = "Login";
 }
 
-<h2>@ViewBag.Title</h2>
+<!--if user is authenticated, they're already logged in, so don't show log in interface again-->
+@if (Model.IsAuthenticated)
+{
+    <p>You are already logged in.</p>
+}
+else
+{
+    <div class="container col-md-4">
+        <h2 class="mt-5">@ViewBag.Title</h2>
 
-<div class="container col-md-4">
-    <h2 class="mt-5">@ViewBag.Title</h2>
-
-    @using (Html.BeginForm(FormMethod.Post))
-    {
-        if (Model.ActionType == GCRBA.Models.User.ActionTypes.RequiredFieldMissing)
+        @using (Html.BeginForm(FormMethod.Post))
         {
-            <div class="login-error">
-                <i class="fad fa-exclamation-triangle fa-2x"></i>
-                All fields are required.
+            if (Model.ActionType == GCRBA.Models.User.ActionTypes.RequiredFieldMissing)
+            {
+                <div class="login-error">
+                    <i class="fad fa-exclamation-triangle fa-2x"></i>
+                    All fields are required.
+                </div>
+            }
+
+            if (Model.ActionType == GCRBA.Models.User.ActionTypes.LoginFailed)
+            {
+                <div class="login-error">
+                    <i class="fad fa-exclamation-triangle fa-2x"></i>
+                    Invalid username and/or password.
+                </div>
+            }
+
+            <div class="mt-5 mb-4">
+                @Html.LabelFor(model => model.Username, new { @class = "form-label" })
+                @Html.TextBoxFor(model => model.Username, new { @autofocus = "autofocus", @class = "form-control" })
+            </div>
+            <div class="mb-4">
+                @Html.LabelFor(model => model.Password, new { @class = "form-label" })
+                @Html.TextBoxFor(model => model.Password, new { type = "password", @class = "form-control" })
+            </div>
+            <div class="mb-3">
+                <button id="btnLogin" name="btnSubmit" value="login" class="btn btn-primary">Login</button>
+                <button id="btnSignUp" name="btnSubmit" value="signup"class="btn btn-primary">Sign up!</button>
             </div>
         }
-
-        if (Model.ActionType == GCRBA.Models.User.ActionTypes.LoginFailed)
-        {
-            <div class="login-error">
-                <i class="fad fa-exclamation-triangle fa-2x"></i>
-                Invalid username and/or password.
-            </div>
-        }
-
-        <div class="mt-5 mb-4">
-            @Html.LabelFor(model => model.Username, new { @class = "form-label" })
-            @Html.TextBoxFor(model => model.Username, new { @autofocus = "autofocus", @class = "form-control" })
-        </div>
-        <div class="mb-4">
-            @Html.LabelFor(model => model.Password, new { @class = "form-label" })
-            @Html.TextBoxFor(model => model.Password, new { type = "password", @class = "form-control" })
-        </div>
-        <div class="mb-3">
-            <button id="btnLogin" name="btnSubmit" value="login" class="btn btn-primary">Login</button>
-        </div>
-    }
-</div>
+    </div>
+}

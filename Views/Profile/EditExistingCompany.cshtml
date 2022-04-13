@@ -1,0 +1,22 @@
+﻿@using GCRBA.ViewModels
+@model EditCompaniesViewModel
+
+@{
+    ViewBag.Title = "Edit Existing Company";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (Model.CurrentUser.isAdmin == 0)
+{
+    @Html.Partial("AdminOnly");
+}
+else
+{
+    using (Html.BeginForm(FormMethod.Post))
+    {
+        <button name="btnSubmit" value="editLocationInfo">Edit Location Info</button>
+        <button name="btnSubmit" value="editGeneralInfo">Edit General Info</button>
+        <button name="btnSubmit" value="cancel">Return to Admin Portal</button>
+    }
+}

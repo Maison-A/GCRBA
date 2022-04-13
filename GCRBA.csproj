@@ -214,6 +214,7 @@
     <Compile Include="Models\ContactPerson.cs" />
     <Compile Include="Models\Database.cs" />
     <Compile Include="Models\Days.cs" />
+    <Compile Include="Models\Location.cs" />
     <Compile Include="Models\LocationList.cs" />
     <Compile Include="Models\MailModel.cs" />
     <Compile Include="Models\MainBanner.cs" />
@@ -231,6 +232,7 @@
     <Compile Include="Controllers\BakeryController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="ViewModels\AdminBannerViewModel.cs" />
+    <Compile Include="ViewModels\EditCompaniesViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
@@ -284,6 +286,15 @@
     <Content Include="Views\Profile\EditMainBanner.cshtml" />
     <Content Include="Views\Troubleshoot\Index.cshtml" />
     <Content Include="Views\Troubleshoot\EmailIssue.cshtml" />
+    <Content Include="Views\Profile\EditCompanies.cshtml" />
+    <Content Include="Views\Profile\AddCompany.cshtml" />
+    <Content Include="Views\Profile\EditExistingCompany.cshtml" />
+    <Content Include="Views\Profile\DeleteCompany.cshtml" />
+    <Content Include="Views\Shared\UpdateSuccessful.cshtml" />
+    <Content Include="Views\Shared\AdminOnly.cshtml" />
+    <Content Include="Views\Profile\EditAwards.cshtml" />
+    <Content Include="Views\Profile\EditLocationInfo.cshtml" />
+    <Content Include="Views\Profile\EditGeneralInfo.cshtml" />
     <Content Include="Views\Bakery\TestDynamicPage.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
