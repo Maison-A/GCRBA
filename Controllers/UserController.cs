@@ -11,6 +11,7 @@ namespace GCRBA.Controllers
     public class UserController : Controller
     {
 
+
         public ActionResult Index()
         {
             Models.User u = new Models.User();
@@ -100,6 +101,8 @@ namespace GCRBA.Controllers
                     u.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
                     return View(u);
                 }
+
+
                 // send data if valid to db
                 else
                 {
@@ -164,28 +167,42 @@ namespace GCRBA.Controllers
                 Models.User user = new Models.User();
                 user = user.GetUserSession();
 
-                // check if not authenticated - create new user
                 if (user.UID == 0)
                 {
+                    // contact info
                     user.FirstName = col["Firstname"];
                     user.LastName = col["Lastname"];
-                    user.Email = col["Email"];
                     user.Address = col["Address"];
+                    user.Phone = col["Phone"];
                     user.City = col["City"];
                     user.State = col["State"];
                     user.Zip = col["Zip"];
-                    user.MemberShipType = col[""];
+
+                    // username/pass setup
+                    user.Email = col["Email"];
+                    user.Username = col["Username"];
+                    user.Password = col["Password"];
+
+                    // membership type
+                    user.MemberShipType = col["MemberShipType"];
+                    user.PaymentType = col["PaymentType"];
+
+                    //permissions
                     user.isMember = 1;
                     user.isAdmin = 0;
 
                 }
+                else
+                {
+                    user.isMember = 1;
+                }
 
                 // once submit is hit, process member data
-                if (col["btnSubmit"].ToString() == "submit")
+                if (col["btnSubmit"] == "submit")
                 {
                     //validate data
                     if (user.FirstName.Length == 0 || user.LastName.Length == 0 || user.Email.Length == 0 ||
-                        user.Address.Length == 0 || user.City.Length == 0 || user.State.Length == 0 ||
+                        user.Phone.Length == 0 || user.Address.Length == 0 || user.City.Length == 0 || user.State.Length == 0 ||
                         user.Zip.Length == 0)
                     {
                         // empty field(s), access action type on view to display relevant error message
@@ -229,7 +246,6 @@ namespace GCRBA.Controllers
                                 return View(user);
                         }
                     }
-
                 }
             }
             catch (Exception)
