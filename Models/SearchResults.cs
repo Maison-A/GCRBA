@@ -6,8 +6,15 @@ using System.Web;
 namespace GCRBA.Models
 {
 	public class SearchResults
-	{
-
+	{/// <summary>
+	/// ///////////////////////////////////////////
+	/// 
+	/// 
+	/// 
+	/// 
+	/// 
+	/// </summary>
+		// hi shane this is the newest push
 		public List<Models.NewLocation> lstLocations;
 		public int testLocationSearch = 1;
 		public Models.NewLocation landingLocation;
