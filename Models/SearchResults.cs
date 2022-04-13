@@ -7,7 +7,7 @@ namespace GCRBA.Models
 {
 	public class SearchResults
 	{
-		public int test2 = 1;
+		public int test2 = 55561651561;
 		public int test = 0;
 	
 		public List<Models.NewLocation> lstLocations;
