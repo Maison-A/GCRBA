@@ -175,7 +175,12 @@
 		<table>
 			<tr>
 				<td>
-					@Html.Label("Main Website")
+					@Html.Label("Main Website:")
+				</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.DisplayFor(model => model.landingWebsite.Where(webtype => webtype.intWebsiteTypeID.Equals(1)).Select(url => url.strURL).FirstOrDefault())
 				</td>
 			</tr>
 		</table>
