@@ -16,17 +16,16 @@ namespace GCRBA.Models
         public string Zip { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
- 
+
         public string Username { get; set; }
         public string Password { get; set; }
         public string PaymentType = string.Empty;
         public ActionTypes ActionType { get; set; } = ActionTypes.NoType;
-        
+
         // member type control
         public int isAdmin { get; set; }
         public int isMember { get; set; }
         public string MemberShipType = string.Empty;
-        
 
         // tells us if current user is logged in 
         public bool IsAuthenticated
@@ -156,7 +155,7 @@ namespace GCRBA.Models
             DuplicateUsername = 4,
             Unknown = 5,
             RequiredFieldMissing = 6,
-            LoginFailed = 7,
+            LoginFailed = 7
             
         }
     }
