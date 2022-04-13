@@ -187,13 +187,9 @@ namespace GCRBA.Models {
 				finally {
 					CloseDBConnection(ref cn);
 				}
-				else
-				{
-					return newUser;
-				}
+				return newUser;
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
-
 		}
 
 		public bool IsUserAdmin(User user)
@@ -314,7 +310,7 @@ namespace GCRBA.Models {
 				// specify command type as stored procedure 
 				da.SelectCommand.CommandType = CommandType.StoredProcedure;
 
-				SetParameter(ref da, "@intCompanyID", vm.CurrentCompany.CompanyID, SqlDbType.BigInt);
+				SetParameter(ref da, "@intCompanyID", vm.CurrentCompany.intCompanyID, SqlDbType.BigInt);
 
 				try
                 {
@@ -323,7 +319,7 @@ namespace GCRBA.Models {
 					if (ds.Tables[0].Rows.Count > 0)
                     {
 						DataRow dr = ds.Tables[0].Rows[0];
-						vm.CurrentCompany.Name = (string)dr["strCompanyName"];
+						vm.CurrentCompany.strCompanyName = (string)dr["strCompanyName"];
 						vm.CurrentCompany.About = (string)dr["strAbout"];
 						vm.CurrentCompany.Year = (string)dr["strBizYear"];
 						return vm.CurrentCompany;
@@ -437,7 +433,7 @@ namespace GCRBA.Models {
 				// specify which stored procedure we are using 
 				SqlDataAdapter da = new SqlDataAdapter("GET_LOCATIONS", cn);
 
-				SetParameter(ref da, "@intCompanyID", vm.CurrentCompany.CompanyID, SqlDbType.BigInt);
+				SetParameter(ref da, "@intCompanyID", vm.CurrentCompany.intCompanyID, SqlDbType.BigInt);
 
 				// create new list object with type string  
 				List<Location> locations = new List<Location>();
@@ -529,7 +525,7 @@ namespace GCRBA.Models {
 				SqlCommand cm = new SqlCommand("DELETE_COMPANY", cn);
 				int intReturnValue = -1;
 
-				SetParameter(ref cm, "@intCompanyID", c.CompanyID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@intCompanyID", c.intCompanyID, SqlDbType.BigInt);
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
 
 				cm.ExecuteReader();
@@ -666,7 +662,7 @@ namespace GCRBA.Models {
 				int intReturnValue = -1;
 				
 				SetParameter(ref cm, "@intCompanyID", null, SqlDbType.BigInt, Direction: ParameterDirection.Output);
-				SetParameter(ref cm, "@strCompanyName", c.Name, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strCompanyName", c.strCompanyName, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strAbout", c.About, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strBizYear", c.Year, SqlDbType.NVarChar);
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
@@ -681,7 +677,7 @@ namespace GCRBA.Models {
 					case -1:
 						return Company.ActionTypes.DuplicateName;
 					case 1: // new user created
-						c.CompanyID = Convert.ToInt16(cm.Parameters["@intCompanyID"].Value);
+						c.intCompanyID = Convert.ToInt16(cm.Parameters["@intCompanyID"].Value);
 						return Company.ActionTypes.InsertSuccessful;
 					default:
 						return Company.ActionTypes.Unknown;
@@ -1109,7 +1105,7 @@ namespace GCRBA.Models {
 				DataSet ds = new DataSet();
 				SqlConnection cn = new SqlConnection();
 				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
-				SqlDataAdapter da = new SqlDataAdapter("SELECT_ALLCATEGORY_FORLOCATIONS", cn);
+				SqlDataAdapter da = new SqlDataAdapter("SELECT_ALLCATEGORY_FORLOCATION", cn);
 
 				da.SelectCommand.CommandType = CommandType.StoredProcedure;
 
@@ -1198,6 +1194,106 @@ namespace GCRBA.Models {
 					}
 				}
 				return lstAwards;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public List<Models.ContactPerson> GetLandingContacts(long lngLocationID = 0) {
+			List<Models.ContactPerson> lstContactPerson = new List<ContactPerson>();
+			try {
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlDataAdapter da = new SqlDataAdapter("SELECT_LOCATION_CONTACTS", cn);
+
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				if (lngLocationID > 0) SetParameter(ref da, "@intLocationID", lngLocationID, SqlDbType.BigInt);
+				try {
+					da.Fill(ds);
+				}
+				catch (Exception ex2) {
+					throw new Exception(ex2.Message);
+				}
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0) {
+					foreach (DataRow dr in ds.Tables[0].Rows) {
+						Models.ContactPerson item = new ContactPerson();
+						item.strFullName = (string)dr["strContactName"];
+						item.strFullPhone = (string)dr["strContactPhone"];
+						item.strContactEmail = (string)dr["strContactEmail"];
+						item.intContactTypeID = (Int32)dr["intContactPersonTypeID"];
+						lstContactPerson.Add(item);
+					}
+				}
+				return lstContactPerson;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public List<Models.SocialMedia> GetLandingSocialMedia(long lngLocationID = 0) {
+			List<Models.SocialMedia> lstSocialMedia = new List<SocialMedia>();
+			try {
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlDataAdapter da = new SqlDataAdapter("SELECT_LOCATION_SOCIALMEDIA", cn);
+
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				if (lngLocationID > 0) SetParameter(ref da, "@intLocationID", lngLocationID, SqlDbType.BigInt);
+				try {
+					da.Fill(ds);
+				}
+				catch (Exception ex2) {
+					throw new Exception(ex2.Message);
+				}
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0) {
+					foreach (DataRow dr in ds.Tables[0].Rows) {
+						Models.SocialMedia item = new SocialMedia();
+						item.strSocialMediaLink = (string)dr["strSocialMediaLink"];
+						item.strPlatform = (string)dr["strPlatform"];
+						item.intCompanyID = (long)dr["intCompanyID"];
+						lstSocialMedia.Add(item);
+					}
+				}
+				return lstSocialMedia;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public List<Models.Website> GetLandingWebsite(long lngLocationID = 0) {
+			List<Models.Website> lstWebites = new List<Website>();
+			try {
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlDataAdapter da = new SqlDataAdapter("SELECT_LOCATION_WEBSITE", cn);
+
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				if (lngLocationID > 0) SetParameter(ref da, "@intLocationID", lngLocationID, SqlDbType.BigInt);
+				try {
+					da.Fill(ds);
+				}
+				catch (Exception ex2) {
+					throw new Exception(ex2.Message);
+				}
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0) {
+					foreach (DataRow dr in ds.Tables[0].Rows) {
+						Models.Website item = new Website();
+						item.strWebsiteType = (string)dr["strWebsiteType"];
+						item.intWebsiteTypeID = (short)dr["intWebsiteTypeID"];
+						item.strURL = (string)dr["strURL"];
+						lstWebites.Add(item);
+					}
+				}
+				return lstWebites;
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}

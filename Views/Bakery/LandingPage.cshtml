@@ -80,12 +80,8 @@
 
 <div class="row">
 	<div class="column">
+		@Html.LabelFor(model => model.landingSpecials, "Specials:")
 		<table>
-			<tr>
-				<td>
-					@Html.LabelFor(model => model.landingSpecials, "Specials:")
-				</td>
-			</tr>
 			@foreach (GCRBA.Models.SaleSpecial spcItem in Model.landingSpecials) {
 				<tr>
 					<td>
@@ -104,10 +100,11 @@
 				</tr>
 				indexSpecial += 1;
 			}
-			
+
 		</table>
 	</div> 
 	<div class="column">
+		@Html.Label("Shop Info:")
 		<table>
 			<tr>
 				<td>
@@ -145,12 +142,8 @@
 		</table>
 	</div>
 	<div class="column">
+		@Html.LabelFor(model => model.landingCategories, "Specialties:")
 		<table>
-			<tr>
-				<td>
-					@Html.LabelFor(model => model.landingCategories, "Specialties:")
-				</td>
-			</tr>
 			@foreach (GCRBA.Models.CategoryItem catItem in Model.landingCategories) {
 				<tr>
 					<td>
@@ -165,10 +158,8 @@
 
 <div class="row">
 	<div class="column">
+		@Html.LabelFor(model => model.landingAwards, "Awards:")
 		<table>
-			<tr>
-				@Html.LabelFor(model => model.landingCategories, "Awards:")
-			</tr>
 			@foreach (GCRBA.Models.Awards awardItem in Model.landingAwards) {
 				<tr>
 					<td>
@@ -179,6 +170,17 @@
 			}
 		</table>
 	</div>
+	<div class="column">
+		@Html.LabelFor(model => model.landingWebsite, "Websites:")
+		<table>
+			<tr>
+				<td>
+					@Html.Label("Main Website")
+				</td>
+			</tr>
+		</table>
+	</div>
+
 </div>
 
 }

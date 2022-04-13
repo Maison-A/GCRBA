@@ -56,7 +56,7 @@ namespace GCRBA.Controllers
                    
                     // call Login method on User object
                     // method will either return a User object or null
-                    user = user.NonAdminLogin();
+                    //user = user.NonAdminLogin();
 
                     if (user != null && user.UID > 0)
                     {
@@ -283,13 +283,13 @@ namespace GCRBA.Controllers
                     vm.MainBanner.Banner = col["newBanner"];
 
                     // try to add new banner to database
-                    if (db.InsertNewMainBanner(vm.MainBanner) == true)
-                    {
+                    //if (db.InsertNewMainBanner(vm.MainBanner) == true)
+                    //{
                         // banner successfully added, use this flag so we know what to show on view
                         // 0 - unsuccessful
                         // 1 - successful
-                        ViewBag.Flag = 1;
-                    }
+                        //ViewBag.Flag = 1;
+                    //}
                     // return view with view model as argument 
                     return View(vm);                   
                 } 
@@ -303,6 +303,7 @@ namespace GCRBA.Controllers
                     vm.MainBanner.Banner = vm.MainBanners[vm.MainBanner.BannerID - 1].Banner;
 
                     // try to add banner to newest row in table in db 
+                    /*
                     if (db.InsertNewMainBanner(vm.MainBanner) == true)
                     {
                         // banner successfully added, use this flag so we know what to show on view 
@@ -312,6 +313,7 @@ namespace GCRBA.Controllers
                     }
                     // return view with view model as argument 
                     return View(vm);
+                    */               
                 }
             }
             return View(vm);
@@ -382,7 +384,7 @@ namespace GCRBA.Controllers
             // get input from form 
             if (col["btnSubmit"].ToString() == "submit")
             {
-                vm.CurrentCompany.Name = col["CurrentCompany.Name"];
+                vm.CurrentCompany.strCompanyName = col["CurrentCompany.Name"];
                 vm.CurrentCompany.About = col["CurrentCompany.About"];
                 vm.CurrentCompany.Year = col["CurrentCompany.Year"];
             }
@@ -417,7 +419,7 @@ namespace GCRBA.Controllers
             vm.Companies = GetCompaniesList(vm);
 
             // get selection 
-            vm.CurrentCompany.CompanyID = Convert.ToInt16(col["companies"].ToString());
+            vm.CurrentCompany.intCompanyID = Convert.ToInt16(col["companies"].ToString());
 
             // delete button pressed
             if (col["btnSubmit"].ToString() == "delete")

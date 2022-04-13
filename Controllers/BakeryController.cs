@@ -83,21 +83,13 @@ namespace GCRBA.Views.Bakery {
             results.landingCategories = db.GetLandingCategories(Id);
             results.landingAwards = db.GetLandingAwards(Id);
             results.landingSpecials = db.GetLandingSpecials(Id);
-            /*
-            loc.lngLocationID = Id;
-            loc.LocationName = results.landingLocation.LocationName;
-            loc.City = results.landingLocation.City;
-            loc.StreetAddress = results.landingLocation.StreetAddress;
-            loc.State = results.landingLocation.State;
-            loc.Zip = results.landingLocation.Zip;
-            */
-            /*
-            int catIndex = 0;
-            foreach(Models.CategoryItem catItem in results.landingSpecialties) {
-                
-			}
-            */
+            results.landingContacts = db.GetLandingContacts(Id);
+            results.landingSocialMedia = db.GetLandingSocialMedia(Id);
+            results.landingWebsite = db.GetLandingWebsite(Id);
 
+
+            //string test = results.landingWebsite.Where(r => r.intWebsiteTypeID.Equals(1)).Select(name => name.strURL).FirstOrDefault();
+            
             return View(results);
         }
 
@@ -125,7 +117,7 @@ namespace GCRBA.Views.Bakery {
             loc.lstStates = db.GetStates();
 
             loc.lstCompanies = db.GetCompanies();
-            Models.Company nonValue = new Models.Company { CompanyID = 0, Name = "Select Existing Company" };
+            Models.Company nonValue = new Models.Company { intCompanyID = 0, strCompanyName = "Select Existing Company" };
             loc.lstCompanies.Add(nonValue);
 
             loc.Donuts = new Models.CategoryItem() { ItemID = 1, ItemDesc = "Donuts" };
@@ -491,7 +483,7 @@ namespace GCRBA.Views.Bakery {
                 loc.lstStates = db.GetStates();
 
                 loc.lstCompanies = db.GetCompanies();
-                Models.Company nonValue = new Models.Company { CompanyID = 0, Name = "Select Existing Company" };
+                Models.Company nonValue = new Models.Company { intCompanyID = 0, strCompanyName = "Select Existing Company" };
                 loc.lstCompanies.Add(nonValue);
                 locList.lstLocations = new Models.NewLocation[] { loc };
                 return View(locList);

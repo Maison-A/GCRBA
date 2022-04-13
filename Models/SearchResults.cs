@@ -14,6 +14,9 @@ namespace GCRBA.Models
 		public List<Models.CategoryItem> landingCategories;
 		public List<Models.Awards> landingAwards;
 		public List<Models.SaleSpecial> landingSpecials;
+		public List<Models.ContactPerson> landingContacts;
+		public List<Models.SocialMedia> landingSocialMedia;
+		public List<Models.Website> landingWebsite;
 
 		//Bakery Good For User Search
 		public CategoryItem Donuts = new CategoryItem();
