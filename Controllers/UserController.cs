@@ -38,7 +38,6 @@ namespace GCRBA.Controllers
                     u.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
                     return View(u);
                 }
-
                 else
                 {
                     if (col["btnSubmit"] == "newuser")
@@ -76,11 +75,15 @@ namespace GCRBA.Controllers
             return View(u);
         }
 
+
         [HttpPost]
         public ActionResult AddNewUser(FormCollection col)
         {
             try
             {
+                // check if checkbox is checked, if so then submit all data and redirect to new member form?
+                // or maybe pull a partial view up?
+               
                 Models.User u = new Models.User();
 
                 u.FirstName = col["FirstName"];
@@ -88,6 +91,7 @@ namespace GCRBA.Controllers
                 u.Email = col["Email"];
                 u.Username = col["Username"];
                 u.Password = col["Password"];
+<<<<<<< HEAD
                 u.isMember = 0;
                 u.isAdmin = 0;
                 u.Address = string.Empty;
@@ -96,6 +100,8 @@ namespace GCRBA.Controllers
                 u.Phone = string.Empty;
                 u.MemberShipType = string.Empty;
                 u.PaymentType = string.Empty;
+=======
+>>>>>>> parent of c653a21 (Merge branch 'master' of https://github.com/Maison-A/GCRBA)
 
                 // make sure fields are filled out
                 if (u.FirstName.Length == 0 || u.LastName.Length == 0 || u.Email.Length == 0 || u.Username.Length == 0
@@ -105,8 +111,12 @@ namespace GCRBA.Controllers
                     return View(u);
                 }
 
+<<<<<<< HEAD
 
                 // send data if valid to db
+=======
+             // send data if valid to db
+>>>>>>> parent of c653a21 (Merge branch 'master' of https://github.com/Maison-A/GCRBA)
                 else
                 {
                     // submit new user button pressed
@@ -128,8 +138,10 @@ namespace GCRBA.Controllers
                             // redirect to interface based on member/nonmember
                             case Models.User.ActionTypes.InsertSuccessful:
                                 u.SaveUserSession();
+
                                 // check to see if user is a member or not 
                                 db.IsUserMember(u);
+
                                 if (u.isMember == 0)
                                 {
                                     return RedirectToAction("NonMember", "Profile");
@@ -138,6 +150,7 @@ namespace GCRBA.Controllers
                                 {
                                     return RedirectToAction("Member", "Profile");
                                 }
+
                             default:
                                 return View(u);
                         }
@@ -145,7 +158,12 @@ namespace GCRBA.Controllers
                     else
                     {
                         return View(u);
+<<<<<<< HEAD
                     }      
+=======
+                    }
+                    
+>>>>>>> parent of c653a21 (Merge branch 'master' of https://github.com/Maison-A/GCRBA)
                 }
             }
             catch (Exception)
@@ -154,13 +172,20 @@ namespace GCRBA.Controllers
                 return View(u);
             }
         }
-        
+
+       
+        // TODO: bring up how to manage initilization
+        // will we be forcing members to become Users? 
         public ActionResult AddNewMember()
-        {     
+        {
+            // if user exists: update user value to member
             Models.User u = new Models.User();
             return View(u);
+
+            // if user doesnt exist - redirect to sign up?
         }
 
+        //wip
         [HttpPost]
         public ActionResult AddNewMember(FormCollection col)
         {
@@ -169,12 +194,24 @@ namespace GCRBA.Controllers
                 // get current user session
                 Models.User user = new Models.User();
                 user = user.GetUserSession();
+<<<<<<< HEAD
                 
                 if (user.UID == 0)
+=======
+                // if user data exists - populate within form
+                if (user.UID > 0)
+                {
+                    col[ "Firstname"] = user.FirstName;
+                    col["Lastname"] = user.LastName;
+                    col["Email"] = user.Email;
+                }
+                else
+>>>>>>> parent of c653a21 (Merge branch 'master' of https://github.com/Maison-A/GCRBA)
                 {
                     // contact info
                     user.FirstName = col["Firstname"];
                     user.LastName = col["Lastname"];
+<<<<<<< HEAD
                     user.Address = col["Address"];
                     user.Phone = col["Phone"];
                     user.City = col["City"];
@@ -200,19 +237,27 @@ namespace GCRBA.Controllers
                     user.isMember = 1;                    
                 }
                 
+=======
+                    user.Email = col["Email"];
+                }
+>>>>>>> parent of c653a21 (Merge branch 'master' of https://github.com/Maison-A/GCRBA)
                 // once submit is hit, process member data
                 if (col["btnSubmit"] == "submit")
                 {
+
                     //validate data
+<<<<<<< HEAD
                     if (user.FirstName.Length == 0 || user.LastName.Length == 0 || user.Email.Length == 0 ||
                         user.Phone.Length == 0 || user.Address.Length == 0 || user.City.Length == 0 || user.State.Length == 0 ||
                         user.Zip.Length == 0)
+=======
+                    if (user.FirstName.Length == 0 || user.LastName.Length == 0 || user.Email.Length == 0)
+>>>>>>> parent of c653a21 (Merge branch 'master' of https://github.com/Maison-A/GCRBA)
                     {
                         // empty field(s), access action type on view to display relevant error message
                         user.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
                         return View(user);
                     }
-
                     // send data if valid to db
                     else
                     {
@@ -228,11 +273,11 @@ namespace GCRBA.Controllers
                         switch (at)
                         {
                             // insert successful
-                            // save user session so they are logged in
+                            // save user session so they are logged in 
                             // redirect to interface based on member/nonmember
                             case Models.User.ActionTypes.InsertSuccessful:
-                                
                                 user.SaveUserSession();
+
                                 // check to see if user is a member or not 
                                 db.IsUserMember(user);
 
@@ -258,5 +303,15 @@ namespace GCRBA.Controllers
             }
             return View();
         }
+<<<<<<< HEAD
+=======
+
+         
+      
+
+
+>>>>>>> parent of c653a21 (Merge branch 'master' of https://github.com/Maison-A/GCRBA)
     }
+
+
 }

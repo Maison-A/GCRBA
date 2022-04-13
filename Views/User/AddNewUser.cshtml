@@ -1,6 +1,6 @@
 ﻿@model GCRBA.Models.User
 @{
-    ViewBag.Title = "User Form";
+    ViewBag.Title = "New User Form";
 }
 <!---->
 <h2>@ViewBag.Title</h2>
@@ -51,6 +51,7 @@
             <!-- User First Name -->
             <div>
                 <div>@Html.Label("First Name")</div>
+<<<<<<< HEAD
                 <div>
                     @Html.TextBoxFor(model => model.FirstName, new
                     {
@@ -58,46 +59,62 @@
                @autofocus = "autofocus"
                     })
                 </div>
+=======
+                <div>@Html.TextBoxFor(model => model.FirstName, new { @name = "FirstName", @autofocus = "autofocus" })</div>
+>>>>>>> parent of c653a21 (Merge branch 'master' of https://github.com/Maison-A/GCRBA)
             </div>
 
             <!-- User Last Name -->
             <div>
                 <div>@Html.Label("Last Name")</div>
+<<<<<<< HEAD
                 <div>
                     @Html.TextBoxFor(model => model.LastName, new
                     {
                @Name = "LastName"
                     })
                 </div>
+=======
+                <div>@Html.TextBoxFor(model => model.LastName, new { @Name = "LastName" })</div>
+>>>>>>> parent of c653a21 (Merge branch 'master' of https://github.com/Maison-A/GCRBA)
             </div>
         </div>
 
         <!-- Email -->
         <div>
             <div>@Html.Label("E-mail")</div>
+<<<<<<< HEAD
             <div>
                 @Html.TextBoxFor(model => model.Email, new
                 {
            @Name = "Email"
                 })
             </div>
+=======
+            <div>@Html.TextBoxFor(model => model.Email, new { @Name = "Email" })</div>
+>>>>>>> parent of c653a21 (Merge branch 'master' of https://github.com/Maison-A/GCRBA)
         </div>
 
         <!-- Username -->
         <div>
             <div>@Html.Label("Username")</div>
+<<<<<<< HEAD
             <div>
                 @Html.TextBoxFor(model => model.Username, new
                 {
            @Name = "Username"
                 })
             </div>
+=======
+            <div>@Html.TextBoxFor(model => model.Username, new { @Name = "Username" })</div>
+>>>>>>> parent of c653a21 (Merge branch 'master' of https://github.com/Maison-A/GCRBA)
         </div>
     </div>
 
     <!-- Password -->
     <div class="section">
         <div>@Html.Label("Password")</div>
+<<<<<<< HEAD
         <div>
             @Html.TextBoxFor(model => model.Password, new
             {
@@ -114,6 +131,18 @@
                 class="button-action">
                 <i class="fas fa-user-plus">
                 </i> Submit! </button>
+=======
+        <div>@Html.TextBoxFor(model => model.Password, new { type = "password", @Name = "Password" })</div>
+
+        <!-- Password verify -->
+        <!--<div>@Html.Label("Verify Password")</div>
+        <div>@Html.TextBoxFor(model => model.Password, new { @Name = "passver2" })</div>-->
+
+    </div>
+
+    <div>
+        <button id="btnNewUser" name="btnSubmit" value="newuser" class="button-action"><i class="fas fa-user-plus"></i> Sign-Up</button>
+>>>>>>> parent of c653a21 (Merge branch 'master' of https://github.com/Maison-A/GCRBA)
     </div>
 }
 

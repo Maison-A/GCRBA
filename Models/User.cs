@@ -16,6 +16,7 @@ namespace GCRBA.Models
         public string Zip { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
+<<<<<<< HEAD
 
         public string Username { get; set; }
         public string Password { get; set; }
@@ -26,6 +27,15 @@ namespace GCRBA.Models
         public int isAdmin { get; set; }
         public int isMember { get; set; }
         public string MemberShipType = string.Empty;
+=======
+        public string MemberShipType = string.Empty;    
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string PaymentType = string.Empty;
+        public int isAdmin { get; set; }
+        public int isMember { get; set; }
+        public ActionTypes ActionType { get; set; } = ActionTypes.NoType;
+>>>>>>> parent of c653a21 (Merge branch 'master' of https://github.com/Maison-A/GCRBA)
 
         // tells us if current user is logged in 
         public bool IsAuthenticated
@@ -144,7 +154,12 @@ namespace GCRBA.Models
             DuplicateUserID = 4,
             Unknown = 5,
             RequiredFieldMissing = 6,
+<<<<<<< HEAD
             LoginFailed = 7
+=======
+            LoginFailed = 7,
+         
+>>>>>>> parent of c653a21 (Merge branch 'master' of https://github.com/Maison-A/GCRBA)
             
         }
     }

@@ -10,7 +10,7 @@ namespace GCRBA.Controllers
 {
     public class ProfileController : Controller
     {
-   
+        // GET: Profile
         public ActionResult Index()
         {
             Models.User user = new Models.User();
@@ -39,73 +39,74 @@ namespace GCRBA.Controllers
                 // create instance of user object to pass to the view 
                 Models.User user = new Models.User();
 
-                // has submit button with value login been pressed?
-                if (col["btnSubmit"] == "login")
+                // get whatever input is in the textboxes 
+                user.Username = col["Username"];
+                user.Password = col["Password"];
+
+                // are input fields empty? 
+                if (user.Username.Length == 0 || user.Password.Length == 0)
                 {
-                    // yes, assign Username and Password values to Username and Password properties in User object
-                    user.Username = col["Username"];
-                    user.Password = col["Password"];
-                    
-                    // are input fields empty? 
-                    if (user.Username.Length == 0 || user.Password.Length == 0)
+                    // yes, change User ActionType and return View with User object as argument 
+                    user.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
+                    return View(user);
+                }
+                // no, fields aren't empty 
+                else
+                {
+                    // has submit button with value login been pressed?
+                    if (col["btnSubmit"] == "login")
                     {
-                        // yes, change User ActionType and return View with User object as argument 
-                        user.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
-                        return View(user);
-                    }
-                   
-                    // call Login method on User object
-                    // method will either return a User object or null
-                    user = user.NonAdminLogin();
+                        // yes, assign Username and Password values to Username and Password properties in User object
+                        user.Username = col["Username"];
+                        user.Password = col["Password"];
 
-                    if (user != null && user.UID > 0)
-                    {
-                        // user is not null and is not 0 so we can save the current user session 
-                        user.SaveUserSession();
+                        // call Login method on User object
+                        // method will either return a User object or null
+                        user = user.NonAdminLogin();
 
-                        // create instance of datbase object 
-                        Database db = new Database();
-
-                        // call method that determines if current user is member or not 
-                        db.IsUserMember(user);
-
-                        // show logged in profile 
-                        if (user.isAdmin == 1)
+                        if (user != null && user.UID > 0)
                         {
-                            // this login area is for members/non-members only, not admin 
-                            user.ActionType = Models.User.ActionTypes.LoginFailed;
-                        }
-                        else
-                        {
-                            if (user.isMember == 0)
+                            // user is not null and is not 0 so we can save the current user session 
+                            user.SaveUserSession();
+
+                            // create instance of datbase object 
+                            Database db = new Database();
+
+                            // call method that determines if current user is member or not 
+                            db.IsUserMember(user);
+
+                            // show logged in profile 
+                            if (user.isAdmin == 1)
                             {
-                                // user is not a member, so send them to non-member interface
-                                return RedirectToAction("NonMember");
+                                // this login area is for members/non-members only, not admin 
+                                user.ActionType = Models.User.ActionTypes.LoginFailed;
                             }
                             else
                             {
-                                // user is a member, so send them to the member interface
-                                return RedirectToAction("Member");
+                                if (user.isMember == 0)
+                                {
+                                    // user is not a member, so send them to non-member interface
+                                    return RedirectToAction("NonMember");
+                                }
+                                else
+                                {
+                                    // user is a member, so send them to the member interface
+                                    return RedirectToAction("Member");
+                                }
                             }
                         }
+                        else
+                        {
+                            user = new Models.User();
+                            user.Username = col["Username"];
+                            user.ActionType = Models.User.ActionTypes.LoginFailed;
+                            return View(user);
+                        }
                     }
-                    else
-                    {
-                        user = new Models.User();
-                        user.Username = col["Username"];
-                        user.ActionType = Models.User.ActionTypes.LoginFailed;
-                        return View(user);
-                    }
-                }
-               
-                // redirect to AddNewUser form if signup clicked
-                else if(col["btnSubmit"] == "signup")
-                {
-                    return RedirectToAction("AddNewUser","User");
-                }
 
-                return View(user);
-                
+                    return View(user);
+
+                }
             }
             catch (Exception)
             {
