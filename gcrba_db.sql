@@ -52,7 +52,9 @@ IF OBJECT_ID('GET_SPECIFIC_COMPANY')			IS NOT NULL DROP PROCEDURE GET_SPECIFIC_C
 IF OBJECT_ID('SELECT_ALLCATEGORY_FORLOCATION') IS NOT NULL DROP PROCEDURE SELECT_ALLCATEGORY_FORLOCATION
 IF OBJECT_ID('SELECT_LOCATION_BYCATEGORY')		IS NOT NULL DROP PROCEDURE SELECT_LOCATION_BYCATEGORY
 IF OBJECT_ID ('SELECT_LOCATION_SPECIALS')		IS NOT NULL DROP PROCEDURE SELECT_LOCATION_SPECIALS
-
+IF OBJECT_ID('SELECT_LOCATION_CONTACTS') IS NOT NULL DROP PROCEDURE SELECT_LOCATION_CONTACTS
+IF OBJECT_ID('SELECT_LOCATION_SOCIALMEDIA') IS NOT NULL DROP PROCEDURE SELECT_LOCATION_SOCIALMEDIA
+IF OBJECT_ID('SELECT_LOCATION_WEBSITE') IS NOT NULL DROP PROCEDURE SELECT_LOCATION_WEBSITE
 
 CREATE TABLE tblState
 (
@@ -427,6 +429,24 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [dbo].[SELECT_LOCATION_WEBSITE]
+@intLocationID BIGINT = NULL
+AS 
+BEGIN
+	SET NOCOUNT ON;
+	
+	IF @intLocationID IS NOT NULL
+	BEGIN
+		SELECT * FROM db_owner.tblWebsite AS Website
+		JOIN db_owner.tblWebsiteType AS WebType
+		ON Website.intWebsiteTypeID = WebType.intWebsiteTypeID
+		JOIN db_owner.tblLocation AS Loc
+		ON Loc.intCompanyID = Website.intCompanyID
+		WHERE intLocationID = @intLocationID
+	END
+END
+GO
+
 CREATE PROCEDURE [dbo].[SELECT_ALLCATEGORY_FORLOCATION]
 @intLocationID BIGINT = NULL
 AS 
@@ -440,6 +460,7 @@ BEGIN
 		JOIN db_owner.tblCategory AS Cat
 		ON CatLoc.intCategoryID = Cat.intCategoryID
 		WHERE [intLocationID] = @intLocationID
+		ORDER BY Cat.strCategory
 	END
 END
 GO
@@ -452,7 +473,7 @@ BEGIN
 
 	SELECT		intMemberID 
 	FROM		tblMember
-	WHERE		intUserID = @intUserID 
+	WHERE		intUserID = @intUserID
 END
 GO
 
@@ -485,6 +506,46 @@ BEGIN
 
 END
 GO
+
+CREATE PROCEDURE [dbo].[INSERT_NEW_USER]
+@intNewUserID SMALLINT  = null OUTPUT, 
+@strFirstName NVARCHAR(25), 
+@strLastName NVARCHAR(25),
+@strEmail NVARCHAR(50),
+@strUsername NVARCHAR (15),
+@strPassword NVARCHAR(15),
+@isAdmin BIT
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON 
+BEGIN
+	DECLARE @COUNT AS TINYINT 
+
+	SELECT @COUNT=COUNT(*) FROM db_owner.tblUser WHERE strUsername = @strUsername
+	IF @COUNT > 0 RETURN -2 -- user with this username already exists 
+	
+	SELECT @COUNT=COUNT(*)FROM db_owner.tblUser WHERE strEmail = @strEmail
+	IF @COUNT > 0 RETURN -1 -- user with this email already exists 
+
+	INSERT INTO [db_owner].[tblUser]
+			([strFirstName],
+			 [strLastName],
+			 [strEmail],
+			 [strUsername],
+			 [strPassword],
+			 [isAdmin])
+		VALUES
+			(@strFirstName, 
+			 @strLastName, 
+			 @strEmail,
+			 @strUsername, 
+			 @strPassword,
+			 @isAdmin)
+	SELECT @intNewUserID=@@IDENTITY
+	RETURN 1
+END 
+GO
+
 
 CREATE PROCEDURE [dbo].[INSERT_CONTACTPERSON]
 @intContactPersonID AS BIGINT OUTPUT
@@ -560,6 +621,36 @@ BEGIN
 	SELECT @intLocationID=@@IDENTITY
 	RETURN 1
 
+END
+GO
+
+CREATE PROCEDURE [dbo].[SELECT_LOCATION_CONTACTS]
+@intLocationID BIGINT = NULL
+AS 
+BEGIN
+	SET NOCOUNT ON;
+	
+	IF @intLocationID IS NOT NULL
+	BEGIN
+		SELECT * FROM db_owner.tblContactPerson
+		WHERE intLocationID = @intLocationID
+	END
+END
+GO
+
+CREATE PROCEDURE [dbo].[SELECT_LOCATION_SOCIALMEDIA]
+@intLocationID BIGINT = NULL
+AS 
+BEGIN
+	SET NOCOUNT ON;
+	
+	IF @intLocationID IS NOT NULL
+	BEGIN
+		SELECT * FROM db_owner.tblCompanySocialMedia AS compSocMed
+		JOIN db_owner.tblLocation AS Loc
+		ON Loc.intCompanyID = compSocMed.intCompanyID
+		WHERE Loc.intLocationID = @intLocationID
+	END
 END
 GO
 
@@ -961,8 +1052,10 @@ VALUES	(1, 'Best of City Search', 'Best of City'),
 	(1, 'Trip Advisor', 'Certificate of Excellence'), 
 	(1, 'Cincinnati Chamber of Commerce', 'Small Business Award Winner')
 
-INSERT INTO tblContactPerson (strContactName, strContactPhone, strContactEmail, intContactPersonTypeID, intCompanyID)
-VALUES					('Briggs, Randall', '5555555555', 'briggs.r@gmail.com', 1, 1)
+INSERT INTO tblContactPerson (strContactName, strContactPhone, strContactEmail, intLocationID, intCompanyID, intContactPersonTypeID)
+VALUES					('Briggs, Randall', '5555555555', 'briggs.r@gmail.com', 1, 1, 1)
+						,('Hall, Ben', '5555555555', 'hall.b@gmail.com', 1, 1, 2)
+						,('Cowen, Candice', '5555555555', 'cowen.c@gmail.com', 1, 1, 3)
 
 INSERT INTO tblLocation (intCompanyID, strAddress, strCity, intStateID, strZip, strPhone, strEmail)
 VALUES	(1, '2030 Madison Rd', 'Cincinnati', 3, '45208-3289', '513-321-3399', 'customerservice@bonbonerie.com'),
