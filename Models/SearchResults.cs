@@ -7,9 +7,10 @@ namespace GCRBA.Models
 {
 	public class SearchResults
 	{
-		public int test2 = 0;
+		public int test2 = 100000;
 		public int test = 0;
-	{/// <summary>
+	
+	/// <summary>
 	/// ///////////////////////////////////////////
 	/// 
 	/// 
