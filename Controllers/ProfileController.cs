@@ -10,7 +10,7 @@ namespace GCRBA.Controllers
 {
     public class ProfileController : Controller
     {
-        // GET: Profile
+
         public ActionResult Index()
         {
             Models.User user = new Models.User();
@@ -21,8 +21,6 @@ namespace GCRBA.Controllers
             }
             return View(user);
         }
-
-
 
         public ActionResult Login()
         {
@@ -39,74 +37,73 @@ namespace GCRBA.Controllers
                 // create instance of user object to pass to the view 
                 Models.User user = new Models.User();
 
-                // get whatever input is in the textboxes 
-                user.Username = col["Username"];
-                user.Password = col["Password"];
+                // has submit button with value login been pressed?
+                if (col["btnSubmit"] == "login")
+                {
+                    // yes, assign Username and Password values to Username and Password properties in User object
+                    user.Username = col["Username"];
+                    user.Password = col["Password"];
 
-                // are input fields empty? 
-                if (user.Username.Length == 0 || user.Password.Length == 0)
-                {
-                    // yes, change User ActionType and return View with User object as argument 
-                    user.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
-                    return View(user);
-                }
-                // no, fields aren't empty 
-                else
-                {
-                    // has submit button with value login been pressed?
-                    if (col["btnSubmit"] == "login")
+                    // are input fields empty? 
+                    if (user.Username.Length == 0 || user.Password.Length == 0)
                     {
-                        // yes, assign Username and Password values to Username and Password properties in User object
-                        user.Username = col["Username"];
-                        user.Password = col["Password"];
+                        // yes, change User ActionType and return View with User object as argument 
+                        user.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
+                        return View(user);
+                    }
 
-                        // call Login method on User object
-                        // method will either return a User object or null
-                        user = user.NonAdminLogin();
+                    // call Login method on User object
+                    // method will either return a User object or null
+                    user = user.NonAdminLogin();
 
-                        if (user != null && user.UID > 0)
+                    if (user != null && user.UID > 0)
+                    {
+                        // user is not null and is not 0 so we can save the current user session 
+                        user.SaveUserSession();
+
+                        // create instance of datbase object 
+                        Database db = new Database();
+
+                        // call method that determines if current user is member or not 
+                        db.IsUserMember(user);
+
+                        // show logged in profile 
+                        if (user.isAdmin == 1)
                         {
-                            // user is not null and is not 0 so we can save the current user session 
-                            user.SaveUserSession();
-
-                            // create instance of datbase object 
-                            Database db = new Database();
-
-                            // call method that determines if current user is member or not 
-                            db.IsUserMember(user);
-
-                            // show logged in profile 
-                            if (user.isAdmin == 1)
-                            {
-                                // this login area is for members/non-members only, not admin 
-                                user.ActionType = Models.User.ActionTypes.LoginFailed;
-                            }
-                            else
-                            {
-                                if (user.isMember == 0)
-                                {
-                                    // user is not a member, so send them to non-member interface
-                                    return RedirectToAction("NonMember");
-                                }
-                                else
-                                {
-                                    // user is a member, so send them to the member interface
-                                    return RedirectToAction("Member");
-                                }
-                            }
+                            // this login area is for members/non-members only, not admin 
+                            user.ActionType = Models.User.ActionTypes.LoginFailed;
                         }
                         else
                         {
-                            user = new Models.User();
-                            user.Username = col["Username"];
-                            user.ActionType = Models.User.ActionTypes.LoginFailed;
-                            return View(user);
+                            if (user.isMember == 0)
+                            {
+                                // user is not a member, so send them to non-member interface
+                                return RedirectToAction("NonMember");
+                            }
+                            else
+                            {
+                                // user is a member, so send them to the member interface
+                                return RedirectToAction("Member");
+                            }
                         }
                     }
-
-                    return View(user);
-
+                    else
+                    {
+                        user = new Models.User();
+                        user.Username = col["Username"];
+                        user.ActionType = Models.User.ActionTypes.LoginFailed;
+                        return View(user);
+                    }
                 }
+
+                // redirect to AddNewUser form if signup clicked
+                else if (col["btnSubmit"] == "signup")
+                {
+                    return RedirectToAction("AddNewUser", "User");
+                }
+
+                return View(user);
+
             }
             catch (Exception)
             {
@@ -153,7 +150,7 @@ namespace GCRBA.Controllers
 
                         // call Login method on User object
                         // method will either return a User object or null
-                        user = user.Login();
+                        user = user.AdminLogin();
 
                         if (user != null && user.UID > 0)
                         {
@@ -201,6 +198,23 @@ namespace GCRBA.Controllers
             return View(user);
         }
 
+        [HttpPost]
+        public ActionResult NonMember(FormCollection col)
+        {
+            Models.User user = new Models.User();
+            user = user.GetUserSession();
+            if (user.IsAuthenticated)
+            {
+                ViewBag.Name = user.FirstName + " " + user.LastName;
+                if (col["btnSubmit"].ToString() == "join")
+                {
+                    return RedirectToAction("AddNewMember", "User");
+                }
+
+            }
+            return View();
+        }
+
         public ActionResult Member()
         {
             Models.User user = new Models.User();
@@ -217,7 +231,7 @@ namespace GCRBA.Controllers
             // get current user to pass to the view 
             User u = new User();
             u = u.GetUserSession();
-           
+
             return View(u);
         }
 
@@ -261,7 +275,7 @@ namespace GCRBA.Controllers
 
             // get banners list 
             vm.MainBanners = GetBannersList(vm);
-            
+
             // get current main banner 
             vm.MainBanner = new MainBanner();
 
@@ -292,8 +306,8 @@ namespace GCRBA.Controllers
                         ViewBag.Flag = 1;
                     }
                     // return view with view model as argument 
-                    return View(vm);                   
-                } 
+                    return View(vm);
+                }
                 // one of the previous banners in the drop down selected to use for new banner
                 else
                 {
@@ -391,7 +405,7 @@ namespace GCRBA.Controllers
             // add to database
             vm.CurrentCompany.ActionType = vm.CurrentCompany.SaveInsert();
 
-            return View(vm); 
+            return View(vm);
         }
 
         public ActionResult DeleteCompany()
@@ -441,61 +455,7 @@ namespace GCRBA.Controllers
 
         public ActionResult EditExistingCompany()
         {
-            // create EditCompaniesVM object 
-            EditCompaniesViewModel vm = new EditCompaniesViewModel();
-
-            // create VM user object
-            vm.CurrentUser = new User();
-
-            // get current user session
-            vm.CurrentUser = vm.CurrentUser.GetUserSession();
-
-            return View(vm);
-        }
-
-        [HttpPost]
-        public ActionResult EditExistingCompany(FormCollection col)
-        {
-            // create EditCompaniesVM object 
-            EditCompaniesViewModel vm = new EditCompaniesViewModel();
-
-            // create VM user object
-            vm.CurrentUser = new User();
-
-            // get current user session
-            vm.CurrentUser = vm.CurrentUser.GetUserSession();
-
-            if (col["btnSubmit"].ToString() == "editLocationInfo")
-            {
-                return RedirectToAction("EditLocationInfo", "Profile");
-            }
-
-            if (col["btnSubmit"].ToString() == "editGeneralInfo")
-            {
-                return RedirectToAction("EditGeneralInfo", "Profile");
-            }
-
-            return View(vm);
-        }
-
-        public ActionResult EditCompanyInfo()
-        {
-            // initialize EditCompaniesVM object
-            EditCompaniesViewModel vm = InitializeEditCompaniesVM();
-
-            // get companyID that was selected from  dropdown on previous page and saved in company session
-            vm.CurrentCompany = vm.CurrentCompany.GetCompanySession();
-
-            // create database object
-            Database db = new Database();
-
-            // get current company info based on selected company from previous page
-            vm.CurrentCompany = db.GetCompanyInfo(vm);
-
-            // get locations list
-            vm.Locations = db.GetLocations(vm);
-
-            return View(vm);
+            return View();
         }
 
         public ActionResult Logout()
