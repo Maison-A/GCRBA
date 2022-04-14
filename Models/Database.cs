@@ -11,6 +11,33 @@ namespace GCRBA.Models
 
 	public class Database
 	{
+		public bool InsertNewMainBanner(MainBanner mb) {
+
+			try {
+				SqlConnection cn = null; // inside System.Data.SqlClient
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("INSERT_NEW_MAIN_BANNER", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intNewBannerID", "null", SqlDbType.SmallInt, Direction: ParameterDirection.Output);
+				SetParameter(ref cm, "@strBanner", mb.Banner, SqlDbType.NVarChar);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1) {
+					mb.BannerID = Convert.ToInt16(cm.Parameters["@intNewBannerID"].Value);
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
 
 		public List<Models.State> GetStates()
 		{
@@ -543,7 +570,7 @@ namespace GCRBA.Models
 				// specify command type as stored procedure 
 				da.SelectCommand.CommandType = CommandType.StoredProcedure;
 
-				SetParameter(ref da, "@intCompanyID", vm.CurrentCompany.intCompanyID, SqlDbType.BigInt);
+				SetParameter(ref da, "@intCompanyID", vm.CurrentCompany.CompanyID, SqlDbType.BigInt);
 
 				try
 				{
@@ -552,7 +579,7 @@ namespace GCRBA.Models
 					if (ds.Tables[0].Rows.Count > 0)
 					{
 						DataRow dr = ds.Tables[0].Rows[0];
-						vm.CurrentCompany.strCompanyName = (string)dr["strCompanyName"];
+						vm.CurrentCompany.Name = (string)dr["strCompanyName"];
 						vm.CurrentCompany.About = (string)dr["strAbout"];
 						vm.CurrentCompany.Year = (string)dr["strBizYear"];
 						return vm.CurrentCompany;
@@ -666,7 +693,7 @@ namespace GCRBA.Models
 				// specify which stored procedure we are using 
 				SqlDataAdapter da = new SqlDataAdapter("GET_LOCATIONS", cn);
 
-				SetParameter(ref da, "@intCompanyID", vm.CurrentCompany.intCompanyID, SqlDbType.BigInt);
+				SetParameter(ref da, "@intCompanyID", vm.CurrentCompany.CompanyID, SqlDbType.BigInt);
 
 				// create new list object with type string  
 				List<Location> locations = new List<Location>();
@@ -736,8 +763,8 @@ namespace GCRBA.Models
 						Company c = new Company();
 
 						// add values to CompanyID and Name properties 
-						c.intCompanyID = Convert.ToInt16(dr["intCompanyID"]);
-						c.strCompanyName = (string)dr["strCompanyName"];
+						c.CompanyID = Convert.ToInt16(dr["intCompanyID"]);
+						c.Name = (string)dr["strCompanyName"];
 
 						// add Company object (c) to Company list (companies) 
 						companies.Add(c);
@@ -758,7 +785,7 @@ namespace GCRBA.Models
 				SqlCommand cm = new SqlCommand("DELETE_COMPANY", cn);
 				int intReturnValue = -1;
 
-				SetParameter(ref cm, "@intCompanyID", c.intCompanyID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@intCompanyID", c.CompanyID, SqlDbType.BigInt);
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
 
 				cm.ExecuteReader();
@@ -903,7 +930,7 @@ namespace GCRBA.Models
 				int intReturnValue = -1;
 
 				SetParameter(ref cm, "@intCompanyID", null, SqlDbType.BigInt, Direction: ParameterDirection.Output);
-				SetParameter(ref cm, "@strCompanyName", c.strCompanyName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strCompanyName", c.Name, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strAbout", c.About, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strBizYear", c.Year, SqlDbType.NVarChar);
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
@@ -918,7 +945,7 @@ namespace GCRBA.Models
 					case -1:
 						return Company.ActionTypes.DuplicateName;
 					case 1: // new user created
-						c.intCompanyID = Convert.ToInt16(cm.Parameters["@intCompanyID"].Value);
+						c.CompanyID = Convert.ToInt16(cm.Parameters["@intCompanyID"].Value);
 						return Company.ActionTypes.InsertSuccessful;
 					default:
 						return Company.ActionTypes.Unknown;
@@ -969,7 +996,7 @@ namespace GCRBA.Models
 			return LocationList.ActionTypes.InsertSuccessful;
 		}
 
-		public LocationList.ActionTypes InsertLocation(LocationList locList)
+		public LocationList.ActionTypes InsertLocations(LocationList locList)
 		{
 			int i = 0;
 			do
@@ -1018,6 +1045,94 @@ namespace GCRBA.Models
 			} while (locList.lstLocations[i] != null);
 
 			return LocationList.ActionTypes.InsertSuccessful;
+		}
+
+		/*
+		public NewLocation.ActionTypes InsertLocation(LocationList locList) {
+			int i = 0;
+			do {
+				try {
+					//Convert Phone Class to Concat String
+					string PhoneNumber = locList.lstLocations[i].BusinessPhone.AreaCode + locList.lstLocations[i].BusinessPhone.Prefix + locList.lstLocations[i].BusinessPhone.Suffix;
+
+					SqlConnection cn = null;
+					if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+					SqlCommand cm = new SqlCommand("INSERT_LOCATION", cn);
+					int intReturnValue = -1;
+
+					SetParameter(ref cm, "@intLocationID", locList.lstLocations[i].lngLocationID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+					SetParameter(ref cm, "@intCompanyID", locList.lstLocations[i].lngCompanyID, SqlDbType.BigInt);
+					SetParameter(ref cm, "@strAddress", locList.lstLocations[i].LocationName, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@strCity", locList.lstLocations[i].City, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@intStateID", locList.lstLocations[i].intState, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@strZip", locList.lstLocations[i].Zip, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@strPhone", PhoneNumber, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@strEmail", locList.lstLocations[i].BusinessEmail, SqlDbType.NVarChar);
+
+
+					SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+					cm.ExecuteReader();
+
+					intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+					CloseDBConnection(ref cn);
+
+					locList.lstLocations[i].lngLocationID = (long)cm.Parameters["@intLocationID"].Value;
+					/*
+					switch (intReturnValue) {
+						case 1: // new user created
+							locList.lstLocations[0].lngLocationID = (long)cm.Parameters["@intLocationID"].Value;
+							return LocationList.ActionTypes.InsertSuccessful;
+						default:
+							return LocationList.ActionTypes.Unknown;
+					}
+					
+					i += 1;
+				}
+				catch (Exception ex) { throw new Exception(ex.Message); }
+
+			} while (locList.lstLocations[i] != null);
+
+			return LocationList.ActionTypes.InsertSuccessful;
+		}
+		*/
+
+		public NewLocation.ActionTypes InsertLocation(NewLocation loc) {
+			try {
+				//Convert Phone Class to Concat String
+				string PhoneNumber = loc.BusinessPhone.AreaCode + loc.BusinessPhone.Prefix + loc.BusinessPhone.Suffix;
+
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("INSERT_LOCATION", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intLocationID", loc.lngLocationID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+				SetParameter(ref cm, "@intCompanyID", loc.lngCompanyID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@strAddress", loc.LocationName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strCity", loc.City, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@intStateID", loc.intState, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strZip", loc.Zip, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strPhone", PhoneNumber, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strEmail", loc.BusinessEmail, SqlDbType.NVarChar);
+
+
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				switch (intReturnValue) {
+					case 1: // new user created
+						loc.lngLocationID = (long)cm.Parameters["@intLocationID"].Value;
+						return NewLocation.ActionTypes.InsertSuccessful;
+					default:
+						return NewLocation.ActionTypes.Unknown;
+				}
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
 		public LocationList.ActionTypes InsertSpecialties(LocationList locList, List<Models.CategoryItem>[] categories)

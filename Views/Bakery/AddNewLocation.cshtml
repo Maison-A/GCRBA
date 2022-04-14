@@ -65,7 +65,7 @@
 				<td>
 					<div>
 						<div id="label">@Html.LabelFor(model => model.lstLocations[index].lngCompanyID, "Existing Parent Company Name")*</div>
-						<div>@Html.DropDownListFor(model => model.lstLocations[index].lngCompanyID, new SelectList(Model.lstLocations[index].lstCompanies, "intCompanyID", "strCompanyName", selectedValue: 0)) </div>
+						<div>@Html.DropDownListFor(model => model.lstLocations[index].lngCompanyID, new SelectList(Model.lstLocations[index].lstCompanies, "CompanyID", "Name", selectedValue: 0))</div>
 					</div>
 				</td>
 			</tr>
