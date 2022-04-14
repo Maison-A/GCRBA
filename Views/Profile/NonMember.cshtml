@@ -1,25 +1,29 @@
 ﻿@model GCRBA.Models.User
 
 @{
-    ViewBag.Title = "NonMember";
+    ViewBag.Title = "Non-Member";
 }
-<div class="topcorner">
-    <button class="button-action" name="btnSubmit" value="join">Join the GCRBA!</button>
-    <button class="button-action" name="btnSubmit" value="home">Home</button>
-</div>
-@if (Model.isMember == 1)
+@using (Html.BeginForm())
 {
-    if (Model.isAdmin == 1)
+    <div class="topcorner">
+        <button class="button-action" id="btnJoin" name="btnSubmit" value="join">Join the GCRBA!</button>
+        <button class="button-action" id="btnHome" name="btnSubmit" value="home">Home</button>
+    </div>
+    if (Model.isMember == 1)
     {
-        <p>This page is for non</p>
+
+
+        if (Model.isAdmin == 1)
+        {
+            <p>This page is for non</p>
+        }
+        <p>This page is for non-members only.</p>
     }
-    <p>This page is for non-members only.</p>
+
+    else
+    {
+
+        <p>Hello,  @Model.FirstName, you are logged in as a non-member.</p>
+    }
+
 }
-
-else
-{
-
-    
-    <p>Hello,  @Model.FirstName, you are logged in as a non-member.</p>
-}
-

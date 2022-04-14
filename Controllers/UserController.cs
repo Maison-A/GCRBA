@@ -167,51 +167,30 @@ namespace GCRBA.Controllers
                 // get current user session
                 Models.User user = new Models.User();
                 user = user.GetUserSession();
-                
+                   
+                // contact info
+                user.FirstName = col["Firstname"];
+                user.LastName = col["Lastname"];
+                user.Address = col["Address"];
+                user.Phone = col["Phone"];
+                user.City = col["City"];
+                user.State = col["State"];
+                user.Zip = col["Zip"];
+
+                // username/pass setup
+                user.Email = col["Email"];
+                user.Username = col["Username"];
+                user.Password = col["Password"];
+
+                // membership type
+                user.MemberShipType = col["MemberShipType"];
+                user.PaymentType = col["PaymentType"];
+
+                //permissions
+                user.isMember = 1;
+                user.isAdmin = 0;
 
 
-                if (user.IsAuthenticated == false)
-                {                    
-                    // contact info
-                    user.FirstName = col["Firstname"];
-                    user.LastName = col["Lastname"];
-                    user.Address = col["Address"];
-                    user.Phone = col["Phone"];
-                    user.City = col["City"];
-                    user.State = col["State"];
-                    user.Zip = col["Zip"];
-
-                    // username/pass setup
-                    user.Email = col["Email"];
-                    user.Username = col["Username"];
-                    user.Password = col["Password"];
-
-                    // membership type
-                    user.MemberShipType = col["MemberShipType"];
-                    user.PaymentType = col["PaymentType"];
-
-                    //permissions
-                    user.isMember = 1;
-                    user.isAdmin = 0;
-
-                }
-                else
-                {
-                    user.Address = col["Address"];
-                    user.Phone = col["Phone"];
-                    user.City = col["City"];
-                    user.State = col["State"];
-                    user.Zip = col["Zip"];
-
-                    // membership type
-                    user.MemberShipType = col["MemberShipType"];
-                    user.PaymentType = col["PaymentType"];
-
-                    //permissions
-                    user.isMember = 1;
-                    user.isAdmin = 0;
-
-                }
 
                 // once submit is hit, process member data
                 if (col["btnSubmit"] == "submit")

@@ -5,31 +5,36 @@
 }
 
 <!--if user is authenticated, they're already logged in, so don't show log in interface again-->
-@if (Model.IsAuthenticated)
-{
-    <p>You are already logged in.</p>
-}
-else
-{
-    <div class="container col-md-4">
-        <h2 class="mt-5">@ViewBag.Title</h2>
 
-        @using (Html.BeginForm(FormMethod.Post))
-        {
-            if (Model.ActionType == GCRBA.Models.User.ActionTypes.RequiredFieldMissing)
+@using (Html.BeginForm(FormMethod.Post))
+{
+    if (Model.IsAuthenticated)
+    {
+        <div class="topcorner">
+            <button class="button-action" id="btnJoin" name="btnSubmit" value="join">Join the GCRBA!</button>
+            <button class="button-action" id="btnHome" name="btnSubmit" value="home">Home</button>
+        </div>
+        <p>You are already logged in.</p>
+    }
+    else
+    {
+        <div class="container col-md-4">
+            <h2 class="mt-5">@ViewBag.Title</h2>
+
+            @if (Model.ActionType == GCRBA.Models.User.ActionTypes.RequiredFieldMissing)
             {
-                <div class="login-error">
-                    <i class="fad fa-exclamation-triangle fa-2x"></i>
-                    All fields are required.
-                </div>
+            <div class="login-error">
+                <i class="fad fa-exclamation-triangle fa-2x"></i>
+                All fields are required.
+            </div>
             }
 
-            if (Model.ActionType == GCRBA.Models.User.ActionTypes.LoginFailed)
+            @if (Model.ActionType == GCRBA.Models.User.ActionTypes.LoginFailed)
             {
-                <div class="login-error">
-                    <i class="fad fa-exclamation-triangle fa-2x"></i>
-                    Invalid username and/or password.
-                </div>
+            <div class="login-error">
+                <i class="fad fa-exclamation-triangle fa-2x"></i>
+                Invalid username and/or password.
+            </div>
             }
 
             <div class="mt-5 mb-4">
@@ -44,6 +49,7 @@ else
                 <button id="btnLogin" name="btnSubmit" value="login" class="btn btn-primary">Login</button>
                 <button id="btnSignUp" name="btnSubmit" value="signup" class="btn btn-primary">Sign up!</button>
             </div>
-        }
-    </div>
+            }
+        </div>
+    }
 }

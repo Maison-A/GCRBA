@@ -214,10 +214,8 @@ namespace GCRBA.Controllers
             }
 
             if (user.IsAuthenticated)
-            {
-                ViewBag.Name = user.FirstName + " " + user.LastName;
-                
-              
+            { 
+                ViewBag.Name = user.FirstName + " " + user.LastName; 
             }
             return View();
         }
