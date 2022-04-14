@@ -14,7 +14,9 @@
                 <span>Please enter data in all fields.</span>
             </div>
         }
-
+<div class="topcorner">
+    <button class="button-action" name="btnSubmit" value="home">Home</button>
+</div>
 
 <div class="section">
     <!-- Member First Name -->
@@ -23,7 +25,7 @@
         <div>
             @Html.TextBoxFor(model => model.FirstName, new {
             @name="Firstname",
-            @Value = "First",
+            @Value = Model.FirstName,
             @autofocus = "autofocus" })
         </div>
     </div>

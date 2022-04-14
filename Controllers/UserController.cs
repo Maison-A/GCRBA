@@ -155,6 +155,7 @@ namespace GCRBA.Controllers
         public ActionResult AddNewMember()
         {
             Models.User u = new Models.User();
+            u = u.GetUserSession();
             return View(u);
         }
 
@@ -166,6 +167,8 @@ namespace GCRBA.Controllers
                 // get current user session
                 Models.User user = new Models.User();
                 user = user.GetUserSession();
+                
+
 
                 if (user.UID == 0)
                 {
@@ -194,7 +197,20 @@ namespace GCRBA.Controllers
                 }
                 else
                 {
+                    user.Address = col["Address"];
+                    user.Phone = col["Phone"];
+                    user.City = col["City"];
+                    user.State = col["State"];
+                    user.Zip = col["Zip"];
+
+                    // membership type
+                    user.MemberShipType = col["MemberShipType"];
+                    user.PaymentType = col["PaymentType"];
+
+                    //permissions
                     user.isMember = 1;
+                    user.isAdmin = 0;
+
                 }
 
                 // once submit is hit, process member data
@@ -246,6 +262,10 @@ namespace GCRBA.Controllers
                                 return View(user);
                         }
                     }
+                }
+                if (col["btnSubmit"] == "home")
+                {
+                    return RedirectToAction("Index", "Home");
                 }
             }
             catch (Exception)

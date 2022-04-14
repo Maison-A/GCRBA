@@ -203,14 +203,21 @@ namespace GCRBA.Controllers
         {
             Models.User user = new Models.User();
             user = user.GetUserSession();
+            if (col["btnSubmit"] == "join")
+            {
+                return RedirectToAction("AddNewMember", "User");
+            }
+
+            if (col["btnSubmit"] == "home")
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             if (user.IsAuthenticated)
             {
                 ViewBag.Name = user.FirstName + " " + user.LastName;
-                if (col["btnSubmit"].ToString() == "join")
-                {
-                    return RedirectToAction("AddNewMember", "User");
-                }
-
+                
+              
             }
             return View();
         }
