@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace GCRBA.Models {
-	public class Awards {
+namespace GCRBA.Models
+{
+	public class Awards
+	{
 		public string strFrom { get; set; }
 		public string strAward { get; set; }
 	}

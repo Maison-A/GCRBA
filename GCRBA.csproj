@@ -205,6 +205,7 @@
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\SendMailerController.cs" />
     <Compile Include="Controllers\VendorController.cs" />
+    <Compile Include="Models\Awards.cs" />
     <Compile Include="Models\ExportToCsv.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
