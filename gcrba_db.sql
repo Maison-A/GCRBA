@@ -28,6 +28,35 @@ IF OBJECT_ID('tblUser')					IS NOT NULL DROP TABLE tblUser
 IF OBJECT_ID('tblState')				IS NOT NULL DROP TABLE tblState 
 
 --DROP STORED PROCEDURES
+<<<<<<< HEAD
+IF OBJECT_ID('LOGIN')							IS NOT NULL DROP PROCEDURE LOGIN 
+IF OBJECT_ID('VERIFY_MEMBER')					IS NOT NULL DROP PROCEDURE VERIFY_MEMBER
+IF OBJECT_ID('INSERT_WEBSITE')					IS NOT NULL DROP PROCEDURE INSERT_WEBSITE
+IF OBJECT_ID('INSERT_CONTACTPERSON')			IS NOT NULL DROP PROCEDURE INSERT_CONTACTPERSON
+IF OBJECT_ID('INSERT_SOCIALMEDIA')				IS NOT NULL DROP PROCEDURE INSERT_SOCIALMEDIA
+IF OBJECT_ID('INSERT_LOCATION')					IS NOT NULL DROP PROCEDURE INSERT_LOCATION
+IF OBJECT_ID('INSERT_COMPANY')					IS NOT NULL DROP PROCEDURE INSERT_COMPANY
+IF OBJECT_ID('INSERT_CATEGORYLOCATION')			IS NOT NULL DROP PROCEDURE INSERT_CATEGORYLOCATION
+IF OBJECT_ID('INSERT_LOCATIONHOURS')			IS NOT NULL DROP PROCEDURE INSERT_LOCATIONHOURS
+IF OBJECT_ID('GET_MAIN_BANNER')					IS NOT NULL DROP PROCEDURE GET_MAIN_BANNER
+IF OBJECT_ID('GET_COMPANY_INFO')				IS NOT NULL DROP PROCEDURE GET_COMPANY_INFO
+IF OBJECT_ID('GET_ALL_MAIN_BANNERS')			IS NOT NULL DROP PROCEDURE GET_ALL_MAIN_BANNERS
+IF OBJECT_ID('SELECT_LOCATION')					IS NOT NULL DROP PROCEDURE SELECT_LOCATION
+IF OBJECT_ID('INSERT_NEW_USER')					IS NOT NULL	DROP PROCEDURE INSERT_NEW_USER
+IF OBJECT_ID('SELECT_STATES')					IS NOT NULL	DROP PROCEDURE SELECT_STATES
+IF OBJECT_ID('DELETE_LOCATION')					IS NOT NULL	DROP PROCEDURE DELETE_LOCATION
+IF OBJECT_ID('INSERT_NEW_MAIN_BANNER')			IS NOT NULL	DROP PROCEDURE INSERT_NEW_MAIN_BANNER
+IF OBJECT_ID('REUSE_MAIN_BANNER')				IS NOT NULL	DROP PROCEDURE REUSE_MAIN_BANNER
+IF OBJECT_ID('DELETE_COMPANY')					IS NOT NULL	DROP PROCEDURE DELETE_COMPANY
+IF OBJECT_ID('GET_LOCATIONS')					IS NOT NULL	DROP PROCEDURE GET_LOCATIONS
+IF OBJECT_ID('GET_SPECIFIC_COMPANY')			IS NOT NULL DROP PROCEDURE GET_SPECIFIC_COMPANY
+IF OBJECT_ID('SELECT_ALLCATEGORY_FORLOCATION') IS NOT NULL DROP PROCEDURE SELECT_ALLCATEGORY_FORLOCATION
+IF OBJECT_ID('SELECT_LOCATION_BYCATEGORY')		IS NOT NULL DROP PROCEDURE SELECT_LOCATION_BYCATEGORY
+IF OBJECT_ID ('SELECT_LOCATION_SPECIALS')		IS NOT NULL DROP PROCEDURE SELECT_LOCATION_SPECIALS
+IF OBJECT_ID('SELECT_LOCATION_CONTACTS') IS NOT NULL DROP PROCEDURE SELECT_LOCATION_CONTACTS
+IF OBJECT_ID('SELECT_LOCATION_SOCIALMEDIA') IS NOT NULL DROP PROCEDURE SELECT_LOCATION_SOCIALMEDIA
+IF OBJECT_ID('SELECT_LOCATION_WEBSITE') IS NOT NULL DROP PROCEDURE SELECT_LOCATION_WEBSITE
+=======
 IF OBJECT_ID('LOGIN')					IS NOT NULL DROP PROCEDURE LOGIN 
 IF OBJECT_ID('VERIFY_MEMBER')			IS NOT NULL DROP PROCEDURE VERIFY_MEMBER
 IF OBJECT_ID('INSERT_WEBSITE')			IS NOT NULL DROP PROCEDURE INSERT_WEBSITE
@@ -47,9 +76,7 @@ IF OBJECT_ID('SELECT_STATES')			IS NOT NULL	DROP PROCEDURE SELECT_STATES
 IF OBJECT_ID('DELETE_LOCATION')			IS NOT NULL	DROP PROCEDURE DELETE_LOCATION
 IF OBJECT_ID('INSERT_NEW_MAIN_BANNER')	IS NOT NULL	DROP PROCEDURE INSERT_NEW_MAIN_BANNER
 IF OBJECT_ID('REUSE_MAIN_BANNER')		IS NOT NULL	DROP PROCEDURE REUSE_MAIN_BANNER
-IF OBJECT_ID('DELETE_COMPANY')			IS NOT NULL	DROP PROCEDURE DELETE_COMPANY
-IF OBJECT_ID('GET_LOCATIONS')			IS NOT NULL	DROP PROCEDURE GET_LOCATIONS
-IF OBJECT_ID('GET_SPECIFIC_COMPANY')	IS NOT NULL DROP PROCEDURE GET_SPECIFIC_COMPANY
+>>>>>>> parent of c653a21 (Merge branch 'master' of https://github.com/Maison-A/GCRBA)
 
 CREATE TABLE tblState
 (
@@ -196,6 +223,7 @@ CREATE TABLE tblCategoryLocation
 	intCategoryLocationID		BIGINT IDENTITY(1,1)	NOT NULL,
 	intCategoryID			SMALLINT		NOT NULL,
 	intLocationID			BIGINT			NOT NULL,
+	blnAvailable			BIT			NOT NULL,
 	CONSTRAINT tblCategoryLocation_PK PRIMARY KEY (intCategoryLocationID)
 )
 
@@ -237,7 +265,7 @@ CREATE TABLE tblSpecial
 (
 	intSpecialID			SMALLINT IDENTITY(1,1)		NOT NULL,
 	strDescription			NVARCHAR(500)			NOT NULL, 
-	strPrice			NVARCHAR(10), 
+	monPrice			MONEY, 
 	dtmStart			DATE				NOT NULL, 
 	dtmEnd				DATE				NOT NULL, 
 	CONSTRAINT tblSpecial_PK PRIMARY KEY (intSpecialID)
@@ -424,6 +452,41 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [dbo].[SELECT_LOCATION_WEBSITE]
+@intLocationID BIGINT = NULL
+AS 
+BEGIN
+	SET NOCOUNT ON;
+	
+	IF @intLocationID IS NOT NULL
+	BEGIN
+		SELECT * FROM db_owner.tblWebsite AS Website
+		JOIN db_owner.tblWebsiteType AS WebType
+		ON Website.intWebsiteTypeID = WebType.intWebsiteTypeID
+		JOIN db_owner.tblLocation AS Loc
+		ON Loc.intCompanyID = Website.intCompanyID
+		WHERE intLocationID = @intLocationID
+	END
+END
+GO
+
+CREATE PROCEDURE [dbo].[SELECT_ALLCATEGORY_FORLOCATION]
+@intLocationID BIGINT = NULL
+AS 
+BEGIN
+	SET NOCOUNT ON;
+	
+	IF @intLocationID IS NOT NULL
+	BEGIN
+		SELECT *
+		FROM db_owner.tblCategoryLocation AS CatLoc
+		JOIN db_owner.tblCategory AS Cat
+		ON CatLoc.intCategoryID = Cat.intCategoryID
+		WHERE [intLocationID] = @intLocationID
+		ORDER BY Cat.strCategory
+	END
+END
+GO
 
 CREATE PROCEDURE [db_owner].[VERIFY_MEMBER]
 @intUserID SMALLINT
@@ -584,6 +647,36 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [dbo].[SELECT_LOCATION_CONTACTS]
+@intLocationID BIGINT = NULL
+AS 
+BEGIN
+	SET NOCOUNT ON;
+	
+	IF @intLocationID IS NOT NULL
+	BEGIN
+		SELECT * FROM db_owner.tblContactPerson
+		WHERE intLocationID = @intLocationID
+	END
+END
+GO
+
+CREATE PROCEDURE [dbo].[SELECT_LOCATION_SOCIALMEDIA]
+@intLocationID BIGINT = NULL
+AS 
+BEGIN
+	SET NOCOUNT ON;
+	
+	IF @intLocationID IS NOT NULL
+	BEGIN
+		SELECT * FROM db_owner.tblCompanySocialMedia AS compSocMed
+		JOIN db_owner.tblLocation AS Loc
+		ON Loc.intCompanyID = compSocMed.intCompanyID
+		WHERE Loc.intLocationID = @intLocationID
+	END
+END
+GO
+
 CREATE PROCEDURE [dbo].[INSERT_SOCIALMEDIA]
 @intCompanySocialMediaID AS BIGINT OUTPUT
 ,@strSocialMediaLink AS NVARCHAR(100)
@@ -644,6 +737,7 @@ CREATE PROCEDURE [dbo].[INSERT_CATEGORYLOCATION]
 @intCategoryLocationID AS BIGINT OUTPUT
 ,@intCategoryID AS SMALLINT
 ,@intLocationID AS BIGINT
+,@blnAvailable AS BIT
 AS
 SET NOCOUNT ON
 SET XACT_ABORT ON
@@ -657,13 +751,32 @@ BEGIN
 
 	INSERT INTO [db_owner].[tblCategoryLocation] WITH (TABLOCKX)
 				([intCategoryID]
-				,[intLocationID])
+				,[intLocationID]
+				,[blnAvailable])
 			VALUES
 				(@intCategoryID
-				,@intLocationID)
+				,@intLocationID
+				,@blnAvailable)
 	SELECT @intCategoryLocationID=@@IDENTITY
 	RETURN 1
 
+END
+GO
+
+CREATE PROCEDURE [dbo].[SELECT_LOCATION_SPECIALS]
+@intLocationID BIGINT = NULL
+AS 
+BEGIN
+	SET NOCOUNT ON;
+	
+	IF @intLocationID IS NOT NULL
+	BEGIN
+		SELECT *
+		FROM db_owner.tblSpecial as special
+		JOIN db_owner.tblSpecialLocation as specLoc
+		ON special.intSpecialID = specLoc.intSpecialID
+		WHERE [intLocationID] = @intLocationID
+	END
 END
 GO
 
@@ -721,18 +834,6 @@ BEGIN
 END
 GO
 
-CREATE PROCEDURE [db_owner].[GET_LOCATIONS]
-@intCompanyID BIGINT
-AS
-BEGIN
-	SET NOCOUNT ON;
-
-	SELECT l.intLocationID, l.strAddress, l.strCity, s.strState, l.strZip, l.strPhone, l.strEmail
-	FROM tblLocation AS l JOIN tblState AS s ON s.intStateID = l.intStateID
-	WHERE l.intCompanyID = @intCompanyID
-END
-GO
-
 CREATE PROCEDURE [db_owner].[GET_COMPANY_INFO]
 AS 
 BEGIN
@@ -743,6 +844,7 @@ BEGIN
 END 
 GO
 
+<<<<<<< HEAD
 CREATE PROCEDURE [db_owner].[GET_SPECIFIC_COMPANY]
 @intCompanyID BIGINT
 AS 
@@ -755,7 +857,8 @@ BEGIN
 END
 GO
 
-
+=======
+>>>>>>> parent of c653a21 (Merge branch 'master' of https://github.com/Maison-A/GCRBA)
 CREATE PROCEDURE [dbo].[SELECT_LOCATION]
 @intLocationID BIGINT = NULL
 AS 
@@ -775,7 +878,7 @@ BEGIN
 END
 GO
 
-CREATE PROCEDURE [dbo].[SELECT_CATEGORYLOCATION]
+CREATE PROCEDURE [dbo].[SELECT_LOCATION_BYCATEGORY]
 @intCategoryID SMALLINT = NULL
 AS 
 BEGIN
@@ -803,11 +906,6 @@ BEGIN
 		WHERE Catloc.intCategoryID = @intCategoryID;
 	END
 END
-GO
-
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE PROCEDURE [db_owner].[SELECT_STATES]
@@ -854,7 +952,6 @@ BEGIN
 END
 GO
 
-
 CREATE PROCEDURE [dbo].[REUSE_MAIN_BANNER]
 @intMainBannerID SMALLINT,
 @intNewBannerID	SMALLINT = null OUTPUT,
@@ -871,26 +968,6 @@ BEGIN
 
 	SELECT @intNewBannerID=@@IDENTITY
 	RETURN 1
-END
-GO
-
-CREATE PROCEDURE [db_owner].[DELETE_COMPANY]
-@intCompanyID BIGINT
-AS
-SET NOCOUNT ON
-SET XACT_ABORT ON
-BEGIN
-	
-	DELETE FROM tblCompanyMember WHERE intCompanyID = @intCompanyID 
-	DELETE FROM tblCategoryLocation WHERE intLocationID IN (SELECT intLocationID FROM tblLocation WHERE intCompanyID = @intCompanyID)
-	DELETE FROM tblLocationHours WHERE intLocationID IN (SELECT intLocationID FROM  tblLocation WHERE intCompanyID = @intCompanyID)
-	DELETE FROM tblLocation WHERE intCompanyID = @intCompanyID
-	DELETE FROM tblCompanyAward WHERE intCompanyID = @intCompanyID
-	DELETE FROM tblCompanySocialMedia WHERE intCompanyID = @intCompanyID
-	DELETE FROM tblContactPerson WHERE intCompanyID = @intCompanyID
-	DELETE FROM tblWebsite WHERE intCompanyID = @intCompanyID
-	DELETE FROM tblCompany WHERE intCompanyID = @intCompanyID
-	RETURN @@rowcount
 END
 GO
 
@@ -972,8 +1049,10 @@ VALUES	(1, 'Best of City Search', 'Best of City'),
 	(1, 'Trip Advisor', 'Certificate of Excellence'), 
 	(1, 'Cincinnati Chamber of Commerce', 'Small Business Award Winner')
 
-INSERT INTO tblContactPerson (strContactName, strContactPhone, strContactEmail, intContactPersonTypeID, intCompanyID)
-VALUES					('Briggs, Randall', '5555555555', 'briggs.r@gmail.com', 1, 1)
+INSERT INTO tblContactPerson (strContactName, strContactPhone, strContactEmail, intLocationID, intCompanyID, intContactPersonTypeID)
+VALUES					('Briggs, Randall', '5555555555', 'briggs.r@gmail.com', 1, 1, 1)
+						,('Hall, Ben', '5555555555', 'hall.b@gmail.com', 1, 1, 2)
+						,('Cowen, Candice', '5555555555', 'cowen.c@gmail.com', 1, 1, 3)
 
 INSERT INTO tblLocation (intCompanyID, strAddress, strCity, intStateID, strZip, strPhone, strEmail)
 VALUES	(1, '2030 Madison Rd', 'Cincinnati', 3, '45208-3289', '513-321-3399', 'customerservice@bonbonerie.com'),
@@ -1061,6 +1140,14 @@ INSERT INTO tblMainBanner (strBanner)
 VALUES	('This is an example of the main banner. This will hold information relevant to the GCRBA.'),
 		('This is an example of the most up-to-date banner in this database. This will hold information relevant to the GCRBA')
 
+<<<<<<< HEAD
+INSERT INTO tblSpecial (strDescription, monPrice, dtmStart, dtmEnd)
+VALUES			('Celebrate National Apple Pie Day! $5.85 for an 8" Dutch Apple at all Servatii Locations! Call ahead to ensure availablity', 5.85, '05/13/2022', '05/14/2022')
+
+INSERT INTO tblSpecialLocation (intSpecialID, intLocationID)
+VALUES				(1, 3)
+					,(1, 4)
+
 INSERT INTO tblCategoryLocation (intCategoryID, intLocationID)
 VALUES		(6, 1),
 			(8, 1),
@@ -1103,3 +1190,47 @@ VALUES		(6, 1),
 			(13, 4),
 			(15, 4),
 			(16, 4)
+=======
+INSERT INTO tblCategoryLocation (intCategoryID, intLocationID, blnAvailable)
+VALUES		(6, 1, 1),
+			(8, 1, 1),
+			(9, 1, 1),
+			(10, 1, 1), 
+			(11, 1, 1),
+			(13,  1, 1),
+			(15, 1, 1),
+			(1, 2, 1),
+			(6, 2, 1),
+			(7, 2, 1),
+			(8, 2, 1),
+			(9, 2, 1),
+			(10, 2, 1),
+			(11, 2, 1),
+			(12, 2, 1),
+			(1, 3, 1),
+			(2, 3, 1),
+			(3, 3, 1),
+			(6, 3, 1),
+			(7, 3, 1),
+			(8, 3, 1),
+			(9, 3, 1),
+			(10, 3, 1),
+			(11, 3, 1),
+			(12, 3, 1),
+			(13, 3, 1),
+			(15, 3, 1),
+			(16, 3, 1),
+			(1, 4, 1),
+			(2, 4, 1),
+			(3, 4, 1),
+			(6, 4, 1),
+			(7, 4, 1),
+			(8, 4, 1),
+			(9, 4, 1),
+			(10, 4, 1),
+			(11, 4, 1),
+			(12, 4, 1),
+			(13, 4, 1),
+			(15, 4, 1),
+			(16, 4, 1)
+>>>>>>> parent of c653a21 (Merge branch 'master' of https://github.com/Maison-A/GCRBA)

@@ -6,15 +6,16 @@
 
 <h2>@ViewBag.MainBanner</h2>
 
-@using (Html.BeginForm()) {
-<div class="topcorner">
-    <button class="button-action" id="btnJoin" name="btnSubmit" value="join">Join the GCRBA!</button>
-    
-    <button class="button-action" id="btnLogin" name="btnSubmit" value="login">Login</button>
-    <button class="button-action" id="btnAdminLogin" name="btnSubmit" value="admin">Admin Login</button>
-</div>
+@using (Html.BeginForm())
+{
+    <div class="topcorner">
+        <button class="button-action" id="btnJoin" name="btnSubmit" value="join">Join the GCRBA!</button>
 
-	<div>
+        <button class="button-action" id="btnLogin" name="btnSubmit" value="login">Login</button>
+        <button class="button-action" id="btnAdminLogin" name="btnSubmit" value="admin">Admin Login</button>
+    </div>
+
+    <div>
         <div>
             <button class="button-action" id="btnBakery" name="btnSubmit" value="bakery"><i class="fal fa-birthday-cake"></i>Find a Bakery</button>
         </div>
@@ -24,8 +25,5 @@
         <div>
             <button class="button-action" id="btnBakery" name="btnSubmit" value="education"><i class="fal fa-birthday-cake"></i>Learn to Bake!</button>
         </div>
-
-		
-
-	</div>
+    </div>
 }

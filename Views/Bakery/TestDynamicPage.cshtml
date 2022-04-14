@@ -1,0 +1,123 @@
+﻿
+@{
+	ViewBag.Title = "TestDynamicPage";
+}
+
+<h2>TestDynamicPage</h2>
+
+<style>
+
+	.center {
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	#topleft {
+		text-align: left;
+		vertical-align: top;
+	}
+
+	#text-center {
+		text-align: center;
+	}
+
+	#label-1 {
+		font-weight: bold;
+		text-decoration: underline;
+	}
+
+	* {
+		box-sizing: border-box;
+	}
+
+	.row {
+		margin-left: -5px;
+		margin-right: -5px;
+	}
+
+	.column {
+		float: left;
+		width: 50%;
+		padding: 5px;
+	}
+
+	/* Clearfix (clear floats) */
+	.row::after {
+		content: "";
+		clear: both;
+		display: table;
+	}
+
+	table {
+		border-collapse: collapse;
+		border-spacing: 0;
+		width: 100%;
+		border: 1px solid #ddd;
+	}
+
+	th, td {
+		text-align: left;
+		padding: 16px;
+	}
+
+	tr:nth-child(even) {
+		background-color: #f2f2f2;
+	}
+
+@@media screen and (max-width: 600px) {
+  .column {
+    width: 100%;
+  }
+}
+</style>
+
+<div class="row">
+	<div class="column">
+		<table>
+			<tr>
+				<th>First Name</th>
+				<th>Last Name</th>
+				<th>Points</th>
+			</tr>
+			<tr>
+				<td>Jill</td>
+				<td>Smith</td>
+				<td>50</td>
+			</tr>
+			<tr>
+				<td>Eve</td>
+				<td>Jackson</td>
+				<td>94</td>
+			</tr>
+			<tr>
+				<td>Adam</td>
+				<td>Johnson</td>
+				<td>67</td>
+			</tr>
+		</table>
+	</div>
+	<div class="column">
+		<table>
+			<tr>
+				<th>First Name</th>
+				<th>Last Name</th>
+				<th>Points</th>
+			</tr>
+			<tr>
+				<td>Jill</td>
+				<td>Smith</td>
+				<td>50</td>
+			</tr>
+			<tr>
+				<td>Eve</td>
+				<td>Jackson</td>
+				<td>94</td>
+			</tr>
+			<tr>
+				<td>Adam</td>
+				<td>Johnson</td>
+				<td>67</td>
+			</tr>
+		</table>
+	</div>
+</div>

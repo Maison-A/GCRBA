@@ -16,17 +16,17 @@ namespace GCRBA.Models
         public string Zip { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
- 
+
         public string Username { get; set; }
         public string Password { get; set; }
         public string PaymentType = string.Empty;
         public ActionTypes ActionType { get; set; } = ActionTypes.NoType;
-        
+
         // member type control
         public int isAdmin { get; set; }
         public int isMember { get; set; }
         public string MemberShipType = string.Empty;
-        
+
 
         // tells us if current user is logged in 
         public bool IsAuthenticated
@@ -101,7 +101,7 @@ namespace GCRBA.Models
 
                 // user is not admin, return false
                 return false;
-            } 
+            }
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
@@ -157,7 +157,7 @@ namespace GCRBA.Models
             Unknown = 5,
             RequiredFieldMissing = 6,
             LoginFailed = 7,
-            
+
         }
     }
 
