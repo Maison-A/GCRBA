@@ -15,6 +15,24 @@
         </div>
     }
 
+    if (Model.ActionType == GCRBA.Models.User.ActionTypes.DuplicateUsername)
+    {
+        <div id="content-locked">
+
+            <i class="fad fa-exclamation-trangle fa-2x"></i>
+            <span>That USER NAME has already been used. To sign up you must use a different USER NAME.</span>
+        </div>
+    }
+
+    if (Model.ActionType == GCRBA.Models.User.ActionTypes.DuplicateEmail)
+    {
+        <div id="content-locked">
+
+            <i class="fad fa-exclamation-trangle fa-2x"></i>
+            <span>That EAMIL has already been used. To sign up you must use a different EMAIL.</span>
+        </div>
+    }
+
     <div class="topcorner">
         <button class="button-action" name="btnSubmit" value="home">Home</button>
     </div>
@@ -27,10 +45,12 @@
             <div>
                 <div>@Html.Label("First Name")</div>
                 <div>
-                    @Html.TextBoxFor(model => model.FirstName, new {
-                    @name="Firstname",
+                    @Html.TextBoxFor(model => model.FirstName, new
+                    {
+                        @name = "Firstname",
                     @Value = Model.FirstName,
-                    @autofocus = "autofocus" })
+                    @autofocus = "autofocus"
+                    })
                 </div>
             </div>
 
@@ -38,9 +58,11 @@
             <div>
                 <div>@Html.Label("Last Name")</div>
                 <div>
-                    @Html.TextBoxFor(model => model.LastName, new {
-                    @name = "Lastname",
-                    @Value = @Model.LastName})
+                    @Html.TextBoxFor(model => model.LastName, new
+                    {
+                        @name = "Lastname",
+                    @Value = @Model.LastName
+                    })
                 </div>
             </div>
         </div>
@@ -50,9 +72,11 @@
             <div>
                 <div>@Html.Label("Phone")</div>
                 <div>
-                    @Html.TextBoxFor(model => model.Phone, new {
-                    @name = "Phone",
-                    @Value = @Model.Phone })
+                    @Html.TextBoxFor(model => model.Phone, new
+                    {
+                        @name = "Phone",
+                    @Value = @Model.Phone
+                    })
                 </div>
             </div>
 
@@ -60,9 +84,11 @@
             <div>
                 <div>@Html.Label("Address")</div>
                 <div>
-                    @Html.TextBoxFor(model => model.Address, new {
-                    @name = "Address",
-                    @Value = @Model.Address })
+                    @Html.TextBoxFor(model => model.Address, new
+                    {
+                        @name = "Address",
+                    @Value = @Model.Address
+                    })
                 </div>
             </div>
 
@@ -70,9 +96,11 @@
             <div>
                 <div>@Html.Label("City")</div>
                 <div>
-                    @Html.TextBoxFor(model => model.City, new {
-                    @name = "City",
-                    @Value = @Model.City })
+                    @Html.TextBoxFor(model => model.City, new
+                    {
+                        @name = "City",
+                    @Value = @Model.City
+                    })
                 </div>
             </div>
 
@@ -83,22 +111,22 @@
                     <!--View model?-->
                     <div id="label">@Html.LabelFor(model => model.State, "State")*</div>
                     @{
-                    List<SelectListItem> stateItems = new List<SelectListItem>();
-                    stateItems.Add(new SelectListItem
-                    {
-                        Text = "Indiana",
-                        Value = "1"
-                    });
+                        List<SelectListItem> stateItems = new List<SelectListItem>();
                         stateItems.Add(new SelectListItem
-                    {
-                        Text = "Kentucky",
-                        Value = "2"
-                });
-                          stateItems.Add(new SelectListItem
-                    {
-                        Text = "Ohio",
-                        Value = "3"
-                    });
+                        {
+                            Text = "Indiana",
+                            Value = "1"
+                        });
+                        stateItems.Add(new SelectListItem
+                        {
+                            Text = "Kentucky",
+                            Value = "2"
+                        });
+                        stateItems.Add(new SelectListItem
+                        {
+                            Text = "Ohio",
+                            Value = "3"
+                        });
                     }
 
                     <div>@Html.DropDownList("State", stateItems) </div>
@@ -109,35 +137,43 @@
             <div>
                 <div>@Html.Label("Zip")</div>
                 <div>
-                    @Html.TextBoxFor(model => model.Zip, new {
-                    @name = "Zip",
-                    @Value = @Model.Zip })
+                    @Html.TextBoxFor(model => model.Zip, new
+                    {
+                        @name = "Zip",
+                    @Value = @Model.Zip
+                    })
                 </div>
             </div>
 
             <!-- Email -->
             <div>@Html.Label("E-mail")</div>
             <div>
-                @Html.TextBoxFor(model => model.Email, new {
-                @name = "Email",
-                @Value = @Model.Email })
+                @Html.TextBoxFor(model => model.Email, new
+                {
+                    @name = "Email",
+                @Value = @Model.Email
+                })
             </div>
 
             <!-- Username -->
             <div>@Html.Label("Username")</div>
             <div>
-                @Html.TextBoxFor(model => model.Username, new {
-                @name = "Username",
-                @Value = @Model.Username })
+                @Html.TextBoxFor(model => model.Username, new
+                {
+                    @name = "Username",
+                @Value = @Model.Username
+                })
             </div>
 
             <!-- Password -->
             <div>@Html.Label("Password")</div>
             <div>
-                @Html.TextBoxFor(model => model.Password, new {
-                @name = "Password",
+                @Html.TextBoxFor(model => model.Password, new
+                {
+                    @name = "Password",
                 @Value = @Model.Password,
-                type = "password"})
+                type = "password"
+                })
             </div>
 
             <!-- Membership Type -->
@@ -162,7 +198,7 @@
     <div>
         <button id="btnSignUp" name="btnSubmit" value="submit" class="button-action"><i class="fas fa-user-plus"></i> Submit </button>
     </div>
-    }
+}
 
 }
 

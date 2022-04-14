@@ -11,6 +11,19 @@ namespace GCRBA.Controllers
     public class UserController : Controller
     {
 
+        /// TODO
+        /// - null is being returned when signing up for gcrba within:
+        ///     -- address
+        ///     -- city
+        ///     -- stateid
+        ///     -- zip
+        ///     -- phone
+        ///     need to determine what the issue is and make adjustements to sprocs as needed (if needed)
+        /// - authenticated user data is not being updated when gcrba app submitted 
+        /// - redirecting home after authentication removes home/index within url
+        /// - no logout func
+        /// tbc..
+        /// - MAISON
 
         public ActionResult Index()
         {
