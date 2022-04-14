@@ -14,5 +14,6 @@ namespace GCRBA.Models {
 
 		public string strFullName = string.Empty;
 		public string strFullPhone = string.Empty;
+		public string strContactPersonType = string.Empty;
 	}
 }

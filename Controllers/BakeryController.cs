@@ -87,10 +87,16 @@ namespace GCRBA.Views.Bakery {
             results.landingSocialMedia = db.GetLandingSocialMedia(Id);
             results.landingWebsite = db.GetLandingWebsite(Id);
 
-
             results.MainURL = results.landingWebsite.Where(r => r.intWebsiteTypeID.Equals(1)).Select(name => name.strURL).FirstOrDefault();
             results.OrderingURL = results.landingWebsite.Where(r => r.intWebsiteTypeID.Equals(2)).Select(name => name.strURL).FirstOrDefault();
             results.OrderingURL = results.landingWebsite.Where(r => r.intWebsiteTypeID.Equals(0)).Select(name => name.strURL).FirstOrDefault();
+
+            results.FacebookURL = results.landingSocialMedia.Where(s => s.intSocialMediaID.Equals(1)).Select(name => name.strSocialMediaLink).FirstOrDefault();
+            results.InstagramURL = results.landingSocialMedia.Where(s => s.intSocialMediaID.Equals(2)).Select(name => name.strSocialMediaLink).FirstOrDefault();
+            results.SnapchatURL = results.landingSocialMedia.Where(s => s.intSocialMediaID.Equals(3)).Select(name => name.strSocialMediaLink).FirstOrDefault();
+            results.TikTokURL = results.landingSocialMedia.Where(s => s.intSocialMediaID.Equals(4)).Select(name => name.strSocialMediaLink).FirstOrDefault();
+            results.TwitterURL = results.landingSocialMedia.Where(s => s.intSocialMediaID.Equals(5)).Select(name => name.strSocialMediaLink).FirstOrDefault();
+            results.YelpURL = results.landingSocialMedia.Where(s => s.intSocialMediaID.Equals(6)).Select(name => name.strSocialMediaLink).FirstOrDefault();
 
             return View(results);
         }

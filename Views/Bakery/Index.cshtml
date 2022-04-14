@@ -35,6 +35,20 @@
 	#results{
 		width: 700px;
 	}
+
+	table {
+		border-collapse: collapse;
+		border-spacing: 0;
+		width: 750px;
+		height: 400px;
+		border: 1px solid #ddd;
+	}
+
+	#table-scroll {
+		overflow-y: scroll;
+		height: 400px;
+		display: inline-block;
+	}
 </style>
 
 @{
@@ -48,8 +62,6 @@
 
 @using (Html.BeginForm("Index", "Bakery", FormMethod.Post)) {
 
-
-	if (Model.lstLocations == null) {
 		<div class="some-spacing">
 			<table class="center">
 				<tr>
@@ -171,20 +183,36 @@
 			</table>
 		</div>
 
+		<div>
+			<table id="table-scroll">
+				<tr>
+					<td></td>
+				</tr>
+				@if (Model.lstLocations != null) {
+					foreach (GCRBA.Models.NewLocation item in Model.lstLocations) {
+						if (Model.lstLocations != null) {
+						<tr>
+							<td>
+								<div class="some-spacing">
+									<button id="results" name="btnSubmit" value=@item.lngLocationID>@item.LocationName | @item.StreetAddress, @item.City @item.State | @item.selectedGood</button>
+								</div>
+							</td>
+						</tr>
+						}
+					}
+				}
+				</table>
+		</div>
+
 		<br />
 		<div>
 			<button class="border-3" id="btnSearch" name="btnSubmit" value="search">Search</button>
 		</div>
 		<br />
-	}
-	else {
-		foreach (GCRBA.Models.NewLocation item in Model.lstLocations) {
-			<div class="some-spacing">
-				<button id="results" name="btnSubmit" value=@item.lngLocationID>@item.LocationName | @item.StreetAddress, @item.City @item.State | @item.selectedGood</button>
-			</div>
+	
 
-		}
-	}
+		
+	
 }
 
 @using (Html.BeginForm()) {

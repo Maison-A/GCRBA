@@ -195,4 +195,8 @@ th, td {
     .column {
         width: 100%;
     }
+
+	.column-wide-x2 {
+		width: 100%;
+	}
 }

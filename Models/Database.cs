@@ -1490,7 +1490,8 @@ namespace GCRBA.Models
 						item.strFullName = (string)dr["strContactName"];
 						item.strFullPhone = (string)dr["strContactPhone"];
 						item.strContactEmail = (string)dr["strContactEmail"];
-						item.intContactTypeID = (Int32)dr["intContactPersonTypeID"];
+						item.intContactTypeID = (short)dr["intContactPersonTypeID"];
+						item.strContactPersonType = (string)dr["strContactPersonType"];
 						lstContactPerson.Add(item);
 					}
 				}
@@ -1524,6 +1525,7 @@ namespace GCRBA.Models
 						item.strSocialMediaLink = (string)dr["strSocialMediaLink"];
 						item.strPlatform = (string)dr["strPlatform"];
 						item.intCompanyID = (long)dr["intCompanyID"];
+						item.intSocialMediaID = (short)dr["intSocialMediaID"];
 						lstSocialMedia.Add(item);
 					}
 				}

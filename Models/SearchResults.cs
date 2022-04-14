@@ -21,6 +21,13 @@ namespace GCRBA.Models
 		public string OrderingURL = string.Empty;
 		public string KettleURL = string.Empty;
 
+		public string FacebookURL = string.Empty;
+		public string TwitterURL = string.Empty;
+		public string InstagramURL = string.Empty;
+		public string SnapchatURL = string.Empty;
+		public string YelpURL = string.Empty;
+		public string TikTokURL = string.Empty;
+
 		//Bakery Good For User Search
 		public CategoryItem Donuts = new CategoryItem();
 		public CategoryItem Bagels = new CategoryItem();
