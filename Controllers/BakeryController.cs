@@ -88,8 +88,10 @@ namespace GCRBA.Views.Bakery {
             results.landingWebsite = db.GetLandingWebsite(Id);
 
 
-            //string test = results.landingWebsite.Where(r => r.intWebsiteTypeID.Equals(1)).Select(name => name.strURL).FirstOrDefault();
-            
+            results.MainURL = results.landingWebsite.Where(r => r.intWebsiteTypeID.Equals(1)).Select(name => name.strURL).FirstOrDefault();
+            results.OrderingURL = results.landingWebsite.Where(r => r.intWebsiteTypeID.Equals(2)).Select(name => name.strURL).FirstOrDefault();
+            results.OrderingURL = results.landingWebsite.Where(r => r.intWebsiteTypeID.Equals(0)).Select(name => name.strURL).FirstOrDefault();
+
             return View(results);
         }
 

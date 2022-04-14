@@ -17,6 +17,10 @@ namespace GCRBA.Models
 		public List<Models.SocialMedia> landingSocialMedia;
 		public List<Models.Website> landingWebsite;
 
+		public string MainURL = string.Empty;
+		public string OrderingURL = string.Empty;
+		public string KettleURL = string.Empty;
+
 		//Bakery Good For User Search
 		public CategoryItem Donuts = new CategoryItem();
 		public CategoryItem Bagels = new CategoryItem();

@@ -173,19 +173,29 @@
 	<div class="column">
 		@Html.LabelFor(model => model.landingWebsite, "Websites:")
 		<table>
+			@if (Model.MainURL != string.Empty) {
 			<tr>
 				<td>
-					@Html.Label("Main Website:")
+					<a href=@Model.MainURL>Visit Main Page</a>
 				</td>
 			</tr>
+			}
+			@if (Model.OrderingURL != string.Empty) {
 			<tr>
 				<td>
-					@Html.DisplayFor(model => model.landingWebsite.Where(webtype => webtype.intWebsiteTypeID.Equals(1)).Select(url => url.strURL).FirstOrDefault())
+					<a href=@Model.OrderingURL>Order From Us!</a>
 				</td>
 			</tr>
+			}
+			@if (Model.KettleURL != string.Empty) {
+			<tr>
+				<td>
+					<a href=@Model.KettleURL>Donate!</a>
+				</td>
+			</tr>
+			}
 		</table>
 	</div>
-
 </div>
 
 }
