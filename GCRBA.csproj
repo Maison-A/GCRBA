@@ -264,7 +264,6 @@
     <Content Include="Views\Vendor\Index.cshtml" />
     <Content Include="Views\Bakery\AddNewLocation.cshtml" />
     <Content Include="Views\Bakery\MemberBakery.cshtml" />
-    <Content Include="Views\Bakery\TestLandingPage.cshtml" />
     <Content Include="Views\User\AddNewUser.cshtml" />
     <Content Include="Python\Scripts\.idea\.name" />
     <Content Include="Python\Scripts\.idea\Scripts.iml" />
