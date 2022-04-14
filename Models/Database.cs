@@ -57,6 +57,40 @@ namespace GCRBA.Models
 			}
 		}
 
+		public string GetState(int intStateID)
+		{
+			try
+			{
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to db 
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+
+				// specift stored procedure to use
+				SqlDataAdapter da = new SqlDataAdapter("GET_STATE", cn);
+
+				// create variable to hold state 
+				string strState = "";
+
+				SetParameter(ref da, "@intStateID", intStateID, SqlDbType.BigInt);
+
+				// set command type as stored procedure 
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				try { da.Fill(ds); }
+				catch (Exception ex) { throw new Exception(ex.Message); }
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0)
+				{
+					DataRow dr = ds.Tables[0].Rows[0];
+					strState = (string)dr["strState"];
+				}
+				return strState;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
 		public NewLocation.ActionTypes DeleteLocation(long lngLocationID)
 		{
 			try
