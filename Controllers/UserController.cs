@@ -170,8 +170,8 @@ namespace GCRBA.Controllers
                 
 
 
-                if (user.UID == 0)
-                {
+                if (user.IsAuthenticated == false)
+                {                    
                     // contact info
                     user.FirstName = col["Firstname"];
                     user.LastName = col["Lastname"];

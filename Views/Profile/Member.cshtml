@@ -2,7 +2,10 @@
 @{
     ViewBag.Title = "Member";
 }
-
+<div class="topcorner">
+    <button class="button-action" name="btnSubmit" value="join">Join the GCRBA!</button>
+    <button class="button-action" name="btnSubmit" value="home">Home</button>
+</div>
 @if (Model.isMember == 0)
 {
     <p>This page is for members only.</p>
