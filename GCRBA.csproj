@@ -220,6 +220,7 @@
     <Compile Include="Models\MainBanner.cs" />
     <Compile Include="Models\NewLocation.cs" />
     <Compile Include="Models\PhoneNumber.cs" />
+    <Compile Include="Models\SaleSpecial.cs" />
     <Compile Include="Models\SearchResults.cs" />
     <Compile Include="Models\SocialMedia.cs" />
     <Compile Include="Models\State.cs" />
