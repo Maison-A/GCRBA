@@ -15,6 +15,14 @@ else
 {
     using (Html.BeginForm(FormMethod.Post))
     {
+        <label for="companies" class="form-label">Select Company to Edit:</label>
+        <select name="companies" class="form-control">
+            @foreach(var item in Model.Companies) 
+            {
+                <option value="@item.CompanyID">@item.Name</option>
+            }
+        </select>
+
         <button name="btnSubmit" value="editLocationInfo">Edit Location Info</button>
         <button name="btnSubmit" value="editGeneralInfo">Edit General Info</button>
         <button name="btnSubmit" value="cancel">Return to Admin Portal</button>

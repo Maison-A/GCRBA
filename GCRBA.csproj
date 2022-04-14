@@ -198,6 +198,7 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\EducationController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MemberController.cs" />
@@ -230,6 +231,7 @@
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="ViewModels\AdminBannerViewModel.cs" />
     <Compile Include="ViewModels\EditCompaniesViewModel.cs" />
+    <Compile Include="ViewModels\EditLocationVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
@@ -277,21 +279,21 @@
     <Content Include="Views\Profile\Login.cshtml" />
     <Content Include="Views\Profile\NonMember.cshtml" />
     <Content Include="Views\Profile\Member.cshtml" />
-    <Content Include="Views\Profile\Admin.cshtml" />
+    <Content Include="Views\AdminPortal\Index.cshtml" />
     <Content Include="Views\Profile\AdminLogin.cshtml" />
     <Content Include="Views\SendMailer\Index.cshtml" />
-    <Content Include="Views\Profile\EditMainBanner.cshtml" />
+    <Content Include="Views\AdminPortal\EditMainBanner.cshtml" />
     <Content Include="Views\Troubleshoot\Index.cshtml" />
     <Content Include="Views\Troubleshoot\EmailIssue.cshtml" />
-    <Content Include="Views\Profile\EditCompanies.cshtml" />
-    <Content Include="Views\Profile\AddCompany.cshtml" />
-    <Content Include="Views\Profile\EditExistingCompany.cshtml" />
-    <Content Include="Views\Profile\DeleteCompany.cshtml" />
+    <Content Include="Views\AdminPortal\EditCompanies.cshtml" />
+    <Content Include="Views\AdminPortal\AddCompany.cshtml" />
+    <Content Include="Views\AdminPortal\EditExistingCompany.cshtml" />
+    <Content Include="Views\AdminPortal\DeleteCompany.cshtml" />
     <Content Include="Views\Shared\UpdateSuccessful.cshtml" />
     <Content Include="Views\Shared\AdminOnly.cshtml" />
     <Content Include="Views\Profile\EditAwards.cshtml" />
-    <Content Include="Views\Profile\EditLocationInfo.cshtml" />
-    <Content Include="Views\Profile\EditGeneralInfo.cshtml" />
+    <Content Include="Views\AdminPortal\EditLocationInfo.cshtml" />
+    <Content Include="Views\AdminPortal\EditGeneralInfo.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

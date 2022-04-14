@@ -6,15 +6,10 @@ using GCRBA.Models;
 
 namespace GCRBA.ViewModels
 {
-    public class EditCompaniesViewModel
+    public class EditLocationVM
     {
         public User CurrentUser { get; set; }
         public Company CurrentCompany { get; set; }
         public List<Company> Companies { get; set; }
-        public Location CurrentLocation { get; set; }
-        public List<Location> Locations { get; set; }
-        public State CurrentState { get; set; }
-        public List<State> States { get; set; }
-        public NewLocation NewLocation { get; set; }
     }
 }

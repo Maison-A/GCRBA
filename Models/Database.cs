@@ -612,6 +612,41 @@ namespace GCRBA.Models {
 			catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
+		public string GetState(int intStateID)
+        {
+			try
+            {
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to db 
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+
+				// specift stored procedure to use
+				SqlDataAdapter da = new SqlDataAdapter("GET_STATE", cn);
+
+				// create variable to hold state 
+				string strState = "";
+
+				SetParameter(ref da, "@intStateID", intStateID, SqlDbType.BigInt);
+
+				// set command type as stored procedure 
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				try { da.Fill(ds); }
+				catch (Exception ex) { throw new Exception(ex.Message); }
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0)
+				{
+					DataRow dr = ds.Tables[0].Rows[0];
+					strState = (string)dr["strState"];
+				}
+				return strState;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
 		public List<Company> GetCompanies()
         {
 			try
@@ -620,7 +655,7 @@ namespace GCRBA.Models {
 				SqlConnection cn = new SqlConnection();
 
 				// try to connect to database -- throw error if unsuccessful
-				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
 
 				// specify which stored procedure we are using 
 				SqlDataAdapter da = new SqlDataAdapter("GET_COMPANY_INFO", cn);
@@ -892,8 +927,16 @@ namespace GCRBA.Models {
 
 		public NewLocation.ActionTypes InsertLocation(NewLocation loc) {
 			try {
+
+				string PhoneNumber = "";
 				//Convert Phone Class to Concat String
-				string PhoneNumber = loc.BusinessPhone.AreaCode + loc.BusinessPhone.Prefix + loc.BusinessPhone.Suffix;
+				if (loc.BusinessPhone != null)
+                {
+					PhoneNumber = loc.BusinessPhone.AreaCode + loc.BusinessPhone.Prefix + loc.BusinessPhone.Suffix;
+				} else
+                {
+					PhoneNumber = null;
+                }
 
 				//ONLY DELETE intState!!!!!!!!!!!!!!!!!!
 				loc.intState = 1;
@@ -911,7 +954,6 @@ namespace GCRBA.Models {
 				SetParameter(ref cm, "@strZip", loc.Zip, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strPhone", PhoneNumber, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strEmail", loc.BusinessEmail, SqlDbType.NVarChar);
-				
 
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
 

@@ -1,0 +1,58 @@
+﻿@using GCRBA.ViewModels
+@model EditCompaniesViewModel
+
+<h2>Edit Location Data for @Model.CurrentCompany.Name</h2>
+
+@if (Model.CurrentUser.isAdmin == 0)
+{
+    @Html.Partial("AdminOnly");
+}
+else
+{
+    if (Model.NewLocation.ActionType == GCRBA.Models.NewLocation.ActionTypes.InsertSuccessful) 
+    {
+        <p>@ViewBag.NewLocationStatus</p>
+    }
+    <div class="container card bg-light w-50 p-4">
+       @using (Html.BeginForm(FormMethod.Post))
+        {
+            <div class="card-header" id="addNewLocation" onclick="display()">Add New Location</div>
+            <div id="addNewLocationInput" style="display:none">
+                <div>
+                    @Html.LabelFor(model => model.NewLocation.StreetAddress, new { @autofocus = "autofocus", @class = "form-label mt-4" })
+                    @Html.TextBoxFor(model => model.NewLocation.StreetAddress, new { @class = "form-control mb-4", @required = "required" })
+                </div>
+                <div>
+                    @Html.LabelFor(model => model.NewLocation.City, new { @class = "form-label" })
+                    @Html.TextBoxFor(model => model.NewLocation.City, new { @class = "form-control mb-4", @required = "required" })
+                </div>
+                <div>
+                    <label for="states" class="form-label">State</label>
+                    <select name="states" class="form-control mb-4" required>
+                        @foreach (var item in Model.States)
+                        {
+                            <option value="@item.intStateID">@item.strState</option>
+                        }
+                    </select>
+                </div>
+                <div>
+                    @Html.LabelFor(model => model.NewLocation.Zip, new { @class = "form-laebl" })
+                    @Html.TextBoxFor(model => model.NewLocation.Zip, new { @class = "form-control mb-4", @required = "required" })
+                </div>
+            </div>
+            <button name="btnSubmit" value="editLocationInfo">Submit</button>
+
+        }
+    </div>
+}
+
+<script>
+    function display() {
+        var x = document.getElementById("addNewLocationInput");
+        if (x.style.display == "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+    }
+</script>
