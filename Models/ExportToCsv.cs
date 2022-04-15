@@ -98,7 +98,7 @@ namespace GCRBA {
                         int Index = 0;
                         LocateFile file = new LocateFile();
                         string file_path = file.GetFilePath();
-                        //string file_path = "E:/Web-Folders/Students/Spring/CPDM-290-200/CPDM-WinslowS/Views/SendMailer/Bakery.csv"; //"C:/Users/winsl/OneDrive/Desktop/Capstone/MVC/Views/SendMailer/Bakery.csv"; //"E:/Web-Folders/Students/Spring/CPDM-290-200/CPDM-WinslowS/Views/SendMailer/Bakery.csv";
+                        //string file_path = "E:\\Web-Folders\\Students\\Spring\\CPDM-290-200\\CPDM-WinslowS\\CSV_Folder\\Bakery.csv"; //"C:/Users/winsl/OneDrive/Desktop/Capstone/MVC/Views/SendMailer/Bakery.csv"; //"E:/Web-Folders/Students/Spring/CPDM-290-200/CPDM-WinslowS/Views/SendMailer/Bakery.csv";
                         using (StreamWriter streamWriter = new StreamWriter(file_path)) {
                             using (CsvWriter csvWriter = new CsvWriter(streamWriter, CultureInfo.CurrentCulture)) {
                                 //Write Location Information Headers
@@ -217,9 +217,9 @@ namespace GCRBA {
         public string GetFilePath() {
             try {
                 int fCount = 0;
-                string folder_path = HttpContext.Current.Server.MapPath("/Views/SendMailer/CSV_Folder");
+                string folder_path = HttpContext.Current.Server.MapPath("\\CSV_Folder");
                 fCount = Directory.GetFiles(folder_path, "*", SearchOption.AllDirectories).Length;
-                return HttpContext.Current.Server.MapPath("/Views/SendMailer/CSV_Folder/Bakery" + fCount.ToString() + ".csv");
+                return HttpContext.Current.Server.MapPath("\\CSV_Folder\\Bakery" + fCount.ToString() + ".csv");
             }
             catch(Exception ex) {
                 throw new Exception(ex.Message);

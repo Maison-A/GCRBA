@@ -264,6 +264,7 @@
     <Content Include="Views\Vendor\Index.cshtml" />
     <Content Include="Views\Bakery\AddNewLocation.cshtml" />
     <Content Include="Views\Bakery\MemberBakery.cshtml" />
+    <Content Include="Views\Bakery\LandingPage.cshtml" />
     <Content Include="Views\User\AddNewUser.cshtml" />
     <Content Include="Python\Scripts\.idea\.name" />
     <Content Include="Python\Scripts\.idea\Scripts.iml" />
@@ -283,6 +284,7 @@
     <Content Include="Views\AdminPortal\Index.cshtml" />
     <Content Include="Views\Profile\AdminLogin.cshtml" />
     <Content Include="Views\SendMailer\Index.cshtml" />
+    <Content Include="CSV_Folder\Bakery.csv" />
     <Content Include="Views\AdminPortal\EditMainBanner.cshtml" />
     <Content Include="Views\Troubleshoot\Index.cshtml" />
     <Content Include="Views\Troubleshoot\EmailIssue.cshtml" />
