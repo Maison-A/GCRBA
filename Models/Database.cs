@@ -215,7 +215,13 @@ namespace GCRBA.Models
 				SetParameter(ref cm, "@intNewUserID", u.UID, SqlDbType.SmallInt, Direction: ParameterDirection.Output);
 				SetParameter(ref cm, "@strFirstName", u.FirstName, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strLastName", u.LastName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strAddress", u.Address, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strCity", u.City, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@intStateID", u.intState, SqlDbType.SmallInt);
+				SetParameter(ref cm, "@strZip", u.Zip, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strPhone", u.Phone, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strEmail", u.Email, SqlDbType.NVarChar);
+				
 				SetParameter(ref cm, "@strUsername", u.Username, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strPassword", u.Password, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@isAdmin", u.isAdmin, SqlDbType.Bit);
@@ -509,10 +515,12 @@ namespace GCRBA.Models
 						{
 							u.isMember = 1;
 						}
+						/*
 						else
 						{
 							u.isMember = 0;
 						}
+						*/
 					}
 					catch (Exception ex) { throw new Exception(ex.Message); }
 					finally
@@ -607,6 +615,54 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 
 			return banner;
+		}
+
+		public LocationList.ActionTypes InsertLocations(LocationList locList) {
+			int i = 0;
+			do {
+				try {
+					//Convert Phone Class to Concat String
+					string PhoneNumber = locList.lstLocations[i].BusinessPhone.AreaCode + locList.lstLocations[i].BusinessPhone.Prefix + locList.lstLocations[i].BusinessPhone.Suffix;
+
+					SqlConnection cn = null;
+					if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+					SqlCommand cm = new SqlCommand("INSERT_LOCATION", cn);
+					int intReturnValue = -1;
+
+					SetParameter(ref cm, "@intLocationID", locList.lstLocations[i].lngLocationID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+					SetParameter(ref cm, "@intCompanyID", locList.lstLocations[i].lngCompanyID, SqlDbType.BigInt);
+					SetParameter(ref cm, "@strAddress", locList.lstLocations[i].LocationName, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@strCity", locList.lstLocations[i].City, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@intStateID", locList.lstLocations[i].intState, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@strZip", locList.lstLocations[i].Zip, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@strPhone", PhoneNumber, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@strEmail", locList.lstLocations[i].BusinessEmail, SqlDbType.NVarChar);
+
+
+					SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+					cm.ExecuteReader();
+
+					intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+					CloseDBConnection(ref cn);
+
+					locList.lstLocations[i].lngLocationID = (long)cm.Parameters["@intLocationID"].Value;
+					/*
+					switch (intReturnValue) {
+						case 1: // new user created
+							locList.lstLocations[0].lngLocationID = (long)cm.Parameters["@intLocationID"].Value;
+							return LocationList.ActionTypes.InsertSuccessful;
+						default:
+							return LocationList.ActionTypes.Unknown;
+					}
+					*/
+					i += 1;
+				}
+				catch (Exception ex) { throw new Exception(ex.Message); }
+
+			} while (locList.lstLocations[i] != null);
+
+			return LocationList.ActionTypes.InsertSuccessful;
 		}
 
 		public List<MainBanner> GetMainBanners()

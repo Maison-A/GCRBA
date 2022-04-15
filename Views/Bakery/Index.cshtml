@@ -271,10 +271,18 @@
 
 }
 
+
 @using (Html.BeginForm()) {
+	GCRBA.Models.User u = new GCRBA.Models.User();
+	u = u.GetUserSession();
+
+	if (u.IsAuthenticated) {
+
+
 	<div class="some-spacing">
 		<button class="button-action" id="btnAdd" name="btnSubmit" value="addLocation">Add a Bakery!</button>
 	</div>
+	}
 }
 
 

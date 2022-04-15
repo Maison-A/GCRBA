@@ -167,8 +167,10 @@ namespace GCRBA.Controllers
 
         public ActionResult AddNewMember()
         {
-            Models.User u = new Models.User();
+            Models.User u = new Models.User(); 
+            Models.Database db = new Models.Database();
             u = u.GetUserSession();
+            u.lstStates = db.GetStates();
             return View(u);
         }
 
@@ -180,14 +182,22 @@ namespace GCRBA.Controllers
                 // get current user session
                 Models.User user = new Models.User();
                 user = user.GetUserSession();
-                   
+                  
                 // contact info
-                user.FirstName = col["Firstname"];
-                user.LastName = col["Lastname"];
+                user.FirstName = col["FirstName"];
+                user.LastName = col["LastName"];
                 user.Address = col["Address"];
-                user.Phone = col["Phone"];
+                user.Phone = col["userPhone.AreaCode"] + col["userPhone.Prefix"] + col["userPhone.Suffix"];
                 user.City = col["City"];
-                user.State = col["State"];
+                user.intState = Convert.ToInt16(col["intState"]);
+
+                //Just doing something quick here... probably should be changed to something more dynamic.
+                if (user.intState == 1) user.State = "Indiana";
+                else if (user.intState == 2) user.State = "Kentucky";
+                else if (user.intState == 3) user.State = "Ohio";
+
+                
+                
                 user.Zip = col["Zip"];
 
                 // username/pass setup

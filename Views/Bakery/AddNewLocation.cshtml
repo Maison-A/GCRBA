@@ -34,15 +34,27 @@
 
 @model GCRBA.Models.LocationList
 
-@{
-	ViewBag.Title = "New Bakery Location Form";
-}
-
-<h2>@ViewBag.Title</h2>
-<p>Please enter the information for the new bakery location(s)</p>
-
 @using (Html.BeginForm(FormMethod.Post)) {
 	int index = 0;
+	GCRBA.Models.User u = new GCRBA.Models.User();
+	u = u.GetUserSession();
+	if (!u.IsAuthenticated) {
+		<div id="content-locked">
+			<i class="fad fa-exclamation-triangle fa-2x"></i>
+			<span>Please login to enter a new location.</span>
+		</div>
+	}
+
+	{
+		ViewBag.Title = "New Bakery Location Form";
+	}
+
+
+
+	<h2>@ViewBag.Title</h2>
+	<p>Please enter the information for the new bakery location(s)</p>
+
+
 
 	if (Model.lstLocations[index].ActionType == GCRBA.Models.NewLocation.ActionTypes.RequiredFieldsMissing) {
 		<div id="content-locked" style="color: red">
@@ -57,7 +69,6 @@
 			<span>Field already exists!</span>
 		</div>
 	}
-
 
 	<div class="mainTable">
 		<table class="center" id="lstLocations-table">
@@ -370,7 +381,7 @@
 							<div id="label"><label for="BusinessPhone_AreaCode">Business Phone Number</label></div>
 							(@Html.TextBoxFor(m => Model.lstLocations[index].BusinessPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].BusinessPhone.Prefix, new { Style = "width: 50px" })-@Html.TextBoxFor(m => Model.lstLocations[index].BusinessPhone.Suffix, new { Style = "width: 50px" })
 						</div>
-		
+
 						<div>
 							<div id="label">@Html.LabelFor(model => model.lstLocations[index].BusinessEmail, "Business Email")</div>
 							<div>@Html.TextBoxFor(model => model.lstLocations[index].BusinessEmail)</div>
@@ -378,6 +389,7 @@
 					</div>
 				</td>
 			</tr>
+			@if (u.isMember > 0) {
 			<tr>
 				<td>
 					<div>
@@ -385,7 +397,7 @@
 							<div id="label">@Html.LabelFor(model => model.lstLocations[index].BizYear, "Year Established:")</div>
 							@Html.TextBoxFor(model => model.lstLocations[index].BizYear)
 						</div>
-		
+
 						<div class="some-spacing">
 							<div id="label">@Html.LabelFor(model => model.lstLocations[index].Bio, "About us:")</div>
 							<div>@Html.TextAreaFor(model => model.lstLocations[index].Bio, new { @spellcheck = "true", rows = "5", style = "width: 500px;" })</div>
@@ -401,19 +413,19 @@
 							<div id="label">@Html.LabelFor(m => Model.lstLocations[index].LocationContact.strContactFirstName, "Contact First Name")</div>
 							<div>@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.strContactFirstName, new { @autofocus = "autofocus" })</div>
 						</div>
-		
+
 						<div class="some-spacing">
 							<div id="label">@Html.LabelFor(m => Model.lstLocations[index].LocationContact.strContactLastName, "Contact Last Name")</div>
 							<div>@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.strContactLastName)</div>
 						</div>
-		
+
 						<div class="some-spacing">
 							<div id="label"><label for="ContactPhone_AreaCode">Contact Phone Number</label></div>
 							<div>
 								(@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.contactPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.contactPhone.Prefix, new { Style = "width: 50px" })-@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.contactPhone.Suffix, new { Style = "width: 50px" })
 							</div>
 						</div>
-		
+
 						<div class="some-spacing">
 							<div id="label">@Html.LabelFor(m => Model.lstLocations[index].LocationContact.strContactEmail, "Contact Email")</div>
 							<div>@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.strContactEmail)</div>
@@ -429,19 +441,19 @@
 							<div id="label">@Html.LabelFor(m => Model.lstLocations[index].CustService.strContactFirstName, "Customer Service First Name")</div>
 							<div>@Html.TextBoxFor(m => Model.lstLocations[index].CustService.strContactFirstName, new { @autofocus = "autofocus" })</div>
 						</div>
-		
+
 						<div class="some-spacing">
 							<div id="label">@Html.LabelFor(m => Model.lstLocations[index].CustService.strContactLastName, "Customer Service Last Name")</div>
 							<div>@Html.TextBoxFor(m => Model.lstLocations[index].CustService.strContactLastName)</div>
 						</div>
-		
+
 						<div class="some-spacing">
 							<div id="label"><label for="ContactPhone_AreaCode">Customer Service Phone Number</label></div>
 							<div>
 								(@Html.TextBoxFor(m => Model.lstLocations[index].CustService.contactPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].CustService.contactPhone.Prefix, new { Style = "width: 50px" }) - @Html.TextBoxFor(m => Model.lstLocations[index].CustService.contactPhone.Suffix, new { Style = "width: 50px" })
 							</div>
 						</div>
-		
+
 						<div class="some-spacing">
 							<div id="label">@Html.LabelFor(m => Model.lstLocations[index].CustService.strContactEmail, "Customer Service Email")</div>
 							<div>@Html.TextBoxFor(m => Model.lstLocations[index].CustService.strContactEmail)</div>
@@ -457,12 +469,12 @@
 							<div id="label">@Html.LabelFor(model => model.lstLocations[index].MainWeb, "Main Website URL")</div>
 							<div>@Html.TextBoxFor(model => model.lstLocations[index].MainWeb.strURL)</div>
 						</div>
-		
+
 						<div class="some-spacing">
 							<div id="label">@Html.LabelFor(model => model.lstLocations[index].OrderingWeb, "Ordering Webpage URL") </div>
 							<div>@Html.TextBoxFor(model => model.lstLocations[index].OrderingWeb.strURL) </div>
 						</div>
-		
+
 						<div class="some-spacing">
 							<div id="label">@Html.LabelFor(model => model.lstLocations[index].KettleWeb, "Donation Kettle URL") </div>
 							<div>@Html.TextBoxFor(model => model.lstLocations[index].KettleWeb.strURL) </div>
@@ -478,19 +490,19 @@
 							<div id="label">@Html.LabelFor(m => Model.lstLocations[index].WebAdmin.strContactFirstName, "Web Admin First Name")</div>
 							<div>@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.strContactFirstName, new { @autofocus = "autofocus" })</div>
 						</div>
-		
+
 						<div class="some-spacing">
 							<div id="label">@Html.LabelFor(m => Model.lstLocations[index].WebAdmin.strContactLastName, "Web Admin Last Name")</div>
 							<div>@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.strContactLastName)</div>
 						</div>
-		
+
 						<div class="some-spacing">
 							<div id="label"><label for="ContactPhone_AreaCode">Web Admin Phone Number</label></div>
 							<div>
 								(@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.contactPhone.AreaCode, new { @class = "phone-area-code" })) @Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.contactPhone.Prefix, new { @class = "phone-prefix" })-@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.contactPhone.Suffix, new { @class = "phone-suffix" })
 							</div>
 						</div>
-		
+
 						<div class="some-spacing">
 							<div id="label">@Html.LabelFor(m => Model.lstLocations[index].WebAdmin.strContactEmail, "Web Admin Email")</div>
 							<div>@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.strContactEmail)</div>
@@ -589,11 +601,12 @@
 					</div>
 				</td>
 			</tr>
+			}
 			<tfoot>
 			</tfoot>
 		</table>
 	</div>
-	
+
 	/*
 	<table >
 		<tr>
