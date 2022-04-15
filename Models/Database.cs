@@ -215,7 +215,13 @@ namespace GCRBA.Models
 				SetParameter(ref cm, "@intNewUserID", u.UID, SqlDbType.SmallInt, Direction: ParameterDirection.Output);
 				SetParameter(ref cm, "@strFirstName", u.FirstName, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strLastName", u.LastName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strAddress", u.Address, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strCity", u.City, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@intStateID", u.intState, SqlDbType.SmallInt);
+				SetParameter(ref cm, "@strZip", u.Zip, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strPhone", u.Phone, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strEmail", u.Email, SqlDbType.NVarChar);
+				
 				SetParameter(ref cm, "@strUsername", u.Username, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strPassword", u.Password, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@isAdmin", u.isAdmin, SqlDbType.Bit);
@@ -509,10 +515,12 @@ namespace GCRBA.Models
 						{
 							u.isMember = 1;
 						}
+						/*
 						else
 						{
 							u.isMember = 0;
 						}
+						*/
 					}
 					catch (Exception ex) { throw new Exception(ex.Message); }
 					finally
