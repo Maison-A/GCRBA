@@ -72,11 +72,7 @@
             <div>
                 <div>@Html.Label("Phone")</div>
                 <div>
-                    @Html.TextBoxFor(model => model.Phone, new
-                    {
-                        @name = "Phone",
-                    @Value = @Model.Phone
-                    })
+                    (@Html.TextBoxFor(model => model.userPhone.AreaCode)) @Html.TextBoxFor(model=>model.userPhone.Prefix)-@Html.TextBoxFor(model=>model.userPhone.Suffix)
                 </div>
             </div>
 
@@ -84,11 +80,7 @@
             <div>
                 <div>@Html.Label("Address")</div>
                 <div>
-                    @Html.TextBoxFor(model => model.Address, new
-                    {
-                        @name = "Address",
-                    @Value = @Model.Address
-                    })
+                    @Html.TextBoxFor(model => model.Address)
                 </div>
             </div>
 
@@ -96,52 +88,25 @@
             <div>
                 <div>@Html.Label("City")</div>
                 <div>
-                    @Html.TextBoxFor(model => model.City, new
-                    {
-                        @name = "City",
-                    @Value = @Model.City
-                    })
+                    @Html.TextBoxFor(model => model.City)
                 </div>
             </div>
 
             <!-- State -->
             <div>
                 <div>@Html.Label("State")</div>
-                <div>
-                    <!--View model?-->
-                    <div id="label">@Html.LabelFor(model => model.State, "State")*</div>
-                    @{
-                        List<SelectListItem> stateItems = new List<SelectListItem>();
-                        stateItems.Add(new SelectListItem
-                        {
-                            Text = "Indiana",
-                            Value = "1"
-                        });
-                        stateItems.Add(new SelectListItem
-                        {
-                            Text = "Kentucky",
-                            Value = "2"
-                        });
-                        stateItems.Add(new SelectListItem
-                        {
-                            Text = "Ohio",
-                            Value = "3"
-                        });
-                    }
-
-                    <div>@Html.DropDownList("State", stateItems) </div>
-                </div>
+				<div>
+					<!--View model?-->
+					<div id="label">@Html.LabelFor(model => model.State, "State")*</div>
+					@Html.DropDownListFor(model => model.intState, new SelectList(Model.lstStates, "intStateID", "strState"))
+				</div>
             </div>
 
             <!-- Zip -->
             <div>
                 <div>@Html.Label("Zip")</div>
                 <div>
-                    @Html.TextBoxFor(model => model.Zip, new
-                    {
-                        @name = "Zip",
-                    @Value = @Model.Zip
-                    })
+                    @Html.TextBoxFor(model => model.Zip)
                 </div>
             </div>
 
@@ -180,14 +145,14 @@
             <div class="section">
                 <div>@Html.Label("Membership Type")</div>
                 <div class="some-spacing">
-                    @Html.RadioButtonFor(model => model.MemberShipType, "Associate")@Html.Label("Associate - $10")
-                    @Html.RadioButtonFor(model => model.MemberShipType, "Business")@Html.Label("Business - $20")
+                    @Html.RadioButtonFor(model => model.MemberShipType, "Associate")@Html.Label("Associate - $10") | 
+                    @Html.RadioButtonFor(model => model.MemberShipType, "Business")@Html.Label("Business - $20") | 
                     @Html.RadioButtonFor(model => model.MemberShipType, "Allied")@Html.Label("Allied - $100")
                 </div>
             </div>
             <!-- payment type -->
             <div class="some-spacing">
-                @Html.RadioButtonFor(model => model.PaymentType, "Zelle")@Html.Label("Zelle")
+                @Html.RadioButtonFor(model => model.PaymentType, "Zelle")@Html.Label("Zelle") |
                 @Html.RadioButtonFor(model => model.PaymentType, "Check")@Html.Label("Check")
             </div>
         </div>

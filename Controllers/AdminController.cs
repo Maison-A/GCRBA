@@ -183,7 +183,7 @@ namespace GCRBA.Controllers
             // get input from form 
             if (col["btnSubmit"].ToString() == "submit")
             {
-                vm.CurrentCompany.strCompanyName = col["CurrentCompany.strCompanyName"];
+                vm.CurrentCompany.Name = col["CurrentCompany.strCompanyName"];
                 vm.CurrentCompany.About = col["CurrentCompany.About"];
                 vm.CurrentCompany.Year = col["CurrentCompany.Year"];
             }
@@ -218,7 +218,7 @@ namespace GCRBA.Controllers
             vm.Companies = GetCompaniesList(vm);
 
             // get selection 
-            vm.CurrentCompany.intCompanyID = Convert.ToInt16(col["companies"].ToString());
+            vm.CurrentCompany.CompanyID = Convert.ToInt16(col["companies"].ToString());
 
             // delete button pressed
             if (col["btnSubmit"].ToString() == "delete")
@@ -268,7 +268,7 @@ namespace GCRBA.Controllers
             if (col["btnSubmit"].ToString() == "editLocationInfo")
             {
                 // get companyID from company selected from dropdown
-                vm.CurrentCompany.intCompanyID = Convert.ToInt16(col["companies"]);
+                vm.CurrentCompany.CompanyID = Convert.ToInt16(col["companies"]);
 
                 // save current  ID so we can access it in other view 
                 vm.CurrentCompany.SaveCompanySession();
@@ -312,7 +312,7 @@ namespace GCRBA.Controllers
             // get current company session
             vm = GetCompanySession(vm);
 
-            vm.NewLocation.lngCompanyID = vm.CurrentCompany.intCompanyID;
+            vm.NewLocation.lngCompanyID = vm.CurrentCompany.CompanyID;
 
             if (col["btnSubmit"].ToString() == "editLocationInfo")
             {
@@ -332,7 +332,7 @@ namespace GCRBA.Controllers
 
                 if (vm.NewLocation.ActionType == NewLocation.ActionTypes.InsertSuccessful)
                 {
-                    ViewBag.NewLocationStatus = "You added a new location for " + vm.CurrentCompany.strCompanyName;
+                    ViewBag.NewLocationStatus = "You added a new location for " + vm.CurrentCompany.Name;
                     return View(vm);
                 } 
             }
