@@ -295,7 +295,7 @@
     <Content Include="Views\Shared\UpdateSuccessful.cshtml" />
     <Content Include="Views\Shared\AdminOnly.cshtml" />
     <Content Include="Views\Profile\EditAwards.cshtml" />
-    <Content Include="Views\AdminPortal\EditLocationInfo.cshtml" />
+    <Content Include="Views\AdminPortal\AddNewLocation.cshtml" />
     <Content Include="Views\AdminPortal\EditGeneralInfo.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

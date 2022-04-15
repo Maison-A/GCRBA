@@ -183,7 +183,7 @@ namespace GCRBA.Controllers
             // get input from form 
             if (col["btnSubmit"].ToString() == "submit")
             {
-                vm.CurrentCompany.strCompanyName = col["CurrentCompany.strCompanyName"];
+                vm.CurrentCompany.Name = col["CurrentCompany.strCompanyName"];
                 vm.CurrentCompany.About = col["CurrentCompany.About"];
                 vm.CurrentCompany.Year = col["CurrentCompany.Year"];
             }
@@ -218,7 +218,7 @@ namespace GCRBA.Controllers
             vm.Companies = GetCompaniesList(vm);
 
             // get selection 
-            vm.CurrentCompany.intCompanyID = Convert.ToInt16(col["companies"].ToString());
+            vm.CurrentCompany.CompanyID = Convert.ToInt16(col["companies"].ToString());
 
             // delete button pressed
             if (col["btnSubmit"].ToString() == "delete")
@@ -268,12 +268,12 @@ namespace GCRBA.Controllers
             if (col["btnSubmit"].ToString() == "editLocationInfo")
             {
                 // get companyID from company selected from dropdown
-                vm.CurrentCompany.intCompanyID = Convert.ToInt16(col["companies"]);
+                vm.CurrentCompany.CompanyID = Convert.ToInt16(col["companies"]);
 
                 // save current  ID so we can access it in other view 
                 vm.CurrentCompany.SaveCompanySession();
 
-                return RedirectToAction("EditLocationInfo", "AdminPortal");
+                return RedirectToAction("AddNewLocation", "AdminPortal");
             }
 
             if (col["btnSubmit"].ToString() == "editGeneralInfo")
@@ -289,7 +289,7 @@ namespace GCRBA.Controllers
             return View(vm);
         }
 
-        public ActionResult EditLocationInfo()
+        public ActionResult AddNewLocation()
         {
             EditCompaniesViewModel vm = InitEditCompaniesVM();
 
@@ -298,47 +298,79 @@ namespace GCRBA.Controllers
             // get current company session so we know which company we are editing information for 
             vm = GetCompanySession(vm);
 
+            // get list of locations 
+            vm = GetLocations(vm);
+
             return View(vm);
         }
 
         [HttpPost]
-        public ActionResult EditLocationInfo(FormCollection col)
+        public ActionResult AddNewLocation(FormCollection col)
         {
-            EditCompaniesViewModel vm = InitEditCompaniesVM();
-
-            // initial location objects 
-            vm = InitLocationInfo(vm);
-
-            // get current company session
-            vm = GetCompanySession(vm);
-
-            vm.NewLocation.lngCompanyID = vm.CurrentCompany.intCompanyID;
-
-            if (col["btnSubmit"].ToString() == "editLocationInfo")
+           try
             {
-                vm.NewLocation.StreetAddress = col["NewLocation.StreetAddress"];
-                vm.NewLocation.City = col["NewLocation.City"];
-                vm.NewLocation.intState = Convert.ToInt16(col["states"]);
-                vm.NewLocation.Zip = col["NewLocation.Zip"];
-                vm.NewLocation.strFullPhone = col["NewLocation.strFullPhone"];
-                vm.NewLocation.BusinessEmail = col["NewLocation.BusinessEmail"];
-                vm.NewLocation.custServiceEmail = col["NewLocation.custServiceEmail"];
+                EditCompaniesViewModel vm = InitEditCompaniesVM();
 
-                // get state based on ID from dropdown
-                vm.NewLocation.State = GetState(vm.NewLocation.intState);
+                // initial location objects 
+                vm = InitLocationInfo(vm);
 
-                // submit to database 
-                vm.NewLocation.ActionType = SubmitLocationToDB(vm);
+                // get current company session
+                vm = GetCompanySession(vm);
 
-                if (vm.NewLocation.ActionType == NewLocation.ActionTypes.InsertSuccessful)
+                // get list of locations 
+                vm = GetLocations(vm);
+
+                vm.NewLocation.lngCompanyID = vm.CurrentCompany.CompanyID;
+
+                if (col["btnSubmit"].ToString() == "addLocation")
                 {
-                    ViewBag.NewLocationStatus = "You added a new location for " + vm.CurrentCompany.strCompanyName;
+                    vm.NewLocation.StreetAddress = col["NewLocation.StreetAddress"];
+                    vm.NewLocation.City = col["NewLocation.City"];
+                    vm.NewLocation.intState = Convert.ToInt16(col["states"]);
+                    vm.NewLocation.Zip = col["NewLocation.Zip"];
+
+                    // submit to db 
+                    vm.NewLocation.ActionType = SubmitLocationToDB(vm);
+
                     return View(vm);
-                } 
+                }
+
+                if (col["btnSubmit"].ToString() == "cancel")
+                {
+                    return RedirectToAction("EditExistingCompany", "AdminPortal");
+                }
+
+                return View(vm);
             }
-            return View(vm);
+            catch (Exception ex) { throw new Exception(ex.Message); }
         }
+
         
+        private int ValidateAddNewLocationForm(List<string> LocationInfo)
+        {
+            int count = 0;
+
+            foreach (var item in LocationInfo)
+            {
+                if (item.Length == 0)
+                {
+                    count += 1;
+                }
+            }
+
+            if (count > 0 && count < 4)
+            {
+                return -1;
+            }
+
+            if (count == 4)
+            {
+                return 0;
+            }
+
+            return 1;
+            
+        }
 
         public ActionResult EditGeneralInfo()
         {
@@ -410,6 +442,32 @@ namespace GCRBA.Controllers
                 return vm;
             }
             catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private EditCompaniesViewModel GetLocations(EditCompaniesViewModel vm)
+        {
+            try
+            {
+                // create db object
+                Database db = new Database();
+
+                // get list of locations from db 
+                vm.Locations = db.GetLocations(vm);            
+
+                return vm;
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private NewLocation.ActionTypes DeleteLocation(EditCompaniesViewModel vm)
+        {
+            // create db object 
+            Database db = new Database();
+
+            // get action type from attemp to delete location from db 
+            vm.NewLocation.ActionType = db.DeleteLocation(vm.CurrentLocation.LocationID);
+
+            return vm.NewLocation.ActionType;
         }
 
         private string GetState(int intStateID)

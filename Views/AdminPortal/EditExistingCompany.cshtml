@@ -19,7 +19,7 @@ else
         <select name="companies" class="form-control">
             @foreach(var item in Model.Companies) 
             {
-                <option value="@item.intCompanyID">@item.strCompanyName</option>
+                <option value="@item.CompanyID">@item.Name</option>
             }
         </select>
 

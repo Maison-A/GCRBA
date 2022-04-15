@@ -543,7 +543,7 @@ namespace GCRBA.Models
 				// specify command type as stored procedure 
 				da.SelectCommand.CommandType = CommandType.StoredProcedure;
 
-				SetParameter(ref da, "@intCompanyID", vm.CurrentCompany.intCompanyID, SqlDbType.BigInt);
+				SetParameter(ref da, "@intCompanyID", vm.CurrentCompany.CompanyID, SqlDbType.BigInt);
 
 				try
 				{
@@ -552,7 +552,7 @@ namespace GCRBA.Models
 					if (ds.Tables[0].Rows.Count > 0)
 					{
 						DataRow dr = ds.Tables[0].Rows[0];
-						vm.CurrentCompany.strCompanyName = (string)dr["strCompanyName"];
+						vm.CurrentCompany.Name = (string)dr["strCompanyName"];
 						vm.CurrentCompany.About = (string)dr["strAbout"];
 						vm.CurrentCompany.Year = (string)dr["strBizYear"];
 						return vm.CurrentCompany;
@@ -666,7 +666,7 @@ namespace GCRBA.Models
 				// specify which stored procedure we are using 
 				SqlDataAdapter da = new SqlDataAdapter("GET_LOCATIONS", cn);
 
-				SetParameter(ref da, "@intCompanyID", vm.CurrentCompany.intCompanyID, SqlDbType.BigInt);
+				SetParameter(ref da, "@intCompanyID", vm.CurrentCompany.CompanyID, SqlDbType.BigInt);
 
 				// create new list object with type string  
 				List<Location> locations = new List<Location>();
@@ -736,8 +736,8 @@ namespace GCRBA.Models
 						Company c = new Company();
 
 						// add values to CompanyID and Name properties 
-						c.intCompanyID = Convert.ToInt16(dr["intCompanyID"]);
-						c.strCompanyName = (string)dr["strCompanyName"];
+						c.CompanyID = Convert.ToInt16(dr["intCompanyID"]);
+						c.Name = (string)dr["strCompanyName"];
 
 						// add Company object (c) to Company list (companies) 
 						companies.Add(c);
@@ -758,7 +758,7 @@ namespace GCRBA.Models
 				SqlCommand cm = new SqlCommand("DELETE_COMPANY", cn);
 				int intReturnValue = -1;
 
-				SetParameter(ref cm, "@intCompanyID", c.intCompanyID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@intCompanyID", c.CompanyID, SqlDbType.BigInt);
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
 
 				cm.ExecuteReader();
@@ -903,7 +903,7 @@ namespace GCRBA.Models
 				int intReturnValue = -1;
 
 				SetParameter(ref cm, "@intCompanyID", null, SqlDbType.BigInt, Direction: ParameterDirection.Output);
-				SetParameter(ref cm, "@strCompanyName", c.strCompanyName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strCompanyName", c.Name, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strAbout", c.About, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strBizYear", c.Year, SqlDbType.NVarChar);
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
@@ -918,7 +918,7 @@ namespace GCRBA.Models
 					case -1:
 						return Company.ActionTypes.DuplicateName;
 					case 1: // new user created
-						c.intCompanyID = Convert.ToInt16(cm.Parameters["@intCompanyID"].Value);
+						c.CompanyID = Convert.ToInt16(cm.Parameters["@intCompanyID"].Value);
 						return Company.ActionTypes.InsertSuccessful;
 					default:
 						return Company.ActionTypes.Unknown;
@@ -1030,7 +1030,7 @@ namespace GCRBA.Models
 				int intReturnValue = -1;
 
 				SetParameter(ref cm, "@intLocationID", null, SqlDbType.BigInt, Direction: ParameterDirection.Output);
-				SetParameter(ref cm, "@intCompanyID", vm.CurrentCompany.intCompanyID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@intCompanyID", vm.CurrentCompany.CompanyID, SqlDbType.BigInt);
 				SetParameter(ref cm, "strAddress", vm.NewLocation.StreetAddress, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strCity", vm.NewLocation.City, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@intStateID", vm.NewLocation.intState, SqlDbType.SmallInt);
