@@ -11,6 +11,19 @@ namespace GCRBA.Controllers
     public class UserController : Controller
     {
 
+        /// TODO
+        /// - null is being returned when signing up for gcrba within:
+        ///     -- address
+        ///     -- city
+        ///     -- stateid
+        ///     -- zip
+        ///     -- phone
+        ///     need to determine what the issue is and make adjustements to sprocs as needed (if needed)
+        /// - authenticated user data is not being updated when gcrba app submitted 
+        /// - redirecting home after authentication removes home/index within url
+        /// - no logout func
+        /// tbc..
+        /// - MAISON
 
         public ActionResult Index()
         {
@@ -155,6 +168,7 @@ namespace GCRBA.Controllers
         public ActionResult AddNewMember()
         {
             Models.User u = new Models.User();
+            u = u.GetUserSession();
             return View(u);
         }
 
@@ -166,36 +180,30 @@ namespace GCRBA.Controllers
                 // get current user session
                 Models.User user = new Models.User();
                 user = user.GetUserSession();
+                   
+                // contact info
+                user.FirstName = col["Firstname"];
+                user.LastName = col["Lastname"];
+                user.Address = col["Address"];
+                user.Phone = col["Phone"];
+                user.City = col["City"];
+                user.State = col["State"];
+                user.Zip = col["Zip"];
 
-                if (user.UID == 0)
-                {
-                    // contact info
-                    user.FirstName = col["Firstname"];
-                    user.LastName = col["Lastname"];
-                    user.Address = col["Address"];
-                    user.Phone = col["Phone"];
-                    user.City = col["City"];
-                    user.State = col["State"];
-                    user.Zip = col["Zip"];
+                // username/pass setup
+                user.Email = col["Email"];
+                user.Username = col["Username"];
+                user.Password = col["Password"];
 
-                    // username/pass setup
-                    user.Email = col["Email"];
-                    user.Username = col["Username"];
-                    user.Password = col["Password"];
+                // membership type
+                user.MemberShipType = col["MemberShipType"];
+                user.PaymentType = col["PaymentType"];
 
-                    // membership type
-                    user.MemberShipType = col["MemberShipType"];
-                    user.PaymentType = col["PaymentType"];
+                //permissions
+                user.isMember = 1;
+                user.isAdmin = 0;
 
-                    //permissions
-                    user.isMember = 1;
-                    user.isAdmin = 0;
 
-                }
-                else
-                {
-                    user.isMember = 1;
-                }
 
                 // once submit is hit, process member data
                 if (col["btnSubmit"] == "submit")
@@ -246,6 +254,10 @@ namespace GCRBA.Controllers
                                 return View(user);
                         }
                     }
+                }
+                if (col["btnSubmit"] == "home")
+                {
+                    return RedirectToAction("Index", "Home");
                 }
             }
             catch (Exception)

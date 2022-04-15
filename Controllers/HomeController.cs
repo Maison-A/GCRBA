@@ -6,17 +6,15 @@ using System.Web;
 using System.Web.Mvc;
 
 namespace GCRBA.Controllers {
-// ----------------------------------------------------------- // 
-// Name: Indices mgmt section
-// Desc:
-// ----------------------------------------------------------- // 
 
     public class HomeController : Controller
     {
         public ActionResult Index()
         {
             ViewBag.MainBanner = "";
-
+            // get current user session
+            Models.User user = new Models.User();
+            user = user.GetUserSession();
             try
             {
                 // create instance of Database 

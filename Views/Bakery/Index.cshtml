@@ -16,15 +16,6 @@
 		margin-bottom: 1em;
 	}
 
-	td {
-		text-align: left;
-		padding: 10px 5px;
-	}
-
-	table {
-		border: 1px solid;
-	}
-
 	#label {
 		font-weight: bold;
 	}
@@ -32,8 +23,78 @@
 	#phone {
 		width: 50px;
 	}
-	#results{
-		width: 700px;
+
+	#results {
+		width: 590px;
+	}
+
+	table {
+		border-collapse: collapse;
+		border-spacing: 0;
+		width: 650px;
+		height: 200px;
+		border: 1px solid #ddd;
+	}
+
+	#table-scroll {
+		overflow-y: scroll;
+		height: 443px;
+		display: block;
+	}
+
+	.center {
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	#topleft {
+		text-align: left;
+		vertical-align: top;
+	}
+
+	#text-center {
+		text-align: center;
+	}
+
+	#label-1 {
+		font-weight: bold;
+		text-decoration: underline;
+	}
+
+	* {
+		box-sizing: border-box;
+	}
+
+	.row {
+		margin-left: -5px;
+		margin-right: -5px;
+	}
+
+	.column {
+		float: left;
+		width: 50%;
+		padding: 5px;
+	}
+
+	.column-wide-x2 {
+		float: left;
+		width: 66%;
+		padding: 5px;
+	}
+
+	th, td {
+		text-align: left;
+	}
+
+	tr:nth-child(even) {
+		background-color: #f2f2f2;
+	}
+
+	/* Clearfix (clear floats) */
+	.row::after {
+		content: "";
+		clear: both;
+		display: table;
 	}
 </style>
 
@@ -48,12 +109,13 @@
 
 @using (Html.BeginForm("Index", "Bakery", FormMethod.Post)) {
 
-
-	if (Model.lstLocations == null) {
-		<div class="some-spacing">
-			<table class="center">
+	<div class="row">
+		<div class="column">
+			<table>
 				<tr>
-					<h5 id="label">Specialty Product Categories</h5>
+					<th id="label" colspan="6">
+						Specialty Product Categories
+					</th>
 				</tr>
 				<tr>
 					<td>
@@ -74,6 +136,15 @@
 					<td>
 						@Html.LabelFor(model => model.Muffins, "Muffins")
 					</td>
+				</tr>
+				<tr>
+
+					<td>
+						@Html.CheckBoxFor(models => models.Cupcakes.blnAvailable)
+					</td>
+					<td>
+						@Html.LabelFor(model => model.Cupcakes, "Cupcakes")
+					</td>
 					<td>
 						@Html.CheckBoxFor(models => models.IceCream.blnAvailable)
 					</td>
@@ -81,16 +152,11 @@
 						@Html.LabelFor(model => model.IceCream, "Ice Cream")
 					</td>
 					<td>
-						@Html.CheckBoxFor(models => models.FineCandies.blnAvailable)
-					</td>
-					<td>
-						@Html.LabelFor(model => model.FineCandies, "Fine Candies & Chocolates")
-					</td>
-					<td>
 						@Html.CheckBoxFor(models => models.WeddingCakes.blnAvailable)
 					</td>
 					<td>
 						@Html.LabelFor(model => model.WeddingCakes, "Wedding Cakes")
+					</td>
 				</tr>
 				<tr>
 					<td>
@@ -106,11 +172,13 @@
 						@Html.LabelFor(model => model.DecoratedCakes, "Decorated Cakes")
 					</td>
 					<td>
-						@Html.CheckBoxFor(models => models.Cupcakes.blnAvailable)
+						@Html.CheckBoxFor(models => models.FineCandies.blnAvailable)
 					</td>
 					<td>
-						@Html.LabelFor(model => model.Cupcakes, "Cupcakes")
+						@Html.LabelFor(model => model.FineCandies, "Fine Candies & Chocolates")
 					</td>
+				</tr>
+				<tr>
 					<td>
 						@Html.CheckBoxFor(models => models.Cookies.blnAvailable)
 					</td>
@@ -141,7 +209,7 @@
 						@Html.CheckBoxFor(models => models.Other.blnAvailable)
 					</td>
 					<td>
-						@Html.LabelFor(model => model.Other, "Other Deli Carryout")
+						@Html.LabelFor(model => model.Other, "Carryout Deli")
 					</td>
 					<td>
 						@Html.CheckBoxFor(models => models.Wholesale.blnAvailable)
@@ -149,6 +217,8 @@
 					<td>
 						@Html.LabelFor(model => model.Wholesale, "Wholesale")
 					</td>
+				</tr>
+				<tr>
 					<td>
 						@Html.CheckBoxFor(models => models.Delivery.blnAvailable)
 					</td>
@@ -170,21 +240,35 @@
 				</tr>
 			</table>
 		</div>
-
-		<br />
-		<div>
-			<button class="border-3" id="btnSearch" name="btnSubmit" value="search">Search</button>
+		<div class="column">
+			<table id="table-scroll">
+				<tr>
+					<th>Search Results:</th>
+				</tr>
+				@if (Model.lstLocations != null) {
+					foreach (GCRBA.Models.NewLocation item in Model.lstLocations) {
+						<tr>
+							<td>
+								<div>
+									<button id="results" name="btnSubmit" value=@item.lngLocationID>@item.LocationName | @item.StreetAddress, @item.City @item.State | @item.selectedGood</button>
+								</div>
+							</td>
+						</tr>
+					}
+				}
+			</table>
 		</div>
-		<br />
-	}
-	else {
-		foreach (GCRBA.Models.NewLocation item in Model.lstLocations) {
-			<div class="some-spacing">
-				<button id="results" name="btnSubmit" value=@item.lngLocationID>@item.LocationName | @item.StreetAddress, @item.City @item.State | @item.selectedGood</button>
-			</div>
+	</div>
 
-		}
-	}
+	<br />
+	<div>
+		<button class="border-3" id="btnSearch" name="btnSubmit" value="search">Search</button>
+	</div>
+	<br />
+
+
+
+
 }
 
 @using (Html.BeginForm()) {

@@ -7,156 +7,202 @@
 
 @using (Html.BeginForm(FormMethod.Post))
 {
-        if (Model.ActionType == GCRBA.Models.User.ActionTypes.RequiredFieldMissing)
-        {
-            <div id="content-locked">
-                <i class="fad fa-exclamation-trangle fa-2x"></i>
-                <span>Please enter data in all fields.</span>
-            </div>
-        }
-
-
-<div class="section">
-    <!-- Member First Name -->
-    <div>
-        <div>@Html.Label("First Name")</div>
-        <div>
-            @Html.TextBoxFor(model => model.FirstName, new {
-            @name="Firstname",
-            @Value = "First",
-            @autofocus = "autofocus" })
+    if (Model.ActionType == GCRBA.Models.User.ActionTypes.RequiredFieldMissing)
+    {
+        <div id="content-locked">
+            <i class="fad fa-exclamation-trangle fa-2x"></i>
+            <span>Please enter data in all fields.</span>
         </div>
+    }
+
+    if (Model.ActionType == GCRBA.Models.User.ActionTypes.DuplicateUsername)
+    {
+        <div id="content-locked">
+
+            <i class="fad fa-exclamation-trangle fa-2x"></i>
+            <span>That USER NAME has already been used. To sign up you must use a different USER NAME.</span>
+        </div>
+    }
+
+    if (Model.ActionType == GCRBA.Models.User.ActionTypes.DuplicateEmail)
+    {
+        <div id="content-locked">
+
+            <i class="fad fa-exclamation-trangle fa-2x"></i>
+            <span>That EAMIL has already been used. To sign up you must use a different EMAIL.</span>
+        </div>
+    }
+
+    <div class="topcorner">
+        <button class="button-action" name="btnSubmit" value="home">Home</button>
     </div>
 
-    <!-- Member Last Name -->
-    <div>
-        <div>@Html.Label("Last Name")</div>
+
+    <div class="section">
+
         <div>
-            @Html.TextBoxFor(model => model.LastName, new {
-            @name = "Lastname",
-            @Value = @Model.LastName})
-        </div>
-    </div>
-
-
-    <div>
-
-        <!-- Phone -->
-        <div>
-            <div>@Html.Label("Phone")</div>
+            <!-- Member First Name -->
             <div>
-                @Html.TextBoxFor(model => model.Phone, new {
-                @name = "Phone",
-                @Value = @Model.Phone })
+                <div>@Html.Label("First Name")</div>
+                <div>
+                    @Html.TextBoxFor(model => model.FirstName, new
+                    {
+                        @name = "Firstname",
+                    @Value = Model.FirstName,
+                    @autofocus = "autofocus"
+                    })
+                </div>
+            </div>
+
+            <!-- Member Last Name -->
+            <div>
+                <div>@Html.Label("Last Name")</div>
+                <div>
+                    @Html.TextBoxFor(model => model.LastName, new
+                    {
+                        @name = "Lastname",
+                    @Value = @Model.LastName
+                    })
+                </div>
             </div>
         </div>
 
-        <!-- Address -->
         <div>
-            <div>@Html.Label("Address")</div>
+            <!-- Phone -->
             <div>
-                @Html.TextBoxFor(model => model.Address, new {
-                @name = "Address",
-                @Value = @Model.Address })
+                <div>@Html.Label("Phone")</div>
+                <div>
+                    @Html.TextBoxFor(model => model.Phone, new
+                    {
+                        @name = "Phone",
+                    @Value = @Model.Phone
+                    })
+                </div>
             </div>
-        </div>
 
-        <!-- City -->
-        <div>
-            <div>@Html.Label("City")</div>
+            <!-- Address -->
             <div>
-                @Html.TextBoxFor(model => model.City, new {
-                @name = "City",
-                @Value = @Model.City })
+                <div>@Html.Label("Address")</div>
+                <div>
+                    @Html.TextBoxFor(model => model.Address, new
+                    {
+                        @name = "Address",
+                    @Value = @Model.Address
+                    })
+                </div>
             </div>
-        </div>
 
-        <!-- State -->
-        <div>
-            <div>@Html.Label("State")</div>
+            <!-- City -->
             <div>
-                <!--View model?-->
-                <div id="label">@Html.LabelFor(model => model.State, "State")*</div>
-                @{
-                List<SelectListItem> stateItems = new List<SelectListItem>();
-                stateItems.Add(new SelectListItem
+                <div>@Html.Label("City")</div>
+                <div>
+                    @Html.TextBoxFor(model => model.City, new
+                    {
+                        @name = "City",
+                    @Value = @Model.City
+                    })
+                </div>
+            </div>
+
+            <!-- State -->
+            <div>
+                <div>@Html.Label("State")</div>
+                <div>
+                    <!--View model?-->
+                    <div id="label">@Html.LabelFor(model => model.State, "State")*</div>
+                    @{
+                        List<SelectListItem> stateItems = new List<SelectListItem>();
+                        stateItems.Add(new SelectListItem
+                        {
+                            Text = "Indiana",
+                            Value = "1"
+                        });
+                        stateItems.Add(new SelectListItem
+                        {
+                            Text = "Kentucky",
+                            Value = "2"
+                        });
+                        stateItems.Add(new SelectListItem
+                        {
+                            Text = "Ohio",
+                            Value = "3"
+                        });
+                    }
+
+                    <div>@Html.DropDownList("State", stateItems) </div>
+                </div>
+            </div>
+
+            <!-- Zip -->
+            <div>
+                <div>@Html.Label("Zip")</div>
+                <div>
+                    @Html.TextBoxFor(model => model.Zip, new
+                    {
+                        @name = "Zip",
+                    @Value = @Model.Zip
+                    })
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div>@Html.Label("E-mail")</div>
+            <div>
+                @Html.TextBoxFor(model => model.Email, new
                 {
-                    Text = "Indiana",
-                    Value = "1"
-                });
-                    stateItems.Add(new SelectListItem
-                {
-                    Text = "Kentucky",
-                    Value = "2"
-            });
-                      stateItems.Add(new SelectListItem
-                {
-                    Text = "Ohio",
-                    Value = "3"
-                });
-                }
-
-                <div>@Html.DropDownList("State", stateItems) </div>
+                    @name = "Email",
+                @Value = @Model.Email
+                })
             </div>
-        </div>
 
-
-        <!-- Zip -->
-        <div>
-            <div>@Html.Label("Zip")</div>
+            <!-- Username -->
+            <div>@Html.Label("Username")</div>
             <div>
-                @Html.TextBoxFor(model => model.Zip, new {
-                @name = "Zip",
-                @Value = @Model.Zip })
+                @Html.TextBoxFor(model => model.Username, new
+                {
+                    @name = "Username",
+                @Value = @Model.Username
+                })
             </div>
-        </div>
 
-        <!-- Email -->
-        <div>@Html.Label("E-mail")</div>
-        <div>
-            @Html.TextBoxFor(model => model.Email, new {
-            @name = "Email",
-            @Value = @Model.Email })
-        </div>
+            <!-- Password -->
+            <div>@Html.Label("Password")</div>
+            <div>
+                @Html.TextBoxFor(model => model.Password, new
+                {
+                    @name = "Password",
+                @Value = @Model.Password,
+                type = "password"
+                })
+            </div>
 
-        <!-- Username -->
-        <div>@Html.Label("Username")</div>
-        <div>
-            @Html.TextBoxFor(model => model.Username, new {
-            @name = "Username",
-            @Value = @Model.Username })
-        </div>
-
-        <!-- Password -->
-        <div>@Html.Label("Password")</div>
-        <div>
-            @Html.TextBoxFor(model => model.Password, new {
-            @name = "Password",
-            @Value = @Model.Password,
-            type = "password"})
-        </div>
-
-        <!-- Membership Type -->
-        <div class="section">
-            <div>@Html.Label("Membership Type")</div>
+            <!-- Membership Type -->
+            <div class="section">
+                <div>@Html.Label("Membership Type")</div>
+                <div class="some-spacing">
+                    @Html.RadioButtonFor(model => model.MemberShipType, "Associate")@Html.Label("Associate - $10")
+                    @Html.RadioButtonFor(model => model.MemberShipType, "Business")@Html.Label("Business - $20")
+                    @Html.RadioButtonFor(model => model.MemberShipType, "Allied")@Html.Label("Allied - $100")
+                </div>
+            </div>
+            <!-- payment type -->
             <div class="some-spacing">
-                @Html.RadioButtonFor(model => model.MemberShipType, "Associate")@Html.Label("Associate - $10")
-                @Html.RadioButtonFor(model => model.MemberShipType, "Business")@Html.Label("Business - $20")
-                @Html.RadioButtonFor(model => model.MemberShipType, "Allied")@Html.Label("Allied - $100")
+                @Html.RadioButtonFor(model => model.PaymentType, "Zelle")@Html.Label("Zelle")
+                @Html.RadioButtonFor(model => model.PaymentType, "Check")@Html.Label("Check")
             </div>
         </div>
-        <!-- payment type -->
-        <div class="some-spacing">
-            @Html.RadioButtonFor(model => model.PaymentType, "Zelle")@Html.Label("Zelle")
-            @Html.RadioButtonFor(model => model.PaymentType, "Check")@Html.Label("Check")
-        </div>
     </div>
+
+
 
     <div>
         <button id="btnSignUp" name="btnSubmit" value="submit" class="button-action"><i class="fas fa-user-plus"></i> Submit </button>
     </div>
-</div>
 }
+
+}
+
+
 
 
 

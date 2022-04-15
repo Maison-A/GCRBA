@@ -87,10 +87,16 @@ namespace GCRBA.Views.Bakery {
             results.landingSocialMedia = db.GetLandingSocialMedia(Id);
             results.landingWebsite = db.GetLandingWebsite(Id);
 
-
             results.MainURL = results.landingWebsite.Where(r => r.intWebsiteTypeID.Equals(1)).Select(name => name.strURL).FirstOrDefault();
             results.OrderingURL = results.landingWebsite.Where(r => r.intWebsiteTypeID.Equals(2)).Select(name => name.strURL).FirstOrDefault();
             results.OrderingURL = results.landingWebsite.Where(r => r.intWebsiteTypeID.Equals(0)).Select(name => name.strURL).FirstOrDefault();
+
+            results.FacebookURL = results.landingSocialMedia.Where(s => s.intSocialMediaID.Equals(1)).Select(name => name.strSocialMediaLink).FirstOrDefault();
+            results.InstagramURL = results.landingSocialMedia.Where(s => s.intSocialMediaID.Equals(2)).Select(name => name.strSocialMediaLink).FirstOrDefault();
+            results.SnapchatURL = results.landingSocialMedia.Where(s => s.intSocialMediaID.Equals(3)).Select(name => name.strSocialMediaLink).FirstOrDefault();
+            results.TikTokURL = results.landingSocialMedia.Where(s => s.intSocialMediaID.Equals(4)).Select(name => name.strSocialMediaLink).FirstOrDefault();
+            results.TwitterURL = results.landingSocialMedia.Where(s => s.intSocialMediaID.Equals(5)).Select(name => name.strSocialMediaLink).FirstOrDefault();
+            results.YelpURL = results.landingSocialMedia.Where(s => s.intSocialMediaID.Equals(6)).Select(name => name.strSocialMediaLink).FirstOrDefault();
 
             return View(results);
         }
@@ -119,7 +125,7 @@ namespace GCRBA.Views.Bakery {
             loc.lstStates = db.GetStates();
 
             loc.lstCompanies = db.GetCompanies();
-            Models.Company nonValue = new Models.Company { intCompanyID = 0, strCompanyName = "Select Existing Company" };
+            Models.Company nonValue = new Models.Company { CompanyID = 0, Name = "Select Existing Company" };
             loc.lstCompanies.Add(nonValue);
 
             loc.Donuts = new Models.CategoryItem() { ItemID = 1, ItemDesc = "Donuts" };
@@ -190,7 +196,7 @@ namespace GCRBA.Views.Bakery {
                     Models.Database db = new Models.Database();
                     loc.lstStates = db.GetStates();
                     loc.lstCompanies = db.GetCompanies();
-                    Models.Company nonValue = new Models.Company { intCompanyID = 0, strCompanyName = "Select Existing Company" };
+                    Models.Company nonValue = new Models.Company { CompanyID = 0, Name = "Select Existing Company" };
                     loc.lstCompanies.Add(nonValue);
 
                     //Check to see if preselected dropdown was selected
@@ -485,7 +491,7 @@ namespace GCRBA.Views.Bakery {
                 loc.lstStates = db.GetStates();
 
                 loc.lstCompanies = db.GetCompanies();
-                Models.Company nonValue = new Models.Company { intCompanyID = 0, strCompanyName = "Select Existing Company" };
+                Models.Company nonValue = new Models.Company { CompanyID = 0, Name = "Select Existing Company" };
                 loc.lstCompanies.Add(nonValue);
                 locList.lstLocations = new Models.NewLocation[] { loc };
                 return View(locList);

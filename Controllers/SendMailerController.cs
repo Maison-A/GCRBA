@@ -178,10 +178,10 @@ namespace GCRBA.Controllers
                     string BizPhone = '(' + email.Content.lstLocations[i].BusinessPhone.AreaCode + ") " + email.Content.lstLocations[i].BusinessPhone.Prefix + '-' + email.Content.lstLocations[i].BusinessPhone.Suffix;
 
                     string body = string.Empty;
-                    using (StreamReader reader = new StreamReader(Server.MapPath("~/Views/Shared/LocEmailTemplate.html"))) {
-                        //"C:/Users/winsl/OneDrive/Desktop/Capstone/MVC/Views/Shared/LocEmailTemplate.html"
-                        //"E:/Web-Folders/Students/Spring/CPDM-290-200/CPDM-WinslowS/Views/Shared/LocEmailTemplate.html"
-                        /*Server.MapPath("~/Views/Shared/LocEmailTemplate.html")*/
+                    using (StreamReader reader = new StreamReader(Server.MapPath("~\\Views\\Shared\\LocEmailTemplate.html"))) {
+                        //"C:\\Users\\winsl\\OneDrive\\Desktop\\Capstone\\MVC\\Views\\Shared\\LocEmailTemplate.html"
+                        //"E:\\Web-Folders\\Students\\Spring\\CPDM-290-200\\CPDM-WinslowS\\Views\\Shared\\LocEmailTemplate.html"
+                        //Server.MapPath("~\\Views\\Shared\\LocEmailTemplate.html")
                         body = reader.ReadToEnd();
                     }
 
@@ -208,7 +208,7 @@ namespace GCRBA.Controllers
                         mailMessage.IsBodyHtml = true;
                         LocateFile file = new LocateFile();
                         string file_path = file.GetFilePath(i);
-                        //string file_path = "E:/Web-Folders/Students/Spring/CPDM-290-200/CPDM-WinslowS/Views/SendMailer/Bakery.csv"; //"C:/Users/winsl/OneDrive/Desktop/Capstone/MVC/Views/SendMailer/Bakery.csv"; //"E:/Web-Folders/Students/Spring/CPDM-290-200/CPDM-WinslowS/Views/SendMailer/Bakery.csv";
+                        //string file_path = "E:\\Web-Folders\\Students\\Spring\\CPDM-290-200\\CPDM-WinslowS\\CSV_Folder\\Bakery.csv"; //"C:/Users/winsl/OneDrive/Desktop/Capstone/MVC/Views/SendMailer/Bakery.csv"; //"E:/Web-Folders/Students/Spring/CPDM-290-200/CPDM-WinslowS/Views/SendMailer/Bakery.csv";
                         mailMessage.Attachments.Add(new Attachment(file_path));
                         mailMessage.To.Add(new MailAddress(email.Recipient));
                         SmtpClient smtp = new SmtpClient();
@@ -223,7 +223,7 @@ namespace GCRBA.Controllers
                 }
             } while (col["Content.lstLocations[" + i + "]"] != null);
             delete deleteFiles = new delete();
-            string folder_path = Server.MapPath("/Views/SendMailer/CSV_Folder");
+            string folder_path = Server.MapPath("\\CSV_Folder");
             deleteFiles.delete_files(folder_path);
             return RedirectToAction("Index", "Bakery");
         }
@@ -231,7 +231,7 @@ namespace GCRBA.Controllers
 
     public class LocateFile {
         public string GetFilePath(int i) {
-            return HttpContext.Current.Server.MapPath("/Views/SendMailer/CSV_Folder/Bakery" + i.ToString() + ".csv");
+            return HttpContext.Current.Server.MapPath("\\Views\\SendMailer\\CSV_Folder\\Bakery" + i.ToString() + ".csv");
         }
     }
 
