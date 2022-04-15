@@ -1020,6 +1020,41 @@ namespace GCRBA.Models
 			return LocationList.ActionTypes.InsertSuccessful;
 		}
 
+		public NewLocation.ActionTypes AddNewLocation(EditCompaniesViewModel vm)
+        {
+			try
+            {
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("INSERT_LOCATION", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intLocationID", null, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+				SetParameter(ref cm, "@intCompanyID", vm.CurrentCompany.intCompanyID, SqlDbType.BigInt);
+				SetParameter(ref cm, "strAddress", vm.NewLocation.StreetAddress, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strCity", vm.NewLocation.City, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@intStateID", vm.NewLocation.intState, SqlDbType.SmallInt);
+				SetParameter(ref cm, "@strZip", vm.NewLocation.Zip, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strPhone", vm.NewLocation.strFullPhone, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strEmail", vm.NewLocation.BusinessEmail, SqlDbType.NVarChar);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1)
+                {
+					return NewLocation.ActionTypes.InsertSuccessful;
+                } else
+                {
+					return NewLocation.ActionTypes.Unknown;
+                }
+            }
+			catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
 		public LocationList.ActionTypes InsertSpecialties(LocationList locList, List<Models.CategoryItem>[] categories)
 		{
 			int i = 0;
@@ -1562,6 +1597,38 @@ namespace GCRBA.Models
 					}
 				}
 				return lstSocialMedia;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public bool InsertNewMainBanner(AdminBannerViewModel vm)
+		{
+
+			try
+			{
+				SqlConnection cn = null; // inside System.Data.SqlClient
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("INSERT_NEW_MAIN_BANNER", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intNewBannerID", "null", SqlDbType.SmallInt, Direction: ParameterDirection.Output);
+				SetParameter(ref cm, "@strBanner", vm.MainBanner.Banner, SqlDbType.NVarChar);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1)
+				{
+					vm.MainBanner.BannerID = Convert.ToInt16(cm.Parameters["@intNewBannerID"].Value);
+					return true;
+				}
+				else
+				{
+					return false;
+				}
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}

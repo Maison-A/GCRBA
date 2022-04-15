@@ -84,7 +84,7 @@ namespace GCRBA.Controllers
                     vm.MainBanner.Banner = col["newBanner"];
 
                     // try to add new banner to database
-                    if (db.InsertNewMainBanner(vm.MainBanner) == true)
+                    if (db.InsertNewMainBanner(vm) == true)
                     {
                         // banner successfully added, use this flag so we know what to show on view
                         // 0 - unsuccessful
@@ -104,7 +104,7 @@ namespace GCRBA.Controllers
                     vm.MainBanner.Banner = vm.MainBanners[vm.MainBanner.BannerID - 1].Banner;
 
                     // try to add banner to newest row in table in db 
-                    if (db.InsertNewMainBanner(vm.MainBanner) == true)
+                    if (db.InsertNewMainBanner(vm) == true)
                     {
                         // banner successfully added, use this flag so we know what to show on view 
                         // 0 - unsuccessful
@@ -183,7 +183,7 @@ namespace GCRBA.Controllers
             // get input from form 
             if (col["btnSubmit"].ToString() == "submit")
             {
-                vm.CurrentCompany.Name = col["CurrentCompany.Name"];
+                vm.CurrentCompany.strCompanyName = col["CurrentCompany.strCompanyName"];
                 vm.CurrentCompany.About = col["CurrentCompany.About"];
                 vm.CurrentCompany.Year = col["CurrentCompany.Year"];
             }
@@ -218,7 +218,7 @@ namespace GCRBA.Controllers
             vm.Companies = GetCompaniesList(vm);
 
             // get selection 
-            vm.CurrentCompany.CompanyID = Convert.ToInt16(col["companies"].ToString());
+            vm.CurrentCompany.intCompanyID = Convert.ToInt16(col["companies"].ToString());
 
             // delete button pressed
             if (col["btnSubmit"].ToString() == "delete")
@@ -268,7 +268,7 @@ namespace GCRBA.Controllers
             if (col["btnSubmit"].ToString() == "editLocationInfo")
             {
                 // get companyID from company selected from dropdown
-                vm.CurrentCompany.CompanyID = Convert.ToInt16(col["companies"]);
+                vm.CurrentCompany.intCompanyID = Convert.ToInt16(col["companies"]);
 
                 // save current  ID so we can access it in other view 
                 vm.CurrentCompany.SaveCompanySession();
@@ -296,7 +296,7 @@ namespace GCRBA.Controllers
             vm = InitLocationInfo(vm);
 
             // get current company session so we know which company we are editing information for 
-            vm.CurrentCompany = vm.CurrentCompany.GetCompanySession();
+            vm = GetCompanySession(vm);
 
             return View(vm);
         }
@@ -312,7 +312,7 @@ namespace GCRBA.Controllers
             // get current company session
             vm = GetCompanySession(vm);
 
-            vm.NewLocation.lngCompanyID = vm.CurrentCompany.CompanyID;
+            vm.NewLocation.lngCompanyID = vm.CurrentCompany.intCompanyID;
 
             if (col["btnSubmit"].ToString() == "editLocationInfo")
             {
@@ -320,6 +320,9 @@ namespace GCRBA.Controllers
                 vm.NewLocation.City = col["NewLocation.City"];
                 vm.NewLocation.intState = Convert.ToInt16(col["states"]);
                 vm.NewLocation.Zip = col["NewLocation.Zip"];
+                vm.NewLocation.strFullPhone = col["NewLocation.strFullPhone"];
+                vm.NewLocation.BusinessEmail = col["NewLocation.BusinessEmail"];
+                vm.NewLocation.custServiceEmail = col["NewLocation.custServiceEmail"];
 
                 // get state based on ID from dropdown
                 vm.NewLocation.State = GetState(vm.NewLocation.intState);
@@ -329,7 +332,7 @@ namespace GCRBA.Controllers
 
                 if (vm.NewLocation.ActionType == NewLocation.ActionTypes.InsertSuccessful)
                 {
-                    ViewBag.NewLocationStatus = "You added a new location for " + vm.CurrentCompany.Name;
+                    ViewBag.NewLocationStatus = "You added a new location for " + vm.CurrentCompany.strCompanyName;
                     return View(vm);
                 } 
             }
@@ -395,7 +398,14 @@ namespace GCRBA.Controllers
         {
             try
             {
+                // create database object
+                Database db = new Database();
+
+                // get current companyID from session
                 vm.CurrentCompany = vm.CurrentCompany.GetCompanySession();
+
+                // get rest of current company information using companyID we get from session
+                vm.CurrentCompany = db.GetCompanyInfo(vm);
 
                 return vm;
             }
@@ -455,7 +465,7 @@ namespace GCRBA.Controllers
                 Database db = new Database();
 
                 // submit to db 
-                vm.NewLocation.ActionType = db.InsertLocation(vm.NewLocation);
+                vm.NewLocation.ActionType = db.AddNewLocation(vm);
 
                 return vm.NewLocation.ActionType;
             }

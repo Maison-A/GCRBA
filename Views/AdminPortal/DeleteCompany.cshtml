@@ -28,7 +28,7 @@ else
         <select name="companies">
             @foreach (var item in Model.Companies) 
             {
-                <option value="@item.CompanyID">@item.Name</option>
+                <option value="@item.intCompanyID">@item.strCompanyName</option>
             }
         </select>
 
