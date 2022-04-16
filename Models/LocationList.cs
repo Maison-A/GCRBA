@@ -7,6 +7,7 @@ namespace GCRBA.Models {
 	public class LocationList {
 		public Models.NewLocation[] lstLocations = new Models.NewLocation[100];
 		public ActionTypes ActionType = ActionTypes.NoType;
+		public int  isMember { get; set; }
 
 		public LocationList.ActionTypes StoreNewLocation(List<Models.CategoryItem>[] categories, List<Models.Days>[] LocationHours, List<Models.SocialMedia>[] socialMedias, List<Models.Website>[] websites, List<Models.ContactPerson>[] contacts) {
 

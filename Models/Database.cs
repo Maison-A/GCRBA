@@ -1163,30 +1163,24 @@ namespace GCRBA.Models
 
 		public LocationList.ActionTypes InsertLocationHours(LocationList locList, List<Models.Days>[] LocationHours)
 		{
-			int i = 0;
-			do
-			{
-				try
-				{
-					int[] arrReturnValue = new int[] { 1 };
-					List<int> ls = arrReturnValue.ToList();
-
-					foreach (Models.Days item in LocationHours[i])
-					{
+			try { 
+				int i = 0;
+				int[] arrReturnValue = new int[] { 1 };
+				List<int> ls = arrReturnValue.ToList();
+				do {
+					foreach (Models.Days item in LocationHours[i]) {
 
 						SqlConnection cn = null;
 						if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
 						SqlCommand cm = new SqlCommand("INSERT_LOCATIONHOURS", cn);
 
-						if (item.strOpenTime != string.Empty)
-						{
+						if (item.strOpenTime != string.Empty) {
 							item.dtOpenTime = Convert.ToDateTime(item.strOpenTime);
 							item.strOpenTime = item.dtOpenTime.ToShortTimeString();
 						}
 						else item.strOpenTime = "Closed";
 
-						if (item.strClosedTime != string.Empty)
-						{
+						if (item.strClosedTime != string.Empty) {
 							item.dtClosedTime = Convert.ToDateTime(item.strClosedTime);
 							item.strClosedTime = item.dtClosedTime.ToShortTimeString();
 						}
@@ -1207,22 +1201,24 @@ namespace GCRBA.Models
 						CloseDBConnection(ref cn);
 					}
 					i += 1;
-					/*
-					arrReturnValue = ls.ToArray();
-					foreach (int item in arrReturnValue) {
-						switch (item) {
-							case 1: // new user created
-								break;
-							default:
-								return LocationList.ActionTypes.Unknown;
-						}
-					}
-					return LocationList.ActionTypes.InsertSuccessful;
-					*/
 				}
-				catch (Exception ex) { throw new Exception(ex.Message); }
-			} while (locList.lstLocations[i] != null);
-			return LocationList.ActionTypes.InsertSuccessful;
+				while (LocationHours[i] != null);
+
+				/*
+				arrReturnValue = ls.ToArray();
+				foreach (int item in arrReturnValue) {
+					switch (item) {
+						case 1: // new user created
+							break;
+						default:
+							return LocationList.ActionTypes.Unknown;
+					}
+				}
+				return LocationList.ActionTypes.InsertSuccessful;
+				*/
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		return LocationList.ActionTypes.InsertSuccessful;
 		}
 
 		public LocationList.ActionTypes InsertSocialMedia(LocationList locList, List<Models.SocialMedia>[] socialMedias)

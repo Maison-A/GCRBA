@@ -231,7 +231,7 @@ namespace GCRBA.Controllers
 
     public class LocateFile {
         public string GetFilePath(int i) {
-            return HttpContext.Current.Server.MapPath("\\Views\\SendMailer\\CSV_Folder\\Bakery" + i.ToString() + ".csv");
+            return HttpContext.Current.Server.MapPath("\\CSV_Folder\\Bakery" + i.ToString() + ".csv");
         }
     }
 
