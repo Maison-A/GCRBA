@@ -220,15 +220,21 @@ namespace GCRBA.Controllers
             return View();
         }
 
-        public ActionResult Member()
-        {
+        public ActionResult Member() {
             Models.User user = new Models.User();
             user = user.GetUserSession();
-            if (user.IsAuthenticated)
-            {
+            if (user.IsAuthenticated) {
                 ViewBag.Name = user.FirstName + " " + user.LastName;
             }
             return View(user);
+        }
+
+        [HttpPost]
+        public ActionResult Member(FormCollection col) {
+            if (col["btnSubmit"] == "home") {
+                return RedirectToAction("Index", "Home");
+			}
+            return View();
         }
 
     }

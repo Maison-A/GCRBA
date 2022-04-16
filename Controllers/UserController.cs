@@ -12,13 +12,6 @@ namespace GCRBA.Controllers
     {
 
         /// TODO
-        /// - null is being returned when signing up for gcrba within:
-        ///     -- address
-        ///     -- city
-        ///     -- stateid
-        ///     -- zip
-        ///     -- phone
-        ///     need to determine what the issue is and make adjustements to sprocs as needed (if needed)
         /// - authenticated user data is not being updated when gcrba app submitted 
         /// - redirecting home after authentication removes home/index within url
         /// - no logout func
@@ -169,7 +162,7 @@ namespace GCRBA.Controllers
         {
             Models.User u = new Models.User(); 
             Models.Database db = new Models.Database();
-            u = u.GetUserSession();
+            //u = u.GetUserSession();
             u.lstStates = db.GetStates();
             return View(u);
         }
@@ -181,7 +174,7 @@ namespace GCRBA.Controllers
             {
                 // get current user session
                 Models.User user = new Models.User();
-                user = user.GetUserSession();
+                //user = user.GetUserSession();
                   
                 // contact info
                 user.FirstName = col["FirstName"];

@@ -179,7 +179,7 @@ namespace GCRBA.Views.Bakery {
         [HttpPost]
         public ActionResult AddNewLocation(FormCollection col) {
             try {
-                int index = 0;
+                int indexPopulated = 0;
                 List<string>[] arrLocInfo = new List<string>[10];
                 List<string>[] arrBizInfo = new List<string>[10];
                 List<Models.ContactPerson>[] arrContactInfo = new List<Models.ContactPerson>[10];
@@ -189,256 +189,244 @@ namespace GCRBA.Views.Bakery {
                 List<Models.Website>[] arrWebsites = new List<Models.Website>[10];
 
                 Models.LocationList locList = new Models.LocationList();
+                
+                for (int index = 0; index <= 99; index++) {
+                    if(col["lstLocations[" + index + "].LocationName"] != null) {
+                        //Add this information in case error and send back to view - company and state list need to be populated
+                        Models.NewLocation loc = new Models.NewLocation();
+                        Models.Database db = new Models.Database();
+                        loc.lstStates = db.GetStates();
+                        loc.lstCompanies = db.GetCompanies();
+                        Models.Company nonValue = new Models.Company { CompanyID = 0, Name = "Select Existing Company" };
+                        loc.lstCompanies.Add(nonValue);
 
-                do {
-                    //Add this information in case error and send back to view - company and state list need to be populated
-                    Models.NewLocation loc = new Models.NewLocation();
-                    Models.Database db = new Models.Database();
-                    loc.lstStates = db.GetStates();
-                    loc.lstCompanies = db.GetCompanies();
-                    Models.Company nonValue = new Models.Company { CompanyID = 0, Name = "Select Existing Company" };
-                    loc.lstCompanies.Add(nonValue);
+                        //Check to see if preselected dropdown was selected
+                        if (Convert.ToInt64(col["lstLocations[0].lngCompanyID"]) != 0) {
+                            loc.lngCompanyID = Convert.ToInt64(col["lstLocations[0].lngCompanyID"]);
+                        }
 
-                    //Check to see if preselected dropdown was selected
-                    if (Convert.ToInt64(col["lstLocations[0].lngCompanyID"]) != 0) {
-                        loc.lngCompanyID = Convert.ToInt64(col["lstLocations[0].lngCompanyID"]);
-                    }
+                        loc.CompanyName = col["lstLocations[0].CompanyName"];
+                        loc.LocationName = col["lstLocations[" + index + "].LocationName"];
+                        loc.StreetAddress = col["lstLocations[" + index + "].StreetAddress"];
+                        loc.City = col["lstLocations[" + index + "].City"];
+                        loc.intState = Convert.ToInt16(col["lstLocations[" + index + "].intState"]);
+                        loc.Zip = col["lstLocations[" + index + "].Zip"];
 
-                    loc.CompanyName = col["lstLocations[0].CompanyName"];
-                    loc.LocationName = col["lstLocations[" + index + "].LocationName"];
-                    loc.StreetAddress = col["lstLocations[" + index + "].StreetAddress"];
-                    loc.City = col["lstLocations[" + index + "].City"];
-                    loc.intState = Convert.ToInt16(col["lstLocations[" + index + "].intState"]);
-                    loc.Zip = col["lstLocations[" + index + "].Zip"];
-                    
-                    //Hours of Operation
-                    if (col["lstLocations[" + index + "].Sunday.blnOperational"] == null) loc.Sunday = new Models.Days() { strDay = "Sunday", intDayID = 1, blnOperational = false, strOpenTime = col["lstLocations[" + index + "].Sunday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Sunday.strClosedTime"] };
-                    else loc.Sunday = new Models.Days() { strDay = "Sunday", intDayID = 1, blnOperational = Convert.ToBoolean(col["lstLocations[" + index + "].Sunday.blnOperational"].Split(',')[0]), strOpenTime = col["lstLocations[" + index + "].Sunday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Sunday.strClosedTime"] };
-                    
-                    if (col["lstLocations[" + index + "].Monday.blnOperational"] == null) loc.Monday = new Models.Days() { strDay = "Monday", intDayID = 2, blnOperational = false, strOpenTime = col["lstLocations[" + index + "].Monday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Monday.strClosedTime"] };
-                    else loc.Monday = new Models.Days() { strDay = "Monday", intDayID = 2, blnOperational = Convert.ToBoolean(col["lstLocations[" + index + "].Monday.blnOperational"].Split(',')[0]), strOpenTime = col["lstLocations[" + index + "].Monday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Monday.strClosedTime"] };
+                        //Hours of Operation
+                        if (col["lstLocations[" + index + "].Sunday.blnOperational"] == null) loc.Sunday = new Models.Days() { strDay = "Sunday", intDayID = 1, blnOperational = false, strOpenTime = col["lstLocations[" + index + "].Sunday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Sunday.strClosedTime"] };
+                        else loc.Sunday = new Models.Days() { strDay = "Sunday", intDayID = 1, blnOperational = Convert.ToBoolean(col["lstLocations[" + index + "].Sunday.blnOperational"].Split(',')[0]), strOpenTime = col["lstLocations[" + index + "].Sunday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Sunday.strClosedTime"] };
 
-                    if (col["lstLocations[" + index + "].Tuesday.blnOperational"] == null) loc.Tuesday = new Models.Days() { strDay = "Tuesday", intDayID = 3, blnOperational = false, strOpenTime = col["lstLocations[" + index + "].Tuesday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Tuesday.strClosedTime"] };
-                    else loc.Tuesday = new Models.Days() { strDay = "Tuesday", intDayID = 3, blnOperational = Convert.ToBoolean(col["lstLocations[" + index + "].Tuesday.blnOperational"].Split(',')[0]), strOpenTime = col["lstLocations[" + index + "].Tuesday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Tuesday.strClosedTime"] };
-                    
-                    if (col["lstLocations[" + index + "].Wednesday.blnOperational"] == null) loc.Wednesday = new Models.Days() { strDay = "Wednesday", intDayID = 4, blnOperational = false, strOpenTime = col["lstLocations[" + index + "].Wednesday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Wednesday.strClosedTime"] };
-                    else loc.Wednesday = new Models.Days() { strDay = "Wednesday", intDayID = 4, blnOperational = Convert.ToBoolean(col["lstLocations[" + index + "].Wednesday.blnOperational"].Split(',')[0]), strOpenTime = col["lstLocations[" + index + "].Wednesday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Wednesday.strClosedTime"] };
-                    
-                    if (col["lstLocations[" + index + "].Thursday.blnOperational"] == null) loc.Thursday = new Models.Days() { strDay = "Thursday", intDayID = 5, blnOperational = false, strOpenTime = col["lstLocations[" + index + "].Thursday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Thursday.strClosedTime"] };
-                    else loc.Thursday = new Models.Days() { strDay = "Thursday", intDayID = 5, blnOperational = Convert.ToBoolean(col["lstLocations[" + index + "].Thursday.blnOperational"].Split(',')[0]), strOpenTime = col["lstLocations[" + index + "].Thursday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Thursday.strClosedTime"] };
-                    
-                    if (col["lstLocations[" + index + "].Friday.blnOperational"] == null) loc.Friday = new Models.Days() { strDay = "Friday", intDayID = 6, blnOperational = false, strOpenTime = col["lstLocations[" + index + "].Friday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Friday.strClosedTime"] };
-                    else loc.Friday = new Models.Days() { strDay = "Friday", intDayID = 6, blnOperational = Convert.ToBoolean(col["lstLocations[" + index + "].Friday.blnOperational"].Split(',')[0]), strOpenTime = col["lstLocations[" + index + "].Friday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Friday.strClosedTime"] };
-                    
-                    if (col["lstLocations[" + index + "].Saturday.blnOperational"] == null) loc.Saturday = new Models.Days() { strDay = "Saturday", intDayID = 7, blnOperational = false, strOpenTime = col["lstLocations[" + index + "].Saturday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Saturday.strClosedTime"] };
-                    else loc.Saturday = new Models.Days() { strDay = "Saturday", intDayID = 7, blnOperational = Convert.ToBoolean(col["lstLocations[" + index + "].Saturday.blnOperational"].Split(',')[0]), strOpenTime = col["lstLocations[" + index + "].Saturday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Saturday.strClosedTime"] };
+                        if (col["lstLocations[" + index + "].Monday.blnOperational"] == null) loc.Monday = new Models.Days() { strDay = "Monday", intDayID = 2, blnOperational = false, strOpenTime = col["lstLocations[" + index + "].Monday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Monday.strClosedTime"] };
+                        else loc.Monday = new Models.Days() { strDay = "Monday", intDayID = 2, blnOperational = Convert.ToBoolean(col["lstLocations[" + index + "].Monday.blnOperational"].Split(',')[0]), strOpenTime = col["lstLocations[" + index + "].Monday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Monday.strClosedTime"] };
 
+                        if (col["lstLocations[" + index + "].Tuesday.blnOperational"] == null) loc.Tuesday = new Models.Days() { strDay = "Tuesday", intDayID = 3, blnOperational = false, strOpenTime = col["lstLocations[" + index + "].Tuesday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Tuesday.strClosedTime"] };
+                        else loc.Tuesday = new Models.Days() { strDay = "Tuesday", intDayID = 3, blnOperational = Convert.ToBoolean(col["lstLocations[" + index + "].Tuesday.blnOperational"].Split(',')[0]), strOpenTime = col["lstLocations[" + index + "].Tuesday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Tuesday.strClosedTime"] };
 
+                        if (col["lstLocations[" + index + "].Wednesday.blnOperational"] == null) loc.Wednesday = new Models.Days() { strDay = "Wednesday", intDayID = 4, blnOperational = false, strOpenTime = col["lstLocations[" + index + "].Wednesday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Wednesday.strClosedTime"] };
+                        else loc.Wednesday = new Models.Days() { strDay = "Wednesday", intDayID = 4, blnOperational = Convert.ToBoolean(col["lstLocations[" + index + "].Wednesday.blnOperational"].Split(',')[0]), strOpenTime = col["lstLocations[" + index + "].Wednesday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Wednesday.strClosedTime"] };
 
-                    //Product Categories
-                    if (col["lstLocations[" + index + "].Donuts.blnAvailable"] == null) loc.Donuts = new Models.CategoryItem() { ItemID = 1, ItemDesc = "Donuts", blnAvailable = false };
-                    else loc.Donuts = new Models.CategoryItem() { ItemID = 1, ItemDesc = "Donuts", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Donuts.blnAvailable"].Split(',')[0]) };
+                        if (col["lstLocations[" + index + "].Thursday.blnOperational"] == null) loc.Thursday = new Models.Days() { strDay = "Thursday", intDayID = 5, blnOperational = false, strOpenTime = col["lstLocations[" + index + "].Thursday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Thursday.strClosedTime"] };
+                        else loc.Thursday = new Models.Days() { strDay = "Thursday", intDayID = 5, blnOperational = Convert.ToBoolean(col["lstLocations[" + index + "].Thursday.blnOperational"].Split(',')[0]), strOpenTime = col["lstLocations[" + index + "].Thursday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Thursday.strClosedTime"] };
 
-                    if (col["lstLocations[" + index + "].Bagels.blnAvailable"] == null) loc.Bagels = new Models.CategoryItem() { ItemID = 2, ItemDesc = "Bagels", blnAvailable = false };
-                    else loc.Bagels = new Models.CategoryItem() { ItemID = 2, ItemDesc = "Bagels", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Bagels.blnAvailable"].Split(',')[0]) };
+                        if (col["lstLocations[" + index + "].Friday.blnOperational"] == null) loc.Friday = new Models.Days() { strDay = "Friday", intDayID = 6, blnOperational = false, strOpenTime = col["lstLocations[" + index + "].Friday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Friday.strClosedTime"] };
+                        else loc.Friday = new Models.Days() { strDay = "Friday", intDayID = 6, blnOperational = Convert.ToBoolean(col["lstLocations[" + index + "].Friday.blnOperational"].Split(',')[0]), strOpenTime = col["lstLocations[" + index + "].Friday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Friday.strClosedTime"] };
 
-                    if (col["lstLocations[" + index + "].Muffins.blnAvailable"] == null) loc.Muffins = new Models.CategoryItem() { ItemID = 3, ItemDesc = "Muffins", blnAvailable = false };
-                    else loc.Muffins = new Models.CategoryItem() { ItemID = 3, ItemDesc = "Muffins", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Muffins.blnAvailable"].Split(',')[0]) };
+                        if (col["lstLocations[" + index + "].Saturday.blnOperational"] == null) loc.Saturday = new Models.Days() { strDay = "Saturday", intDayID = 7, blnOperational = false, strOpenTime = col["lstLocations[" + index + "].Saturday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Saturday.strClosedTime"] };
+                        else loc.Saturday = new Models.Days() { strDay = "Saturday", intDayID = 7, blnOperational = Convert.ToBoolean(col["lstLocations[" + index + "].Saturday.blnOperational"].Split(',')[0]), strOpenTime = col["lstLocations[" + index + "].Saturday.strOpenTime"], strClosedTime = col["lstLocations[" + index + "].Saturday.strClosedTime"] };
 
-                    if (col["lstLocations[" + index + "].IceCream.blnAvailable"] == null) loc.IceCream = new Models.CategoryItem() { ItemID = 4, ItemDesc = "IceCream", blnAvailable = false };
-                    else loc.IceCream = new Models.CategoryItem() { ItemID = 4, ItemDesc = "Ice Cream", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].IceCream.blnAvailable"].Split(',')[0]) };
+                        //Product Categories
+                        if (col["lstLocations[" + index + "].Donuts.blnAvailable"] == null) loc.Donuts = new Models.CategoryItem() { ItemID = 1, ItemDesc = "Donuts", blnAvailable = false };
+                        else loc.Donuts = new Models.CategoryItem() { ItemID = 1, ItemDesc = "Donuts", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Donuts.blnAvailable"].Split(',')[0]) };
 
-                    if (col["lstLocations[" + index + "].FineCandies.blnAvailable"] == null) loc.FineCandies = new Models.CategoryItem() { ItemID = 5, ItemDesc = "FineCandies", blnAvailable = false };
-                    else loc.FineCandies = new Models.CategoryItem() { ItemID = 5, ItemDesc = "Fine Candies & Chocolates", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].FineCandies.blnAvailable"].Split(',')[0]) };
+                        if (col["lstLocations[" + index + "].Bagels.blnAvailable"] == null) loc.Bagels = new Models.CategoryItem() { ItemID = 2, ItemDesc = "Bagels", blnAvailable = false };
+                        else loc.Bagels = new Models.CategoryItem() { ItemID = 2, ItemDesc = "Bagels", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Bagels.blnAvailable"].Split(',')[0]) };
 
-                    if (col["lstLocations[" + index + "].WeddingCakes.blnAvailable"] == null) loc.WeddingCakes = new Models.CategoryItem() { ItemID = 6, ItemDesc = "WeddingCakes", blnAvailable = false };
-                    else loc.WeddingCakes = new Models.CategoryItem() { ItemID = 6, ItemDesc = "Wedding Cakes", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].WeddingCakes.blnAvailable"].Split(',')[0]) };
+                        if (col["lstLocations[" + index + "].Muffins.blnAvailable"] == null) loc.Muffins = new Models.CategoryItem() { ItemID = 3, ItemDesc = "Muffins", blnAvailable = false };
+                        else loc.Muffins = new Models.CategoryItem() { ItemID = 3, ItemDesc = "Muffins", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Muffins.blnAvailable"].Split(',')[0]) };
 
-                    if (col["lstLocations[" + index + "].Breads.blnAvailable"] == null) loc.Breads = new Models.CategoryItem() { ItemID = 7, ItemDesc = "Breads", blnAvailable = false };
-                    else loc.Breads = new Models.CategoryItem() { ItemID = 7, ItemDesc = "Breads", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Breads.blnAvailable"].Split(',')[0]) };
+                        if (col["lstLocations[" + index + "].IceCream.blnAvailable"] == null) loc.IceCream = new Models.CategoryItem() { ItemID = 4, ItemDesc = "IceCream", blnAvailable = false };
+                        else loc.IceCream = new Models.CategoryItem() { ItemID = 4, ItemDesc = "Ice Cream", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].IceCream.blnAvailable"].Split(',')[0]) };
 
-                    if (col["lstLocations[" + index + "].DecoratedCakes.blnAvailable"] == null) loc.DecoratedCakes = new Models.CategoryItem() { ItemID = 8, ItemDesc = "DecoratedCakes", blnAvailable = false };
-                    else loc.DecoratedCakes = new Models.CategoryItem() { ItemID = 8, ItemDesc = "Decorated Cakes", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].DecoratedCakes.blnAvailable"].Split(',')[0]) };
+                        if (col["lstLocations[" + index + "].FineCandies.blnAvailable"] == null) loc.FineCandies = new Models.CategoryItem() { ItemID = 5, ItemDesc = "FineCandies", blnAvailable = false };
+                        else loc.FineCandies = new Models.CategoryItem() { ItemID = 5, ItemDesc = "Fine Candies & Chocolates", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].FineCandies.blnAvailable"].Split(',')[0]) };
 
-                    if (col["lstLocations[" + index + "].Cupcakes.blnAvailable"] == null) loc.Cupcakes = new Models.CategoryItem() { ItemID = 9, ItemDesc = "Cupcakes", blnAvailable = false };
-                    else loc.Cupcakes = new Models.CategoryItem() { ItemID = 9, ItemDesc = "Cupcakes", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Cupcakes.blnAvailable"].Split(',')[0]) };
+                        if (col["lstLocations[" + index + "].WeddingCakes.blnAvailable"] == null) loc.WeddingCakes = new Models.CategoryItem() { ItemID = 6, ItemDesc = "WeddingCakes", blnAvailable = false };
+                        else loc.WeddingCakes = new Models.CategoryItem() { ItemID = 6, ItemDesc = "Wedding Cakes", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].WeddingCakes.blnAvailable"].Split(',')[0]) };
 
-                    if (col["lstLocations[" + index + "].Cookies.blnAvailable"] == null) loc.Cookies = new Models.CategoryItem() { ItemID = 10, ItemDesc = "Cookies", blnAvailable = false };
-                    else loc.Cookies = new Models.CategoryItem() { ItemID = 10, ItemDesc = "Cookies", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Cookies.blnAvailable"].Split(',')[0]) };
+                        if (col["lstLocations[" + index + "].Breads.blnAvailable"] == null) loc.Breads = new Models.CategoryItem() { ItemID = 7, ItemDesc = "Breads", blnAvailable = false };
+                        else loc.Breads = new Models.CategoryItem() { ItemID = 7, ItemDesc = "Breads", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Breads.blnAvailable"].Split(',')[0]) };
 
-                    if (col["lstLocations[" + index + "].Desserts.blnAvailable"] == null) loc.Desserts = new Models.CategoryItem() { ItemID = 11, ItemDesc = "Desserts", blnAvailable = false };
-                    else loc.Desserts = new Models.CategoryItem() { ItemID = 11, ItemDesc = "Desserts/Tortes", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Desserts.blnAvailable"].Split(',')[0]) };
+                        if (col["lstLocations[" + index + "].DecoratedCakes.blnAvailable"] == null) loc.DecoratedCakes = new Models.CategoryItem() { ItemID = 8, ItemDesc = "DecoratedCakes", blnAvailable = false };
+                        else loc.DecoratedCakes = new Models.CategoryItem() { ItemID = 8, ItemDesc = "Decorated Cakes", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].DecoratedCakes.blnAvailable"].Split(',')[0]) };
 
-                    if (col["lstLocations[" + index + "].Full.blnAvailable"] == null) loc.Full = new Models.CategoryItem() { ItemID = 12, ItemDesc = "Full", blnAvailable = false };
-                    else loc.Full = new Models.CategoryItem() { ItemID = 12, ItemDesc = "Full-line Bakery", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Full.blnAvailable"].Split(',')[0]) };
+                        if (col["lstLocations[" + index + "].Cupcakes.blnAvailable"] == null) loc.Cupcakes = new Models.CategoryItem() { ItemID = 9, ItemDesc = "Cupcakes", blnAvailable = false };
+                        else loc.Cupcakes = new Models.CategoryItem() { ItemID = 9, ItemDesc = "Cupcakes", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Cupcakes.blnAvailable"].Split(',')[0]) };
 
-                    if (col["lstLocations[" + index + "].Deli.blnAvailable"] == null) loc.Deli = new Models.CategoryItem() { ItemID = 13, ItemDesc = "Deli", blnAvailable = false };
-                    else loc.Deli = new Models.CategoryItem() { ItemID = 13, ItemDesc = "Deli/Catering", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Deli.blnAvailable"].Split(',')[0]) };
+                        if (col["lstLocations[" + index + "].Cookies.blnAvailable"] == null) loc.Cookies = new Models.CategoryItem() { ItemID = 10, ItemDesc = "Cookies", blnAvailable = false };
+                        else loc.Cookies = new Models.CategoryItem() { ItemID = 10, ItemDesc = "Cookies", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Cookies.blnAvailable"].Split(',')[0]) };
 
-                    if (col["lstLocations[" + index + "].Other.blnAvailable"] == null) loc.Other = new Models.CategoryItem() { ItemID = 14, ItemDesc = "Other", blnAvailable = false };
-                    else loc.Other = new Models.CategoryItem() { ItemID = 14, ItemDesc = "Other Carryout Deli", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Other.blnAvailable"].Split(',')[0]) };
+                        if (col["lstLocations[" + index + "].Desserts.blnAvailable"] == null) loc.Desserts = new Models.CategoryItem() { ItemID = 11, ItemDesc = "Desserts", blnAvailable = false };
+                        else loc.Desserts = new Models.CategoryItem() { ItemID = 11, ItemDesc = "Desserts/Tortes", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Desserts.blnAvailable"].Split(',')[0]) };
 
-                    if (col["lstLocations[" + index + "].Wholesale.blnAvailable"] == null) loc.Wholesale = new Models.CategoryItem() { ItemID = 15, ItemDesc = "Wholesale", blnAvailable = false };
-                    else loc.Wholesale = new Models.CategoryItem() { ItemID = 15, ItemDesc = "Wholesale", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Wholesale.blnAvailable"].Split(',')[0]) };
+                        if (col["lstLocations[" + index + "].Full.blnAvailable"] == null) loc.Full = new Models.CategoryItem() { ItemID = 12, ItemDesc = "Full", blnAvailable = false };
+                        else loc.Full = new Models.CategoryItem() { ItemID = 12, ItemDesc = "Full-line Bakery", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Full.blnAvailable"].Split(',')[0]) };
 
-                    if (col["lstLocations[" + index + "].Delivery.blnAvailable"] == null) loc.Delivery = new Models.CategoryItem() { ItemID = 16, ItemDesc = "Delivery", blnAvailable = false };
-                    else loc.Delivery = new Models.CategoryItem() { ItemID = 16, ItemDesc = "Delivery (3rd Party)", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Delivery.blnAvailable"].Split(',')[0]) };
+                        if (col["lstLocations[" + index + "].Deli.blnAvailable"] == null) loc.Deli = new Models.CategoryItem() { ItemID = 13, ItemDesc = "Deli", blnAvailable = false };
+                        else loc.Deli = new Models.CategoryItem() { ItemID = 13, ItemDesc = "Deli/Catering", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Deli.blnAvailable"].Split(',')[0]) };
 
-                    if (col["lstLocations[" + index + "].Shipping.blnAvailable"] == null) loc.Shipping = new Models.CategoryItem() { ItemID = 17, ItemDesc = "Shipping", blnAvailable = false };
-                    else loc.Shipping = new Models.CategoryItem() { ItemID = 17, ItemDesc = "Shipping", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Shipping.blnAvailable"].Split(',')[0]) };
+                        if (col["lstLocations[" + index + "].Other.blnAvailable"] == null) loc.Other = new Models.CategoryItem() { ItemID = 14, ItemDesc = "Other", blnAvailable = false };
+                        else loc.Other = new Models.CategoryItem() { ItemID = 14, ItemDesc = "Other Carryout Deli", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Other.blnAvailable"].Split(',')[0]) };
 
-                    if (col["lstLocations[" + index + "].Online.blnAvailable"] == null) loc.Online = new Models.CategoryItem() { ItemID = 18, ItemDesc = "Online", blnAvailable = false };
-                    else loc.Online = new Models.CategoryItem() { ItemID = 18, ItemDesc = "Online Ordering", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Online.blnAvailable"].Split(',')[0]) };
+                        if (col["lstLocations[" + index + "].Wholesale.blnAvailable"] == null) loc.Wholesale = new Models.CategoryItem() { ItemID = 15, ItemDesc = "Wholesale", blnAvailable = false };
+                        else loc.Wholesale = new Models.CategoryItem() { ItemID = 15, ItemDesc = "Wholesale", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Wholesale.blnAvailable"].Split(',')[0]) };
 
+                        if (col["lstLocations[" + index + "].Delivery.blnAvailable"] == null) loc.Delivery = new Models.CategoryItem() { ItemID = 16, ItemDesc = "Delivery", blnAvailable = false };
+                        else loc.Delivery = new Models.CategoryItem() { ItemID = 16, ItemDesc = "Delivery (3rd Party)", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Delivery.blnAvailable"].Split(',')[0]) };
 
-                    //Business Contact Information
-                    loc.BusinessPhone = new Models.PhoneNumber();
-                    loc.BusinessPhone.AreaCode = col["lstLocations[" + index + "].BusinessPhone.AreaCode"];
-                    loc.BusinessPhone.Prefix = col["lstLocations[" + index + "].BusinessPhone.Prefix"];
-                    loc.BusinessPhone.Suffix = col["lstLocations[" + index + "].BusinessPhone.Suffix"];
-                    loc.BusinessEmail = col["lstLocations[" + index + "].BusinessEmail"];
+                        if (col["lstLocations[" + index + "].Shipping.blnAvailable"] == null) loc.Shipping = new Models.CategoryItem() { ItemID = 17, ItemDesc = "Shipping", blnAvailable = false };
+                        else loc.Shipping = new Models.CategoryItem() { ItemID = 17, ItemDesc = "Shipping", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Shipping.blnAvailable"].Split(',')[0]) };
 
-                    //Member Only Variables
-                    //Contact Person Information
-                    loc.LocationContact = new Models.ContactPerson();
-                    loc.LocationContact.strContactFirstName = col["lstLocations[" + index + "].LocationContact.strContactFirstName"];
-                    loc.LocationContact.strContactLastName = col["lstLocations[" + index + "].LocationContact.strContactLastName"];
-                    loc.LocationContact.contactPhone = new Models.PhoneNumber();
-                    loc.LocationContact.contactPhone.AreaCode = col["lstLocations[" + index + "].LocationContact.contactPhone.AreaCode"];
-                    loc.LocationContact.contactPhone.Prefix = col["lstLocations[" + index + "].LocationContact.contactPhone.Prefix"];
-                    loc.LocationContact.contactPhone.Suffix = col["lstLocations[" + index + "].LocationContact.contactPhone.Suffix"];
-                    loc.LocationContact.strContactEmail = col["lstLocations[" + index + "].LocationContact.strContactEmail"];
-                    loc.LocationContact.intContactTypeID = 1;
+                        if (col["lstLocations[" + index + "].Online.blnAvailable"] == null) loc.Online = new Models.CategoryItem() { ItemID = 18, ItemDesc = "Online", blnAvailable = false };
+                        else loc.Online = new Models.CategoryItem() { ItemID = 18, ItemDesc = "Online Ordering", blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Online.blnAvailable"].Split(',')[0]) };
 
-                    //Web Admin contact information
-                    loc.WebAdmin = new Models.ContactPerson();
-                    loc.WebAdmin.strContactFirstName = col["lstLocations[" + index + "].WebAdmin.strContactFirstName"];
-                    loc.WebAdmin.strContactLastName = col["lstLocations[" + index + "].WebAdmin.strContactLastName"];
-                    loc.WebAdmin.contactPhone = new Models.PhoneNumber();
-                    loc.WebAdmin.contactPhone.AreaCode = col["lstLocations[" + index + "].WebAdmin.contactPhone.AreaCode"];
-                    loc.WebAdmin.contactPhone.Prefix = col["lstLocations[" + index + "].WebAdmin.contactPhone.Prefix"];
-                    loc.WebAdmin.contactPhone.Suffix = col["lstLocations[" + index + "].WebAdmin.contactPhone.Suffix"];
-                    loc.WebAdmin.strContactEmail = col["lstLocations[" + index + "].WebAdmin.strContactEmail"];
-                    loc.WebAdmin.intContactTypeID = 2;
+                        //Business Contact Information
+                        loc.BusinessPhone = new Models.PhoneNumber();
+                        loc.BusinessPhone.AreaCode = col["lstLocations[" + index + "].BusinessPhone.AreaCode"];
+                        loc.BusinessPhone.Prefix = col["lstLocations[" + index + "].BusinessPhone.Prefix"];
+                        loc.BusinessPhone.Suffix = col["lstLocations[" + index + "].BusinessPhone.Suffix"];
+                        loc.BusinessEmail = col["lstLocations[" + index + "].BusinessEmail"];
 
-                    //Customer Service Contact Information
-                    loc.CustService = new Models.ContactPerson();
-                    loc.CustService.strContactFirstName = col["lstLocations[" + index + "].CustService.strContactFirstName"];
-                    loc.CustService.strContactLastName = col["lstLocations[" + index + "].CustService.strContactLastName"];
-                    loc.CustService.contactPhone = new Models.PhoneNumber();
-                    loc.CustService.contactPhone.AreaCode = col["lstLocations[" + index + "].CustService.contactPhone.AreaCode"];
-                    loc.CustService.contactPhone.Prefix = col["lstLocations[" + index + "].CustService.contactPhone.Prefix"];
-                    loc.CustService.contactPhone.Suffix = col["lstLocations[" + index + "].CustService.contactPhone.Suffix"];
-                    loc.CustService.strContactEmail = col["lstLocations[" + index + "].CustService.strContactEmail"];
-                    loc.CustService.intContactTypeID = 3;
+                        //Member Only Variables
+                        //Contact Person Information
+                        loc.LocationContact = new Models.ContactPerson();
+                        loc.LocationContact.strContactFirstName = col["lstLocations[" + index + "].LocationContact.strContactFirstName"];
+                        loc.LocationContact.strContactLastName = col["lstLocations[" + index + "].LocationContact.strContactLastName"];
+                        loc.LocationContact.contactPhone = new Models.PhoneNumber();
+                        loc.LocationContact.contactPhone.AreaCode = col["lstLocations[" + index + "].LocationContact.contactPhone.AreaCode"];
+                        loc.LocationContact.contactPhone.Prefix = col["lstLocations[" + index + "].LocationContact.contactPhone.Prefix"];
+                        loc.LocationContact.contactPhone.Suffix = col["lstLocations[" + index + "].LocationContact.contactPhone.Suffix"];
+                        loc.LocationContact.strContactEmail = col["lstLocations[" + index + "].LocationContact.strContactEmail"];
+                        loc.LocationContact.intContactTypeID = 1;
 
-                    //Web Portal Information
-                    loc.MainWeb = new Models.Website();
-                    loc.MainWeb.intWebsiteTypeID = 1;
-                    loc.MainWeb.strURL = col["lstLocations[" + index + "].MainWeb.strURL"];
+                        //Web Admin contact information
+                        loc.WebAdmin = new Models.ContactPerson();
+                        loc.WebAdmin.strContactFirstName = col["lstLocations[" + index + "].WebAdmin.strContactFirstName"];
+                        loc.WebAdmin.strContactLastName = col["lstLocations[" + index + "].WebAdmin.strContactLastName"];
+                        loc.WebAdmin.contactPhone = new Models.PhoneNumber();
+                        loc.WebAdmin.contactPhone.AreaCode = col["lstLocations[" + index + "].WebAdmin.contactPhone.AreaCode"];
+                        loc.WebAdmin.contactPhone.Prefix = col["lstLocations[" + index + "].WebAdmin.contactPhone.Prefix"];
+                        loc.WebAdmin.contactPhone.Suffix = col["lstLocations[" + index + "].WebAdmin.contactPhone.Suffix"];
+                        loc.WebAdmin.strContactEmail = col["lstLocations[" + index + "].WebAdmin.strContactEmail"];
+                        loc.WebAdmin.intContactTypeID = 2;
 
-                    loc.OrderingWeb = new Models.Website();
-                    loc.OrderingWeb.intWebsiteTypeID = 2;
-                    loc.OrderingWeb.strURL = col["lstLocations[" + index + "].OrderingWeb.strURL"];
+                        //Customer Service Contact Information
+                        loc.CustService = new Models.ContactPerson();
+                        loc.CustService.strContactFirstName = col["lstLocations[" + index + "].CustService.strContactFirstName"];
+                        loc.CustService.strContactLastName = col["lstLocations[" + index + "].CustService.strContactLastName"];
+                        loc.CustService.contactPhone = new Models.PhoneNumber();
+                        loc.CustService.contactPhone.AreaCode = col["lstLocations[" + index + "].CustService.contactPhone.AreaCode"];
+                        loc.CustService.contactPhone.Prefix = col["lstLocations[" + index + "].CustService.contactPhone.Prefix"];
+                        loc.CustService.contactPhone.Suffix = col["lstLocations[" + index + "].CustService.contactPhone.Suffix"];
+                        loc.CustService.strContactEmail = col["lstLocations[" + index + "].CustService.strContactEmail"];
+                        loc.CustService.intContactTypeID = 3;
 
-                    loc.KettleWeb = new Models.Website();
-                    loc.KettleWeb.intWebsiteTypeID = 3;
-                    loc.KettleWeb.strURL = col["lstLocations[" + index + "].KettleWeb.strURL"];
+                        //Web Portal Information
+                        loc.MainWeb = new Models.Website();
+                        loc.MainWeb.intWebsiteTypeID = 1;
+                        loc.MainWeb.strURL = col["lstLocations[" + index + "].MainWeb.strURL"];
 
+                        loc.OrderingWeb = new Models.Website();
+                        loc.OrderingWeb.intWebsiteTypeID = 2;
+                        loc.OrderingWeb.strURL = col["lstLocations[" + index + "].OrderingWeb.strURL"];
 
+                        loc.KettleWeb = new Models.Website();
+                        loc.KettleWeb.intWebsiteTypeID = 3;
+                        loc.KettleWeb.strURL = col["lstLocations[" + index + "].KettleWeb.strURL"];
 
-                    //Social Media Information
-                    if(col["lstLocations[" + index + "].Facebook.blnAvailable"] == null) loc.Facebook = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].Facebook.strSocialMediaLink"], intSocialMediaID = 1, blnAvailable = false };
-                    else loc.Facebook = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].Facebook.strSocialMediaLink"], intSocialMediaID = 1, blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Facebook.blnAvailable"].Split(',')[0]) };
+                        //Social Media Information
+                        if (col["lstLocations[" + index + "].Facebook.blnAvailable"] == null) loc.Facebook = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].Facebook.strSocialMediaLink"], intSocialMediaID = 1, blnAvailable = false };
+                        else loc.Facebook = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].Facebook.strSocialMediaLink"], intSocialMediaID = 1, blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Facebook.blnAvailable"].Split(',')[0]) };
 
-                    if (col["lstLocations[" + index + "].Instagram.blnAvailable"] == null) loc.Instagram = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].Instagram.strSocialMediaLink"], intSocialMediaID = 2, blnAvailable = false };
-                    else loc.Instagram = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].Instagram.strSocialMediaLink"], intSocialMediaID = 2, blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Instagram.blnAvailable"].Split(',')[0]) };
+                        if (col["lstLocations[" + index + "].Instagram.blnAvailable"] == null) loc.Instagram = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].Instagram.strSocialMediaLink"], intSocialMediaID = 2, blnAvailable = false };
+                        else loc.Instagram = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].Instagram.strSocialMediaLink"], intSocialMediaID = 2, blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Instagram.blnAvailable"].Split(',')[0]) };
 
-                    if (col["lstLocations[" + index + "].Snapchat.blnAvailable"] == null) loc.Snapchat = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].Snapchat.strSocialMediaLink"], intSocialMediaID = 3, blnAvailable = false };
-                    else loc.Snapchat = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].Snapchat.strSocialMediaLink"], intSocialMediaID = 3, blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Snapchat.blnAvailable"].Split(',')[0]) };
+                        if (col["lstLocations[" + index + "].Snapchat.blnAvailable"] == null) loc.Snapchat = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].Snapchat.strSocialMediaLink"], intSocialMediaID = 3, blnAvailable = false };
+                        else loc.Snapchat = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].Snapchat.strSocialMediaLink"], intSocialMediaID = 3, blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Snapchat.blnAvailable"].Split(',')[0]) };
 
-                    if (col["lstLocations[" + index + "].TikTok.blnAvailable"] == null) loc.TikTok = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].TikTok.strSocialMediaLink"], intSocialMediaID = 4, blnAvailable = false };
-                    else loc.TikTok = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].TikTok.strSocialMediaLink"], intSocialMediaID = 4, blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].TikTok.blnAvailable"].Split(',')[0]) };
+                        if (col["lstLocations[" + index + "].TikTok.blnAvailable"] == null) loc.TikTok = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].TikTok.strSocialMediaLink"], intSocialMediaID = 4, blnAvailable = false };
+                        else loc.TikTok = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].TikTok.strSocialMediaLink"], intSocialMediaID = 4, blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].TikTok.blnAvailable"].Split(',')[0]) };
 
-                    if (col["lstLocations[" + index + "].Twitter.blnAvailable"] == null) loc.Twitter = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].Twitter.strSocialMediaLink"], intSocialMediaID = 5, blnAvailable = false };
-                    else loc.Twitter = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].Twitter.strSocialMediaLink"], intSocialMediaID = 5, blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Twitter.blnAvailable"].Split(',')[0]) };
+                        if (col["lstLocations[" + index + "].Twitter.blnAvailable"] == null) loc.Twitter = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].Twitter.strSocialMediaLink"], intSocialMediaID = 5, blnAvailable = false };
+                        else loc.Twitter = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].Twitter.strSocialMediaLink"], intSocialMediaID = 5, blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Twitter.blnAvailable"].Split(',')[0]) };
 
-                    if (col["lstLocations[" + index + "].Yelp.blnAvailable"] == null) loc.Yelp = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].Yelp.strSocialMediaLink"], intSocialMediaID = 6, blnAvailable = false };
-                    else loc.Yelp = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].Yelp.strSocialMediaLink"], intSocialMediaID = 6, blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Yelp.blnAvailable"].Split(',')[0]) };
+                        if (col["lstLocations[" + index + "].Yelp.blnAvailable"] == null) loc.Yelp = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].Yelp.strSocialMediaLink"], intSocialMediaID = 6, blnAvailable = false };
+                        else loc.Yelp = new Models.SocialMedia() { strSocialMediaLink = col["lstLocations[" + index + "].Yelp.strSocialMediaLink"], intSocialMediaID = 6, blnAvailable = Convert.ToBoolean(col["lstLocations[" + index + "].Yelp.blnAvailable"].Split(',')[0]) };
 
-                    //Extra Business Information
-                    loc.BizYear = col["lstLocations[" + index + "].BizYear"];
-                    loc.Bio = col["lstLocations[" + index + "].Bio"];
+                        //Extra Business Information
+                        loc.BizYear = col["lstLocations[" + index + "].BizYear"];
+                        loc.Bio = col["lstLocations[" + index + "].Bio"];
 
-                    if (loc.CompanyName.Length == 0 && loc.lngCompanyID == 0) {
-                        loc.ActionType = Models.NewLocation.ActionTypes.RequiredFieldsMissing;
-                        locList.lstLocations[index] = loc;
-                        return View(locList);
-                    }
+                        if (loc.CompanyName.Length == 0 && loc.lngCompanyID == 0) {
+                            loc.ActionType = Models.NewLocation.ActionTypes.RequiredFieldsMissing;
+                            locList.lstLocations[index] = loc;
+                            return View(locList);
+                        }
 
-                    if (loc.LocationName.Length == 0 || loc.StreetAddress.Length == 0 || loc.City.Length == 0 || loc.intState == 0 || loc.Zip.Length == 0) {
-                        loc.ActionType = Models.NewLocation.ActionTypes.RequiredFieldsMissing;
-                        locList.lstLocations[index] = loc;
-                        return View(locList);
-                    }
+                        if (loc.LocationName.Length == 0 || loc.StreetAddress.Length == 0 || loc.City.Length == 0 || loc.intState == 0 || loc.Zip.Length == 0) {
+                            loc.ActionType = Models.NewLocation.ActionTypes.RequiredFieldsMissing;
+                            locList.lstLocations[index] = loc;
+                            return View(locList);
+                        }
 
-
-
-
-
-
-
-
-                    //ADDRESS MOST IMPORTANT TO GEOCODE
-                    var location = new List<string>()
-                    {
+                        //ADDRESS MOST IMPORTANT TO GEOCODE
+                        var location = new List<string>()
+                        {
                         loc.LocationName, loc.StreetAddress + ' ' + loc.City + ' ' + loc.State + ' ' + loc.Zip
                     };
-                    arrLocInfo[index] = location;
+                        arrLocInfo[indexPopulated] = location;
 
-                    var businessInfo = new List<string>() {
+                        var businessInfo = new List<string>() {
                         loc.BusinessPhone.AreaCode + loc.BusinessPhone.Prefix + loc.BusinessPhone.Suffix,
                         loc.BusinessEmail,
                         loc.BizYear,
                         loc.Bio
                     };
-                    arrBizInfo[index] = businessInfo;
+                        arrBizInfo[indexPopulated] = businessInfo;
 
-                    var contacts = new List<Models.ContactPerson>()
-                    {
+                        var contacts = new List<Models.ContactPerson>()
+                        {
                         loc.LocationContact, loc.WebAdmin, loc.CustService
                     };
-                    arrContactInfo[index] = contacts;
+                        arrContactInfo[indexPopulated] = contacts;
 
-                    var socialmedia = new List<Models.SocialMedia>() {
+                        var socialmedia = new List<Models.SocialMedia>() {
                         loc.Facebook, loc.Twitter, loc.Instagram, loc.Snapchat, loc.TikTok, loc.Yelp
                     };
-                    arrSocialMediaInfo[index] = socialmedia;
+                        arrSocialMediaInfo[indexPopulated] = socialmedia;
 
-                    var categories = new List<Models.CategoryItem>()
-                    {
+                        var categories = new List<Models.CategoryItem>()
+                        {
                         loc.Donuts, loc.Bagels, loc.Muffins, loc.IceCream, loc.FineCandies, loc.WeddingCakes, loc.Breads, loc.DecoratedCakes, loc.Cupcakes, loc.Cookies, loc.Desserts, loc.Full,
                         loc.Deli, loc.Other, loc.Wholesale, loc.Delivery, loc.Shipping, loc.Online
                     };
-                    arrCategoryInfo[index] = categories;
+                        arrCategoryInfo[indexPopulated] = categories;
 
-                    var LocationHours = new List<Models.Days>()
-                    {
+                        var LocationHours = new List<Models.Days>()
+                        {
                         loc.Sunday, loc.Monday, loc.Tuesday, loc.Wednesday, loc.Thursday, loc.Friday, loc.Saturday
                     };
-                    arrLocHours[index] = LocationHours;
+                        arrLocHours[indexPopulated] = LocationHours;
 
-                    var Websites = new List<Models.Website>() {
+                        var Websites = new List<Models.Website>() {
                         loc.MainWeb, loc.OrderingWeb, loc.KettleWeb
                     };
-                    arrWebsites[index] = Websites;
+                        arrWebsites[indexPopulated] = Websites;
 
-                    //Store location inside list of locations
-                    locList.lstLocations[index] = loc;
-
-                    index += 1;
-
-                } while (col["lstLocations[" + index + "].LocationName"] != null);
+                        //Store location inside list of locations
+                        locList.lstLocations[indexPopulated] = loc;
+                        indexPopulated += 1;
+                    }
+				}
                 
 
                 if (col["btnSubmit"].ToString() == "SubmitLocation") {
