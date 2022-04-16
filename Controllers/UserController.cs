@@ -36,7 +36,7 @@ namespace GCRBA.Controllers
                 u.FirstName = col["FirstName"];
                 u.LastName = col["LastName"];
                 u.Email = col["Email"];
-                //u.UserID = col["UserID"];
+                //u.UID = col["UserID"];
                 u.Password = col["Password"];
 
                 if (u.FirstName.Length == 0 || u.LastName.Length == 0 || u.Email.Length == 0 || u.Password.Length == 0)

@@ -13,7 +13,7 @@ namespace GCRBA.Models
         public string Address { get; set; }
         public string City { get; set; }
         public string State { get; set; }
-        public short intState = 0;
+        public short intState { get; set; }
         public List<Models.State> lstStates = new List<Models.State>();
         public string Zip { get; set; }
         public string Phone { get; set; }
