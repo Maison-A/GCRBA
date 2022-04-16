@@ -13,7 +13,7 @@ namespace GCRBA.Models {
 				try {
 					Database db = new Database();
 					if (this.lstLocations[0].CompanyName != string.Empty) this.ActionType = db.InsertCompany(this);
-					//if (this.ActionType != ActionTypes.Unknown) this.ActionType = db.InsertLocations(this);
+					if (this.ActionType != ActionTypes.Unknown) this.ActionType = db.InsertLocations(this);
 					if (this.ActionType != ActionTypes.Unknown) this.ActionType = db.InsertLocationHours(this, LocationHours);
 					if (this.ActionType != ActionTypes.Unknown) this.ActionType = db.InsertSpecialties(this, categories);
 					if (this.ActionType != ActionTypes.Unknown) this.ActionType = db.InsertSocialMedia(this, socialMedias);
