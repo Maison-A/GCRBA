@@ -96,60 +96,68 @@ namespace GCRBA.Controllers
                 u.Email = col["Email"];
                 u.Username = col["Username"];
                 u.Password = col["Password"];
+                
+                // permissions control
                 u.isMember = 0;
                 u.isAdmin = 0;
 
-                // make sure none of the fields are empty
-                if (u.FirstName.Length == 0 || u.LastName.Length == 0 || u.Email.Length == 0 || u.Username.Length == 0
-                       || u.Password.Length == 0)
+                // some blank values to return to db
+                u.Address = "";
+                u.City = "";
+                u.State = "";
+                u.Zip = "";
+                u.Phone = "";
+                u.MemberShipType = "";
+
+                // submit new user button pressed
+                if (col["btnSubmit"].ToString() == "newuser")
                 {
-                    // empty field(s), access action type on view to display relevant error message
-                    u.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
-                    return View(u);
-                }
-
-
-                // send data if valid to db
-                else
-                {
-                    // submit new user button pressed
-                    if (col["btnSubmit"].ToString() == "newuser")
+                    // initialize action type
+                    Models.User.ActionTypes at = Models.User.ActionTypes.NoType;
+                       
+                    // make sure none of the fields are empty
+                    if (u.FirstName.Length == 0 || u.LastName.Length == 0 || u.Email.Length == 0 || u.Username.Length == 0
+                            || u.Password.Length == 0)
                     {
-                        // initialize action type
-                        Models.User.ActionTypes at = Models.User.ActionTypes.NoType;
-
-                        // create database object 
-                        Database db = new Database();
-
-                        // save action type based on what Save() returns 
-                        at = u.Save();
-
-                        switch (at)
-                        {
-                            // insert successful
-                            // save user session so they are logged in 
-                            // redirect to interface based on member/nonmember
-                            case Models.User.ActionTypes.InsertSuccessful:
-                                u.SaveUserSession();
-                                // check to see if user is a member or not 
-                                db.IsUserMember(u);
-                                if (u.isMember == 0)
-                                {
-                                    return RedirectToAction("NonMember", "Profile");
-                                }
-                                else
-                                {
-                                    return RedirectToAction("Member", "Profile");
-                                }
-                            default:
-                                return View(u);
-                        }
-                    }
-                    else
-                    {
+                        // empty field(s), access action type on view to display relevant error message
+                        u.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
                         return View(u);
                     }
+
+                    // create database object 
+                    Database db = new Database();
+
+                    // save action type based on what Save() returns 
+                    at = u.Save();
+
+                    switch (at)
+                    {
+                        // insert successful
+                        // save user session so they are logged in 
+                        // redirect to interface based on member/nonmember
+                        case Models.User.ActionTypes.InsertSuccessful:
+                            u.SaveUserSession();
+                            // check to see if user is a member or not 
+                            db.IsUserMember(u);
+                            if (u.isMember == 0)
+                            {
+                                return RedirectToAction("NonMember", "Profile");
+                            }
+                            else
+                            {
+                                return RedirectToAction("Member", "Profile");
+                            }
+                        default:
+                            return View(u);
+                    }
                 }
+
+                if (col["btnSubmit"].ToString() == "home")
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                return View(u);
+                
             }
             catch (Exception)
             {
@@ -209,7 +217,7 @@ namespace GCRBA.Controllers
 
 
                 // once submit is hit, process member data
-                if (col["btnSubmit"] == "submit")
+                if (col["btnSubmit"].ToString() == "submit")
                 {
                     //validate data
                     if (user.FirstName.Length == 0 || user.LastName.Length == 0 || user.Email.Length == 0 ||
@@ -258,7 +266,7 @@ namespace GCRBA.Controllers
                         }
                     }
                 }
-                if (col["btnSubmit"] == "home")
+                if (col["btnSubmit"].ToString() == "home")
                 {
                     return RedirectToAction("Index", "Home");
                 }
