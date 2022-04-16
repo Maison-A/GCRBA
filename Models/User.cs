@@ -7,7 +7,7 @@ namespace GCRBA.Models
 {
     public class User
     {
-        public int UID = 3; //{ get; set; }
+        public int UID { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Address { get; set; }
