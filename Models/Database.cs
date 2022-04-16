@@ -841,7 +841,7 @@ namespace GCRBA.Models
 				SqlConnection cn = new SqlConnection();
 				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
 				SqlDataAdapter da = new SqlDataAdapter("SELECT_USERLOCATION_ASSOCIATION", cn);
-				Models.NewLocation loc = new Models.NewLocation();
+				
 
 				da.SelectCommand.CommandType = CommandType.StoredProcedure;
 
@@ -856,12 +856,13 @@ namespace GCRBA.Models
 
 				if (ds.Tables[0].Rows.Count != 0) {
 					foreach (DataRow dr in ds.Tables[0].Rows) {
+						Models.NewLocation loc = new Models.NewLocation();
 						loc.lngLocationID = (long)dr["intLocationID"];
 						loc.lngCompanyID = (long)dr["intCompanyID"];
 						loc.LocationName = (string)dr["strCompanyName"];
 						loc.StreetAddress = (string)dr["strAddress"];
 						loc.City = (string)dr["strCity"];
-						loc.State = (string)dr["strState"];
+						loc.intState = (short)dr["intStateID"];
 						loc.Zip = (string)dr["strZip"];
 						loc.strFullPhone = (string)dr["strPhone"];
 						loc.BusinessEmail = (string)dr["strEmail"];
