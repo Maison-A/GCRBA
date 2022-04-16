@@ -99,6 +99,12 @@ namespace GCRBA.Controllers
                 u.isMember = 0;
                 u.isAdmin = 0;
 
+                u.Address = "";
+                u.City = "";
+                u.State = "";
+                u.Zip = "";
+                u.Phone = "";
+
                 // make sure none of the fields are empty
                 if (u.FirstName.Length == 0 || u.LastName.Length == 0 || u.Email.Length == 0 || u.Username.Length == 0
                        || u.Password.Length == 0)
