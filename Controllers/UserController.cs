@@ -17,7 +17,7 @@ namespace GCRBA.Controllers
         /// - redirecting home after authenticated redirects to login?
         /// tbc..
         /// - MAISON
-        /// 
+
         public ActionResult AddNewUser()
         {
             Models.User u = new Models.User();
