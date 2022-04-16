@@ -30,6 +30,9 @@ namespace GCRBA.Models
         public int isMember { get; set; }
         public string MemberShipType = string.Empty;
 
+        public List<NewLocation> lstMemberLocations = new List<NewLocation>();
+        public bool myLocation { get; set; }
+
 
         // tells us if current user is logged in 
         public bool IsAuthenticated

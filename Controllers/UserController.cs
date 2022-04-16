@@ -168,7 +168,7 @@ namespace GCRBA.Controllers
         {
             Models.User u = new Models.User(); 
             Models.Database db = new Models.Database();
-            //u = u.GetUserSession();
+            u = u.GetUserSession();
             u.lstStates = db.GetStates();
             return View(u);
         }
@@ -180,7 +180,7 @@ namespace GCRBA.Controllers
             {
                 // get current user session
                 Models.User user = new Models.User();
-                //user = user.GetUserSession();
+                user = user.GetUserSession();
                   
                 // contact info
                 user.FirstName = col["FirstName"];
