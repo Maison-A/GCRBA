@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Collections.Generic;
 using System.Linq;
 using GCRBA.ViewModels;
+using System.Data.SqlTypes;
 
 namespace GCRBA.Models
 {
@@ -345,11 +346,36 @@ namespace GCRBA.Models
 							newUser.UID = Convert.ToInt16(dr["intUserID"]);
 							newUser.FirstName = (string)dr["strFirstName"];
 							newUser.LastName = (string)dr["strLastName"];
-							newUser.Address = (string)dr["strAddress"];
-							newUser.City = (string)dr["strCity"];
-							newUser.State = (string)dr["strState"];
-							newUser.Zip = (string)dr["strZip"];
-							newUser.Phone = (string)dr["strPhone"];
+
+							// db allows address, city, state, zip, and phone to be null in user table 
+							// so must check if null here before adding to User object 
+							// if not null, add to User, else skip these columns 
+							if (dr["strAddress"].ToString() != SqlString.Null)
+                            {
+								newUser.Address = (string)dr["strAddress"];
+                            }
+
+							if (dr["strCity"].ToString() != SqlString.Null)
+							{
+								newUser.Address = (string)dr["strCity"];
+							}
+
+							if (dr["strState"].ToString() != SqlString.Null)
+							{
+								newUser.Address = (string)dr["strState"];
+							}
+
+							if (dr["strZip"].ToString() != SqlString.Null)
+							{
+								newUser.Address = (string)dr["strZip"];
+							}
+
+							if (dr["strPhone"].ToString() != SqlString.Null)
+							{
+								newUser.Address = (string)dr["strPhone"];
+							}
+
+							
 							newUser.Email = (string)dr["strEmail"];
 							newUser.Username = user.Username;
 							newUser.Password = user.Password;
