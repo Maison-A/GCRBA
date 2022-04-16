@@ -17,65 +17,7 @@ namespace GCRBA.Controllers
         /// - redirecting home after authenticated redirects to login?
         /// tbc..
         /// - MAISON
-
-        public ActionResult Index()
-        {
-            Models.User u = new Models.User();
-            u = u.GetUserSession();
-
-            return View(u);
-        }
-
-        [HttpPost]
-        public ActionResult Index(FormCollection col)
-        {
-            try
-            {
-                Models.User u = new Models.User();
-                u = u.GetUserSession();
-                u.FirstName = col["FirstName"];
-                u.LastName = col["LastName"];
-                u.Email = col["Email"];
-                //u.UserID = col["UserID"];
-                u.Password = col["Password"];
-
-                if (u.FirstName.Length == 0 || u.LastName.Length == 0 || u.Email.Length == 0 || u.Password.Length == 0)
-                {
-                    u.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
-                    return View(u);
-                }
-
-                else
-                {
-                    if (col["btnSubmit"] == "newuser")
-                    { //sign up button pressed
-                        Models.User.ActionTypes at = Models.User.ActionTypes.NoType;
-                        at = u.Save();
-                        switch (at)
-                        {
-                            case Models.User.ActionTypes.InsertSuccessful:
-                                u.SaveUserSession();
-                                // TODO: return to user profile page/index
-                                return RedirectToAction("Home", "Index");
-                            //break;
-                            default:
-                                return View(u);
-                                //break;
-                        }
-                    }
-                    else
-                    {
-                        return View(u);
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                Models.User u = new Models.User();
-                return View(u);
-            }
-        }
-
+        /// 
         public ActionResult AddNewUser()
         {
             Models.User u = new Models.User();
@@ -102,12 +44,12 @@ namespace GCRBA.Controllers
                 u.isAdmin = 0;
 
                 // some blank values to return to db
-                u.Address = "";
-                u.City = "";
-                u.State = "";
-                u.Zip = "";
-                u.Phone = "";
-                u.MemberShipType = "";
+                u.Address = "NO DATA";
+                u.City = "NO DATA";
+                u.State = "NO DATA";
+                u.Zip = "NO DATA";
+                u.Phone = "NO DATA";
+                u.MemberShipType = "NO DATA";
 
                 // submit new user button pressed
                 if (col["btnSubmit"].ToString() == "newuser")
@@ -149,7 +91,6 @@ namespace GCRBA.Controllers
                             return View(u);
                     }
                 }
-
                 if (col["btnSubmit"].ToString() == "home")
                 {
                     return RedirectToAction("Index", "Home");
@@ -242,8 +183,6 @@ namespace GCRBA.Controllers
                         switch (at)
                         {
                             // insert successful
-                            // save user session so they are logged in
-                            // redirect to interface based on member/nonmember
                             case Models.User.ActionTypes.InsertSuccessful:
 
                                 user.SaveUserSession();
@@ -264,10 +203,7 @@ namespace GCRBA.Controllers
                         }
                     }
                 }
-                if (col["btnSubmit"] == "home")
-                {
-                    return RedirectToAction("Index", "Home");
-                }
+                if (col["btnSubmit"].ToString() == "home")
                 {
                     return RedirectToAction("Index", "Home");
                 }
