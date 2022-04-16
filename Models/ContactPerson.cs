@@ -15,5 +15,17 @@ namespace GCRBA.Models {
 		public string strFullName = string.Empty;
 		public string strFullPhone = string.Empty;
 		public string strContactPersonType = string.Empty;
+
+		public ContactPerson.ActionTypes ActionType = ActionTypes.NoType;
+
+		public enum ActionTypes
+        {
+			NoType = 0,
+			InsertSuccessful = 1,
+			UpdateSuccessful = 2, 
+			DeleteSuccessful = 3,
+			Unknown = 4, 
+			RequiredFieldsMissing = 5
+        }
 	}
 }

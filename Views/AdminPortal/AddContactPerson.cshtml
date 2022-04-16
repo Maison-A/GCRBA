@@ -1,0 +1,28 @@
+﻿@using GCRBA.ViewModels
+@model EditCompaniesViewModel
+
+<h2>Add Contact Person for: @Model.CurrentCompany.Name</h2>
+
+@if (Model.CurrentUser.isAdmin == 0)
+{
+    @Html.Partial("AdminOnly");
+}
+else
+{
+    if (Model.ContactPerson.ActionType == GCRBA.Models.ContactPerson.ActionTypes.InsertSuccessful)
+    {
+        <p>Contact person successfully added.</p>
+    }
+
+    <div class="container card bg-light w-50 p-4">
+        @using (Html.BeginForm(FormMethod.Post))
+        {
+            <button name="btnSubmit" value="addExistingContact">Add Existing Contact to Other Location(s)</button>
+            <button name="btnSubmit" value="addNewContact">Add New Contact to Location(s)</button>
+
+            <button name="btnSubmit" value="submit">Submit</button>
+            <button name="btnSubmit" value="cancel" formnovalidate>Cancel</button>
+        }
+    </div>
+}
+
