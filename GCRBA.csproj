@@ -234,6 +234,7 @@
     <Compile Include="ViewModels\AdminBannerViewModel.cs" />
     <Compile Include="ViewModels\EditCompaniesViewModel.cs" />
     <Compile Include="ViewModels\EditLocationVM.cs" />
+    <Compile Include="ViewModels\UserCompanyVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
@@ -298,6 +299,9 @@
     <Content Include="Views\AdminPortal\AddNewLocation.cshtml" />
     <Content Include="Views\AdminPortal\EditGeneralInfo.cshtml" />
     <Content Include="Views\AdminPortal\DeleteLocation.cshtml" />
+    <Content Include="Views\AdminPortal\AddContactPerson.cshtml" />
+    <Content Include="Views\AdminPortal\AddExistingContact.cshtml" />
+    <Content Include="Views\AdminPortal\Locations.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
