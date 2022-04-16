@@ -7,28 +7,31 @@ namespace GCRBA.Models
 {
     public class User
     {
-        public int UID { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public int UID = 3; //{ get; set; }
+        public string FirstName = "Shane";//{ get; set; }
+        public string LastName = "Winslow"; //{ get; set; }
         public string Address { get; set; }
         public string City { get; set; }
         public string State { get; set; }
-        public short intState = 0;
+        public short intState = 1;//0;
         public List<Models.State> lstStates = new List<Models.State>();
         public string Zip { get; set; }
         public string Phone { get; set; }
         public Models.PhoneNumber userPhone;
         public string Email { get; set; }
 
-        public string Username { get; set; }
-        public string Password { get; set; }
+        public string Username = "winslows1"; //{ get; set; }
+        public string Password = "password"; //{ get; set; }
         public string PaymentType = string.Empty;
         public ActionTypes ActionType { get; set; } = ActionTypes.NoType;
 
         // member type control
         public int isAdmin { get; set; }
-        public int isMember { get; set; }
-        public string MemberShipType = string.Empty;
+        public int isMember = 1; //{ get; set; }
+        public string MemberShipType = "Business";//string.Empty;
+
+        public List<NewLocation> lstMemberLocations = new List<NewLocation>();
+        public bool myLocation { get; set; }
 
 
         // tells us if current user is logged in 
