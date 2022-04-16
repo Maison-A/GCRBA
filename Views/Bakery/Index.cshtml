@@ -96,6 +96,10 @@
 		clear: both;
 		display: table;
 	}
+
+	.disabled{
+		color: #999;
+	}
 </style>
 
 @{
@@ -262,7 +266,7 @@
 
 	<br />
 	<div>
-		<button class="border-3" id="btnSearch" name="btnSubmit" value="search">Search</button>
+		<button class="button-action" id="btnSearch" name="btnSubmit" value="search">Search</button>
 	</div>
 	<br />
 
@@ -278,16 +282,34 @@
 
 	if (u.IsAuthenticated) {
 
-
-	<div class="some-spacing">
-		<button class="button-action" id="btnAdd" name="btnSubmit" value="addLocation">Add a Bakery!</button>
-	</div>
+		<div class="some-spacing">
+			<button class="button-action" id="btnAdd" name="btnSubmit" value="addLocation">Add a Bakery!</button>
+		</div>
 	}
+	else {
+		<div class="some-spacing">
+			<button type="button" id="btnDisabled" onclick="showMessage()">Add a Bakery!</button>
+		</div>
+	}
+
 }
 
 
 
 <script>
+	var message = `Please login to add a new bakery location! 
+Press OK to be redirect to login screen.`
+	
+	function showMessage() {
+		//alert(message);
+		if (confirm(message)) {
+		location.href="/Profile/Login"};
+	}
+
+	$('#btnDisabled').click(function () {
+		$('#btnDisabled').prop('disabled', true).addClass('disabled');
+	});
+
 	$(document).ready(function () {
 		SetActiveMenus('profile', 'index');
 	});

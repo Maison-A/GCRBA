@@ -26,9 +26,14 @@
 }
 
 .topcorner {
-    position: absolute;
+    position:absolute;
     top: 0;
     right: 0;
+}
+
+.left{
+	position:absolute;
+	left: 0;
 }
 
 
