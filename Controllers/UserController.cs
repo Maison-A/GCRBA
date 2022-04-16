@@ -132,8 +132,6 @@ namespace GCRBA.Controllers
 
                     switch (at)
                     {
-                        // insert successful
-                        // save user session so they are logged in 
                         // redirect to interface based on member/nonmember
                         case Models.User.ActionTypes.InsertSuccessful:
                             u.SaveUserSession();
@@ -217,7 +215,7 @@ namespace GCRBA.Controllers
 
 
                 // once submit is hit, process member data
-                if (col["btnSubmit"].ToString() == "submit")
+                if (col["btnSubmit"] == "submit")
                 {
                     //validate data
                     if (user.FirstName.Length == 0 || user.LastName.Length == 0 || user.Email.Length == 0 ||
@@ -266,7 +264,10 @@ namespace GCRBA.Controllers
                         }
                     }
                 }
-                if (col["btnSubmit"].ToString() == "home")
+                if (col["btnSubmit"] == "home")
+                {
+                    return RedirectToAction("Index", "Home");
+                }
                 {
                     return RedirectToAction("Index", "Home");
                 }
