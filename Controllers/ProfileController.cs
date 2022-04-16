@@ -203,6 +203,7 @@ namespace GCRBA.Controllers
         {
             Models.User user = new Models.User();
             user = user.GetUserSession();
+            
             if (col["btnSubmit"] == "join")
             {
                 return RedirectToAction("AddNewMember", "User");
