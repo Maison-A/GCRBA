@@ -55,6 +55,8 @@ IF OBJECT_ID ('SELECT_LOCATION_SPECIALS')		IS NOT NULL DROP PROCEDURE SELECT_LOC
 IF OBJECT_ID('SELECT_LOCATION_CONTACTS') IS NOT NULL DROP PROCEDURE SELECT_LOCATION_CONTACTS
 IF OBJECT_ID('SELECT_LOCATION_SOCIALMEDIA') IS NOT NULL DROP PROCEDURE SELECT_LOCATION_SOCIALMEDIA
 IF OBJECT_ID('SELECT_LOCATION_WEBSITE') IS NOT NULL DROP PROCEDURE SELECT_LOCATION_WEBSITE
+IF OBJECT_ID('SELECT_USERLOCATION_ASSOCIATION') IS NOT NULL DROP PROCEDURE SELECT_USERLOCATION_ASSOCIATION
+
 
 CREATE TABLE tblState
 (
@@ -507,6 +509,7 @@ BEGIN
 END
 GO
 
+
 CREATE PROCEDURE [dbo].[INSERT_NEW_USER]
 @intNewUserID SMALLINT  = null OUTPUT, 
 @strFirstName NVARCHAR(25), 
@@ -514,6 +517,11 @@ CREATE PROCEDURE [dbo].[INSERT_NEW_USER]
 @strEmail NVARCHAR(50),
 @strUsername NVARCHAR (15),
 @strPassword NVARCHAR(15),
+@strAddress NVARCHAR(50),
+@strCity NVARCHAR(50),
+@strPhone NVARCHAR(10),
+@intStateID SMALLINT,
+@strZip NVARCHAR(10),
 @isAdmin BIT
 AS
 SET NOCOUNT ON
@@ -530,6 +538,11 @@ BEGIN
 	INSERT INTO [db_owner].[tblUser]
 			([strFirstName],
 			 [strLastName],
+			 [strAddress],
+			 [strCity],
+			 [intStateID],
+			 [strZip],
+			 [strPhone],
 			 [strEmail],
 			 [strUsername],
 			 [strPassword],
@@ -537,6 +550,11 @@ BEGIN
 		VALUES
 			(@strFirstName, 
 			 @strLastName, 
+			 @strAddress,
+			 @strCity,
+			 @intStateID,
+			 @strZip,
+			 @strPhone,
 			 @strEmail,
 			 @strUsername, 
 			 @strPassword,
@@ -544,6 +562,7 @@ BEGIN
 	SELECT @intNewUserID=@@IDENTITY
 	RETURN 1
 END 
+
 GO
 
 
@@ -978,6 +997,27 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [dbo].[SELECT_USERLOCATION_ASSOCIATION]
+@intUserID AS SMALLINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	IF @intUserID IS NOT NULL
+	BEGIN
+		SELECT * FROM db_owner.tblLocation AS loc
+		JOIN db_owner.tblCompany AS comp
+		ON loc.intCompanyID = comp.intCompanyID
+		JOIN db_owner.tblCompanyMember AS compMem
+		ON compMem.intCompanyID = comp.intCompanyID
+		JOIN db_owner.tblMember AS mem
+		ON mem.intMemberID = compMem.intMemberID
+		JOIN db_owner.tblUser AS users
+		ON mem.intUserID = users.intUserID
+		WHERE users.intUserID = @intUserID
+	END
+END
+GO
+
 -- -----------------------------------------------------------------------------------------
 -- ADD TEST DATA
 -- -----------------------------------------------------------------------------------------
@@ -1133,8 +1173,8 @@ VALUES		('https://twitter.com/servatiipastry', 3, 5),
 -- NON-ADMIN USER 
 INSERT INTO tblUser (strFirstName, strLastName, strAddress, strCity, intStateID, strZip, strPhone, strEmail, strUsername, strPassword, isAdmin)
 VALUES	('Katie', 'Schmidt', '6036 Flyer Drive', 'Cincinnati', 3, '45248', '5133103965', 'klschmidt16178@cincinnatistate.edu', 'test2', 'test2', 0),
-		('Random', 'User', '1234 Main St', 'Lawrenceburg', 1, '41010', '5135555555', 'random_user@gmail.com', 'test3', 'test3', 0)
-
+		('Random', 'User', '1234 Main St', 'Lawrenceburg', 1, '41010', '5135555555', 'random_user@gmail.com', 'test3', 'test3', 0),
+		('Shane', 'Winslow', NULL, NULL, NULL, NULL, NULL, 'winslows1@gmail.com', 'winslows1', 'password', 0)
 -- ADMIN USER 
 INSERT INTO tblUser (strFirstName, strLastName, strAddress, strCity, intStateID, strZip, strPhone, strEmail, strUsername, strPassword, isAdmin)
 VALUES	('Grace', 'Gottenbusch', '123 Elm St', 'Covington', 2, '41212', '5135555555', 'grace@gmail.com', 'grace', 'grace', 1)
@@ -1142,6 +1182,13 @@ VALUES	('Grace', 'Gottenbusch', '123 Elm St', 'Covington', 2, '41212', '51355555
 -- ADD USER TO MEMBER TABLE 
 INSERT INTO  tblMember (intUserID, intMemberLevelID, intPaymentTypeID)
 VALUES	(1, 1, 2)
+		,(3, 2, 1)
+		,(4, 2, 1)
+
+-- ADD CONNECTION BETWEEN COMPANY AND MEMBER
+INSERT INTO tblCompanyMember (intCompanyID, intMemberID)
+VALUES				(3, 2)
+					,(3,3)
 
 INSERT INTO tblMainBanner (strBanner)
 VALUES	('This is an example of the main banner. This will hold information relevant to the GCRBA.'),
