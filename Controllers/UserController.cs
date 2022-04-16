@@ -107,6 +107,7 @@ namespace GCRBA.Controllers
                 u.State = "";
                 u.Zip = "";
                 u.Phone = "";
+                u.MemberShipType = "";
 
                 // submit new user button pressed
                 if (col["btnSubmit"].ToString() == "newuser")
