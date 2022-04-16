@@ -265,15 +265,20 @@ namespace GCRBA.Controllers
             // get companies list 
             vm.Companies = GetCompaniesList(vm);
 
-            if (col["btnSubmit"].ToString() == "editLocationInfo")
+            // get companyID from company selected from dropdown
+            vm.CurrentCompany.CompanyID = Convert.ToInt16(col["companies"]);
+
+            // save current  ID so we can access it in other view 
+            vm.CurrentCompany.SaveCompanySession();
+
+            if (col["btnSubmit"].ToString() == "addNewLocation")
             {
-                // get companyID from company selected from dropdown
-                vm.CurrentCompany.CompanyID = Convert.ToInt16(col["companies"]);
-
-                // save current  ID so we can access it in other view 
-                vm.CurrentCompany.SaveCompanySession();
-
                 return RedirectToAction("AddNewLocation", "AdminPortal");
+            }
+
+            if (col["btnSubmit"].ToString() == "deleteLocation")
+            {
+                return RedirectToAction("DeleteLocation", "AdminPortal");
             }
 
             if (col["btnSubmit"].ToString() == "editGeneralInfo")
@@ -345,32 +350,74 @@ namespace GCRBA.Controllers
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
-        
-        private int ValidateAddNewLocationForm(List<string> LocationInfo)
+        public ActionResult DeleteLocation()
         {
-            int count = 0;
+            // initialize EditCompaniesVM 
+            EditCompaniesViewModel vm = InitEditCompaniesVM();
 
-            foreach (var item in LocationInfo)
-            {
-                if (item.Length == 0)
-                {
-                    count += 1;
-                }
-            }
+            // get current company session 
+            vm = GetCompanySession(vm);
 
-            if (count > 0 && count < 4)
-            {
-                return -1;
-            }
+            // create locations list object
+            vm.Locations = new List<Location>();
 
-            if (count == 4)
-            {
-                return 0;
-            }
+            // get list of locations 
+            vm = GetLocations(vm);
 
-            return 1;
-            
+            // create NewLocation object 
+            vm.NewLocation = new NewLocation();
+
+            return View(vm);
         }
+
+        [HttpPost]
+        public ActionResult DeleteLocation(FormCollection col)
+        {
+            try
+            {
+                // initialize EditCompaniesVM
+                EditCompaniesViewModel vm = InitEditCompaniesVM();
+
+                // get current company session so we know which company we are making edits to
+                vm = GetCompanySession(vm);
+
+                // create locations list object
+                vm.Locations = new List<Location>();
+
+                // get list of locations to display in dropdown
+                vm = GetLocations(vm);
+
+                // create Location object to hold location selected in dropdown to be deleted 
+                vm.CurrentLocation = new Location();
+
+                // create NewLocation object 
+                vm.NewLocation = new NewLocation();
+
+                // if submit button pressed 
+                if (col["btnSubmit"].ToString() == "submit")
+                {
+                    // get ID of location selected to be deleted 
+                    vm.CurrentLocation.LocationID = Convert.ToInt16(col["locations"]);
+
+                    // send to database
+                    vm.NewLocation.ActionType = DeleteLocation(vm);
+
+                    // return view 
+                    return View(vm);
+                }
+
+                // cancel button pressed
+                if (col["btnSubmit"].ToString() == "cancel")
+                {
+                    // send back to Edit Existing Company page
+                    return RedirectToAction("EditExistingCompany", "AdminPortal");
+                }
+
+                return View(vm);
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+       
 
         public ActionResult EditGeneralInfo()
         {

@@ -297,6 +297,7 @@
     <Content Include="Views\Profile\EditAwards.cshtml" />
     <Content Include="Views\AdminPortal\AddNewLocation.cshtml" />
     <Content Include="Views\AdminPortal\EditGeneralInfo.cshtml" />
+    <Content Include="Views\AdminPortal\DeleteLocation.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -12,9 +12,9 @@ namespace GCRBA.Controllers
     {
 
         /// TODO
-        /// - authenticated user data is not being updated when gcrba app submitted 
         /// - redirecting home after authentication removes home/index within url
         /// - no logout func
+        /// - redirecting home after authenticated redirects to login?
         /// tbc..
         /// - MAISON
 

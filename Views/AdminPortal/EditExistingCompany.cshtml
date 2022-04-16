@@ -16,15 +16,16 @@ else
     using (Html.BeginForm(FormMethod.Post))
     {
         <label for="companies" class="form-label">Select Company to Edit:</label>
-        <select name="companies" class="form-control">
-            @foreach(var item in Model.Companies) 
+        <select name="companies" class="form-control" required="required">
+            @foreach (var item in Model.Companies)
             {
                 <option value="@item.CompanyID">@item.Name</option>
             }
         </select>
 
-        <button name="btnSubmit" value="editLocationInfo">Edit Location Info</button>
+        <button name="btnSubmit" value="addNewLocation">Add Location</button>
+        <button name="btnSubmit" value="deleteLocation">Delete Location</button>
         <button name="btnSubmit" value="editGeneralInfo">Edit General Info</button>
-        <button name="btnSubmit" value="cancel">Return to Admin Portal</button>
+        <button name="btnSubmit" value="cancel" formnovalidate>Return to Admin Portal</button>
     }
 }
