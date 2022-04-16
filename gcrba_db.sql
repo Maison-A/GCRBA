@@ -425,9 +425,9 @@ BEGIN
 	SET NOCOUNT ON;
 
 	SELECT		u.intUserID, u.strFirstName, u.strLastName, u.strAddress, u.strCity, s.strState, u.strZip, u.strPhone, u.strEmail, u.strUsername, u.strPassword, u.isAdmin
-	FROM		tblState as s JOIN tblUser as u 
+	FROM		tblState as s FULL OUTER JOIN tblUser as u 
 				ON s.intStateID = u.intStateID
-	WHERE		u.strUsername = @strUsername and u.strPassword = @strPassword
+	WHERE		u.strUsername = @strUsername and u.strPassword = @strPassword 
 END
 GO
 
