@@ -529,6 +529,8 @@ SET XACT_ABORT ON
 BEGIN
 	DECLARE @COUNT AS TINYINT 
 
+	IF @intStateID = 0 SET @intStateID = NULL
+
 	SELECT @COUNT=COUNT(*) FROM db_owner.tblUser WHERE strUsername = @strUsername
 	IF @COUNT > 0 RETURN -2 -- user with this username already exists 
 	
