@@ -14,7 +14,7 @@ namespace GCRBA.Controllers
 
         public ActionResult Index()
         {
-            // get current user to pass to the view 
+            // get current user session so we know who is logged in (member, nonmember, admin)  
             User u = new User();
             u = u.GetUserSession();
 
@@ -24,11 +24,13 @@ namespace GCRBA.Controllers
         [HttpPost]
         public ActionResult Index(FormCollection col)
         {
+            // Edit Main Banner button pressed
             if (col["btnSubmit"].ToString() == "editMainBanner")
             {
                 return RedirectToAction("EditMainBanner", "AdminPortal");
             }
 
+            // Edit Companites button pressed
             if (col["btnSubmit"].ToString() == "editCompanies")
             {
                 return RedirectToAction("EditCompanies", "AdminPortal");
@@ -120,35 +122,33 @@ namespace GCRBA.Controllers
 
         public ActionResult EditCompanies()
         {
-            // create new user object
+            // get current user session so we know who is logged in (member, nonmember, admin)
             User u = new User();
-
-            // get current user session 
             u = u.GetUserSession();
 
-            // return view 
             return View(u);
         }
 
         [HttpPost]
         public ActionResult EditCompanies(FormCollection col)
         {
-            // create new user object
+            // get current user session so we know who is logged in (member, nonmember, admin)
             User u = new User();
-
-            // get current user session
             u = u.GetUserSession();
 
+            // Add Company button pressed
             if (col["btnSubmit"].ToString() == "addCompany")
             {
                 return RedirectToAction("AddCompany", "AdminPortal");
             }
 
+            // Delete Company button pressed
             if (col["btnSubmit"].ToString() == "deleteCompany")
             {
                 return RedirectToAction("DeleteCompany", "AdminPortal");
             }
 
+            // Edit Company button pressed
             if (col["btnSubmit"].ToString() == "editCompany")
             {
                 return RedirectToAction("EditExistingCompany", "AdminPortal");
@@ -161,7 +161,7 @@ namespace GCRBA.Controllers
         public ActionResult AddCompany()
         {
             // create object of view model
-            EditCompaniesViewModel vm = new EditCompaniesViewModel();
+            EditCompaniesViewModel vm = InitEditCompanies();
 
             // create new user object with vm 
             vm.CurrentUser = new User();
@@ -176,7 +176,7 @@ namespace GCRBA.Controllers
         public ActionResult AddCompany(FormCollection col)
         {
             // create objects of what we will use 
-            EditCompaniesViewModel vm = InitEditCompaniesVM();
+            EditCompaniesViewModel vm = InitEditCompanies();
             vm.CurrentCompany = new Company();
             Database db = new Database();
 
@@ -197,7 +197,7 @@ namespace GCRBA.Controllers
         public ActionResult DeleteCompany()
         {
             // create VM object
-            EditCompaniesViewModel vm = InitEditCompaniesVM();
+            EditCompaniesViewModel vm = InitEditCompanies();
 
             vm.Companies = GetCompaniesList(vm);
 
@@ -212,7 +212,7 @@ namespace GCRBA.Controllers
             ViewBag.Flag = 0;
 
             // create VM object
-            EditCompaniesViewModel vm = InitEditCompaniesVM();
+            EditCompaniesViewModel vm = InitEditCompanies();
 
             // get list of companies
             vm.Companies = GetCompaniesList(vm);
@@ -260,7 +260,7 @@ namespace GCRBA.Controllers
         public ActionResult EditExistingCompany(FormCollection col)
         {
             // create EditCompaniesVM object 
-            EditCompaniesViewModel vm = InitEditCompaniesVM();
+            EditCompaniesViewModel vm = InitEditCompanies();
 
             // get companies list 
             vm.Companies = GetCompaniesList(vm);
@@ -281,6 +281,11 @@ namespace GCRBA.Controllers
                 return RedirectToAction("DeleteLocation", "AdminPortal");
             }
 
+            if (col["btnSubmit"].ToString() == "addContactPerson")
+            {
+                return RedirectToAction("AddContactPerson", "AdminPortal");
+            }
+
             if (col["btnSubmit"].ToString() == "editGeneralInfo")
             {
                 return RedirectToAction("EditGeneralInfo", "AdminPortal");
@@ -296,7 +301,7 @@ namespace GCRBA.Controllers
 
         public ActionResult AddNewLocation()
         {
-            EditCompaniesViewModel vm = InitEditCompaniesVM();
+            EditCompaniesViewModel vm = InitEditCompanies();
 
             vm = InitLocationInfo(vm);
 
@@ -314,7 +319,7 @@ namespace GCRBA.Controllers
         {
            try
             {
-                EditCompaniesViewModel vm = InitEditCompaniesVM();
+                EditCompaniesViewModel vm = InitEditCompanies();
 
                 // initial location objects 
                 vm = InitLocationInfo(vm);
@@ -353,7 +358,7 @@ namespace GCRBA.Controllers
         public ActionResult DeleteLocation()
         {
             // initialize EditCompaniesVM 
-            EditCompaniesViewModel vm = InitEditCompaniesVM();
+            EditCompaniesViewModel vm = InitEditCompanies();
 
             // get current company session 
             vm = GetCompanySession(vm);
@@ -376,7 +381,7 @@ namespace GCRBA.Controllers
             try
             {
                 // initialize EditCompaniesVM
-                EditCompaniesViewModel vm = InitEditCompaniesVM();
+                EditCompaniesViewModel vm = InitEditCompanies();
 
                 // get current company session so we know which company we are making edits to
                 vm = GetCompanySession(vm);
@@ -418,6 +423,95 @@ namespace GCRBA.Controllers
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
        
+        public ActionResult AddContactPerson()
+        {
+            // create EditCompaniesVM object
+            EditCompaniesViewModel vm = InitEditCompanies();
+
+            // get current company session
+            vm = GetCompanySession(vm);
+
+            //initialize location list variable 
+            vm.Locations = new List<Location>();
+
+            // get list of locations for current company 
+            vm = GetLocations(vm);
+
+            // create ContactPerson object 
+            vm.ContactPerson = new ContactPerson();
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        public ActionResult AddContactPerson(FormCollection col)
+        {
+            // create EditCompaniesVM object
+            EditCompaniesViewModel vm = InitEditCompanies();
+
+            // get current company session
+            vm = GetCompanySession(vm);
+
+            //initialize location list variable 
+            vm.Locations = new List<Location>();
+
+            // get list of locations for current company 
+            vm = GetLocations(vm);
+
+            // create new ContactPerson object 
+            vm.Contacts = new List<ContactPerson>();
+
+            vm.ContactPerson = new ContactPerson();
+
+            if (col["btnSubmit"].ToString() == "addExistingContact")
+            {
+                return RedirectToAction("AddExistingContact", "AdminPortal");
+            }
+
+            if (col["btnSubmit"].ToString() == "addNewContact")
+            {
+                return RedirectToAction("AddNewContact", "AdminPortal");
+            }
+
+            return View(vm);
+        }
+
+        public ActionResult AddExistingContact()
+        {
+            EditCompaniesViewModel vm = InitEditCompanies();
+
+            vm = GetCompanySession(vm);
+
+            vm.Contacts = new List<ContactPerson>();
+
+            vm.ContactPerson = new ContactPerson();
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        public ActionResult AddExistingContact(FormCollection col)
+        {
+            EditCompaniesViewModel vm = InitEditCompanies();
+
+            vm = GetCompanySession(vm);
+
+            vm.Contacts = new List<ContactPerson>();
+
+            vm.ContactPerson = new ContactPerson();
+
+            vm.Locations = new List<Location>();
+
+            vm.CurrentLocation = new Location();
+
+            if (col["btnSubmit"].ToString() == "chooseContact")
+            {
+                vm = GetLocations(vm);
+                return View(vm);
+            }
+
+            return View(vm);
+        }
 
         public ActionResult EditGeneralInfo()
         {
@@ -429,7 +523,7 @@ namespace GCRBA.Controllers
         public ActionResult EditCompanyInfo()
         {
             // initialize EditCompaniesVM object
-            EditCompaniesViewModel vm = InitEditCompaniesVM();
+            EditCompaniesViewModel vm = InitEditCompanies();
 
             // get companyID that was selected from  dropdown on previous page and saved in company session
             vm.CurrentCompany = vm.CurrentCompany.GetCompanySession();
@@ -577,7 +671,7 @@ namespace GCRBA.Controllers
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
-        private EditCompaniesViewModel InitEditCompaniesVM()
+        private EditCompaniesViewModel InitEditCompanies()
         {
             // create EditCompaniesVM object 
             EditCompaniesViewModel vm = new EditCompaniesViewModel();

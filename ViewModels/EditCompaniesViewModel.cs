@@ -16,5 +16,7 @@ namespace GCRBA.ViewModels
         public State CurrentState { get; set; }
         public List<State> States { get; set; }
         public NewLocation NewLocation { get; set; }
+        public ContactPerson ContactPerson { get; set; }
+        public List<ContactPerson> Contacts { get; set; }
     }
 }

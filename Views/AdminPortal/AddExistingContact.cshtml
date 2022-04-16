@@ -1,0 +1,42 @@
+﻿@using GCRBA.ViewModels
+@model EditCompaniesViewModel
+
+<h2>Add Contact Person for: @Model.CurrentCompany.Name</h2>
+
+@if (Model.CurrentUser.isAdmin == 0)
+{
+    @Html.Partial("AdminOnly");
+}
+else
+{
+    if (Model.ContactPerson.ActionType == GCRBA.Models.ContactPerson.ActionTypes.InsertSuccessful)
+    {
+        <p>Contact person successfully added.</p>
+    }
+
+<div class="container card bg-light w-50 p-4">
+    @using (Html.BeginForm(FormMethod.Post))
+    {
+        <div id="contacts">
+            <label for="contacts" class="form-label">Contacts</label>
+            <select name="contacts" class="form-control">
+                @foreach (var item in Model.Contacts)
+                {
+                    <option value="@item.lngContactPersonID" class="contacts">@item.strFullName</option>
+                }
+            </select>
+            <button name="btnSubmit" value="chooseContact" id="chooseContact">Select Contact</button>
+        </div>
+
+        if (Model.ContactPerson != null)
+        {
+            Html.Partial("Locations");
+        }
+
+
+        <button name="btnSubmit" value="submit">Submit</button>
+        <button name="btnSubmit" value="cancel" formnovalidate>Cancel</button>
+    }
+</div>
+}
+
