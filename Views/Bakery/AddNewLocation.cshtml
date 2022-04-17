@@ -56,576 +56,600 @@
 
 
 
-	if (Model.lstLocations[index].ActionType == GCRBA.Models.NewLocation.ActionTypes.RequiredFieldsMissing) {
+	if (Model.ActionType == GCRBA.Models.LocationList.ActionTypes.RequiredFieldsMissing) {
 		<div id="content-locked" style="color: red">
 			<i class="fad fa-exclamation-triangle fa-2x"></i>
-			<span>All fields with <b>*</b> are required.</span>
+			<span>All fields with <b>*</b> are required!</span>
 		</div>
 	}
 
-	if (Model.lstLocations[index].ActionType == GCRBA.Models.NewLocation.ActionTypes.Unknown) {
+	if (Model.ActionType == GCRBA.Models.LocationList.ActionTypes.Unknown) {
 		<div id="content-locked">
 			<i class="fad fa-exclamation-triangle fa-2x"></i>
 			<span>Field already exists!</span>
 		</div>
 	}
 
-	<div class="some-spacing">
-		<button class="button-action" id="btnEnterLocation" name="btnSubmit" value="SubmitLocation">Submit Location(s)</button>
-		<button class="button-cancel1" id="addAdditionalLocation1" type="button" name="btnSubmit" value="AddLocation">Add Location(s)</button>
-		<!--<button class="button-action" id="btnExtraLocation" name="btnSubmit" value="ExtraLocation">Add Another Location</button>-->
-	</div>
+	if (Model.ActionType == GCRBA.Models.LocationList.ActionTypes.CompanyFieldsMissing) {
+		<div id="content-locked">
+			<i class="fad fa-exclamation-triangle fa-2x"></i>
+			<span>Company Field is required!</span>
+		</div>
+	}
 
-	<div class="some-spacing">
-		<table>
-			<tr>
-				<td>
-					<div>
-						<div id="label">@Html.LabelFor(model => model.lstLocations[index].lngCompanyID, "Existing Parent Company Name")*</div>
-						<div>@Html.DropDownListFor(model => model.lstLocations[index].lngCompanyID, new SelectList(Model.lstLocations[index].lstCompanies, "CompanyID", "Name", selectedValue: 0), new { onchange ="disableCompany()", id = "dropdownCompany"})</div>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td style="text-align: center">
-					<strong>-OR-</strong>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<div>
-						<div id="label">@Html.LabelFor(model => model.lstLocations[index].CompanyName, "New Parent Company Name")*</div>
-						<div>@Html.TextBoxFor(model => model.lstLocations[index].CompanyName, new { @autofocus = "autofocus", id="textboxCompany", onchange="disableCompany()" })</div>
-					</div>
-				</td>
-			</tr>
-		</table>
-	</div>
+	if (Model.ActionType == GCRBA.Models.LocationList.ActionTypes.HoursFieldsMissing) {
+		<div id="content-locked">
+			<i class="fad fa-exclamation-triangle fa-2x"></i>
+			<span>Location must be open at least 1 Day!</span>
+		</div>
+	}
 
-	<div class="mainTable0" id="mainTable0">
-		<table class="center" id="lstLocations-table">
-			<tr>
-				<td>
-					<div>
-						<div id="label">@Html.LabelFor(model => model.lstLocations[index].LocationName, "Bakery Store Location Name")*</div>
-						<div>@Html.TextBoxFor(model => model.lstLocations[index].LocationName)</div>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<div>
-						<div id="label">@Html.LabelFor(model => model.lstLocations[index].StreetAddress, "Street Address")*</div>
-						<div>@Html.TextBoxFor(model => model.lstLocations[index].StreetAddress)</div>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<div>
-						<div id="label">@Html.LabelFor(model => model.lstLocations[index].City)*</div>
-						<div>@Html.TextBoxFor(model => model.lstLocations[index].City)</div>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<div>
-						<div id="label">@Html.LabelFor(model => model.lstLocations[index].intState, "State")*</div>
-						<div>@Html.DropDownListFor(model => model.lstLocations[index].intState, new SelectList(Model.lstLocations[index].lstStates, "intStateID", "strState")) </div>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<div>
-						<div id="label">@Html.LabelFor(model => model.lstLocations[index].Zip, "Zip Code (5-digit)")*</div>
-						<div>@Html.TextBoxFor(model => model.lstLocations[index].Zip)</div>
-					</div>
-					<br />
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<div class="some-spacing">
-						<div>
-							<!--table for Bakery Specialty -->
-							<h5 id="label">Specialty Product Categories<b>*</b></h5>
-							<table class="center">
-								<tr>
-									<td>
-										@Html.CheckBoxFor(model => model.lstLocations[index].Donuts.blnAvailable)
-									</td>
-									<td>
-										@Html.LabelFor(model => model.lstLocations[index].Donuts, "Donuts")
-									</td>
-									<td>
-										@Html.CheckBoxFor(model => model.lstLocations[index].Bagels.blnAvailable)
-									</td>
-									<td>
-										@Html.LabelFor(model => model.lstLocations[index].Bagels, "Bagels")
-									</td>
-									<td>
-										@Html.CheckBoxFor(model => model.lstLocations[index].Muffins.blnAvailable)
-									</td>
-									<td>
-										@Html.LabelFor(model => model.lstLocations[index].Muffins, "Muffins")
-									</td>
-									<td>
-										@Html.CheckBoxFor(model => model.lstLocations[index].IceCream.blnAvailable)
-									</td>
-									<td>
-										@Html.LabelFor(model => model.lstLocations[index].IceCream, "Ice Cream")
-									</td>
-									<td>
-										@Html.CheckBoxFor(model => model.lstLocations[index].FineCandies.blnAvailable)
-									</td>
-									<td>
-										@Html.LabelFor(model => model.lstLocations[index].FineCandies, "Fine Candies & Chocolates")
-									</td>
-									<td>
-										@Html.CheckBoxFor(model => model.lstLocations[index].WeddingCakes.blnAvailable)
-									</td>
-									<td>
-										@Html.LabelFor(model => model.lstLocations[index].WeddingCakes, "Wedding Cakes")
-								</tr>
-								<tr>
-									<td>
-										@Html.CheckBoxFor(model => model.lstLocations[index].Breads.blnAvailable)
-									</td>
-									<td>
-										@Html.LabelFor(model => model.lstLocations[index].Breads, "Breads")
-									</td>
-									<td>
-										@Html.CheckBoxFor(model => model.lstLocations[index].DecoratedCakes.blnAvailable)
-									</td>
-									<td>
-										@Html.LabelFor(model => model.lstLocations[index].DecoratedCakes, "Decorated Cakes")
-									</td>
-									<td>
-										@Html.CheckBoxFor(model => model.lstLocations[index].Cupcakes.blnAvailable)
-									</td>
-									<td>
-										@Html.LabelFor(model => model.lstLocations[index].Cupcakes, "Cupcakes")
-									</td>
-									<td>
-										@Html.CheckBoxFor(model => model.lstLocations[index].Cookies.blnAvailable)
-									</td>
-									<td>
-										@Html.LabelFor(model => model.lstLocations[index].Cookies, "Cookies")
-									</td>
-									<td>
-										@Html.CheckBoxFor(model => model.lstLocations[index].Desserts.blnAvailable)
-									</td>
-									<td>
-										@Html.LabelFor(model => model.lstLocations[index].Desserts, "Desserts/Tortes")
-									</td>
-									<td>
-										@Html.CheckBoxFor(model => model.lstLocations[index].Full.blnAvailable)
-									</td>
-									<td>
-										@Html.LabelFor(model => model.lstLocations[index].Full, "Full-line Bakery")
-									</td>
-								</tr>
-								<tr>
-									<td>
-										@Html.CheckBoxFor(model => model.lstLocations[index].Deli.blnAvailable)
-									</td>
-									<td>
-										@Html.LabelFor(model => model.lstLocations[index].Deli, "Deli/Catering")
-									</td>
-									<td>
-										@Html.CheckBoxFor(model => model.lstLocations[index].Other.blnAvailable)
-									</td>
-									<td>
-										@Html.LabelFor(model => model.lstLocations[index].Other, "Other Deli Carryout")
-									</td>
-									<td>
-										@Html.CheckBoxFor(model => model.lstLocations[index].Wholesale.blnAvailable)
-									</td>
-									<td>
-										@Html.LabelFor(model => model.lstLocations[index].Wholesale, "Wholesale")
-									</td>
-									<td>
-										@Html.CheckBoxFor(model => model.lstLocations[index].Delivery.blnAvailable)
-									</td>
-									<td>
-										@Html.LabelFor(model => model.lstLocations[index].Delivery, "Delivery (3rd Party)")
-									</td>
-									<td>
-										@Html.CheckBoxFor(model => model.lstLocations[index].Shipping.blnAvailable)
-									</td>
-									<td>
-										@Html.LabelFor(model => model.lstLocations[index].Shipping, "Shipping")
-									</td>
-									<td>
-										@Html.CheckBoxFor(model => model.lstLocations[index].Online.blnAvailable)
-									</td>
-									<td>
-										@Html.LabelFor(model => model.lstLocations[index].Online, "Online Ordering")
-									</td>
-								</tr>
-							</table>
-						</div>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<div class="some-spacing">
-						<!-- table for Hours of Operation -->
-						<h5 id="label">Hours of Operation*</h5>
-						<table class="center">
-							<tr style="text-align: center">
-								<td><b>Days</b></td>
-								<td style="text-align: center"><b>(Check if Open)</b></td>
-								<td style="text-align: center"><b>Start Time</b></td>
-								<td style="text-align: center"><b>End Time</b></td>
-							</tr>
-							<tr>
-								<td>
-									@Html.LabelFor(model => model.lstLocations[index].Sunday)
-								</td>
-								<td style="text-align: center">
-									@Html.CheckBoxFor(model => model.lstLocations[index].Sunday.blnOperational, new { id="checkboxSunday", onclick="disableSunday(this)" })
-								</td>
-								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Sunday.strOpenTime, new { type = "time", id="sundayOpen", disabled=true })
-								</td>
-								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Sunday.strClosedTime, new { type = "time", id="sundayClose", disabled=true })
-								</td>
-							</tr>
-							<tr>
-								<td>
-									@Html.LabelFor(model => model.lstLocations[index].Monday)
-								</td>
-								<td style="text-align: center">
-									@Html.CheckBoxFor(model => model.lstLocations[index].Monday.blnOperational, new { id = "checkboxMonday", onclick = "disableMonday(this)" })
-								</td>
-								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Monday.strOpenTime, new { type = "time", id="mondayOpen", disabled=true })
-								</td>
-								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Monday.strClosedTime, new { type = "time", id="mondayClose", disabled=true })
-								</td>
-							</tr>
-							<tr>
-								<td>
-									@Html.LabelFor(model => model.lstLocations[index].Tuesday)
-								</td>
-								<td style="text-align: center">
-									@Html.CheckBoxFor(model => model.lstLocations[index].Tuesday.blnOperational, new { id="checkboxTuesday", onclick = "disableTuesday(this)"})
-								</td>
-								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Tuesday.strOpenTime, new { type = "time", id="tuesdayOpen", disabled=true })
-								</td>
-								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Tuesday.strClosedTime, new { type = "time", id="tuesdayClose", disabled=true })
-								</td>
-							</tr>
-							<tr>
-								<td>
-									@Html.LabelFor(model => model.lstLocations[index].Wednesday)
-								</td>
-								<td style="text-align: center">
-									@Html.CheckBoxFor(model => model.lstLocations[index].Wednesday.blnOperational, new { id = "checkboxWednesday", onclick = "disableWednesday(this)" })
-								</td>
-								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Wednesday.strOpenTime, new { type = "time", id = "wednesdayOpen", disabled = true })
-								</td>
-								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Wednesday.strClosedTime, new { type = "time", id = "wednesdayClose", disabled = true })
-								</td>
-							</tr>
-							<tr>
-								<td>
-									@Html.LabelFor(model => model.lstLocations[index].Thursday)
-								</td>
-								<td style="text-align: center">
-									@Html.CheckBoxFor(model => model.lstLocations[index].Thursday.blnOperational, new { id = "checkboxThursday", onclick = "disableThursday(this)" })
-								</td>
-								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Thursday.strOpenTime, new { type = "time", id = "thursdayOpen", disabled = true })
-								</td>
-								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Thursday.strClosedTime, new { type = "time", id = "thursdayClose", disabled = true })
-								</td>
-							</tr>
-							<tr>
-								<td>
-									@Html.LabelFor(model => model.lstLocations[index].Friday)
-								</td>
-								<td style="text-align: center">
-									@Html.CheckBoxFor(model => model.lstLocations[index].Friday.blnOperational, new { id = "checkboxFriday", onclick = "disableFriday(this)" })
-								</td>
-								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Friday.strOpenTime, new { type = "time", id = "fridayOpen", disabled = true })
-								</td>
-								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Friday.strClosedTime, new { type = "time", id = "fridayClose", disabled = true })
-								</td>
-							</tr>
-							<tr>
-								<td>
-									@Html.LabelFor(model => model.lstLocations[index].Saturday)
-								</td>
-								<td style="text-align: center">
-									@Html.CheckBoxFor(model => model.lstLocations[index].Saturday.blnOperational, new { id = "checkboxSaturday", onclick = "disableSaturday(this)" })
-								</td>
-								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Saturday.strOpenTime, new { type = "time", id = "saturdayOpen", disabled = true })
-								</td>
-								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Saturday.strClosedTime, new { type = "time", id = "saturdayClose", disabled = true })
-								</td>
-							</tr>
-						</table>
-					</div>
-				</td>
-			</tr>
-			<!--Business Contact Information-->
-			<tr>
-				<td>
-					<div>
-						<div class="some-spacing">
-							<div id="label"><label for="BusinessPhone_AreaCode">Business Phone Number</label></div>
-							(@Html.TextBoxFor(m => Model.lstLocations[index].BusinessPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].BusinessPhone.Prefix, new { Style = "width: 50px" })-@Html.TextBoxFor(m => Model.lstLocations[index].BusinessPhone.Suffix, new { Style = "width: 50px" })
-						</div>
+	if (Model.ActionType == GCRBA.Models.LocationList.ActionTypes.CategoryFieldsMissing) {
+		<div id="content-locked">
+			<i class="fad fa-exclamation-triangle fa-2x"></i>
+			<span>Location must carry at least 1 Speciality Product item!</span>
+		</div>
+	}
 
-						<div>
-							<div id="label">@Html.LabelFor(model => model.lstLocations[index].BusinessEmail, "Business Email")</div>
-							<div>@Html.TextBoxFor(model => model.lstLocations[index].BusinessEmail)</div>
-						</div>
-					</div>
-				</td>
-			</tr>
-			@if (u.isMember > 0) {
-				Model.isMember = 1;
+	if (u.IsAuthenticated) {
+
+		<div class="some-spacing">
+			<button class="button-action" id="btnEnterLocation" name="btnSubmit" value="SubmitLocation">Submit Location(s)</button>
+			<button class="button-cancel1" id="addAdditionalLocation1" type="button" name="btnSubmit" value="AddLocation">Add Location(s)</button>
+			<!--<button class="button-action" id="btnExtraLocation" name="btnSubmit" value="ExtraLocation">Add Another Location</button>-->
+		</div>
+
+		<div class="some-spacing">
+			<table>
 				<tr>
 					<td>
 						<div>
-							<div class="some-spacing">
-								<div id="label">@Html.LabelFor(model => model.lstLocations[index].BizYear, "Year Established:")</div>
-								@Html.TextBoxFor(model => model.lstLocations[index].BizYear)
-							</div>
-
-							<div class="some-spacing">
-								<div id="label">@Html.LabelFor(model => model.lstLocations[index].Bio, "About us:")</div>
-								<div>@Html.TextAreaFor(model => model.lstLocations[index].Bio, new { @spellcheck = "true", rows = "5", style = "width: 500px;", placeholder = "Tell us about your business..." })</div>
-							</div>
+							<div id="label">@Html.LabelFor(model => model.lstLocations[index].lngCompanyID, "Existing Parent Company Name")*</div>
+							<div>@Html.DropDownListFor(model => model.lstLocations[index].lngCompanyID, new SelectList(Model.lstLocations[index].lstCompanies, "CompanyID", "Name", selectedValue: 0), new { onchange = "disableCompany()", id = "dropdownCompany" })</div>
 						</div>
 					</td>
 				</tr>
-				<!--Contact Person Information-->
+				<tr>
+					<td style="text-align: center">
+						<strong>-OR-</strong>
+					</td>
+				</tr>
 				<tr>
 					<td>
 						<div>
-							<h2 class="some-spacing"><u>Location Contact</u></h2>
-							<div class="some-spacing">
-								<div id="label">@Html.LabelFor(m => Model.lstLocations[index].LocationContact.strContactFirstName, "Contact First Name")</div>
-								<div>@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.strContactFirstName, new { @autofocus = "autofocus" })</div>
-							</div>
-
-							<div class="some-spacing">
-								<div id="label">@Html.LabelFor(m => Model.lstLocations[index].LocationContact.strContactLastName, "Contact Last Name")</div>
-								<div>@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.strContactLastName)</div>
-							</div>
-
-							<div class="some-spacing">
-								<div id="label"><label for="ContactPhone_AreaCode">Contact Phone Number</label></div>
-								<div>
-									(@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.contactPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.contactPhone.Prefix, new { Style = "width: 50px" })-@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.contactPhone.Suffix, new { Style = "width: 50px" })
-								</div>
-							</div>
-
-							<div class="some-spacing">
-								<div id="label">@Html.LabelFor(m => Model.lstLocations[index].LocationContact.strContactEmail, "Contact Email")</div>
-								<div>@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.strContactEmail)</div>
-							</div>
+							<div id="label">@Html.LabelFor(model => model.lstLocations[index].CompanyName, "New Parent Company Name")*</div>
+							<div>@Html.TextBoxFor(model => model.lstLocations[index].CompanyName, new { @autofocus = "autofocus", id = "textboxCompany", onchange = "disableCompany()" })</div>
 						</div>
 					</td>
 				</tr>
-				<!--Customer Service Person Information-->
+			</table>
+		</div>
+
+		<div class="mainTable0" id="mainTable0">
+			<table class="center" id="lstLocations-table">
 				<tr>
 					<td>
 						<div>
-							<h2 class="some-spacing"><u>Customer Service Contact</u></h2>
-							<div class="some-spacing">
-								<div id="label">@Html.LabelFor(m => Model.lstLocations[index].CustService.strContactFirstName, "Customer Service First Name")</div>
-								<div>@Html.TextBoxFor(m => Model.lstLocations[index].CustService.strContactFirstName, new { @autofocus = "autofocus" })</div>
-							</div>
-
-							<div class="some-spacing">
-								<div id="label">@Html.LabelFor(m => Model.lstLocations[index].CustService.strContactLastName, "Customer Service Last Name")</div>
-								<div>@Html.TextBoxFor(m => Model.lstLocations[index].CustService.strContactLastName)</div>
-							</div>
-
-							<div class="some-spacing">
-								<div id="label"><label for="ContactPhone_AreaCode">Customer Service Phone Number</label></div>
-								<div>
-									(@Html.TextBoxFor(m => Model.lstLocations[index].CustService.contactPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].CustService.contactPhone.Prefix, new { Style = "width: 50px" }) - @Html.TextBoxFor(m => Model.lstLocations[index].CustService.contactPhone.Suffix, new { Style = "width: 50px" })
-								</div>
-							</div>
-
-							<div class="some-spacing">
-								<div id="label">@Html.LabelFor(m => Model.lstLocations[index].CustService.strContactEmail, "Customer Service Email")</div>
-								<div>@Html.TextBoxFor(m => Model.lstLocations[index].CustService.strContactEmail)</div>
-							</div>
+							<div id="label">@Html.LabelFor(model => model.lstLocations[index].LocationName, "Bakery Store Location Name")*</div>
+							<div>@Html.TextBoxFor(model => model.lstLocations[index].LocationName, new { required = true })</div>
 						</div>
 					</td>
 				</tr>
-				<!--Web Admin Contact Information-->
 				<tr>
 					<td>
 						<div>
-							<h2 class="some-spacing"><u>Web Admin Contact</u></h2>
-							<div class="some-spacing">
-								<div id="label">@Html.LabelFor(m => Model.lstLocations[index].WebAdmin.strContactFirstName, "Web Admin First Name")</div>
-								<div>@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.strContactFirstName, new { @autofocus = "autofocus" })</div>
-							</div>
-
-							<div class="some-spacing">
-								<div id="label">@Html.LabelFor(m => Model.lstLocations[index].WebAdmin.strContactLastName, "Web Admin Last Name")</div>
-								<div>@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.strContactLastName)</div>
-							</div>
-
-							<div class="some-spacing">
-								<div id="label"><label for="ContactPhone_AreaCode">Web Admin Phone Number</label></div>
-								<div>
-									(@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.contactPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.contactPhone.Prefix, new { Style = "width: 50px" })-@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.contactPhone.Suffix, new { Style = "width: 50px" })
-								</div>
-							</div>
-
-							<div class="some-spacing">
-								<div id="label">@Html.LabelFor(m => Model.lstLocations[index].WebAdmin.strContactEmail, "Web Admin Email")</div>
-								<div>@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.strContactEmail)</div>
-							</div>
+							<div id="label">@Html.LabelFor(model => model.lstLocations[index].StreetAddress, "Street Address")*</div>
+							<div>@Html.TextBoxFor(model => model.lstLocations[index].StreetAddress, new { required = true })</div>
 						</div>
 					</td>
 				</tr>
-				<!--Website Information-->
 				<tr>
 					<td>
 						<div>
-							<h2 class="some-spacing"><u>Additional Websites</u></h2>
-							<div class="some-spacing">
-								<div id="label">@Html.LabelFor(model => model.lstLocations[index].MainWeb, "Main Website URL")</div>
-								<div>@Html.TextBoxFor(model => model.lstLocations[index].MainWeb.strURL, new { placeholder="https://www.samplewebsite.com", style="width: 325px"})</div>
-							</div>
-
-							<div class="some-spacing">
-								<div id="label">@Html.LabelFor(model => model.lstLocations[index].OrderingWeb, "Ordering Webpage URL") </div>
-								<div>@Html.TextBoxFor(model => model.lstLocations[index].OrderingWeb.strURL, new { placeholder = "https://www.samplewebsite.com/ordering", style = "width: 325px" }) </div>
-							</div>
-
-							<div class="some-spacing">
-								<div id="label">@Html.LabelFor(model => model.lstLocations[index].KettleWeb, "Donation Kettle URL") </div>
-								<div>@Html.TextBoxFor(model => model.lstLocations[index].KettleWeb.strURL, new { placeholder = "https://www.salvationarmy.com", style = "width: 325px"}) </div>
-							</div>
+							<div id="label">@Html.LabelFor(model => model.lstLocations[index].City)*</div>
+							<div>@Html.TextBoxFor(model => model.lstLocations[index].City, new { required = true })</div>
 						</div>
 					</td>
 				</tr>
-				<!--table for Social Media-->
+				<tr>
+					<td>
+						<div>
+							<div id="label">@Html.LabelFor(model => model.lstLocations[index].intState, "State")*</div>
+							<div>@Html.DropDownListFor(model => model.lstLocations[index].intState, new SelectList(Model.lstLocations[index].lstStates, "intStateID", "strState"), new { required = true }) </div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div>
+							<div id="label">@Html.LabelFor(model => model.lstLocations[index].Zip, "Zip Code (5-digit)")*</div>
+							<div>@Html.TextBoxFor(model => model.lstLocations[index].Zip, new { required = true })</div>
+						</div>
+						<br />
+					</td>
+				</tr>
 				<tr>
 					<td>
 						<div class="some-spacing">
-							<h5><strong>Social Media Outlets</strong></h5>
+							<div>
+								<!--table for Bakery Specialty -->
+								<h5 id="label">Specialty Product Categories<b>*</b></h5>
+								<table class="center">
+									<tr>
+										<td>
+											@Html.CheckBoxFor(model => model.lstLocations[index].Donuts.blnAvailable)
+										</td>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].Donuts, "Donuts")
+										</td>
+										<td>
+											@Html.CheckBoxFor(model => model.lstLocations[index].Bagels.blnAvailable)
+										</td>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].Bagels, "Bagels")
+										</td>
+										<td>
+											@Html.CheckBoxFor(model => model.lstLocations[index].Muffins.blnAvailable)
+										</td>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].Muffins, "Muffins")
+										</td>
+										<td>
+											@Html.CheckBoxFor(model => model.lstLocations[index].IceCream.blnAvailable)
+										</td>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].IceCream, "Ice Cream")
+										</td>
+										<td>
+											@Html.CheckBoxFor(model => model.lstLocations[index].FineCandies.blnAvailable)
+										</td>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].FineCandies, "Fine Candies & Chocolates")
+										</td>
+										<td>
+											@Html.CheckBoxFor(model => model.lstLocations[index].WeddingCakes.blnAvailable)
+										</td>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].WeddingCakes, "Wedding Cakes")
+									</tr>
+									<tr>
+										<td>
+											@Html.CheckBoxFor(model => model.lstLocations[index].Breads.blnAvailable)
+										</td>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].Breads, "Breads")
+										</td>
+										<td>
+											@Html.CheckBoxFor(model => model.lstLocations[index].DecoratedCakes.blnAvailable)
+										</td>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].DecoratedCakes, "Decorated Cakes")
+										</td>
+										<td>
+											@Html.CheckBoxFor(model => model.lstLocations[index].Cupcakes.blnAvailable)
+										</td>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].Cupcakes, "Cupcakes")
+										</td>
+										<td>
+											@Html.CheckBoxFor(model => model.lstLocations[index].Cookies.blnAvailable)
+										</td>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].Cookies, "Cookies")
+										</td>
+										<td>
+											@Html.CheckBoxFor(model => model.lstLocations[index].Desserts.blnAvailable)
+										</td>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].Desserts, "Desserts/Tortes")
+										</td>
+										<td>
+											@Html.CheckBoxFor(model => model.lstLocations[index].Full.blnAvailable)
+										</td>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].Full, "Full-line Bakery")
+										</td>
+									</tr>
+									<tr>
+										<td>
+											@Html.CheckBoxFor(model => model.lstLocations[index].Deli.blnAvailable)
+										</td>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].Deli, "Deli/Catering")
+										</td>
+										<td>
+											@Html.CheckBoxFor(model => model.lstLocations[index].Other.blnAvailable)
+										</td>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].Other, "Other Deli Carryout")
+										</td>
+										<td>
+											@Html.CheckBoxFor(model => model.lstLocations[index].Wholesale.blnAvailable)
+										</td>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].Wholesale, "Wholesale")
+										</td>
+										<td>
+											@Html.CheckBoxFor(model => model.lstLocations[index].Delivery.blnAvailable)
+										</td>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].Delivery, "Delivery (3rd Party)")
+										</td>
+										<td>
+											@Html.CheckBoxFor(model => model.lstLocations[index].Shipping.blnAvailable)
+										</td>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].Shipping, "Shipping")
+										</td>
+										<td>
+											@Html.CheckBoxFor(model => model.lstLocations[index].Online.blnAvailable)
+										</td>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].Online, "Online Ordering")
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="some-spacing">
+							<!-- table for Hours of Operation -->
+							<h5 id="label">Hours of Operation*</h5>
 							<table class="center">
-								<tr>
-									<td><b>Platform</b></td>
-									<td>
-										<b>(Check to Include)</b>
-									</td>
-									<td style="text-align: center"><b>Link</b></td>
+								<tr style="text-align: center">
+									<td><b>Days</b></td>
+									<td style="text-align: center"><b>(Check if Open)</b></td>
+									<td style="text-align: center"><b>Start Time</b></td>
+									<td style="text-align: center"><b>End Time</b></td>
 								</tr>
 								<tr>
 									<td>
-										@Html.LabelFor(model => model.lstLocations[index].Facebook)
+										@Html.LabelFor(model => model.lstLocations[index].Sunday)
 									</td>
 									<td style="text-align: center">
-										@Html.CheckBoxFor(model => model.lstLocations[index].Facebook.blnAvailable, new { id = "checkboxFacebook", onclick = "disableFacebook(this)" })
+										@Html.CheckBoxFor(model => model.lstLocations[index].Sunday.blnOperational, new { id = "checkboxSunday", onclick = "disableSunday(this)" })
 									</td>
 									<td>
-										<label>URL:</label>
-										@Html.TextBoxFor(model => model.lstLocations[index].Facebook.strSocialMediaLink, new { id = "textFacebook", disabled = true, placeholder = "https://m.facebook.com/servatii", style = "width: 350px" })
-									</td>
-								</tr>
-								<tr>
-									<td>
-										@Html.LabelFor(model => model.lstLocations[index].Twitter)
-									</td>
-									<td style="text-align: center">
-										@Html.CheckBoxFor(model => model.lstLocations[index].Twitter.blnAvailable, new { id = "checkboxTwitter", onclick = "disableTwitter(this)" })
+										@Html.TextBoxFor(model => model.lstLocations[index].Sunday.strOpenTime, new { type = "time", id = "sundayOpen", disabled = true })
 									</td>
 									<td>
-										<label>URL:</label>
-										@Html.TextBoxFor(model => model.lstLocations[index].Twitter.strSocialMediaLink, new { id = "textTwitter", disabled = true, placeholder = "https://twitter.com/servatiipastry", style = "width: 350px" })
+										@Html.TextBoxFor(model => model.lstLocations[index].Sunday.strClosedTime, new { type = "time", id = "sundayClose", disabled = true })
 									</td>
 								</tr>
 								<tr>
 									<td>
-										@Html.LabelFor(model => model.lstLocations[index].Instagram)
+										@Html.LabelFor(model => model.lstLocations[index].Monday)
 									</td>
 									<td style="text-align: center">
-										@Html.CheckBoxFor(model => model.lstLocations[index].Instagram.blnAvailable, new { id = "checkboxInstagram", onclick = "disableInstagram(this)" })
+										@Html.CheckBoxFor(model => model.lstLocations[index].Monday.blnOperational, new { id = "checkboxMonday", onclick = "disableMonday(this)" })
 									</td>
 									<td>
-										<label>URL:</label>
-										@Html.TextBoxFor(model => model.lstLocations[index].Instagram.strSocialMediaLink, new { id = "textInstagram", disabled = true, placeholder = "https://www.instagram.com/servatiipastry/", style = "width: 350px" })
+										@Html.TextBoxFor(model => model.lstLocations[index].Monday.strOpenTime, new { type = "time", id = "mondayOpen", disabled = true })
+									</td>
+									<td>
+										@Html.TextBoxFor(model => model.lstLocations[index].Monday.strClosedTime, new { type = "time", id = "mondayClose", disabled = true })
 									</td>
 								</tr>
 								<tr>
 									<td>
-										@Html.LabelFor(model => model.lstLocations[index].Yelp)
+										@Html.LabelFor(model => model.lstLocations[index].Tuesday)
 									</td>
 									<td style="text-align: center">
-										@Html.CheckBoxFor(model => model.lstLocations[index].Yelp.blnAvailable, new { id = "checkboxYelp", onclick = "disableYelp(this)" })
+										@Html.CheckBoxFor(model => model.lstLocations[index].Tuesday.blnOperational, new { id = "checkboxTuesday", onclick = "disableTuesday(this)" })
 									</td>
 									<td>
-										<label>URL:</label>
-										@Html.TextBoxFor(model => model.lstLocations[index].Yelp.strSocialMediaLink, new { id = "textYelp", disabled = true, placeholder = "https://www.yelp.com/biz/servatii-pastry-and-cafe-cincinnati", style = "width: 350px" })
+										@Html.TextBoxFor(model => model.lstLocations[index].Tuesday.strOpenTime, new { type = "time", id = "tuesdayOpen", disabled = true })
+									</td>
+									<td>
+										@Html.TextBoxFor(model => model.lstLocations[index].Tuesday.strClosedTime, new { type = "time", id = "tuesdayClose", disabled = true })
 									</td>
 								</tr>
 								<tr>
 									<td>
-										@Html.LabelFor(model => model.lstLocations[index].Snapchat)
+										@Html.LabelFor(model => model.lstLocations[index].Wednesday)
 									</td>
 									<td style="text-align: center">
-										@Html.CheckBoxFor(model => model.lstLocations[index].Snapchat.blnAvailable, new { id = "checkboxSnapchat", onclick = "disableSnapchat(this)" })
+										@Html.CheckBoxFor(model => model.lstLocations[index].Wednesday.blnOperational, new { id = "checkboxWednesday", onclick = "disableWednesday(this)" })
 									</td>
 									<td>
-										<label>URL:</label>
-										@Html.TextBoxFor(model => model.lstLocations[index].Snapchat.strSocialMediaLink, new { id = "textSnapchat", disabled = true, placeholder = "https://www.snapchat.com/add/encinitasbakery", style = "width: 350px" })
+										@Html.TextBoxFor(model => model.lstLocations[index].Wednesday.strOpenTime, new { type = "time", id = "wednesdayOpen", disabled = true })
+									</td>
+									<td>
+										@Html.TextBoxFor(model => model.lstLocations[index].Wednesday.strClosedTime, new { type = "time", id = "wednesdayClose", disabled = true })
 									</td>
 								</tr>
 								<tr>
 									<td>
-										@Html.LabelFor(model => model.lstLocations[index].TikTok)
+										@Html.LabelFor(model => model.lstLocations[index].Thursday)
 									</td>
 									<td style="text-align: center">
-										@Html.CheckBoxFor(model => model.lstLocations[index].TikTok.blnAvailable, new { id = "checkboxTikTok", onclick = "disableTikTok(this)" })
+										@Html.CheckBoxFor(model => model.lstLocations[index].Thursday.blnOperational, new { id = "checkboxThursday", onclick = "disableThursday(this)" })
 									</td>
 									<td>
-										<label>URL:</label>
-										@Html.TextBoxFor(model => model.lstLocations[index].TikTok.strSocialMediaLink, new { id = "textTikTok", disabled = true, placeholder = "https://www.tiktok.com/tag/bakery", style = "width: 350px" })
+										@Html.TextBoxFor(model => model.lstLocations[index].Thursday.strOpenTime, new { type = "time", id = "thursdayOpen", disabled = true })
+									</td>
+									<td>
+										@Html.TextBoxFor(model => model.lstLocations[index].Thursday.strClosedTime, new { type = "time", id = "thursdayClose", disabled = true })
+									</td>
+								</tr>
+								<tr>
+									<td>
+										@Html.LabelFor(model => model.lstLocations[index].Friday)
+									</td>
+									<td style="text-align: center">
+										@Html.CheckBoxFor(model => model.lstLocations[index].Friday.blnOperational, new { id = "checkboxFriday", onclick = "disableFriday(this)" })
+									</td>
+									<td>
+										@Html.TextBoxFor(model => model.lstLocations[index].Friday.strOpenTime, new { type = "time", id = "fridayOpen", disabled = true })
+									</td>
+									<td>
+										@Html.TextBoxFor(model => model.lstLocations[index].Friday.strClosedTime, new { type = "time", id = "fridayClose", disabled = true })
+									</td>
+								</tr>
+								<tr>
+									<td>
+										@Html.LabelFor(model => model.lstLocations[index].Saturday)
+									</td>
+									<td style="text-align: center">
+										@Html.CheckBoxFor(model => model.lstLocations[index].Saturday.blnOperational, new { id = "checkboxSaturday", onclick = "disableSaturday(this)" })
+									</td>
+									<td>
+										@Html.TextBoxFor(model => model.lstLocations[index].Saturday.strOpenTime, new { type = "time", id = "saturdayOpen", disabled = true })
+									</td>
+									<td>
+										@Html.TextBoxFor(model => model.lstLocations[index].Saturday.strClosedTime, new { type = "time", id = "saturdayClose", disabled = true })
 									</td>
 								</tr>
 							</table>
 						</div>
 					</td>
 				</tr>
-			}
-			<tfoot>
-			</tfoot>
-		</table>
-	</div>
-	<br />
-	<div class="some-spacing">
-		<button class="button-action" id="btnEnterLocation" name="btnSubmit" value="SubmitLocation">Submit Location(s)</button>
-		<button class="button-cancel" id="addAdditionalLocation" type="button" name="btnSubmit" value="AddLocation">Add Location(s)</button>
-		<!--<button class="button-action" id="btnExtraLocation" name="btnSubmit" value="ExtraLocation">Add Another Location</button>-->
-	</div>
+				<!--Business Contact Information-->
+				<tr>
+					<td>
+						<div>
+							<div class="some-spacing">
+								<div id="label"><label for="BusinessPhone_AreaCode">Business Phone Number</label></div>
+								(@Html.TextBoxFor(m => Model.lstLocations[index].BusinessPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].BusinessPhone.Prefix, new { Style = "width: 50px" })-@Html.TextBoxFor(m => Model.lstLocations[index].BusinessPhone.Suffix, new { Style = "width: 50px" })
+							</div>
+
+							<div>
+								<div id="label">@Html.LabelFor(model => model.lstLocations[index].BusinessEmail, "Business Email")</div>
+								<div>@Html.TextBoxFor(model => model.lstLocations[index].BusinessEmail)</div>
+							</div>
+						</div>
+					</td>
+				</tr>
+				@if (u.isMember > 0) {
+					Model.isMember = 1;
+					<tr>
+						<td>
+							<div>
+								<div class="some-spacing">
+									<div id="label">@Html.LabelFor(model => model.lstLocations[index].BizYear, "Year Established:")</div>
+									@Html.TextBoxFor(model => model.lstLocations[index].BizYear)
+								</div>
+
+								<div class="some-spacing">
+									<div id="label">@Html.LabelFor(model => model.lstLocations[index].Bio, "About us:")</div>
+									<div>@Html.TextAreaFor(model => model.lstLocations[index].Bio, new { @spellcheck = "true", rows = "5", style = "width: 500px;", placeholder = "Tell us about your business..." })</div>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<!--Contact Person Information-->
+					<tr>
+						<td>
+							<div>
+								<h2 class="some-spacing"><u>Location Contact</u></h2>
+								<div class="some-spacing">
+									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].LocationContact.strContactFirstName, "Contact First Name")</div>
+									<div>@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.strContactFirstName, new { @autofocus = "autofocus" })</div>
+								</div>
+
+								<div class="some-spacing">
+									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].LocationContact.strContactLastName, "Contact Last Name")</div>
+									<div>@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.strContactLastName)</div>
+								</div>
+
+								<div class="some-spacing">
+									<div id="label"><label for="ContactPhone_AreaCode">Contact Phone Number</label></div>
+									<div>
+										(@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.contactPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.contactPhone.Prefix, new { Style = "width: 50px" })-@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.contactPhone.Suffix, new { Style = "width: 50px" })
+									</div>
+								</div>
+
+								<div class="some-spacing">
+									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].LocationContact.strContactEmail, "Contact Email")</div>
+									<div>@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.strContactEmail)</div>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<!--Customer Service Person Information-->
+					<tr>
+						<td>
+							<div>
+								<h2 class="some-spacing"><u>Customer Service Contact</u></h2>
+								<div class="some-spacing">
+									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].CustService.strContactFirstName, "Customer Service First Name")</div>
+									<div>@Html.TextBoxFor(m => Model.lstLocations[index].CustService.strContactFirstName, new { @autofocus = "autofocus" })</div>
+								</div>
+
+								<div class="some-spacing">
+									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].CustService.strContactLastName, "Customer Service Last Name")</div>
+									<div>@Html.TextBoxFor(m => Model.lstLocations[index].CustService.strContactLastName)</div>
+								</div>
+
+								<div class="some-spacing">
+									<div id="label"><label for="ContactPhone_AreaCode">Customer Service Phone Number</label></div>
+									<div>
+										(@Html.TextBoxFor(m => Model.lstLocations[index].CustService.contactPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].CustService.contactPhone.Prefix, new { Style = "width: 50px" }) - @Html.TextBoxFor(m => Model.lstLocations[index].CustService.contactPhone.Suffix, new { Style = "width: 50px" })
+									</div>
+								</div>
+
+								<div class="some-spacing">
+									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].CustService.strContactEmail, "Customer Service Email")</div>
+									<div>@Html.TextBoxFor(m => Model.lstLocations[index].CustService.strContactEmail)</div>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<!--Web Admin Contact Information-->
+					<tr>
+						<td>
+							<div>
+								<h2 class="some-spacing"><u>Web Admin Contact</u></h2>
+								<div class="some-spacing">
+									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].WebAdmin.strContactFirstName, "Web Admin First Name")</div>
+									<div>@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.strContactFirstName, new { @autofocus = "autofocus" })</div>
+								</div>
+
+								<div class="some-spacing">
+									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].WebAdmin.strContactLastName, "Web Admin Last Name")</div>
+									<div>@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.strContactLastName)</div>
+								</div>
+
+								<div class="some-spacing">
+									<div id="label"><label for="ContactPhone_AreaCode">Web Admin Phone Number</label></div>
+									<div>
+										(@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.contactPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.contactPhone.Prefix, new { Style = "width: 50px" })-@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.contactPhone.Suffix, new { Style = "width: 50px" })
+									</div>
+								</div>
+
+								<div class="some-spacing">
+									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].WebAdmin.strContactEmail, "Web Admin Email")</div>
+									<div>@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.strContactEmail)</div>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<!--Website Information-->
+					<tr>
+						<td>
+							<div>
+								<h2 class="some-spacing"><u>Additional Websites</u></h2>
+								<div class="some-spacing">
+									<div id="label">@Html.LabelFor(model => model.lstLocations[index].MainWeb, "Main Website URL")</div>
+									<div>@Html.TextBoxFor(model => model.lstLocations[index].MainWeb.strURL, new { placeholder = "Example: https://www.samplewebsite.com", style = "width: 375px" })</div>
+								</div>
+
+								<div class="some-spacing">
+									<div id="label">@Html.LabelFor(model => model.lstLocations[index].OrderingWeb, "Ordering Webpage URL") </div>
+									<div>@Html.TextBoxFor(model => model.lstLocations[index].OrderingWeb.strURL, new { placeholder = "Example: https://www.samplewebsite.com/ordering", style = "width: 375px" }) </div>
+								</div>
+
+								<div class="some-spacing">
+									<div id="label">@Html.LabelFor(model => model.lstLocations[index].KettleWeb, "Donation Kettle URL") </div>
+									<div>@Html.TextBoxFor(model => model.lstLocations[index].KettleWeb.strURL, new { placeholder = "Example: https://www.salvationarmy.com", style = "width: 375px" }) </div>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<!--table for Social Media-->
+					<tr>
+						<td>
+							<div class="some-spacing">
+								<h5><strong>Social Media Outlets</strong></h5>
+								<table class="center">
+									<tr>
+										<td><b>Platform</b></td>
+										<td>
+											<b>(Check to Include)</b>
+										</td>
+										<td style="text-align: center"><b>Link</b></td>
+									</tr>
+									<tr>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].Facebook)
+										</td>
+										<td style="text-align: center">
+											@Html.CheckBoxFor(model => model.lstLocations[index].Facebook.blnAvailable, new { id = "checkboxFacebook", onclick = "disableFacebook(this)" })
+										</td>
+										<td>
+											<label>URL:</label>
+											@Html.TextBoxFor(model => model.lstLocations[index].Facebook.strSocialMediaLink, new { id = "textFacebook", disabled = true, placeholder = "Example: https://m.facebook.com/servatii", style = "width: 450px" })
+										</td>
+									</tr>
+									<tr>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].Twitter)
+										</td>
+										<td style="text-align: center">
+											@Html.CheckBoxFor(model => model.lstLocations[index].Twitter.blnAvailable, new { id = "checkboxTwitter", onclick = "disableTwitter(this)" })
+										</td>
+										<td>
+											<label>URL:</label>
+											@Html.TextBoxFor(model => model.lstLocations[index].Twitter.strSocialMediaLink, new { id = "textTwitter", disabled = true, placeholder = "Example: https://twitter.com/servatiipastry", style = "width: 450px" })
+										</td>
+									</tr>
+									<tr>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].Instagram)
+										</td>
+										<td style="text-align: center">
+											@Html.CheckBoxFor(model => model.lstLocations[index].Instagram.blnAvailable, new { id = "checkboxInstagram", onclick = "disableInstagram(this)" })
+										</td>
+										<td>
+											<label>URL:</label>
+											@Html.TextBoxFor(model => model.lstLocations[index].Instagram.strSocialMediaLink, new { id = "textInstagram", disabled = true, placeholder = "Example: https://www.instagram.com/servatiipastry/", style = "width: 450px" })
+										</td>
+									</tr>
+									<tr>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].Yelp)
+										</td>
+										<td style="text-align: center">
+											@Html.CheckBoxFor(model => model.lstLocations[index].Yelp.blnAvailable, new { id = "checkboxYelp", onclick = "disableYelp(this)" })
+										</td>
+										<td>
+											<label>URL:</label>
+											@Html.TextBoxFor(model => model.lstLocations[index].Yelp.strSocialMediaLink, new { id = "textYelp", disabled = true, placeholder = "Example: https://www.yelp.com/biz/servatii-pastry-and-cafe-cincinnati", style = "width: 450px" })
+										</td>
+									</tr>
+									<tr>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].Snapchat)
+										</td>
+										<td style="text-align: center">
+											@Html.CheckBoxFor(model => model.lstLocations[index].Snapchat.blnAvailable, new { id = "checkboxSnapchat", onclick = "disableSnapchat(this)" })
+										</td>
+										<td>
+											<label>URL:</label>
+											@Html.TextBoxFor(model => model.lstLocations[index].Snapchat.strSocialMediaLink, new { id = "textSnapchat", disabled = true, placeholder = "Example: https://www.snapchat.com/add/encinitasbakery", style = "width: 450px" })
+										</td>
+									</tr>
+									<tr>
+										<td>
+											@Html.LabelFor(model => model.lstLocations[index].TikTok)
+										</td>
+										<td style="text-align: center">
+											@Html.CheckBoxFor(model => model.lstLocations[index].TikTok.blnAvailable, new { id = "checkboxTikTok", onclick = "disableTikTok(this)" })
+										</td>
+										<td>
+											<label>URL:</label>
+											@Html.TextBoxFor(model => model.lstLocations[index].TikTok.strSocialMediaLink, new { id = "textTikTok", disabled = true, placeholder = "Example: https://www.tiktok.com/tag/bakery", style = "width: 450px" })
+										</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+					</tr>
+				}
+				<tfoot>
+				</tfoot>
+			</table>
+		</div>
+		<br />
+		<div class="some-spacing">
+			<button class="button-action" id="btnEnterLocation" name="btnSubmit" value="SubmitLocation">Submit Location(s)</button>
+			<button class="button-cancel" id="addAdditionalLocation" type="button" name="btnSubmit" value="AddLocation">Add Location(s)</button>
+			<!--<button class="button-action" id="btnExtraLocation" name="btnSubmit" value="ExtraLocation">Add Another Location</button>-->
+		</div>
+	}
 }
 
 <script>

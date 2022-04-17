@@ -31,7 +31,10 @@ namespace GCRBA.Models {
 			UpdateSuccessful = 2,
 			DeleteSuccessful = 3,
 			RequiredFieldsMissing = 4,
-			Unknown = 5
+			CompanyFieldsMissing = 5,
+			CategoryFieldsMissing = 6,
+			HoursFieldsMissing = 7,
+			Unknown = 8
 		}
 	}
 }

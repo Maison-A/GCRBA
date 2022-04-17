@@ -208,7 +208,13 @@ namespace GCRBA.Views.Bakery {
                             loc.lngCompanyID = Convert.ToInt64(col["lstLocations[0].lngCompanyID"]);
                         }
 
-                        loc.CompanyName = col["lstLocations[0].CompanyName"];
+                        if (loc.lngCompanyID == 0) {
+                            loc.CompanyName = col["lstLocations[0].CompanyName"];
+                        }
+                        else {
+                            loc.CompanyName = string.Empty;
+						}
+                        
                         loc.LocationName = col["lstLocations[" + index + "].LocationName"];
                         loc.StreetAddress = col["lstLocations[" + index + "].StreetAddress"];
                         loc.City = col["lstLocations[" + index + "].City"];
@@ -369,23 +375,72 @@ namespace GCRBA.Views.Bakery {
                         loc.BizYear = col["lstLocations[" + index + "].BizYear"];
                         loc.Bio = col["lstLocations[" + index + "].Bio"];
 
+
                         if (loc.CompanyName.Length == 0 && loc.lngCompanyID == 0) {
-                            loc.ActionType = Models.NewLocation.ActionTypes.RequiredFieldsMissing;
-                            locList.lstLocations[index] = loc;
+                            loc.lstStates = db.GetStates();
+                            loc.lstCompanies = db.GetCompanies();
+                            loc.lstCompanies.Add(nonValue);
+                            locList.lstLocations = new Models.NewLocation[] { loc };
+                            locList.ActionType = Models.LocationList.ActionTypes.CompanyFieldsMissing;
                             return View(locList);
                         }
 
                         if (loc.LocationName.Length == 0 || loc.StreetAddress.Length == 0 || loc.City.Length == 0 || loc.intState == 0 || loc.Zip.Length == 0) {
-                            loc.ActionType = Models.NewLocation.ActionTypes.RequiredFieldsMissing;
-                            locList.lstLocations[index] = loc;
+                            loc.lstStates = db.GetStates();
+                            loc.lstCompanies = db.GetCompanies();
+                            loc.lstCompanies.Add(nonValue);
+                            locList.lstLocations = new Models.NewLocation[] { loc };
+                            locList.ActionType = Models.LocationList.ActionTypes.RequiredFieldsMissing;
                             return View(locList);
                         }
 
+                        //Store Categories in List for Category Check
+                        var categories = new List<Models.CategoryItem>() {
+                        loc.Donuts, loc.Bagels, loc.Muffins, loc.IceCream, loc.FineCandies, loc.WeddingCakes, loc.Breads, loc.DecoratedCakes, loc.Cupcakes, loc.Cookies, loc.Desserts, loc.Full,
+                        loc.Deli, loc.Other, loc.Wholesale, loc.Delivery, loc.Shipping, loc.Online
+                        };
+
+                        bool CategoryCheck = false;
+                        foreach (Models.CategoryItem item in categories) {
+                            if (item.blnAvailable == false) continue;
+                            else CategoryCheck = true;
+						}
+                        if(CategoryCheck == false) {
+                            loc.lstStates = db.GetStates();
+                            loc.lstCompanies = db.GetCompanies();
+                            loc.lstCompanies.Add(nonValue);
+                            locList.lstLocations = new Models.NewLocation[] { loc };
+                            locList.ActionType = Models.LocationList.ActionTypes.CategoryFieldsMissing;
+                            return View(locList);
+						}
+                        //If good, store information in array
+                        arrCategoryInfo[indexPopulated] = categories;
+
+                        //Store Location Hours in List for Hours Check
+                        var LocationHours = new List<Models.Days>() {
+                        loc.Sunday, loc.Monday, loc.Tuesday, loc.Wednesday, loc.Thursday, loc.Friday, loc.Saturday
+                        };
+
+                        bool HoursCheck = false;
+                        foreach (Models.Days item in LocationHours) {
+                            if (item.blnOperational == false) continue;
+                            else HoursCheck = true;
+                        }
+                        if (HoursCheck == false) {
+                            loc.lstStates = db.GetStates();
+                            loc.lstCompanies = db.GetCompanies();
+                            loc.lstCompanies.Add(nonValue);
+                            locList.lstLocations = new Models.NewLocation[] { loc };
+                            locList.ActionType = Models.LocationList.ActionTypes.HoursFieldsMissing;
+                            return View(locList);
+                        }
+                        //If good, store information in array
+                        arrLocHours[indexPopulated] = LocationHours;
+
                         //ADDRESS MOST IMPORTANT TO GEOCODE
-                        var location = new List<string>()
-                        {
+                        var location = new List<string>() {
                         loc.LocationName, loc.StreetAddress + ' ' + loc.City + ' ' + loc.State + ' ' + loc.Zip
-                    };
+                        };
                         arrLocInfo[indexPopulated] = location;
 
                         var businessInfo = new List<string>() {
@@ -393,7 +448,7 @@ namespace GCRBA.Views.Bakery {
                         loc.BusinessEmail,
                         loc.BizYear,
                         loc.Bio
-                    };
+                        };
                         arrBizInfo[indexPopulated] = businessInfo;
 
                         var contacts = new List<Models.ContactPerson>()
@@ -407,18 +462,7 @@ namespace GCRBA.Views.Bakery {
                     };
                         arrSocialMediaInfo[indexPopulated] = socialmedia;
 
-                        var categories = new List<Models.CategoryItem>()
-                        {
-                        loc.Donuts, loc.Bagels, loc.Muffins, loc.IceCream, loc.FineCandies, loc.WeddingCakes, loc.Breads, loc.DecoratedCakes, loc.Cupcakes, loc.Cookies, loc.Desserts, loc.Full,
-                        loc.Deli, loc.Other, loc.Wholesale, loc.Delivery, loc.Shipping, loc.Online
-                    };
-                        arrCategoryInfo[indexPopulated] = categories;
-
-                        var LocationHours = new List<Models.Days>()
-                        {
-                        loc.Sunday, loc.Monday, loc.Tuesday, loc.Wednesday, loc.Thursday, loc.Friday, loc.Saturday
-                    };
-                        arrLocHours[indexPopulated] = LocationHours;
+                       
 
                         var Websites = new List<Models.Website>() {
                         loc.MainWeb, loc.OrderingWeb, loc.KettleWeb
