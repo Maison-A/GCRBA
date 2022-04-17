@@ -56,6 +56,7 @@ IF OBJECT_ID('SELECT_LOCATION_CONTACTS') IS NOT NULL DROP PROCEDURE SELECT_LOCAT
 IF OBJECT_ID('SELECT_LOCATION_SOCIALMEDIA') IS NOT NULL DROP PROCEDURE SELECT_LOCATION_SOCIALMEDIA
 IF OBJECT_ID('SELECT_LOCATION_WEBSITE') IS NOT NULL DROP PROCEDURE SELECT_LOCATION_WEBSITE
 IF OBJECT_ID('SELECT_USERLOCATION_ASSOCIATION') IS NOT NULL DROP PROCEDURE SELECT_USERLOCATION_ASSOCIATION
+IF OBJECT_ID('GET_LOCATIONS_NOT_CONTACT') IS NOT NULL DROP PROCEDURE GET_LOCATIONS_NOT_CONTACT
 
 
 CREATE TABLE tblState
@@ -855,6 +856,22 @@ BEGIN
 END 
 GO
 
+CREATE PROCEDURE [db_owner].[GET_LOCATIONS_NOT_CONTACT]
+@intContactPersonID BIGINT,
+@intCompanyID		BIGINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT	DISTINCT l.intLocationID, l.strAddress, l.strCity, s.strState, l.strZip
+	FROM	tblLocation as l JOIN tblContactPerson as c 
+			ON l.intLocationID = c.intLocationID
+			JOIN tblState as s 
+			ON s.intStateID = l.intStateID
+	WHERE	c.intContactPersonID != @intContactPersonID and c.intCompanyID = @intCompanyID and l.intLocationID NOT IN (SELECT intLocationID FROM tblContactPerson WHERE intContactPersonID = @intContactPersonID)
+END 
+GO
+
 CREATE PROCEDURE [db_owner].[GET_SPECIFIC_COMPANY]
 @intCompanyID BIGINT
 AS 
@@ -1108,6 +1125,9 @@ INSERT INTO tblContactPerson (strContactName, strContactPhone, strContactEmail, 
 VALUES					('Briggs, Randall', '5555555555', 'briggs.r@gmail.com', 1, 1, 1)
 						,('Hall, Ben', '5555555555', 'hall.b@gmail.com', 1, 1, 2)
 						,('Cowen, Candice', '5555555555', 'cowen.c@gmail.com', 1, 1, 3)
+						,('Smith, Bob', '5555555555', 'bob.smith@gmail.com', 3, 3, 1)
+						,('Brown, Erica', '5555555555', 'erica.b@gmail.com', 4, 3, 1)
+						,('Lopez, Maria', '5555555555', 'maria_lopez@gmail.com', 3, 3, 2)
 
 INSERT INTO tblLocationHours (intLocationID, intDayID, strOpen, strClose)
 VALUES	(1, 1, '10:00am', '4:00pm'),
