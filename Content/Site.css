@@ -195,13 +195,24 @@ th, td {
 	padding: 16px;
 }
 
-@media screen and (max-width : 600 px) {
+@media only screen and (max-width: 30em) {
+	.basic-column {
+		width: 100%;
+	}
 
-    .column {
-        width: 100%;
-    }
+	.column{
+		width: 100%;
+	}
 
-	.column-wide-x2 {
+	.basic-column-wide-x2 {
+		width: 100%;
+	}
+
+	.member-column {
+		width: 100%;
+	}
+
+	.member-column-wide-x2 {
 		width: 100%;
 	}
 }
