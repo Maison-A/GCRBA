@@ -79,14 +79,10 @@ namespace GCRBA.Views.Bakery {
             Models.Database db = new Models.Database();
             Models.SearchResults results = new Models.SearchResults();
             Models.NewLocation loc = new Models.NewLocation();
-            Models.User user = new Models.User();
-            user.GetUserSession();
-            user.lstMemberLocations = db.GetMemberLocations(user);
-            user.SaveUserSession();
             
             
-
             results.landingLocation = db.GetLandingLocation(Id);
+            results.landingLocation.memberStatus = db.CheckMemberStatus(results.landingLocation.lngLocationID);
             results.landingCategories = db.GetLandingCategories(Id);
             results.landingAwards = db.GetLandingAwards(Id);
             results.landingSpecials = db.GetLandingSpecials(Id);

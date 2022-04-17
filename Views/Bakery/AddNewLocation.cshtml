@@ -70,13 +70,19 @@
 		</div>
 	}
 
-	<div class="mainTable0" id="mainTable0">
-		<table class="center" id="lstLocations-table">
+	<div class="some-spacing">
+		<button class="button-action" id="btnEnterLocation" name="btnSubmit" value="SubmitLocation">Submit Location(s)</button>
+		<button class="button-cancel1" id="addAdditionalLocation1" type="button" name="btnSubmit" value="AddLocation">Add Location(s)</button>
+		<!--<button class="button-action" id="btnExtraLocation" name="btnSubmit" value="ExtraLocation">Add Another Location</button>-->
+	</div>
+
+	<div class="some-spacing">
+		<table>
 			<tr>
 				<td>
 					<div>
 						<div id="label">@Html.LabelFor(model => model.lstLocations[index].lngCompanyID, "Existing Parent Company Name")*</div>
-						<div>@Html.DropDownListFor(model => model.lstLocations[index].lngCompanyID, new SelectList(Model.lstLocations[index].lstCompanies, "CompanyID", "Name", selectedValue: 0))</div>
+						<div>@Html.DropDownListFor(model => model.lstLocations[index].lngCompanyID, new SelectList(Model.lstLocations[index].lstCompanies, "CompanyID", "Name", selectedValue: 0), new { onchange ="disableME()", id = "dropdownCompany"})</div>
 					</div>
 				</td>
 			</tr>
@@ -89,10 +95,15 @@
 				<td>
 					<div>
 						<div id="label">@Html.LabelFor(model => model.lstLocations[index].CompanyName, "New Parent Company Name")*</div>
-						<div>@Html.TextBoxFor(model => model.lstLocations[index].CompanyName, new { @autofocus = "autofocus" })</div>
+						<div>@Html.TextBoxFor(model => model.lstLocations[index].CompanyName, new { @autofocus = "autofocus", id="textboxCompany", onchange="disableME()" })</div>
 					</div>
 				</td>
 			</tr>
+		</table>
+	</div>
+
+	<div class="mainTable0" id="mainTable0">
+		<table class="center" id="lstLocations-table">
 			<tr>
 				<td>
 					<div>
@@ -390,230 +401,228 @@
 				</td>
 			</tr>
 			@if (u.isMember > 0) {
-				Model.isMember = 1; 
-			<tr>
-				<td>
-					<div>
-						<div class="some-spacing">
-							<div id="label">@Html.LabelFor(model => model.lstLocations[index].BizYear, "Year Established:")</div>
-							@Html.TextBoxFor(model => model.lstLocations[index].BizYear)
-						</div>
+				Model.isMember = 1;
+				<tr>
+					<td>
+						<div>
+							<div class="some-spacing">
+								<div id="label">@Html.LabelFor(model => model.lstLocations[index].BizYear, "Year Established:")</div>
+								@Html.TextBoxFor(model => model.lstLocations[index].BizYear)
+							</div>
 
-						<div class="some-spacing">
-							<div id="label">@Html.LabelFor(model => model.lstLocations[index].Bio, "About us:")</div>
-							<div>@Html.TextAreaFor(model => model.lstLocations[index].Bio, new { @spellcheck = "true", rows = "5", style = "width: 500px;" })</div>
-						</div>
-					</div>
-				</td>
-			</tr>
-			<!--Contact Person Information-->
-			<tr>
-				<td>
-					<div>
-						<div class="some-spacing">
-							<div id="label">@Html.LabelFor(m => Model.lstLocations[index].LocationContact.strContactFirstName, "Contact First Name")</div>
-							<div>@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.strContactFirstName, new { @autofocus = "autofocus" })</div>
-						</div>
-
-						<div class="some-spacing">
-							<div id="label">@Html.LabelFor(m => Model.lstLocations[index].LocationContact.strContactLastName, "Contact Last Name")</div>
-							<div>@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.strContactLastName)</div>
-						</div>
-
-						<div class="some-spacing">
-							<div id="label"><label for="ContactPhone_AreaCode">Contact Phone Number</label></div>
-							<div>
-								(@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.contactPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.contactPhone.Prefix, new { Style = "width: 50px" })-@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.contactPhone.Suffix, new { Style = "width: 50px" })
+							<div class="some-spacing">
+								<div id="label">@Html.LabelFor(model => model.lstLocations[index].Bio, "About us:")</div>
+								<div>@Html.TextAreaFor(model => model.lstLocations[index].Bio, new { @spellcheck = "true", rows = "5", style = "width: 500px;" })</div>
 							</div>
 						</div>
+					</td>
+				</tr>
+				<!--Contact Person Information-->
+				<tr>
+					<td>
+						<div>
+							<div class="some-spacing">
+								<div id="label">@Html.LabelFor(m => Model.lstLocations[index].LocationContact.strContactFirstName, "Contact First Name")</div>
+								<div>@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.strContactFirstName, new { @autofocus = "autofocus" })</div>
+							</div>
 
-						<div class="some-spacing">
-							<div id="label">@Html.LabelFor(m => Model.lstLocations[index].LocationContact.strContactEmail, "Contact Email")</div>
-							<div>@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.strContactEmail)</div>
-						</div>
-					</div>
-				</td>
-			</tr>
-			<!--Customer Service Person Information-->
-			<tr>
-				<td>
-					<div>
-						<div class="some-spacing">
-							<div id="label">@Html.LabelFor(m => Model.lstLocations[index].CustService.strContactFirstName, "Customer Service First Name")</div>
-							<div>@Html.TextBoxFor(m => Model.lstLocations[index].CustService.strContactFirstName, new { @autofocus = "autofocus" })</div>
-						</div>
+							<div class="some-spacing">
+								<div id="label">@Html.LabelFor(m => Model.lstLocations[index].LocationContact.strContactLastName, "Contact Last Name")</div>
+								<div>@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.strContactLastName)</div>
+							</div>
 
-						<div class="some-spacing">
-							<div id="label">@Html.LabelFor(m => Model.lstLocations[index].CustService.strContactLastName, "Customer Service Last Name")</div>
-							<div>@Html.TextBoxFor(m => Model.lstLocations[index].CustService.strContactLastName)</div>
-						</div>
+							<div class="some-spacing">
+								<div id="label"><label for="ContactPhone_AreaCode">Contact Phone Number</label></div>
+								<div>
+									(@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.contactPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.contactPhone.Prefix, new { Style = "width: 50px" })-@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.contactPhone.Suffix, new { Style = "width: 50px" })
+								</div>
+							</div>
 
-						<div class="some-spacing">
-							<div id="label"><label for="ContactPhone_AreaCode">Customer Service Phone Number</label></div>
-							<div>
-								(@Html.TextBoxFor(m => Model.lstLocations[index].CustService.contactPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].CustService.contactPhone.Prefix, new { Style = "width: 50px" }) - @Html.TextBoxFor(m => Model.lstLocations[index].CustService.contactPhone.Suffix, new { Style = "width: 50px" })
+							<div class="some-spacing">
+								<div id="label">@Html.LabelFor(m => Model.lstLocations[index].LocationContact.strContactEmail, "Contact Email")</div>
+								<div>@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.strContactEmail)</div>
 							</div>
 						</div>
+					</td>
+				</tr>
+				<!--Customer Service Person Information-->
+				<tr>
+					<td>
+						<div>
+							<div class="some-spacing">
+								<div id="label">@Html.LabelFor(m => Model.lstLocations[index].CustService.strContactFirstName, "Customer Service First Name")</div>
+								<div>@Html.TextBoxFor(m => Model.lstLocations[index].CustService.strContactFirstName, new { @autofocus = "autofocus" })</div>
+							</div>
 
-						<div class="some-spacing">
-							<div id="label">@Html.LabelFor(m => Model.lstLocations[index].CustService.strContactEmail, "Customer Service Email")</div>
-							<div>@Html.TextBoxFor(m => Model.lstLocations[index].CustService.strContactEmail)</div>
-						</div>
-					</div>
-				</td>
-			</tr>
-			<!--Website Information-->
-			<tr>
-				<td>
-					<div>
-						<div class="some-spacing">
-							<div id="label">@Html.LabelFor(model => model.lstLocations[index].MainWeb, "Main Website URL")</div>
-							<div>@Html.TextBoxFor(model => model.lstLocations[index].MainWeb.strURL)</div>
-						</div>
+							<div class="some-spacing">
+								<div id="label">@Html.LabelFor(m => Model.lstLocations[index].CustService.strContactLastName, "Customer Service Last Name")</div>
+								<div>@Html.TextBoxFor(m => Model.lstLocations[index].CustService.strContactLastName)</div>
+							</div>
 
-						<div class="some-spacing">
-							<div id="label">@Html.LabelFor(model => model.lstLocations[index].OrderingWeb, "Ordering Webpage URL") </div>
-							<div>@Html.TextBoxFor(model => model.lstLocations[index].OrderingWeb.strURL) </div>
-						</div>
+							<div class="some-spacing">
+								<div id="label"><label for="ContactPhone_AreaCode">Customer Service Phone Number</label></div>
+								<div>
+									(@Html.TextBoxFor(m => Model.lstLocations[index].CustService.contactPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].CustService.contactPhone.Prefix, new { Style = "width: 50px" }) - @Html.TextBoxFor(m => Model.lstLocations[index].CustService.contactPhone.Suffix, new { Style = "width: 50px" })
+								</div>
+							</div>
 
-						<div class="some-spacing">
-							<div id="label">@Html.LabelFor(model => model.lstLocations[index].KettleWeb, "Donation Kettle URL") </div>
-							<div>@Html.TextBoxFor(model => model.lstLocations[index].KettleWeb.strURL) </div>
-						</div>
-					</div>
-				</td>
-			</tr>
-			<!--Web Admin Contact Information-->
-			<tr>
-				<td>
-					<div>
-						<div class="some-spacing">
-							<div id="label">@Html.LabelFor(m => Model.lstLocations[index].WebAdmin.strContactFirstName, "Web Admin First Name")</div>
-							<div>@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.strContactFirstName, new { @autofocus = "autofocus" })</div>
-						</div>
-
-						<div class="some-spacing">
-							<div id="label">@Html.LabelFor(m => Model.lstLocations[index].WebAdmin.strContactLastName, "Web Admin Last Name")</div>
-							<div>@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.strContactLastName)</div>
-						</div>
-
-						<div class="some-spacing">
-							<div id="label"><label for="ContactPhone_AreaCode">Web Admin Phone Number</label></div>
-							<div>
-								(@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.contactPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.contactPhone.Prefix, new { Style = "width: 50px" })-@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.contactPhone.Suffix, new { Style = "width: 50px" })
+							<div class="some-spacing">
+								<div id="label">@Html.LabelFor(m => Model.lstLocations[index].CustService.strContactEmail, "Customer Service Email")</div>
+								<div>@Html.TextBoxFor(m => Model.lstLocations[index].CustService.strContactEmail)</div>
 							</div>
 						</div>
+					</td>
+				</tr>
+				<!--Website Information-->
+				<tr>
+					<td>
+						<div>
+							<div class="some-spacing">
+								<div id="label">@Html.LabelFor(model => model.lstLocations[index].MainWeb, "Main Website URL")</div>
+								<div>@Html.TextBoxFor(model => model.lstLocations[index].MainWeb.strURL)</div>
+							</div>
 
-						<div class="some-spacing">
-							<div id="label">@Html.LabelFor(m => Model.lstLocations[index].WebAdmin.strContactEmail, "Web Admin Email")</div>
-							<div>@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.strContactEmail)</div>
+							<div class="some-spacing">
+								<div id="label">@Html.LabelFor(model => model.lstLocations[index].OrderingWeb, "Ordering Webpage URL") </div>
+								<div>@Html.TextBoxFor(model => model.lstLocations[index].OrderingWeb.strURL) </div>
+							</div>
+
+							<div class="some-spacing">
+								<div id="label">@Html.LabelFor(model => model.lstLocations[index].KettleWeb, "Donation Kettle URL") </div>
+								<div>@Html.TextBoxFor(model => model.lstLocations[index].KettleWeb.strURL) </div>
+							</div>
 						</div>
-					</div>
-				</td>
-			</tr>
-			<!--table for Social Media-->
-			<tr>
-				<td>
-					<div class="some-spacing">
-						<table class="center">
-							<tr>
-								<h5><strong>Social Media Outlets</strong></h5>
-							</tr>
-							<tr>
-								<td><b>Platform</b></td>
-								<td>
-									<b>(Check to Include)</b>
-								</td>
-								<td style="text-align: center"><b>Link</b></td>
-							</tr>
-							<tr>
-								<td>
-									@Html.LabelFor(model => model.lstLocations[index].Facebook)
-								</td>
-								<td style="text-align: center">
-									@Html.CheckBoxFor(model => model.lstLocations[index].Facebook.blnAvailable)
-								</td>
-								<td>
-									<label>URL:</label>
-									@Html.TextBoxFor(model => model.lstLocations[index].Facebook.strSocialMediaLink)
-								</td>
-							</tr>
-							<tr>
-								<td>
-									@Html.LabelFor(model => model.lstLocations[index].Twitter)
-								</td>
-								<td style="text-align: center">
-									@Html.CheckBoxFor(model => model.lstLocations[index].Twitter.blnAvailable)
-								</td>
-								<td>
-									<label>URL:</label>
-									@Html.TextBoxFor(model => model.lstLocations[index].Twitter.strSocialMediaLink)
-								</td>
-							</tr>
-							<tr>
-								<td>
-									@Html.LabelFor(model => model.lstLocations[index].Instagram)
-								</td>
-								<td style="text-align: center">
-									@Html.CheckBoxFor(model => model.lstLocations[index].Instagram.blnAvailable)
-								</td>
-								<td>
-									<label>URL:</label>
-									@Html.TextBoxFor(model => model.lstLocations[index].Instagram.strSocialMediaLink)
-								</td>
-							</tr>
-							<tr>
-								<td>
-									@Html.LabelFor(model => model.lstLocations[index].Snapchat)
-								</td>
-								<td style="text-align: center">
-									@Html.CheckBoxFor(model => model.lstLocations[index].Snapchat.blnAvailable)
-								</td>
-								<td>
-									<label>URL:</label>
-									@Html.TextBoxFor(model => model.lstLocations[index].Snapchat.strSocialMediaLink)
-								</td>
-							</tr>
-							<tr>
-								<td>
-									@Html.LabelFor(model => model.lstLocations[index].TikTok)
-								</td>
-								<td style="text-align: center">
-									@Html.CheckBoxFor(model => model.lstLocations[index].TikTok.blnAvailable)
-								</td>
-								<td>
-									<label>URL:</label>
-									@Html.TextBoxFor(model => model.lstLocations[index].TikTok.strSocialMediaLink)
-								</td>
-							</tr>
-							<tr>
-								<td>
-									@Html.LabelFor(model => model.lstLocations[index].Yelp)
-								</td>
-								<td style="text-align: center">
-									@Html.CheckBoxFor(model => model.lstLocations[index].Yelp.blnAvailable)
-								</td>
-								<td>
-									<label>URL:</label>
-									@Html.TextBoxFor(model => model.lstLocations[index].Yelp.strSocialMediaLink)
-								</td>
-							</tr>
-						</table>
-					</div>
-				</td>
-			</tr>
+					</td>
+				</tr>
+				<!--Web Admin Contact Information-->
+				<tr>
+					<td>
+						<div>
+							<div class="some-spacing">
+								<div id="label">@Html.LabelFor(m => Model.lstLocations[index].WebAdmin.strContactFirstName, "Web Admin First Name")</div>
+								<div>@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.strContactFirstName, new { @autofocus = "autofocus" })</div>
+							</div>
+
+							<div class="some-spacing">
+								<div id="label">@Html.LabelFor(m => Model.lstLocations[index].WebAdmin.strContactLastName, "Web Admin Last Name")</div>
+								<div>@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.strContactLastName)</div>
+							</div>
+
+							<div class="some-spacing">
+								<div id="label"><label for="ContactPhone_AreaCode">Web Admin Phone Number</label></div>
+								<div>
+									(@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.contactPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.contactPhone.Prefix, new { Style = "width: 50px" })-@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.contactPhone.Suffix, new { Style = "width: 50px" })
+								</div>
+							</div>
+
+							<div class="some-spacing">
+								<div id="label">@Html.LabelFor(m => Model.lstLocations[index].WebAdmin.strContactEmail, "Web Admin Email")</div>
+								<div>@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.strContactEmail)</div>
+							</div>
+						</div>
+					</td>
+				</tr>
+				<!--table for Social Media-->
+				<tr>
+					<td>
+						<div class="some-spacing">
+							<table class="center">
+								<tr>
+									<h5><strong>Social Media Outlets</strong></h5>
+								</tr>
+								<tr>
+									<td><b>Platform</b></td>
+									<td>
+										<b>(Check to Include)</b>
+									</td>
+									<td style="text-align: center"><b>Link</b></td>
+								</tr>
+								<tr>
+									<td>
+										@Html.LabelFor(model => model.lstLocations[index].Facebook)
+									</td>
+									<td style="text-align: center">
+										@Html.CheckBoxFor(model => model.lstLocations[index].Facebook.blnAvailable)
+									</td>
+									<td>
+										<label>URL:</label>
+										@Html.TextBoxFor(model => model.lstLocations[index].Facebook.strSocialMediaLink)
+									</td>
+								</tr>
+								<tr>
+									<td>
+										@Html.LabelFor(model => model.lstLocations[index].Twitter)
+									</td>
+									<td style="text-align: center">
+										@Html.CheckBoxFor(model => model.lstLocations[index].Twitter.blnAvailable)
+									</td>
+									<td>
+										<label>URL:</label>
+										@Html.TextBoxFor(model => model.lstLocations[index].Twitter.strSocialMediaLink)
+									</td>
+								</tr>
+								<tr>
+									<td>
+										@Html.LabelFor(model => model.lstLocations[index].Instagram)
+									</td>
+									<td style="text-align: center">
+										@Html.CheckBoxFor(model => model.lstLocations[index].Instagram.blnAvailable)
+									</td>
+									<td>
+										<label>URL:</label>
+										@Html.TextBoxFor(model => model.lstLocations[index].Instagram.strSocialMediaLink)
+									</td>
+								</tr>
+								<tr>
+									<td>
+										@Html.LabelFor(model => model.lstLocations[index].Snapchat)
+									</td>
+									<td style="text-align: center">
+										@Html.CheckBoxFor(model => model.lstLocations[index].Snapchat.blnAvailable)
+									</td>
+									<td>
+										<label>URL:</label>
+										@Html.TextBoxFor(model => model.lstLocations[index].Snapchat.strSocialMediaLink)
+									</td>
+								</tr>
+								<tr>
+									<td>
+										@Html.LabelFor(model => model.lstLocations[index].TikTok)
+									</td>
+									<td style="text-align: center">
+										@Html.CheckBoxFor(model => model.lstLocations[index].TikTok.blnAvailable)
+									</td>
+									<td>
+										<label>URL:</label>
+										@Html.TextBoxFor(model => model.lstLocations[index].TikTok.strSocialMediaLink)
+									</td>
+								</tr>
+								<tr>
+									<td>
+										@Html.LabelFor(model => model.lstLocations[index].Yelp)
+									</td>
+									<td style="text-align: center">
+										@Html.CheckBoxFor(model => model.lstLocations[index].Yelp.blnAvailable)
+									</td>
+									<td>
+										<label>URL:</label>
+										@Html.TextBoxFor(model => model.lstLocations[index].Yelp.strSocialMediaLink)
+									</td>
+								</tr>
+							</table>
+						</div>
+					</td>
+				</tr>
 			}
 			<tfoot>
 			</tfoot>
 		</table>
 	</div>
 	<br />
-	<div>
-		<div class="some-spacing">
-			<button class="button-action" id="btnEnterLocation" name="btnSubmit" value="SubmitLocation">Submit Location(s)</button>
-			<button class="button-newLocation" id="addAdditionalLocation" type="button" name="btnSubmit" value="AddLocation">Add Location(s)</button>
-			<!--<button class="button-action" id="btnExtraLocation" name="btnSubmit" value="ExtraLocation">Add Another Location</button>-->
-		</div>
+	<div class="some-spacing">
+		<button class="button-action" id="btnEnterLocation" name="btnSubmit" value="SubmitLocation">Submit Location(s)</button>
+		<button class="button-cancel" id="addAdditionalLocation" type="button" name="btnSubmit" value="AddLocation">Add Location(s)</button>
+		<!--<button class="button-action" id="btnExtraLocation" name="btnSubmit" value="ExtraLocation">Add Another Location</button>-->
 	</div>
 }
 
@@ -756,13 +765,37 @@
 
 	var isMember = @Model.isMember;
 
-	let buttonAddLocation = document.querySelector(".button-newLocation");
+	let buttonAddLocation = document.querySelector(".button-cancel");
+	let buttonAddLocation1 = document.querySelector(".button-cancel1");
+
 	let CountButtonClicks = 0;
 
 	buttonAddLocation.addEventListener("click", function () {
 		CountButtonClicks += 1;
 		console.log(CountButtonClicks);
 	});
+
+	buttonAddLocation1.addEventListener("click", function () {
+		CountButtonClicks += 1;
+		console.log(CountButtonClicks);
+	});
+
+	function disableME() {
+		var dropdownCompany = document.getElementById('dropdownCompany'),
+			textboxCompany = document.getElementById('textboxCompany');
+
+		if (dropdownCompany.value > 0) {
+			textboxCompany.disabled = true;
+		}
+		else if (textboxCompany.value != 0) {
+			dropdownCompany.value = 0;
+			dropdownCompany.disabled = true;
+		}
+		else {
+			textboxCompany.disabled = false;
+			dropdownCompany.disabled = false;
+		}
+	}
 
 
 	function remove(index) {
@@ -772,13 +805,6 @@
 		console.log(CountButtonClicks);
 	}
 
-	/*
-	$(".button-deleteLocation").on("click", function remove(el) {
-		var element = el;
-		element.remove();
-	});
-	*/
-
 	$("#addAdditionalLocation").on("click", function () {
 		//var time = Date.now();
 		var index = CountButtonClicks;
@@ -786,19 +812,9 @@
 		var mainTableName = '.mainTable';
 		var latestTable = mainTableName.concat(tableAppend.toString());
 		var deleteTable = "mainTable".concat(tableAppend);
-		var deleteHtml = '<button type="button" onclick="remove(' + index + ')" class="button-deleteLocation" value="' + index + '">Delete</button>';
+		var deleteHtml = '<button type="button" onclick="remove(' + index + ')" class="button-alert" value="' + index + '">Delete</button>';
 
-	
-		
-		/*
-		buttonDeleteLocation.addEventListener("click", function () {
-			const element = document.getElementById('mainTable0');
-			element.remove();
-		});
-		*/
-		
-		
-		
+
 		if (isMember == 0) {
 			$(latestTable).after($('<div class="mainTable' + index + '" id="mainTable' + index + '"><table class="center"><br/>' +
 				'<tr><td>' + hidden.replace('{id}', index) + deleteHtml + '</td>' +
@@ -866,7 +882,7 @@
 				'<div><div id="label">' + locLabelBizEmailHtml + '</div><div>' + locTextBizEmailHtml.replace('{id}', index) + '</div></div></td></tr></table><br/></div>'));
 		}
 		else if (isMember == 1) {
-			$(latestTable).after($('</br><div class="mainTable' + index + '" id="mainTable' + index + '"><table class="center">' +
+			$(latestTable).after($('<div class="mainTable' + index + '" id="mainTable' + index + '"></br><table class="center">' +
 				'<tr><td>' + hidden.replace('{id}', index) + deleteHtml + '</td>' +
 				"<tr><td><div><strong>" + locLabelLocationNameHtml + '*</strong></div><div>' + locTextLocationNameHtml.replace('{id}', index) + '</div></td></tr>' +
 				"<tr><td><div><strong>" + locLabelStreetAddressHtml + '*</strong></div><div>' + locTextStreetAddressHtml.replace('{id}', index) + '</div></td></tr>' +
@@ -966,8 +982,190 @@
 				'<tr><td>' + locLabelSnapchatHtml + '</td><td style="text-align: center">' + locSnapchatCheckHtml.replace('{id}', index) + '</td><td><label>URL: </label>' + locTextSnapchatURIHtml.replace('{id}', index) + '</td></tr>' +
 				'<tr><td>' + locLabelTikTokHtml + '</td><td style="text-align: center">' + locTikTokCheckHtml.replace('{id}', index) + '</td><td><label>URL: </label>' + locTextTikTokURIHtml.replace('{id}', index) + '</td></tr>' +
 				'<tr><td>' + locLabelYelpHtml + '</td><td style="text-align: center">' + locYelpCheckHtml.replace('{id}', index) + '</td><td><label>URL: </label>' + locTextYelpURIHtml.replace('{id}', index) + '</td></tr>' +
-				'</table></div></td></tr></table></br></div>' 
+				'</table></div></td></tr></table></br></div>'
 				));
+		}
+	});
+
+	$("#addAdditionalLocation1").on("click", function () {
+		//var time = Date.now();
+		var index = CountButtonClicks;
+		var tableAppend = index - 1;
+		var mainTableName = '.mainTable';
+		var latestTable = mainTableName.concat(tableAppend.toString());
+		var deleteTable = "mainTable".concat(tableAppend);
+		var deleteHtml = '<button type="button" onclick="remove(' + index + ')" class="button-alert" value="' + index + '">Delete</button>';
+
+
+		if (isMember == 0) {
+			$(latestTable).after($('<div class="mainTable' + index + '" id="mainTable' + index + '"><table class="center"><br/>' +
+				'<tr><td>' + hidden.replace('{id}', index) + deleteHtml + '</td>' +
+				"<tr><td><div><strong>" + locLabelLocationNameHtml + '*</strong></div><div>' + locTextLocationNameHtml.replace('{id}', index) + '</div></td></tr>' +
+				"<tr><td><div><strong>" + locLabelStreetAddressHtml + '*</strong></div><div>' + locTextStreetAddressHtml.replace('{id}', index) + '</div></td></tr>' +
+				"<tr><td><div><strong>" + locLabelCityHtml + '*</strong></div><div>' + locTextCityHtml.replace('{id}', index) + '</div></td></tr>' +
+				'<tr><td><div><strong>' + locLabelStateHtml + '*</strong></div><div>' +
+				'<select id = "State" name = "lstLocations[' + index + '].intState" > ' +
+				'<option> Select State</option>' +
+				'<option value="1">Indiana</option>' +
+				'<option value="2">Kentucky</option>' +
+				'<option value="3">Ohio</option>' +
+				'</select></div>' +
+				"<tr><td><div><strong>" + locLabelZipHtml + '*</strong></div><div>' + locTextZipHtml.replace('{id}', index) + '</div></td></tr>' +
+				"<tr><td><div class='some-spacing'><div><h5 id='label'><strong> Specialty Product Categories* </strong></h5><table class='center'>" +
+				"<tr><td>" + locDonutsCheckHtml.replace('{id}', index) + "</td><td>" + locLabelDonutsHtml + "</td>" +
+				"<td>" + locBagelsCheckHtml.replace('{id}', index) + "</td><td>" + locLabelBagelsHtml + "</td>" +
+				"<td>" + locMuffinsCheckHtml.replace('{id}', index) + "</td><td>" + locLabelMuffinsHtml + "</td>" +
+				"<td>" + locIceCreamCheckHtml.replace('{id}', index) + "</td><td>" + locLabelIceCreamHtml + "</td>" +
+				"<td>" + locFineCandiesCheckHtml.replace('{id}', index) + "</td><td>" + locLabelFineCandiesHtml + "</td>" +
+				"<td>" + locWeddingCakesCheckHtml.replace('{id}', index) + "</td><td>" + locLabelWeddingCakesHtml + "</td></tr>" +
+				"<tr><td>" + locBreadsCheckHtml.replace('{id}', index) + "</td><td>" + locLabelBreadsHtml + "</td>" +
+				"<td>" + locDecoratedCakesCheckHtml.replace('{id}', index) + "</td><td>" + locLabelDecoratedCakesHtml + "</td>" +
+				"<td>" + locCupcakesCheckHtml.replace('{id}', index) + "</td><td>" + locLabelCupcakesHtml + "</td>" +
+				"<td>" + locCookiesCheckHtml.replace('{id}', index) + "</td><td>" + locLabelCookiesHtml + "</td>" +
+				"<td>" + locDessertsCheckHtml.replace('{id}', index) + "</td><td>" + locLabelDessertsHtml + "</td>" +
+				"<td>" + locFullCheckHtml.replace('{id}', index) + "</td><td>" + locLabelFullHtml + "</td></tr>" +
+				"<tr><td>" + locDeliCheckHtml.replace('{id}', index) + "</td><td>" + locLabelDeliHtml + "</td>" +
+				"<td>" + locOtherCheckHtml.replace('{id}', index) + "</td><td>" + locLabelOtherHtml + "</td>" +
+				"<td>" + locWholesaleCheckHtml.replace('{id}', index) + "</td><td>" + locLabelWholeSaleHtml + "</td>" +
+				"<td>" + locDeliveryCheckHtml.replace('{id}', index) + "</td><td>" + locLabelDeliveryHtml + "</td>" +
+				"<td>" + locShippingCheckHtml.replace('{id}', index) + "</td><td>" + locLabelShippingHtml + "</td>" +
+				"<td>" + locOnlineCheckHtml.replace('{id}', index) + "</td><td>" + locLabelOnlineHtml + "</td></tr>" +
+				"</table></div></div></td></tr>" +
+				'<tr><td><div class="some-spacing"><h5 id="label">Hours of Operation</h5><table class="center"><tr style="text-align:center">' +
+				'<td><b>Days</b></td>' +
+				'<td style="text-align: center"><b>(Check if Open)</b></td>' +
+				'<td style="text-align: center"><b>Start Time</b></td>' +
+				'<td style="text-align: center"><b>End Time</b></td></tr>' +
+				'<tr><td>' + locLabelSundayHtml + '</td><td style="text-align: center">' + locSundayCheckHtml.replace('{id}', index) + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Sunday.strOpenTime" type="time" value="">' + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Sunday.strClosedTime" type="time" value="">' + '</td><td>' +
+				'<tr><td>' + locLabelMondayHtml + '</td><td style="text-align: center">' + locMondayCheckHtml.replace('{id}', index) + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Monday.strOpenTime" type="time" value="">' + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Monday.strClosedTime" type="time" value="">' + '</td><td>' +
+				'<tr><td>' + locLabelTuesdayHtml + '</td><td style="text-align: center">' + locTuesdayCheckHtml.replace('{id}', index) + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Tuesday.strOpenTime" type="time" value="">' + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Tuesday.strClosedTime" type="time" value="">' + '</td><td>' +
+				'<tr><td>' + locLabelWednesdayHtml + '</td><td style="text-align: center">' + locWednesdayCheckHtml.replace('{id}', index) + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Wednesday.strOpenTime" type="time" value="">' + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Wednesday.strClosedTime" type="time" value="">' + '</td><td>' +
+				'<tr><td>' + locLabelThursdayHtml + '</td><td style="text-align: center">' + locThursdayCheckHtml.replace('{id}', index) + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Thursday.strOpenTime" type="time" value="">' + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Thursday.strClosedTime" type="time" value="">' + '</td><td>' +
+				'<tr><td>' + locLabelFridayHtml + '</td><td style="text-align: center">' + locFridayCheckHtml.replace('{id}', index) + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Friday.strOpenTime" type="time" value="">' + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Friday.strClosedTime" type="time" value="">' + '</td><td>' +
+				'<tr><td>' + locLabelSaturdayHtml + '</td><td style="text-align: center">' + locSaturdayCheckHtml.replace('{id}', index) + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Saturday.strOpenTime" type="time" value="">' + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Saturday.strClosedTime" type="time" value="">' + '</td><td>' +
+				'</table></div></td></tr>' +
+				'<tr><td><div><div><div id="label">' + locLabelBizPhoneHtml + '</div>' +
+				'(<input type="text" id="lstLocations[' + index + '].BusinessPhone.AreaCode" class="phone"/>) ' +
+				'<input type="text" id="lstLocations[' + index + '].BusinessPhone.Prefix" class="phone"/>-<input type="text" id="lstLocations[' + index + '].BusinessPhone.Suffix" class="phone" /></div>' +
+				'<div><div id="label">' + locLabelBizEmailHtml + '</div><div>' + locTextBizEmailHtml.replace('{id}', index) + '</div></div></td></tr></table><br/></div>'));
+		}
+		else if (isMember == 1) {
+			$(latestTable).after($('<div class="mainTable' + index + '" id="mainTable' + index + '"></br><table class="center">' +
+				'<tr><td>' + hidden.replace('{id}', index) + deleteHtml + '</td>' +
+				"<tr><td><div><strong>" + locLabelLocationNameHtml + '*</strong></div><div>' + locTextLocationNameHtml.replace('{id}', index) + '</div></td></tr>' +
+				"<tr><td><div><strong>" + locLabelStreetAddressHtml + '*</strong></div><div>' + locTextStreetAddressHtml.replace('{id}', index) + '</div></td></tr>' +
+				"<tr><td><div><strong>" + locLabelCityHtml + '*</strong></div><div>' + locTextCityHtml.replace('{id}', index) + '</div></td></tr>' +
+				'<tr><td><div><strong>' + locLabelStateHtml + '*</strong></div><div>' +
+				'<select id = "State" name = "lstLocations[' + index + '].intState" > ' +
+				'<option> Select State</option>' +
+				'<option value="1">Indiana</option>' +
+				'<option value="2">Kentucky</option>' +
+				'<option value="3">Ohio</option>' +
+				'</select></div>' +
+				"<tr><td><div><strong>" + locLabelZipHtml + '*</strong></div><div>' + locTextZipHtml.replace('{id}', index) + '</div></td></tr>' +
+				"<tr><td><div class='some-spacing'><div><h5 id='label'><strong> Specialty Product Categories* </strong></h5><table class='center'>" +
+				"<tr><td>" + locDonutsCheckHtml.replace('{id}', index) + "</td><td>" + locLabelDonutsHtml + "</td>" +
+				"<td>" + locBagelsCheckHtml.replace('{id}', index) + "</td><td>" + locLabelBagelsHtml + "</td>" +
+				"<td>" + locMuffinsCheckHtml.replace('{id}', index) + "</td><td>" + locLabelMuffinsHtml + "</td>" +
+				"<td>" + locIceCreamCheckHtml.replace('{id}', index) + "</td><td>" + locLabelIceCreamHtml + "</td>" +
+				"<td>" + locFineCandiesCheckHtml.replace('{id}', index) + "</td><td>" + locLabelFineCandiesHtml + "</td>" +
+				"<td>" + locWeddingCakesCheckHtml.replace('{id}', index) + "</td><td>" + locLabelWeddingCakesHtml + "</td></tr>" +
+				"<tr><td>" + locBreadsCheckHtml.replace('{id}', index) + "</td><td>" + locLabelBreadsHtml + "</td>" +
+				"<td>" + locDecoratedCakesCheckHtml.replace('{id}', index) + "</td><td>" + locLabelDecoratedCakesHtml + "</td>" +
+				"<td>" + locCupcakesCheckHtml.replace('{id}', index) + "</td><td>" + locLabelCupcakesHtml + "</td>" +
+				"<td>" + locCookiesCheckHtml.replace('{id}', index) + "</td><td>" + locLabelCookiesHtml + "</td>" +
+				"<td>" + locDessertsCheckHtml.replace('{id}', index) + "</td><td>" + locLabelDessertsHtml + "</td>" +
+				"<td>" + locFullCheckHtml.replace('{id}', index) + "</td><td>" + locLabelFullHtml + "</td></tr>" +
+				"<tr><td>" + locDeliCheckHtml.replace('{id}', index) + "</td><td>" + locLabelDeliHtml + "</td>" +
+				"<td>" + locOtherCheckHtml.replace('{id}', index) + "</td><td>" + locLabelOtherHtml + "</td>" +
+				"<td>" + locWholesaleCheckHtml.replace('{id}', index) + "</td><td>" + locLabelWholeSaleHtml + "</td>" +
+				"<td>" + locDeliveryCheckHtml.replace('{id}', index) + "</td><td>" + locLabelDeliveryHtml + "</td>" +
+				"<td>" + locShippingCheckHtml.replace('{id}', index) + "</td><td>" + locLabelShippingHtml + "</td>" +
+				"<td>" + locOnlineCheckHtml.replace('{id}', index) + "</td><td>" + locLabelOnlineHtml + "</td></tr>" +
+				"</table></div></div></td></tr>" +
+				'<tr><td><div class="some-spacing"><h5 id="label">Hours of Operation</h5><table class="center"><tr style="text-align:center">' +
+				'<td><b>Days</b></td>' +
+				'<td style="text-align: center"><b>(Check if Open)</b></td>' +
+				'<td style="text-align: center"><b>Start Time</b></td>' +
+				'<td style="text-align: center"><b>End Time</b></td></tr>' +
+				'<tr><td>' + locLabelSundayHtml + '</td><td style="text-align: center">' + locSundayCheckHtml.replace('{id}', index) + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Sunday.strOpenTime" type="time" value="">' + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Sunday.strClosedTime" type="time" value="">' + '</td><td>' +
+				'<tr><td>' + locLabelMondayHtml + '</td><td style="text-align: center">' + locMondayCheckHtml.replace('{id}', index) + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Monday.strOpenTime" type="time" value="">' + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Monday.strClosedTime" type="time" value="">' + '</td><td>' +
+				'<tr><td>' + locLabelTuesdayHtml + '</td><td style="text-align: center">' + locTuesdayCheckHtml.replace('{id}', index) + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Tuesday.strOpenTime" type="time" value="">' + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Tuesday.strClosedTime" type="time" value="">' + '</td><td>' +
+				'<tr><td>' + locLabelWednesdayHtml + '</td><td style="text-align: center">' + locWednesdayCheckHtml.replace('{id}', index) + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Wednesday.strOpenTime" type="time" value="">' + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Wednesday.strClosedTime" type="time" value="">' + '</td><td>' +
+				'<tr><td>' + locLabelThursdayHtml + '</td><td style="text-align: center">' + locThursdayCheckHtml.replace('{id}', index) + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Thursday.strOpenTime" type="time" value="">' + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Thursday.strClosedTime" type="time" value="">' + '</td><td>' +
+				'<tr><td>' + locLabelFridayHtml + '</td><td style="text-align: center">' + locFridayCheckHtml.replace('{id}', index) + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Friday.strOpenTime" type="time" value="">' + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Friday.strClosedTime" type="time" value="">' + '</td><td>' +
+				'<tr><td>' + locLabelSaturdayHtml + '</td><td style="text-align: center">' + locSaturdayCheckHtml.replace('{id}', index) + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Saturday.strOpenTime" type="time" value="">' + '</td><td>' +
+				'<input name="lstLocations[' + index + '].Saturday.strClosedTime" type="time" value="">' + '</td><td>' +
+				'</table></div></td></tr>' +
+				'<tr><td><div><div><div id="label">' + locLabelBizPhoneHtml + '</div>' +
+				'(<input type="text" id="lstLocations[' + index + '].BusinessPhone.AreaCode" class="phone"/>) ' +
+				'<input type="text" id="lstLocations[' + index + '].BusinessPhone.Prefix" class="phone"/>-<input type="text" id="lstLocations[' + index + '].BusinessPhone.Suffix" class="phone" /></div>' +
+				'<div><div id="label">' + locLabelBizEmailHtml + '</div><div>' + locTextBizEmailHtml.replace('{id}', index) + '</div></div></td></tr>' +
+				'<tr><td><div><div class="some-spacing"><div id="label">' + locLabelBizYearHtml + '</div>' + locTextBizYearHtml.replace('{id}', index) + '</div>' +
+				'<div class="some-spacing"><div id="label">' + locLabelBioHtml + '</div><div>' + '<textarea cols="20" name="lstLocations[' + index + '].Bio" rows="5" spellcheck="true" style="width: 500px;"></textarea>' + '</div></div ></td ></tr>' +
+				'<tr><td><div>' +
+				'<div class="some-spacing"><div id="label">' + locLabelContactFirstHtml + '</div><div>' + locTextContactFirstHtml.replace('{id}', index) + '</div></div>' +
+				'<div class="some-spacing"><div id="label">' + locLabelContactLastHtml + '</div><div>' + locTextContactLastHtml.replace('{id}', index) + '</div></div>' +
+				'<div class="some-spacing"><div id="label">' + locLabelContactPhoneHtml + '</div>' +
+				'(<input type="text" id="lstLocations[' + index + '].LocationContact.contactPhone.AreaCode" class="phone"/>) ' +
+				'<input type="text" id="lstLocations[' + index + '].LocationContact.contactPhone.Prefix" class="phone"/>-<input type="text" id="lstLocations[' + index + '].LocationContact.contactPhone.Suffix" class="phone" /></div>' +
+				'<div class="some-spacing"><div id="label">' + locLabelContactEmailHtml + '</div><div>' + locTextContactEmailHtml.replace('{id}', index) + '</div></div>' +
+				'<div class="some-spacing"><div id="label">' + locLabelCustServFirstHtml + '</div><div>' + locTextCustServFirstHtml.replace('{id}', index) + '</div></div>' +
+				'<div class="some-spacing"><div id="label">' + locLabelCustServLastHtml + '</div><div>' + locTextCustServLastHtml.replace('{id}', index) + '</div></div>' +
+				'<div class="some-spacing"><div id="label">' + locLabelCustServPhoneHtml + '</div>' +
+				'(<input type="text" id="lstLocations[' + index + '].CustService.contactPhone.AreaCode" class="phone"/>) ' +
+				'<input type="text" id="lstLocations[' + index + '].CustService.contactPhone.Prefix" class="phone"/>-<input type="text" id="lstLocations[' + index + '].CustService.contactPhone.Suffix" class="phone" /></div>' +
+				'<div class="some-spacing"><div id="label">' + locLabelCustServEmailHtml + '</div><div>' + locTextCustServEmailHtml.replace('{id}', index) + '</div></div>' +
+
+				'<div class="some-spacing"><div id="label">' + locLabelMainWebHtml + '</div><div>' + locTextMainURIHtml.replace('{id}', index) + '</div></div>' +
+				'<div class="some-spacing"><div id="label">' + locLabelOrderingWebHtml + '</div><div>' + locTextOrderingURIHtml.replace('{id}', index) + '</div></div>' +
+				'<div class="some-spacing"><div id="label">' + locLabelKettleWebHtml + '</div><div>' + locTextKettleURIHtml.replace('{id}', index) + '</div></div>' +
+
+				'<div class="some-spacing"><div id="label">' + locLabelWebAdminFirstHtml + '</div><div>' + locTextWebAdminFirstHtml.replace('{id}', index) + '</div></div>' +
+				'<div class="some-spacing"><div id="label">' + locLabelWebAdminLastHtml + '</div><div>' + locTextWebAdminLastHtml.replace('{id}', index) + '</div></div>' +
+				'<div class="some-spacing"><div id="label">' + locLabelWebAdminPhoneHtml + '</div>' +
+				'(<input type="text" id="lstLocations[' + index + '].WebAdmin.contactPhone.AreaCode" class="phone"/>) ' +
+				'<input type="text" id="lstLocations[' + index + '].WebAdmin.contactPhone.Prefix" class="phone"/>-<input type="text" id="lstLocations[' + index + '].WebAdmin.contactPhone.Suffix" class="phone" /></div>' +
+				'<div class="some-spacing"><div id="label">' + locLabelWebAdminEmailHtml + '</div><div>' + locTextWebAdminEmailHtml.replace('{id}', index) + '</div></div>' +
+				'</div></td></tr>' +
+				'<tr><td><div class="some-spacing"><h5><strong>Social Media Outlets</strong></h5>' +
+				'<table class="center">' +
+				'<tr><td><b>Platform</b></td><td><b>(Check to Include)</b></td><td style="text-align: center"><b>Link</b></td>' +
+				'<tr><td>' + locLabelFacebookHtml + '</td><td style="text-align: center">' + locFacebookCheckHtml.replace('{id}', index) + '</td><td><label>URL: </label>' + locTextFacebookURIHtml.replace('{id}', index) + '</td></tr>' +
+				'<tr><td>' + locLabelTwitterHtml + '</td><td style="text-align: center">' + locTwitterCheckHtml.replace('{id}', index) + '</td><td><label>URL: </label>' + locTextTwitterURIHtml.replace('{id}', index) + '</td></tr>' +
+				'<tr><td>' + locLabelInstagramHtml + '</td><td style="text-align: center">' + locInstagramCheckHtml.replace('{id}', index) + '</td><td><label>URL: </label>' + locTextInstagramURIHtml.replace('{id}', index) + '</td></tr>' +
+				'<tr><td>' + locLabelSnapchatHtml + '</td><td style="text-align: center">' + locSnapchatCheckHtml.replace('{id}', index) + '</td><td><label>URL: </label>' + locTextSnapchatURIHtml.replace('{id}', index) + '</td></tr>' +
+				'<tr><td>' + locLabelTikTokHtml + '</td><td style="text-align: center">' + locTikTokCheckHtml.replace('{id}', index) + '</td><td><label>URL: </label>' + locTextTikTokURIHtml.replace('{id}', index) + '</td></tr>' +
+				'<tr><td>' + locLabelYelpHtml + '</td><td style="text-align: center">' + locYelpCheckHtml.replace('{id}', index) + '</td><td><label>URL: </label>' + locTextYelpURIHtml.replace('{id}', index) + '</td></tr>' +
+				'</table></div></td></tr></table></br></div>'
+			));
 		}
 	});
 </script>

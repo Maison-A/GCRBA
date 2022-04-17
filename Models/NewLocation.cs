@@ -8,6 +8,7 @@ namespace GCRBA.Models {
 		public long lngLocationID = 0;
 		public long lngCompanyID = 0;
 		public List<Models.Company> lstCompanies { get; set; }
+		public bool memberStatus { get; set; }
 
 		//Address Information
 		public string CompanyName = string.Empty;

@@ -541,12 +541,11 @@ namespace GCRBA.Models
 						{
 							u.isMember = 1;
 						}
-						/*
 						else
 						{
 							u.isMember = 0;
 						}
-						*/
+						
 					}
 					catch (Exception ex) { throw new Exception(ex.Message); }
 					finally
@@ -786,54 +785,6 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		/*
-		public List<NewLocation> GetMemberLocations(Models.User user) {
-			List<NewLocation> lstMemLocations = new List<NewLocation>();
-			try {
-				DataSet ds = new DataSet();
-				SqlConnection cn = new SqlConnection();
-
-				// try to connect to database -- throw error if unsuccessful
-				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
-
-				// specify which stored procedure we are using 
-				
-
-				SetParameter(ref da, "@intUserID", user.UID, SqlDbType.SmallInt);
-
-				// set command type as stored procedure
-				da.SelectCommand.CommandType = CommandType.StoredProcedure;
-
-				try { da.Fill(ds); }
-				catch (Exception ex) { throw new Exception(ex.Message); }
-				finally { CloseDBConnection(ref cn); }
-
-				if (ds.Tables[0].Rows.Count != 0) {
-					// loop through results and add to list 
-					foreach (DataRow dr in ds.Tables[0].Rows) {
-						// create location object 
-						NewLocation loc = new NewLocation();
-
-						// add values to LocationID and Location string
-						loc.lngLocationID = (long)(dr["intLocationID"]);
-						loc.lngCompanyID = (long)dr["intCompanyID"];
-						loc.StreetAddress = (string)dr["strAddress"];
-						loc.City = (string)dr["strCity"];
-						loc.intState = (short)dr["intStateID"];
-						loc.Zip = (string)dr["strZip"];
-						loc.strFullPhone = (string)dr["strPhone"];
-						loc.BusinessEmail = (string)dr["strEmail"];
-
-						// add location object to list of location objects 
-						lstMemLocations.Add(loc);
-					}
-				}
-				return lstMemLocations;
-			}
-			catch (Exception ex) { throw new Exception(ex.Message); }
-		}
-		*/
-
 		public List<NewLocation> GetMemberLocations(Models.User user) {
 			List<NewLocation> lstMemLocations = new List<NewLocation>();
 			try {
@@ -917,6 +868,43 @@ namespace GCRBA.Models
 				return companies;
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public bool CheckMemberStatus(long lngLocationID = 0) {
+			try {
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to database -- throw error if unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// specify which stored procedure we are using 
+				SqlDataAdapter da = new SqlDataAdapter("CHECK_IF_MEMBERLOCATION", cn);
+
+				// set command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				if (lngLocationID > 0) SetParameter(ref da, "@intLocationID", lngLocationID, SqlDbType.BigInt);
+
+				try { da.Fill(ds); }
+				catch (Exception ex) { throw new Exception(ex.Message); }
+				finally { CloseDBConnection(ref cn); }
+				int result = 0;
+				if (ds.Tables[0].Rows.Count != 0) {
+					foreach (DataRow dr in ds.Tables[0].Rows) {
+						result = (short)dr["intMemberLevelID"];
+					}
+					if (result == 2) {
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+				else return false;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		
 		}
 
 		public Company.ActionTypes DeleteCompany(Company c)
