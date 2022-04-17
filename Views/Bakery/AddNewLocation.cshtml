@@ -82,7 +82,7 @@
 				<td>
 					<div>
 						<div id="label">@Html.LabelFor(model => model.lstLocations[index].lngCompanyID, "Existing Parent Company Name")*</div>
-						<div>@Html.DropDownListFor(model => model.lstLocations[index].lngCompanyID, new SelectList(Model.lstLocations[index].lstCompanies, "CompanyID", "Name", selectedValue: 0), new { onchange ="disableME()", id = "dropdownCompany"})</div>
+						<div>@Html.DropDownListFor(model => model.lstLocations[index].lngCompanyID, new SelectList(Model.lstLocations[index].lstCompanies, "CompanyID", "Name", selectedValue: 0), new { onchange ="disableCompany()", id = "dropdownCompany"})</div>
 					</div>
 				</td>
 			</tr>
@@ -95,7 +95,7 @@
 				<td>
 					<div>
 						<div id="label">@Html.LabelFor(model => model.lstLocations[index].CompanyName, "New Parent Company Name")*</div>
-						<div>@Html.TextBoxFor(model => model.lstLocations[index].CompanyName, new { @autofocus = "autofocus", id="textboxCompany", onchange="disableME()" })</div>
+						<div>@Html.TextBoxFor(model => model.lstLocations[index].CompanyName, new { @autofocus = "autofocus", id="textboxCompany", onchange="disableCompany()" })</div>
 					</div>
 				</td>
 			</tr>
@@ -139,7 +139,7 @@
 			<tr>
 				<td>
 					<div>
-						<div id="label">@Html.LabelFor(model => model.lstLocations[index].Zip)*</div>
+						<div id="label">@Html.LabelFor(model => model.lstLocations[index].Zip, "Zip Code (5-digit)")*</div>
 						<div>@Html.TextBoxFor(model => model.lstLocations[index].Zip)</div>
 					</div>
 					<br />
@@ -287,13 +287,13 @@
 									@Html.LabelFor(model => model.lstLocations[index].Sunday)
 								</td>
 								<td style="text-align: center">
-									@Html.CheckBoxFor(model => model.lstLocations[index].Sunday.blnOperational)
+									@Html.CheckBoxFor(model => model.lstLocations[index].Sunday.blnOperational, new { id="checkboxSunday", onclick="disableSunday(this)" })
 								</td>
 								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Sunday.strOpenTime, new { type = "time" })
+									@Html.TextBoxFor(model => model.lstLocations[index].Sunday.strOpenTime, new { type = "time", id="sundayOpen", disabled=true })
 								</td>
 								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Sunday.strClosedTime, new { type = "time" })
+									@Html.TextBoxFor(model => model.lstLocations[index].Sunday.strClosedTime, new { type = "time", id="sundayClose", disabled=true })
 								</td>
 							</tr>
 							<tr>
@@ -301,13 +301,13 @@
 									@Html.LabelFor(model => model.lstLocations[index].Monday)
 								</td>
 								<td style="text-align: center">
-									@Html.CheckBoxFor(model => model.lstLocations[index].Monday.blnOperational)
+									@Html.CheckBoxFor(model => model.lstLocations[index].Monday.blnOperational, new { id = "checkboxMonday", onclick = "disableMonday(this)" })
 								</td>
 								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Monday.strOpenTime, new { type = "time" })
+									@Html.TextBoxFor(model => model.lstLocations[index].Monday.strOpenTime, new { type = "time", id="mondayOpen", disabled=true })
 								</td>
 								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Monday.strClosedTime, new { type = "time" })
+									@Html.TextBoxFor(model => model.lstLocations[index].Monday.strClosedTime, new { type = "time", id="mondayClose", disabled=true })
 								</td>
 							</tr>
 							<tr>
@@ -315,13 +315,13 @@
 									@Html.LabelFor(model => model.lstLocations[index].Tuesday)
 								</td>
 								<td style="text-align: center">
-									@Html.CheckBoxFor(model => model.lstLocations[index].Tuesday.blnOperational)
+									@Html.CheckBoxFor(model => model.lstLocations[index].Tuesday.blnOperational, new { id="checkboxTuesday", onclick = "disableTuesday(this)"})
 								</td>
 								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Tuesday.strOpenTime, new { type = "time" })
+									@Html.TextBoxFor(model => model.lstLocations[index].Tuesday.strOpenTime, new { type = "time", id="tuesdayOpen", disabled=true })
 								</td>
 								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Tuesday.strClosedTime, new { type = "time" })
+									@Html.TextBoxFor(model => model.lstLocations[index].Tuesday.strClosedTime, new { type = "time", id="tuesdayClose", disabled=true })
 								</td>
 							</tr>
 							<tr>
@@ -329,13 +329,13 @@
 									@Html.LabelFor(model => model.lstLocations[index].Wednesday)
 								</td>
 								<td style="text-align: center">
-									@Html.CheckBoxFor(model => model.lstLocations[index].Wednesday.blnOperational)
+									@Html.CheckBoxFor(model => model.lstLocations[index].Wednesday.blnOperational, new { id = "checkboxWednesday", onclick = "disableWednesday(this)" })
 								</td>
 								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Wednesday.strOpenTime, new { type = "time" })
+									@Html.TextBoxFor(model => model.lstLocations[index].Wednesday.strOpenTime, new { type = "time", id = "wednesdayOpen", disabled = true })
 								</td>
 								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Wednesday.strClosedTime, new { type = "time" })
+									@Html.TextBoxFor(model => model.lstLocations[index].Wednesday.strClosedTime, new { type = "time", id = "wednesdayClose", disabled = true })
 								</td>
 							</tr>
 							<tr>
@@ -343,13 +343,13 @@
 									@Html.LabelFor(model => model.lstLocations[index].Thursday)
 								</td>
 								<td style="text-align: center">
-									@Html.CheckBoxFor(model => model.lstLocations[index].Thursday.blnOperational)
+									@Html.CheckBoxFor(model => model.lstLocations[index].Thursday.blnOperational, new { id = "checkboxThursday", onclick = "disableThursday(this)" })
 								</td>
 								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Thursday.strOpenTime, new { type = "time" })
+									@Html.TextBoxFor(model => model.lstLocations[index].Thursday.strOpenTime, new { type = "time", id = "thursdayOpen", disabled = true })
 								</td>
 								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Thursday.strClosedTime, new { type = "time" })
+									@Html.TextBoxFor(model => model.lstLocations[index].Thursday.strClosedTime, new { type = "time", id = "thursdayClose", disabled = true })
 								</td>
 							</tr>
 							<tr>
@@ -357,13 +357,13 @@
 									@Html.LabelFor(model => model.lstLocations[index].Friday)
 								</td>
 								<td style="text-align: center">
-									@Html.CheckBoxFor(model => model.lstLocations[index].Friday.blnOperational)
+									@Html.CheckBoxFor(model => model.lstLocations[index].Friday.blnOperational, new { id = "checkboxFriday", onclick = "disableFriday(this)" })
 								</td>
 								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Friday.strOpenTime, new { type = "time" })
+									@Html.TextBoxFor(model => model.lstLocations[index].Friday.strOpenTime, new { type = "time", id = "fridayOpen", disabled = true })
 								</td>
 								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Friday.strClosedTime, new { type = "time" })
+									@Html.TextBoxFor(model => model.lstLocations[index].Friday.strClosedTime, new { type = "time", id = "fridayClose", disabled = true })
 								</td>
 							</tr>
 							<tr>
@@ -371,13 +371,13 @@
 									@Html.LabelFor(model => model.lstLocations[index].Saturday)
 								</td>
 								<td style="text-align: center">
-									@Html.CheckBoxFor(model => model.lstLocations[index].Saturday.blnOperational)
+									@Html.CheckBoxFor(model => model.lstLocations[index].Saturday.blnOperational, new { id = "checkboxSaturday", onclick = "disableSaturday(this)" })
 								</td>
 								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Saturday.strOpenTime, new { type = "time" })
+									@Html.TextBoxFor(model => model.lstLocations[index].Saturday.strOpenTime, new { type = "time", id = "saturdayOpen", disabled = true })
 								</td>
 								<td>
-									@Html.TextBoxFor(model => model.lstLocations[index].Saturday.strClosedTime, new { type = "time" })
+									@Html.TextBoxFor(model => model.lstLocations[index].Saturday.strClosedTime, new { type = "time", id = "saturdayClose", disabled = true })
 								</td>
 							</tr>
 						</table>
@@ -388,7 +388,7 @@
 			<tr>
 				<td>
 					<div>
-						<div>
+						<div class="some-spacing">
 							<div id="label"><label for="BusinessPhone_AreaCode">Business Phone Number</label></div>
 							(@Html.TextBoxFor(m => Model.lstLocations[index].BusinessPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].BusinessPhone.Prefix, new { Style = "width: 50px" })-@Html.TextBoxFor(m => Model.lstLocations[index].BusinessPhone.Suffix, new { Style = "width: 50px" })
 						</div>
@@ -412,7 +412,7 @@
 
 							<div class="some-spacing">
 								<div id="label">@Html.LabelFor(model => model.lstLocations[index].Bio, "About us:")</div>
-								<div>@Html.TextAreaFor(model => model.lstLocations[index].Bio, new { @spellcheck = "true", rows = "5", style = "width: 500px;" })</div>
+								<div>@Html.TextAreaFor(model => model.lstLocations[index].Bio, new { @spellcheck = "true", rows = "5", style = "width: 500px;", placeholder = "Tell us about your business..." })</div>
 							</div>
 						</div>
 					</td>
@@ -421,6 +421,7 @@
 				<tr>
 					<td>
 						<div>
+							<h2 class="some-spacing"><u>Location Contact</u></h2>
 							<div class="some-spacing">
 								<div id="label">@Html.LabelFor(m => Model.lstLocations[index].LocationContact.strContactFirstName, "Contact First Name")</div>
 								<div>@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.strContactFirstName, new { @autofocus = "autofocus" })</div>
@@ -449,6 +450,7 @@
 				<tr>
 					<td>
 						<div>
+							<h2 class="some-spacing"><u>Customer Service Contact</u></h2>
 							<div class="some-spacing">
 								<div id="label">@Html.LabelFor(m => Model.lstLocations[index].CustService.strContactFirstName, "Customer Service First Name")</div>
 								<div>@Html.TextBoxFor(m => Model.lstLocations[index].CustService.strContactFirstName, new { @autofocus = "autofocus" })</div>
@@ -473,31 +475,11 @@
 						</div>
 					</td>
 				</tr>
-				<!--Website Information-->
-				<tr>
-					<td>
-						<div>
-							<div class="some-spacing">
-								<div id="label">@Html.LabelFor(model => model.lstLocations[index].MainWeb, "Main Website URL")</div>
-								<div>@Html.TextBoxFor(model => model.lstLocations[index].MainWeb.strURL)</div>
-							</div>
-
-							<div class="some-spacing">
-								<div id="label">@Html.LabelFor(model => model.lstLocations[index].OrderingWeb, "Ordering Webpage URL") </div>
-								<div>@Html.TextBoxFor(model => model.lstLocations[index].OrderingWeb.strURL) </div>
-							</div>
-
-							<div class="some-spacing">
-								<div id="label">@Html.LabelFor(model => model.lstLocations[index].KettleWeb, "Donation Kettle URL") </div>
-								<div>@Html.TextBoxFor(model => model.lstLocations[index].KettleWeb.strURL) </div>
-							</div>
-						</div>
-					</td>
-				</tr>
 				<!--Web Admin Contact Information-->
 				<tr>
 					<td>
 						<div>
+							<h2 class="some-spacing"><u>Web Admin Contact</u></h2>
 							<div class="some-spacing">
 								<div id="label">@Html.LabelFor(m => Model.lstLocations[index].WebAdmin.strContactFirstName, "Web Admin First Name")</div>
 								<div>@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.strContactFirstName, new { @autofocus = "autofocus" })</div>
@@ -522,14 +504,34 @@
 						</div>
 					</td>
 				</tr>
+				<!--Website Information-->
+				<tr>
+					<td>
+						<div>
+							<h2 class="some-spacing"><u>Additional Websites</u></h2>
+							<div class="some-spacing">
+								<div id="label">@Html.LabelFor(model => model.lstLocations[index].MainWeb, "Main Website URL")</div>
+								<div>@Html.TextBoxFor(model => model.lstLocations[index].MainWeb.strURL, new { placeholder="https://www.samplewebsite.com", style="width: 325px"})</div>
+							</div>
+
+							<div class="some-spacing">
+								<div id="label">@Html.LabelFor(model => model.lstLocations[index].OrderingWeb, "Ordering Webpage URL") </div>
+								<div>@Html.TextBoxFor(model => model.lstLocations[index].OrderingWeb.strURL, new { placeholder = "https://www.samplewebsite.com/ordering", style = "width: 325px" }) </div>
+							</div>
+
+							<div class="some-spacing">
+								<div id="label">@Html.LabelFor(model => model.lstLocations[index].KettleWeb, "Donation Kettle URL") </div>
+								<div>@Html.TextBoxFor(model => model.lstLocations[index].KettleWeb.strURL, new { placeholder = "https://www.salvationarmy.com", style = "width: 325px"}) </div>
+							</div>
+						</div>
+					</td>
+				</tr>
 				<!--table for Social Media-->
 				<tr>
 					<td>
 						<div class="some-spacing">
+							<h5><strong>Social Media Outlets</strong></h5>
 							<table class="center">
-								<tr>
-									<h5><strong>Social Media Outlets</strong></h5>
-								</tr>
 								<tr>
 									<td><b>Platform</b></td>
 									<td>
@@ -542,11 +544,11 @@
 										@Html.LabelFor(model => model.lstLocations[index].Facebook)
 									</td>
 									<td style="text-align: center">
-										@Html.CheckBoxFor(model => model.lstLocations[index].Facebook.blnAvailable)
+										@Html.CheckBoxFor(model => model.lstLocations[index].Facebook.blnAvailable, new { id = "checkboxFacebook", onclick = "disableFacebook(this)" })
 									</td>
 									<td>
 										<label>URL:</label>
-										@Html.TextBoxFor(model => model.lstLocations[index].Facebook.strSocialMediaLink)
+										@Html.TextBoxFor(model => model.lstLocations[index].Facebook.strSocialMediaLink, new { id = "textFacebook", disabled = true, placeholder = "https://m.facebook.com/servatii", style = "width: 350px" })
 									</td>
 								</tr>
 								<tr>
@@ -554,11 +556,11 @@
 										@Html.LabelFor(model => model.lstLocations[index].Twitter)
 									</td>
 									<td style="text-align: center">
-										@Html.CheckBoxFor(model => model.lstLocations[index].Twitter.blnAvailable)
+										@Html.CheckBoxFor(model => model.lstLocations[index].Twitter.blnAvailable, new { id = "checkboxTwitter", onclick = "disableTwitter(this)" })
 									</td>
 									<td>
 										<label>URL:</label>
-										@Html.TextBoxFor(model => model.lstLocations[index].Twitter.strSocialMediaLink)
+										@Html.TextBoxFor(model => model.lstLocations[index].Twitter.strSocialMediaLink, new { id = "textTwitter", disabled = true, placeholder = "https://twitter.com/servatiipastry", style = "width: 350px" })
 									</td>
 								</tr>
 								<tr>
@@ -566,35 +568,11 @@
 										@Html.LabelFor(model => model.lstLocations[index].Instagram)
 									</td>
 									<td style="text-align: center">
-										@Html.CheckBoxFor(model => model.lstLocations[index].Instagram.blnAvailable)
+										@Html.CheckBoxFor(model => model.lstLocations[index].Instagram.blnAvailable, new { id = "checkboxInstagram", onclick = "disableInstagram(this)" })
 									</td>
 									<td>
 										<label>URL:</label>
-										@Html.TextBoxFor(model => model.lstLocations[index].Instagram.strSocialMediaLink)
-									</td>
-								</tr>
-								<tr>
-									<td>
-										@Html.LabelFor(model => model.lstLocations[index].Snapchat)
-									</td>
-									<td style="text-align: center">
-										@Html.CheckBoxFor(model => model.lstLocations[index].Snapchat.blnAvailable)
-									</td>
-									<td>
-										<label>URL:</label>
-										@Html.TextBoxFor(model => model.lstLocations[index].Snapchat.strSocialMediaLink)
-									</td>
-								</tr>
-								<tr>
-									<td>
-										@Html.LabelFor(model => model.lstLocations[index].TikTok)
-									</td>
-									<td style="text-align: center">
-										@Html.CheckBoxFor(model => model.lstLocations[index].TikTok.blnAvailable)
-									</td>
-									<td>
-										<label>URL:</label>
-										@Html.TextBoxFor(model => model.lstLocations[index].TikTok.strSocialMediaLink)
+										@Html.TextBoxFor(model => model.lstLocations[index].Instagram.strSocialMediaLink, new { id = "textInstagram", disabled = true, placeholder = "https://www.instagram.com/servatiipastry/", style = "width: 350px" })
 									</td>
 								</tr>
 								<tr>
@@ -602,11 +580,35 @@
 										@Html.LabelFor(model => model.lstLocations[index].Yelp)
 									</td>
 									<td style="text-align: center">
-										@Html.CheckBoxFor(model => model.lstLocations[index].Yelp.blnAvailable)
+										@Html.CheckBoxFor(model => model.lstLocations[index].Yelp.blnAvailable, new { id = "checkboxYelp", onclick = "disableYelp(this)" })
 									</td>
 									<td>
 										<label>URL:</label>
-										@Html.TextBoxFor(model => model.lstLocations[index].Yelp.strSocialMediaLink)
+										@Html.TextBoxFor(model => model.lstLocations[index].Yelp.strSocialMediaLink, new { id = "textYelp", disabled = true, placeholder = "https://www.yelp.com/biz/servatii-pastry-and-cafe-cincinnati", style = "width: 350px" })
+									</td>
+								</tr>
+								<tr>
+									<td>
+										@Html.LabelFor(model => model.lstLocations[index].Snapchat)
+									</td>
+									<td style="text-align: center">
+										@Html.CheckBoxFor(model => model.lstLocations[index].Snapchat.blnAvailable, new { id = "checkboxSnapchat", onclick = "disableSnapchat(this)" })
+									</td>
+									<td>
+										<label>URL:</label>
+										@Html.TextBoxFor(model => model.lstLocations[index].Snapchat.strSocialMediaLink, new { id = "textSnapchat", disabled = true, placeholder = "https://www.snapchat.com/add/encinitasbakery", style = "width: 350px" })
+									</td>
+								</tr>
+								<tr>
+									<td>
+										@Html.LabelFor(model => model.lstLocations[index].TikTok)
+									</td>
+									<td style="text-align: center">
+										@Html.CheckBoxFor(model => model.lstLocations[index].TikTok.blnAvailable, new { id = "checkboxTikTok", onclick = "disableTikTok(this)" })
+									</td>
+									<td>
+										<label>URL:</label>
+										@Html.TextBoxFor(model => model.lstLocations[index].TikTok.strSocialMediaLink, new { id = "textTikTok", disabled = true, placeholder = "https://www.tiktok.com/tag/bakery", style = "width: 350px" })
 									</td>
 								</tr>
 							</table>
@@ -760,9 +762,6 @@
 	var locFridayCheckHtml = '@Html.CheckBox("lstLocations[{id}].Friday.blnOperational")';
 	var locSaturdayCheckHtml = '@Html.CheckBox("lstLocations[{id}].Saturday.blnOperational")';
 
-	//var streetAddressHtml = 'Html.DropDownList("lstLocations[{id}].StreetAddress")';
-	//var compListLabelHtml = 'Html.Label("lstLocations[{id}].lngCompanyID")';
-
 	var isMember = @Model.isMember;
 
 	let buttonAddLocation = document.querySelector(".button-cancel");
@@ -780,7 +779,7 @@
 		console.log(CountButtonClicks);
 	});
 
-	function disableME() {
+	function disableCompany() {
 		var dropdownCompany = document.getElementById('dropdownCompany'),
 			textboxCompany = document.getElementById('textboxCompany');
 
@@ -797,6 +796,136 @@
 		}
 	}
 
+	function disableSunday(chkSunday) {
+		var openSunday = document.getElementById('sundayOpen'),
+			closeSunday = document.getElementById('sundayClose');
+
+		openSunday.disabled = chkSunday.checked ? false : true;
+		closeSunday.disabled = chkSunday.checked ? false : true;
+		if (!openSunday.disabled) {
+			openSunday.focus();
+		}
+	}
+
+	function disableMonday(chkMonday) {
+		var openMonday = document.getElementById('mondayOpen'),
+			closeMonday = document.getElementById('mondayClose');
+
+		openMonday.disabled = chkMonday.checked ? false : true;
+		closeMonday.disabled = chkMonday.checked ? false : true;
+		if (!openMonday.disabled) {
+			openMonday.focus();
+		}
+	}
+
+	function disableTuesday(chkTuesday) {
+		var openTuesday = document.getElementById('tuesdayOpen'),
+			closeTuesday = document.getElementById('tuesdayClose');
+
+		openTuesday.disabled = chkTuesday.checked ? false : true;
+		closeTuesday.disabled = chkTuesday.checked ? false : true;
+		if (!openTuesday.disabled) {
+			openTuesday.focus();
+		}
+	}
+
+	function disableWednesday(chkWednesday) {
+		var openWednesday = document.getElementById('wednesdayOpen'),
+			closeWednesday = document.getElementById('wednesdayClose');
+
+		openWednesday.disabled = chkWednesday.checked ? false : true;
+		closeWednesday.disabled = chkWednesday.checked ? false : true;
+		if (!openWednesday.disabled) {
+			openWednesday.focus();
+		}
+	}
+
+	function disableThursday(chkThursday) {
+		var openThursday = document.getElementById('thursdayOpen'),
+			closeThursday = document.getElementById('thursdayClose');
+
+		openThursday.disabled = chkThursday.checked ? false : true;
+		closeThursday.disabled = chkThursday.checked ? false : true;
+		if (!openThursday.disabled) {
+			openThursday.focus();
+		}
+	}
+
+	function disableFriday(chkFriday) {
+		var openFriday = document.getElementById('fridayOpen'),
+			closeFriday = document.getElementById('fridayClose');
+
+		openFriday.disabled = chkFriday.checked ? false : true;
+		closeFriday.disabled = chkFriday.checked ? false : true;
+		if (!openFriday.disabled) {
+			openFriday.focus();
+		}
+	}
+
+	function disableSaturday(chkSaturday) {
+		var openSaturday = document.getElementById('saturdayOpen'),
+			closeSaturday = document.getElementById('saturdayClose');
+
+		openSaturday.disabled = chkSaturday.checked ? false : true;
+		closeSaturday.disabled = chkSaturday.checked ? false : true;
+		if (!openSaturday.disabled) {
+			openSaturday.focus();
+		}
+	}
+
+	function disableFacebook(chkFacebook) {
+		var textFacebook = document.getElementById('textFacebook');
+
+		textFacebook.disabled = chkFacebook.checked ? false : true;
+		if (!textFacebook.disabled) {
+			textFacebook.focus();
+		}
+	}
+
+	function disableTwitter(chkTwitter) {
+		var textTwitter = document.getElementById('textTwitter');
+
+		textTwitter.disabled = chkTwitter.checked ? false : true;
+		if (!textTwitter.disabled) {
+			textTwitter.focus();
+		}
+	}
+
+	function disableSnapchat(chkSnapchat) {
+		var textSnapchat = document.getElementById('textSnapchat');
+
+		textSnapchat.disabled = chkSnapchat.checked ? false : true;
+		if (!textSnapchat.disabled) {
+			textSnapchat.focus();
+		}
+	}
+
+	function disableInstagram(chkInstagram) {
+		var textInstagram = document.getElementById('textInstagram');
+
+		textInstagram.disabled = chkInstagram.checked ? false : true;
+		if (!textInstagram.disabled) {
+			textInstagram.focus();
+		}
+	}
+
+	function disableTikTok(chkTikTok) {
+		var textTikTok = document.getElementById('textTikTok');
+
+		textTikTok.disabled = chkTikTok.checked ? false : true;
+		if (!textTikTok.disabled) {
+			textTikTok.focus();
+		}
+	}
+
+	function disableYelp(chkYelp) {
+		var textYelp = document.getElementById('textYelp');
+
+		textYelp.disabled = chkYelp.checked ? false : true;
+		if (!textYelp.disabled) {
+			textYelp.focus();
+		}
+	}
 
 	function remove(index) {
 		var element = document.getElementById("mainTable".concat(index))
