@@ -1,9 +1,14 @@
 ﻿
 @{
-    ViewBag.Title = "Vendor Main Portal";
+	ViewBag.Title = "Vendor Main Portal";
 }
 
 <h2>@ViewBag.Title</h2>
 
 <p>This is where the main portal to connect to vendors will go.</p>
 
+<script>
+$(document).ready(function () {
+		SetActiveMenus('vendor');
+});
+</script>

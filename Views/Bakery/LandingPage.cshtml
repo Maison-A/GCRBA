@@ -80,12 +80,20 @@
 		background-color: #f2f2f2;
 	}
 
-	@@media screen and (max-width: 600px) {
-		.column {
+	@@media only screen and (max-width: 75em) {
+		.basic-column {
 			width: 100%;
 		}
 
-		.column-wide-x2 {
+		.basic-column-wide-x2 {
+			width: 100%;
+		}
+
+		.member-column {
+			width: 100%;
+		}
+
+		.member-column-wide-x2 {
 			width: 100%;
 		}
 	}
@@ -104,16 +112,20 @@
 	GCRBA.Models.Database db = new GCRBA.Models.Database();
 	user = user.GetUserSession();
 	user.myLocation = false;
-	user.lstMemberLocations = db.GetMemberLocations(user);
-	foreach (GCRBA.Models.NewLocation item in user.lstMemberLocations) {
-		if (item.lngLocationID == Model.landingLocation.lngLocationID) {
-			user.myLocation = true;
+	if (user.IsAuthenticated) {
+		user.lstMemberLocations = db.GetMemberLocations(user);
+		foreach (GCRBA.Models.NewLocation item in user.lstMemberLocations) {
+			if (item.lngLocationID == Model.landingLocation.lngLocationID) {
+				user.myLocation = true;
+			}
 		}
 	}
-
+
 	if (user.myLocation == true) {
 		<button class="button-alert" name="btnSubmit" value="deleteLocation">Delete Location</button>
+		@Html.HiddenFor(model=>model.lngLocationID)
 	}
+
 
 	if (Model.landingLocation.memberStatus) {
 

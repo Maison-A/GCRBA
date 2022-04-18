@@ -23,6 +23,21 @@
 	#label {
 		font-weight: bold;
 	}
+	table{
+		width: 100%;
+	}
+	iframe {
+		width: 100%;
+		height: 850px;
+	}
+
+	@@media only screen and (max-width: 90px)
+	{
+		iframe{
+			width: 100%;
+			height: 300px;
+		}
+	}
 </style>
 
 @if (true) {
@@ -37,7 +52,7 @@
 			</tr>
 			<tr>
 				<td>
-					<iframe width="1250" height="850" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+					<iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
 						src="https://cstatebakers.maps.arcgis.com/apps/webappviewer/index.html?id=29fe9a50bad04e0086dd0d399d1a5c2d" allow='geolocation'>
 					</iframe>
 				</td>
@@ -48,6 +63,6 @@
 
 <script>
 	$(document).ready(function () {
-		SetActiveMenus('profile', 'gallery');
+		SetActiveMenus('bakery', 'map');
 	});
 </script>

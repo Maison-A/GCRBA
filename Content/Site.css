@@ -6,10 +6,51 @@
 }
 
 #site-header {
-	background-color: black;
+	background-color: saddlebrown;
 	color: white;
 	font-size: 2.25em;
 	padding: 20px 0px 20px 20px;
+}
+
+/* Profile Menu */
+.tab {
+	overflow: hidden;
+	border: 1px solid #ccc;
+	background-color: lightgray;
+	display: inline-block;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+	background-color: inherit;
+	float: left;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	padding: 14px 24px;
+	transition: 0.3s;
+	font-size: 17px;
+	color: slategray;
+}
+
+.checked {
+	color: orange;
+}
+
+.tab button:hover {
+	background-color: #4b4a4a;
+}
+
+.tab button.active {
+	background-color: saddlebrown;
+	color:white;
+}
+
+.tabcontent {
+	display: none;
+	padding: 6px 12px;
+	-webkit-animation: fadeEffect 1s;
+	animation: fadeEffect 1s;
 }
 
 #label {
@@ -39,7 +80,7 @@
 
 #site-icon {
     margin-right: 0.5em;
-    color: #4CAF50;
+    color: #c8861d;
 }
 
 h2 {
@@ -52,7 +93,7 @@ h2 {
 }
 
 .icon-bar {
-	background-color: black;
+	background-color: burlywood;
 	display: table-cell;
 	float: left;
 }
@@ -62,20 +103,23 @@ h2 {
 	text-align: center;
 	padding: 16px;
 	transition: all 0.3s ease;
-	color: white;
+	color: saddlebrown;
 	font-size: 30px;
 }
 
 .icon-bar a:hover {
-	background-color: #4b4a4a;
+	background-color: saddlebrown;
+	color: burlywood;
 }
 
 .icon-bar .active {
-	background-color: #4CAF50;
+	background-color: saddlebrown;
+	color: burlywood;
 }
 
 .icon-bar .active:hover {
-	background-color: #4CAF50;
+	background-color: saddlebrown;
+	color: burlywood;
 }
 
 p {
@@ -102,7 +146,7 @@ button, input[type=submit], input[type=button] {
 	padding: 12px 30px 12px 30px;
 	background-color: #E4E4E4;
 	color: black;
-	border: 1px solid white;
+	border: 1px solid black;
 }
 
 button i {
@@ -110,12 +154,13 @@ button i {
 }
 
 .button-action {
-	background-color: #4CAF50;
-	color: white;
+	background-color: #dddb89;
+	color: black;
 }
 
 .button-action:hover {
-	background-color: #2f6a31;
+	background-color: #a77f13;
+	color: white;
 }
 
 .button-cancel {
@@ -195,13 +240,24 @@ th, td {
 	padding: 16px;
 }
 
-@media screen and (max-width : 600 px) {
+@media only screen and (max-width: 30em) {
+	.basic-column {
+		width: 100%;
+	}
 
-    .column {
-        width: 100%;
-    }
+	.column{
+		width: 100%;
+	}
 
-	.column-wide-x2 {
+	.basic-column-wide-x2 {
+		width: 100%;
+	}
+
+	.member-column {
+		width: 100%;
+	}
+
+	.member-column-wide-x2 {
 		width: 100%;
 	}
 }
