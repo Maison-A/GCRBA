@@ -18,5 +18,7 @@ namespace GCRBA.ViewModels
         public NewLocation NewLocation { get; set; }
         public ContactPerson ContactPerson { get; set; }
         public List<ContactPerson> Contacts { get; set; }
+        public CategoryItem Category { get; set; }
+        public List<CategoryItem> Categories { get; set; }
     }
 }

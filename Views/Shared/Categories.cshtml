@@ -1,0 +1,13 @@
+﻿@using GCRBA.ViewModels
+@model EditCompaniesViewModel
+
+<div>
+    <label for="categories" class="form-label">Select Category(s):</label>
+
+    <select name="categories" class="form-control" multiple>
+        @foreach (var item in Model.Categories)
+        {
+            <option value="@item.ItemID">@item.ItemDesc</option>
+        }
+    </select>
+</div>

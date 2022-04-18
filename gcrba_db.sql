@@ -597,6 +597,9 @@ BEGIN
 
 	DECLARE @COUNT AS TINYINT
 
+	SELECT @COUNT=COUNT(*) FROM db_owner.tblContactPerson  WHERE intCompanyID = @intCompanyID AND intContactPersonTypeID = @intContactPersonTypeID AND strContactName = @strContactName
+	IF @COUNT >0 RETURN -1 --CONTACT PERSON RECORD EXISTS
+
 	INSERT INTO [db_owner].[tblContactPerson] WITH (TABLOCKX)
 				([strContactName]
 				,[strContactPhone]
@@ -634,8 +637,8 @@ BEGIN
 	DECLARE @COUNT AS TINYINT
 
 	--DONT ALLOW MORE THAN ONE EXACT ADDRESS IN THIS TABLE
-	SELECT @COUNT=COUNT(*) FROM db_owner.tblLocation  WHERE strAddress = @strAddress
-	IF @COUNT >0 RETURN -1 --COMPANY NAME EXISTS
+	SELECT @COUNT=COUNT(*) FROM db_owner.tblLocation  WHERE strAddress = @strAddress AND strZip = @strZip
+	IF @COUNT >0 RETURN -1 --Location already exists
 
 	INSERT INTO [db_owner].[tblLocation] WITH (TABLOCKX)
 				([intCompanyID]
@@ -704,6 +707,9 @@ SET XACT_ABORT ON
 BEGIN
 
 	DECLARE @COUNT AS TINYINT
+
+	SELECT @COUNT=COUNT(*) FROM db_owner.tblCompanySocialMedia WHERE intSocialMediaID = @intSocialMediaID AND intCompanyID = @intCompanyID
+	IF @COUNT >0 RETURN -1 --SOCIAL MEDIA ACCOUNT ALREADY EXISTS FOR COMPANY
 
 	INSERT INTO [db_owner].[tblCompanySocialMedia] WITH (TABLOCKX)
 				([strSocialMediaLink]
