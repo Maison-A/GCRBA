@@ -7,17 +7,36 @@
     <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
     @Scripts.Render("~/bundles/jquery")
-    <script src="https://kit.fontawesome.com/a75ff89abd.js" crossorigin="anonymous"></script>
+	<script src="https://kit.fontawesome.com/12cd627259.js" crossorigin="anonymous"></script>
     <!-- this is the style sheet to be used -->
     @Styles.Render("~/Content/css")
     @Styles.Render("~/Content/bootstrap.css")
 </head>
 <body>
-    <div class="container text-center">
-        <!-- all code in every cshtml page is run through this div -->
-        @RenderBody()
-    </div>
+	<div id="site-header">
+		<!--<i id="site-icon" class="fas fa-user-music"></i>-->
+		<img id="site-icon" src="~/Photos/GCRBAlogo.jpg" />
+		<span class="full-content">GCRBA Bakers Website</span>
+		<span class="mobile-content">3State <i class="fas fa-music"></i></span>
+	</div>
 
-    @RenderSection("Scripts", required: false)
+	<div class="topcorner">
+		<button class="button-action" id="btnJoin" name="btnSubmit" value="join">Join the GCRBA!</button>
+		<button class="button-action" id="btnLogin" name="btnSubmit" value="login">Login</button>
+		<button class="button-action" id="btnAdminLogin" name="btnSubmit" value="admin">Admin Login</button>
+	</div>
+
+	<div class="icon-bar">
+		<a id="icon-bar-home" href="~/Home/Index" title="Go to Home"><i class="fa fa-home"></i></a>
+		<a id="icon-bar-bakery" href="~/Bakery/Index" title="Find a Bakery"><i class="fa-solid fa-magnifying-glass"></i></a>
+		<a id="icon-bar-vendor" href="~/Vendor/Index" title="Connect with Vendors"><i class="fa-solid fa-down-left-and-up-right-to-center"></i></a>
+		<a id="icon-bar-education" href="~/Education/Index" title="Learning Portal"><i class="fa-solid fa-user-graduate"></i></a>
+	</div>
+	<div class="container text-center">
+		<!-- all code in every cshtml page is run through this div -->
+		@RenderBody()
+	</div>
+
+	@RenderSection("Scripts", required: false)
 </body>
 </html>

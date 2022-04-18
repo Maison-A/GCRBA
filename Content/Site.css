@@ -6,7 +6,7 @@
 }
 
 #site-header {
-	background-color: black;
+	background-color: saddlebrown;
 	color: white;
 	font-size: 2.25em;
 	padding: 20px 0px 20px 20px;
@@ -39,7 +39,7 @@
 
 #site-icon {
     margin-right: 0.5em;
-    color: #4CAF50;
+    color: #c8861d;
 }
 
 h2 {
@@ -52,7 +52,7 @@ h2 {
 }
 
 .icon-bar {
-	background-color: black;
+	background-color: burlywood;
 	display: table-cell;
 	float: left;
 }
@@ -62,20 +62,23 @@ h2 {
 	text-align: center;
 	padding: 16px;
 	transition: all 0.3s ease;
-	color: white;
+	color: saddlebrown;
 	font-size: 30px;
 }
 
 .icon-bar a:hover {
-	background-color: #4b4a4a;
+	background-color: saddlebrown;
+	color: burlywood;
 }
 
 .icon-bar .active {
-	background-color: #4CAF50;
+	background-color: saddlebrown;
+	color: burlywood;
 }
 
 .icon-bar .active:hover {
-	background-color: #4CAF50;
+	background-color: saddlebrown;
+	color: burlywood;
 }
 
 p {
@@ -102,7 +105,7 @@ button, input[type=submit], input[type=button] {
 	padding: 12px 30px 12px 30px;
 	background-color: #E4E4E4;
 	color: black;
-	border: 1px solid white;
+	border: 1px solid black;
 }
 
 button i {
@@ -110,12 +113,13 @@ button i {
 }
 
 .button-action {
-	background-color: #4CAF50;
-	color: white;
+	background-color: #dddb89;
+	color: black;
 }
 
 .button-action:hover {
-	background-color: #2f6a31;
+	background-color: #a77f13;
+	color: white;
 }
 
 .button-cancel {

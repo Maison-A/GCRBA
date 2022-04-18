@@ -6,7 +6,8 @@ namespace GCRBA {
 			bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
 						"~/Scripts/modernizr-{version}.js",
 						"~/Scripts/jquery.filedrop.js",
-						"~/Scripts/jquery-{version}.js"));
+						"~/Scripts/jquery-{version}.js",
+						"~/Scripts/gcrba.js"));
 
 			bundles.Add(new StyleBundle("~/Content/css").Include(
 						"~/Content/site.css"));
