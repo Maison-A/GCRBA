@@ -183,7 +183,7 @@ namespace GCRBA.Controllers
             // get input from form 
             if (col["btnSubmit"].ToString() == "submit")
             {
-                vm.CurrentCompany.Name = col["CurrentCompany.strCompanyName"];
+                vm.CurrentCompany.Name = col["CurrentCompany.Name"];
                 vm.CurrentCompany.About = col["CurrentCompany.About"];
                 vm.CurrentCompany.Year = col["CurrentCompany.Year"];
             }
@@ -284,6 +284,11 @@ namespace GCRBA.Controllers
             if (col["btnSubmit"].ToString() == "addContactPerson")
             {
                 return RedirectToAction("AddContactPerson", "AdminPortal");
+            }
+
+            if (col["btnSubmit"].ToString() == "editCategories")
+            {
+                return RedirectToAction("EditCategories", "AdminPortal");
             }
 
             if (col["btnSubmit"].ToString() == "editGeneralInfo")
@@ -478,12 +483,22 @@ namespace GCRBA.Controllers
 
         public ActionResult AddExistingContact()
         {
+            // initialize EditCompaniesVM
             EditCompaniesViewModel vm = InitEditCompanies();
 
+            // get current company session 
             vm = GetCompanySession(vm);
 
+            // create Contacts list object 
             vm.Contacts = new List<ContactPerson>();
 
+            // create Locations list object 
+            vm.Locations = new List<Location>();
+
+            // get contacts based on company 
+            vm.Contacts = GetContactsByCompany(vm);
+
+            // create ContactPerson object 
             vm.ContactPerson = new ContactPerson();
 
             return View(vm);
@@ -492,11 +507,15 @@ namespace GCRBA.Controllers
         [HttpPost]
         public ActionResult AddExistingContact(FormCollection col)
         {
+            ViewBag.PersonSelected = 0;
+
             EditCompaniesViewModel vm = InitEditCompanies();
 
             vm = GetCompanySession(vm);
 
             vm.Contacts = new List<ContactPerson>();
+
+            vm.Contacts = GetContactsByCompany(vm);
 
             vm.ContactPerson = new ContactPerson();
 
@@ -504,18 +523,84 @@ namespace GCRBA.Controllers
 
             vm.CurrentLocation = new Location();
 
-            if (col["btnSubmit"].ToString() == "chooseContact")
+            if (col["btnSubmit"].ToString() == "getLocations")
             {
-                vm = GetLocations(vm);
-                return View(vm);
+                vm.ContactPerson.lngContactPersonID = Convert.ToInt16(col["contacts"]);
+                vm.Locations = GetLocationWhereNotContact(vm);
+            }
+
+            if (col["btnSubmit"].ToString() == "submit")
+            {
+
+            }
+
+            if (col["btnSubmit"].ToString() == "cancel")
+            {
+                return RedirectToAction("AddContactPerson", "AdminPortal");
             }
 
             return View(vm);
         }
 
+        public ActionResult EditCategories()
+        {
+            // initialize EditCompaniesVM object 
+            EditCompaniesViewModel vm = InitEditCompanies();
+
+            // get current company session 
+            vm = InitEditCategories(vm);
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        public ActionResult EditCategories(FormCollection col)
+        {
+            EditCompaniesViewModel vm = InitEditCompanies();
+
+            vm = InitEditCategories(vm);
+           
+            if (col["btnSubmit"].ToString() == "addLocation")
+            {
+                return RedirectToAction("AddNewLocation", "AdminPortal");
+            }
+
+            if (col["btnSubmit"].ToString() == "addCategories")
+            {
+                // get current LocationID
+                vm.CurrentLocation.LocationID = Convert.ToInt16(col["locations"]);
+
+                // get list of categories not current applied to location
+                vm = GetNotCategories(vm);
+            }
+
+            if (col["btnSubmit"].ToString() == "deleteCategories")
+            {
+
+            }
+
+            if (col["btnSubmit"].ToString() == "submit")
+            {
+                vm.CurrentLocation.LocationID = Convert.ToInt16(col["locations"]);
+
+                // get category(s) selected (by ID)
+                string categoryIDs = col["categories"];
+
+                // submit to db 
+                vm.Category.ActionType = AddCategoriesToDB(vm, categoryIDs);
+
+                // reset LocationID to 0 to reset form
+                vm.CurrentLocation.LocationID = 0;
+
+                return View(vm);
+            }
+
+ 
+            return View(vm);
+        }
+
         public ActionResult EditGeneralInfo()
         {
-           
 
             return View();
         }
@@ -552,6 +637,33 @@ namespace GCRBA.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        private List<ContactPerson> GetContactsByCompany(EditCompaniesViewModel vm)
+        {
+            // create db object
+            Database db = new Database();
+
+            // create contacts list object
+            vm.Contacts = new List<ContactPerson>();
+
+            // get list of contacts based on company selected
+            vm.Contacts = db.GetContactsByCompany(vm);
+
+            return vm.Contacts;
+        }
+
+        private List<Location> GetLocationWhereNotContact(EditCompaniesViewModel vm)
+        {
+            // create db object
+            Database db = new Database();
+
+            // create location list objects 
+            vm.Locations = new List<Location>();
+
+            // get list of locations where selected contact is not a contact
+            vm.Locations = db.GetLocationsNotContact(vm);
+
+            return vm.Locations;
+        }
 
         public List<Company> GetCompaniesList(EditCompaniesViewModel vm)
         {
@@ -585,6 +697,21 @@ namespace GCRBA.Controllers
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
+        private EditCompaniesViewModel GetNotCategories(EditCompaniesViewModel vm)
+        {
+            try
+            {
+                // create db object 
+                Database db = new Database();
+
+                // get category list 
+                vm.Categories = db.GetNotCategories(vm);
+
+                return vm;
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
         private EditCompaniesViewModel GetLocations(EditCompaniesViewModel vm)
         {
             try
@@ -609,6 +736,26 @@ namespace GCRBA.Controllers
             vm.NewLocation.ActionType = db.DeleteLocation(vm.CurrentLocation.LocationID);
 
             return vm.NewLocation.ActionType;
+        }
+
+        private EditCompaniesViewModel InitEditCategories(EditCompaniesViewModel vm)
+        {
+            // get current company session 
+            vm = GetCompanySession(vm);
+
+            // get list of locations for current company 
+            vm = GetLocations(vm);
+
+            // create Location object that will hold selected location 
+            vm.CurrentLocation = new Location();
+
+            // create Category object
+            vm.Category = new CategoryItem();
+
+            // create list of categories
+            vm.Categories = new List<CategoryItem>();
+
+            return vm; 
         }
 
         private string GetState(int intStateID)
@@ -667,6 +814,31 @@ namespace GCRBA.Controllers
                 vm.NewLocation.ActionType = db.AddNewLocation(vm);
 
                 return vm.NewLocation.ActionType;
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private CategoryItem.ActionTypes AddCategoriesToDB(EditCompaniesViewModel vm, string categoryIDs)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // create array by splitting string at each comma 
+                string[] AllStrings = categoryIDs.Split(',');
+
+                // loop through array and assign CategoryID to Category object 
+                // then add object to list of category items
+                foreach (string item in AllStrings)
+                {
+                    // get categoryID 
+                    vm.Category.ItemID = int.Parse(item);
+
+                    // add to database
+                    vm.Category.ActionType = db.InsertCategories(vm);
+                }
+                return vm.Category.ActionType;
             }
             catch (Exception ex) { throw new Exception(ex.Message); }
         }

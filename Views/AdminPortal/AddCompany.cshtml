@@ -36,8 +36,8 @@ else
                 <div id="info" class="container text-center" style="display:none">
                     Once you add a company, you can click on Edit Existing Company in the Admin Portal to add more detailed information, such as location, for that specific company.
                 </div>
-                @Html.LabelFor(model => model.CurrentCompany.strCompanyName, new { @class = "form-label" })
-                @Html.TextBoxFor(model => model.CurrentCompany.strCompanyName, new { @autofocus = "autofocus", @class = "form-control", maxlength = "20", @required = "required" })
+                @Html.LabelFor(model => model.CurrentCompany.Name, new { @class = "form-label" })
+                @Html.TextBoxFor(model => model.CurrentCompany.Name, new { @autofocus = "autofocus", @class = "form-control", maxlength = "20", @required = "required" })
             </div>
 
             <div>
