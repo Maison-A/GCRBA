@@ -192,16 +192,25 @@ namespace GCRBA.Controllers
                 //Just doing something quick here... probably should be changed to something more dynamic.
                 if (user.intState == 1) user.State = "Indiana";
                 else if (user.intState == 2) user.State = "Kentucky";
-                else if (user.intState == 3) user.State = "Ohio";
-
-                
-                
+                else if (user.intState == 3) user.State = "Ohio";                
                 user.Zip = col["Zip"];
 
-                // username/pass setup
-                user.Email = col["Email"];
-                user.Username = col["Username"];
-                user.Password = col["Password"];
+                if (user.UID == 0)
+                {
+                    // username/pass setup
+                    user.Email = col["Email"];
+                    user.Username = col["Username"];
+                    user.Password = col["Password"];
+                }
+                //else
+                //{
+                //    user.Email = user.GetType().GetField(user.Email);
+                //foo.GetType()
+                //     .GetFields()
+                //     .Select(field => field.GetValue(foo))
+                //     .ToList();
+
+                //}
 
                 // membership type
                 user.MemberShipType = col["MemberShipType"];
@@ -211,6 +220,7 @@ namespace GCRBA.Controllers
                 user.isMember = 1;
                 user.isAdmin = 0;
 
+                
 
 
                 // once submit is hit, process member data
@@ -261,10 +271,7 @@ namespace GCRBA.Controllers
                         }
                     }
                 }
-                if (col["btnSubmit"].ToString() == "home")
-                {
-                    return RedirectToAction("Index", "Home");
-                }
+ 
             }
             catch (Exception)
             {
