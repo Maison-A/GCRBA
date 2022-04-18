@@ -8,7 +8,7 @@ namespace GCRBA.Models
 	public class SearchResults
 	{
 		public List<Models.NewLocation> lstLocations;
-		public int testLocationSearch = 1;
+		public long lngLocationID { get; set; }
 		public Models.NewLocation landingLocation;
 		public List<Models.CategoryItem> landingCategories;
 		public List<Models.Awards> landingAwards;

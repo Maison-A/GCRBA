@@ -3,7 +3,7 @@
 		if (iconMenu != "")
 			$("#icon-bar-".concat(iconMenu)).addClass("active");
 		if (profileMenu != undefined)
-			$("#profile-".concat(profileMenu)).addClass("active");
+			$("#bakery-".concat(profileMenu)).addClass("active");
 	}
 	catch (Exception) { /* ignore errors here */ }
 }

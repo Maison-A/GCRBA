@@ -120,10 +120,12 @@
 			}
 		}
 	}
-
+
 	if (user.myLocation == true) {
 		<button class="button-alert" name="btnSubmit" value="deleteLocation">Delete Location</button>
+		@Html.HiddenFor(model=>model.lngLocationID)
 	}
+
 
 	if (Model.landingLocation.memberStatus) {
 

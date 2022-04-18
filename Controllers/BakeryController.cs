@@ -80,8 +80,8 @@ namespace GCRBA.Views.Bakery {
             Models.SearchResults results = new Models.SearchResults();
             Models.NewLocation loc = new Models.NewLocation();
             
-            
             results.landingLocation = db.GetLandingLocation(Id);
+            results.lngLocationID = results.landingLocation.lngLocationID;
             results.landingLocation.memberStatus = db.CheckMemberStatus(results.landingLocation.lngLocationID);
             results.landingCategories = db.GetLandingCategories(Id);
             results.landingAwards = db.GetLandingAwards(Id);
@@ -105,13 +105,16 @@ namespace GCRBA.Views.Bakery {
         }
 
         [HttpPost]
-        public ActionResult TestLandingPage(FormCollection col) {
-            Models.NewLocation loc = new Models.NewLocation();
-            loc.lngLocationID = Convert.ToInt64(col["lngLocationID"]);
-            Models.Database db = new Models.Database();
-            loc.ActionType = Models.NewLocation.ActionTypes.NoType;
-            loc.ActionType = db.DeleteLocation(loc.lngLocationID);
-            return RedirectToAction("Index", "Bakery");
+        public ActionResult LandingPage(FormCollection col) {
+            if (col["btnSubmit"] == "deleteLocation") {
+                Models.NewLocation loc = new Models.NewLocation();
+                loc.lngLocationID = Convert.ToInt64(col["lngLocationID"]);
+                Models.Database db = new Models.Database();
+                loc.ActionType = Models.NewLocation.ActionTypes.NoType;
+                loc.ActionType = db.DeleteLocation(loc.lngLocationID);
+                return RedirectToAction("Index", "Bakery");
+            }
+            return View();
 		}
 
         public ActionResult MemberBakery(long Id) {
