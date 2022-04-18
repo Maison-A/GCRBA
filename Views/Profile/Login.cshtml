@@ -8,10 +8,6 @@
 
 @using (Html.BeginForm(FormMethod.Post))
 {
-    <div class="topcorner">
-        <button class="button-action" id="btnJoin" name="btnSubmit" value="join">Join the GCRBA!</button>
-        <button class="button-action" id="btnHome" name="btnSubmit" value="home">Home</button>
-    </div>
     if (Model.IsAuthenticated)
     {
         <p>You are already logged in.</p>
