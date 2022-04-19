@@ -2,9 +2,8 @@
 @model EditCompaniesViewModel
 
 <div id="locations">
-    <label for="locations" class="form-label">Locations</label>
+    <label for="locations" class="form-label">Choose Location:</label>
     <select name="locations" class="form-control">
-        <option value="choose" disabled>Choose Location</option>
         @foreach (var item in Model.Locations)
         {
             <option value="@item.LocationID">@item.Address @item.City, @item.State @item.Zip</option>

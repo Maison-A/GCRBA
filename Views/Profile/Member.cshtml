@@ -3,9 +3,7 @@
     ViewBag.Title = "Member";
 }
 @using (Html.BeginForm()) {
-<div class="topcorner">
-    <button class="button-action" name="btnSubmit" value="home">Home</button>
-</div>
+
 if (Model.isMember == 0) {
     <p>This page is for members only.</p>
 }

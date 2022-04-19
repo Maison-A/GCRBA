@@ -7,4 +7,3 @@
 	}
 	catch (Exception) { /* ignore errors here */ }
 }
-

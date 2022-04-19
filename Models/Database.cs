@@ -813,6 +813,165 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+		public List<CategoryItem> GetNotCategories(EditCompaniesViewModel vm)
+        {
+			try
+            {
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to database -- throw error if unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// specify which stored procedure we are using 
+				SqlDataAdapter da = new SqlDataAdapter("GET_NOT_CATEGORIES", cn);
+
+				SetParameter(ref da, "@intLocationID", vm.CurrentLocation.LocationID, SqlDbType.BigInt);
+
+				// create new list object with type string  
+				List<CategoryItem> categories = new List<CategoryItem>();
+
+				// set command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				try { da.Fill(ds); }
+				catch (Exception ex) { throw new Exception(ex.Message); }
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0)
+                {
+					// loop through results and add to list 
+					foreach (DataRow dr in ds.Tables[0].Rows)
+                    {
+						// create category object
+						CategoryItem c = new CategoryItem();
+
+						// add values to category object
+						c.ItemID = Convert.ToInt16(dr["intCategoryID"]);
+						c.ItemDesc = (string)dr["strCategory"];
+
+						// add category object to list of categorie 
+						categories.Add(c);
+                    }
+                }
+				return categories;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+		public List<ContactPerson> GetContactsByCompany(EditCompaniesViewModel vm)
+        {
+			try
+            {
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to database -- throw error if unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// specify which stored procedure we are using 
+				SqlDataAdapter da = new SqlDataAdapter("GET_CONTACTS_BY_COMPANY", cn);
+
+				SetParameter(ref da, "@intCompanyID", vm.CurrentCompany.CompanyID, SqlDbType.BigInt);
+
+				// create new list object with type string  
+				List<ContactPerson> contacts = new List<ContactPerson>();
+
+				// set command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				try { da.Fill(ds); }
+				catch (Exception ex) { throw new Exception(ex.Message); }
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0)
+                {
+					// loop through results and add to list 
+					foreach (DataRow dr in ds.Tables[0].Rows)
+                    {
+						// create ContactPerson object
+						ContactPerson c = new ContactPerson();
+
+						// add values to ContactPerson object 
+						c.lngContactPersonID = Convert.ToInt16(dr["intContactPersonID"]);
+						c.strFullName = (string)dr["strContactName"];
+						c.intContactTypeID = Convert.ToInt16(dr["intContactPersonTypeID"]);
+						c.strContactPersonType = (string)dr["strContactPersonType"];
+
+						if (dr["strContactPhone"].ToString() != SqlString.Null)
+                        {
+							c.strFullPhone = (string)dr["strContactPhone"];
+                        }
+
+						if (dr["strContactEmail"].ToString() != SqlString.Null)
+						{
+							c.strContactEmail = (string)dr["strContactEmail"];
+						}
+
+						if (dr["intLocationID"].ToString() != SqlString.Null)
+                        {
+							c.intLocationID = Convert.ToInt16(dr["intLocationID"]);
+                        }
+
+						// add contactperson object to list of contacts
+						contacts.Add(c);
+					}
+                }
+				return contacts;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+
+		}
+
+		public List<Location> GetLocationsNotContact(EditCompaniesViewModel vm)
+        {
+			try
+            {
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to database -- throw error if unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// specify which stored procedure we are using 
+				SqlDataAdapter da = new SqlDataAdapter("GET_LOCATIONS_NOT_CONTACT", cn);
+
+				SetParameter(ref da, "@intContactPersonID", vm.ContactPerson.lngContactPersonID, SqlDbType.BigInt);
+				SetParameter(ref da, "@intCompanyID", vm.CurrentCompany.CompanyID, SqlDbType.BigInt);
+
+				// create new list object with type string  
+				List<Location> locations = new List<Location>();
+
+				// set command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				try { da.Fill(ds); }
+				catch (Exception ex) { throw new Exception(ex.Message); }
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0)
+                {
+					foreach (DataRow dr in ds.Tables[0].Rows)
+                    {
+						// create location object
+						Location l = new Location();
+
+						// add values to Location object from db 
+						l.LocationID = Convert.ToInt16(dr["intLocationID"]);
+						l.Address = (string)dr["strAddress"];
+						l.City = (string)dr["strCity"];
+						l.State = (string)dr["strState"];
+						l.Zip = (string)dr["strZip"];
+
+						// add to list of locations 
+						locations.Add(l);
+                    }
+                }
+				return locations;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
 		public List<NewLocation> GetMemberLocations(Models.User user) {
 			List<NewLocation> lstMemLocations = new List<NewLocation>();
 			try {
@@ -997,6 +1156,7 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+
 		private int SetParameter(ref SqlCommand cm, string ParameterName, Object Value
 			, SqlDbType ParameterType, int FieldSize = -1
 			, ParameterDirection Direction = ParameterDirection.Input
@@ -1114,6 +1274,38 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 
 		}
+
+		public CategoryItem.ActionTypes InsertCategories(EditCompaniesViewModel vm)
+        {
+			try
+            {
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("INSERT_CATEGORYLOCATION", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intCategoryLocationID", null, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+				SetParameter(ref cm, "@intCategoryID", vm.Category.ItemID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@intLocationID", vm.CurrentLocation.LocationID, SqlDbType.BigInt);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1)
+                {
+					return CategoryItem.ActionTypes.InsertSuccessful;
+                }
+				else
+                {
+					return CategoryItem.ActionTypes.Unknown;
+                }
+
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+        }
 
 		public LocationList.ActionTypes InsertCompany(LocationList locList)
 		{

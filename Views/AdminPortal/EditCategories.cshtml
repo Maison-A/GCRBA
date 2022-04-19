@@ -1,0 +1,43 @@
+﻿@using GCRBA.ViewModels
+@model EditCompaniesViewModel
+
+@{
+    ViewBag.Title = "Add/Delete Category";
+}
+
+@if (Model.CurrentUser.isAdmin == 0)
+{
+    @Html.Partial("AdminOnly");
+}
+else
+{
+    if (Model.Category.ActionType == GCRBA.Models.CategoryItem.ActionTypes.InsertSuccessful)
+    {
+        <p>Changes successfully made.</p>
+    }
+
+    using (Html.BeginForm(FormMethod.Post))
+    {
+        <div id="add">
+            @if (Model.Locations.Count > 0)
+            {
+                @Html.Partial("Locations");
+                <button name="btnSubmit" value="addCategories">Add Categories</button>
+                <button name="btnSubmit" value="deleteCategories">Delete Categories</button>
+
+                if (Model.CurrentLocation.LocationID > 0)
+                {
+                    @Html.Partial("Categories");
+                    <button name="btnSubmit" value="submit">Submit</button>
+                    <button name="btnSubmit" value="cancel">Cancel</button>
+                }
+            }
+            else
+            {
+                @Html.Partial("NoLocations");
+                <button name="btnSubmit" value="addLocation">Add Location</button>
+            }
+        </div>
+            
+    }
+}

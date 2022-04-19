@@ -300,7 +300,11 @@
     <Content Include="Views\AdminPortal\DeleteLocation.cshtml" />
     <Content Include="Views\AdminPortal\AddContactPerson.cshtml" />
     <Content Include="Views\AdminPortal\AddExistingContact.cshtml" />
-    <Content Include="Views\AdminPortal\Locations.cshtml" />
+    <Content Include="Views\Shared\Locations.cshtml" />
+    <Content Include="Views\Shared\ErrorNoLocationsForContact.cshtml" />
+    <Content Include="Views\AdminPortal\EditCategories.cshtml" />
+    <Content Include="Views\Shared\NoLocations.cshtml" />
+    <Content Include="Views\Shared\Categories.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
