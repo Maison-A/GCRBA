@@ -13,7 +13,12 @@ else
 {
     if (Model.Category.ActionType == GCRBA.Models.CategoryItem.ActionTypes.InsertSuccessful)
     {
-        <p>Changes successfully made.</p>
+        @Html.Partial("ChangeSuccessful");
+    }
+
+    if (Model.Category.ActionType == GCRBA.Models.CategoryItem.ActionTypes.DeleteSuccessful)
+    {
+        @Html.Partial("ChangeSuccessful");
     }
 
     using (Html.BeginForm(FormMethod.Post))
@@ -38,6 +43,6 @@ else
                 <button name="btnSubmit" value="addLocation">Add Location</button>
             }
         </div>
-            
+
     }
 }

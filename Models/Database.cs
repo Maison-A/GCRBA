@@ -787,8 +787,22 @@ namespace GCRBA.Models
 
 		public List<CategoryItem> GetNotCategories(EditCompaniesViewModel vm)
         {
+			vm.Categories = GetCategories(vm, "GET_NOT_CATEGORIES");
+
+			return vm.Categories;
+        }
+
+		public List<CategoryItem> GetCurrentCategories(EditCompaniesViewModel vm)
+        {
+			vm.Categories = GetCategories(vm, "GET_CURRENT_CATEGORIES");
+
+			return vm.Categories;
+		}
+
+		public List<CategoryItem> GetCategories(EditCompaniesViewModel vm, string sproc)
+        {
 			try
-            {
+			{
 				DataSet ds = new DataSet();
 				SqlConnection cn = new SqlConnection();
 
@@ -796,7 +810,7 @@ namespace GCRBA.Models
 				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
 
 				// specify which stored procedure we are using 
-				SqlDataAdapter da = new SqlDataAdapter("GET_NOT_CATEGORIES", cn);
+				SqlDataAdapter da = new SqlDataAdapter(sproc, cn);
 
 				SetParameter(ref da, "@intLocationID", vm.CurrentLocation.LocationID, SqlDbType.BigInt);
 
@@ -811,10 +825,10 @@ namespace GCRBA.Models
 				finally { CloseDBConnection(ref cn); }
 
 				if (ds.Tables[0].Rows.Count != 0)
-                {
+				{
 					// loop through results and add to list 
 					foreach (DataRow dr in ds.Tables[0].Rows)
-                    {
+					{
 						// create category object
 						CategoryItem c = new CategoryItem();
 
@@ -824,12 +838,12 @@ namespace GCRBA.Models
 
 						// add category object to list of categorie 
 						categories.Add(c);
-                    }
-                }
+					}
+				}
 				return categories;
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
-        }
+		}
 
 		public List<ContactPerson> GetContactsByCompany(EditCompaniesViewModel vm)
         {
@@ -1094,6 +1108,36 @@ namespace GCRBA.Models
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
+
+		public CategoryItem.ActionTypes DeleteCategories(EditCompaniesViewModel vm)
+        {
+			try
+            {
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("DELETE_CATEGORY_FROM_LOCATION", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intLocationID", vm.CurrentLocation.LocationID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@intCategoryID", vm.Category.ItemID, SqlDbType.BigInt);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				switch (intReturnValue)
+				{
+					case 1:
+						return CategoryItem.ActionTypes.DeleteSuccessful;
+					default:
+						return CategoryItem.ActionTypes.Unknown;
+
+				}
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+        }
 
 		public bool InsertHomepageBanner()
 		{

@@ -559,7 +559,7 @@ namespace GCRBA.Controllers
             EditCompaniesViewModel vm = InitEditCompanies();
 
             vm = InitEditCategories(vm);
-           
+
             if (col["btnSubmit"].ToString() == "addLocation")
             {
                 return RedirectToAction("AddNewLocation", "AdminPortal");
@@ -567,6 +567,9 @@ namespace GCRBA.Controllers
 
             if (col["btnSubmit"].ToString() == "addCategories")
             {
+                // save button session for currently clicked button 
+                SaveButtonSession("add");
+
                 // get current LocationID
                 vm.CurrentLocation.LocationID = Convert.ToInt16(col["locations"]);
 
@@ -576,22 +579,48 @@ namespace GCRBA.Controllers
 
             if (col["btnSubmit"].ToString() == "deleteCategories")
             {
+                // save button session for currently clicked button 
+                SaveButtonSession("delete");
 
+                // get current LocationID
+                vm.CurrentLocation.LocationID = Convert.ToInt16(col["locations"]);
+
+                // get list of categories currently applied to location 
+                vm = GetCurrentCategories(vm);
             }
 
             if (col["btnSubmit"].ToString() == "submit")
             {
+                // create button object
+                Button button = new Button();
+
+                // get current button session
+                button = button.GetButtonSession();
+
                 vm.CurrentLocation.LocationID = Convert.ToInt16(col["locations"]);
 
                 // get category(s) selected (by ID)
                 string categoryIDs = col["categories"];
 
-                // submit to db 
-                vm.Category.ActionType = AddCategoriesToDB(vm, categoryIDs);
+                // handle INSERT
+                if (button.CurrentButton == "add")
+                {
+                    // submit to db 
+                    vm.Category.ActionType = AddCategoriesToDB(vm, categoryIDs);
+                } 
+                // handle DELETE 
+                else if (button.CurrentButton == "delete")
+                {
+                    // submit to db 
+                    vm.Category.ActionType = DeleteCategories(vm, categoryIDs);
+                }
 
                 // reset LocationID to 0 to reset form
                 vm.CurrentLocation.LocationID = 0;
 
+                // remove current button session b/c we no longer need it 
+                button.RemoveButtonSession();
+                
                 return View(vm);
             }
 
@@ -635,6 +664,22 @@ namespace GCRBA.Controllers
 
             // redirect to main page
             return RedirectToAction("Index", "Home");
+        }
+
+        public void SaveButtonSession(string buttonValue)
+        {
+            try
+            {
+                // create button object 
+                Button button = new Button();
+
+                // get value of button pressed 
+                button.CurrentButton = buttonValue;
+
+                // save button session 
+                button.SaveButtonSession();
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         private List<ContactPerson> GetContactsByCompany(EditCompaniesViewModel vm)
@@ -708,6 +753,46 @@ namespace GCRBA.Controllers
                 vm.Categories = db.GetNotCategories(vm);
 
                 return vm;
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private EditCompaniesViewModel GetCurrentCategories(EditCompaniesViewModel vm)
+        {
+            try
+            {
+                // create db object
+                Database db = new Database();
+
+                // get current category list
+                vm.Categories = db.GetCurrentCategories(vm);
+
+                return vm;
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private CategoryItem.ActionTypes DeleteCategories(EditCompaniesViewModel vm, string categoryIDs)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // create array by splitting string at each comma 
+                string[] AllStrings = categoryIDs.Split(',');
+
+                // loop through array and assign CategoryID to Category object 
+                // then add object to list of category items
+                foreach (string item in AllStrings)
+                {
+                    // get categoryID 
+                    vm.Category.ItemID = int.Parse(item);
+
+                    // add to database
+                    vm.Category.ActionType = db.DeleteCategories(vm);
+                }
+                return vm.Category.ActionType;
             }
             catch (Exception ex) { throw new Exception(ex.Message); }
         }

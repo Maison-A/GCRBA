@@ -206,6 +206,7 @@
     <Compile Include="Controllers\SendMailerController.cs" />
     <Compile Include="Controllers\VendorController.cs" />
     <Compile Include="Models\Awards.cs" />
+    <Compile Include="Models\Button.cs" />
     <Compile Include="Models\ExportToCsv.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -305,6 +306,7 @@
     <Content Include="Views\AdminPortal\EditCategories.cshtml" />
     <Content Include="Views\Shared\NoLocations.cshtml" />
     <Content Include="Views\Shared\Categories.cshtml" />
+    <Content Include="Views\Shared\ChangeSuccessful.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
