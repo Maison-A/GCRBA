@@ -570,6 +570,7 @@ namespace GCRBA.Views.Bakery {
                             loc.Yelp = new Models.SocialMedia() { strPlatform = "Yelp" };
 
                             locList.lstLocations = new Models.NewLocation[] { loc };
+                            locList.ActionType = at;
                             return View(locList);
                     }
                 }

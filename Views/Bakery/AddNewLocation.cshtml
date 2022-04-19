@@ -91,6 +91,20 @@
 		</div>
 	}
 
+	if (Model.ActionType == GCRBA.Models.LocationList.ActionTypes.LocationExists) {
+		<div id="content-locked">
+			<i class="fad fa-exclamation-triangle fa-2x"></i>
+			<span>One or more of the locations already exist in our records!</span>
+		</div>
+	}
+
+	if (Model.ActionType == GCRBA.Models.LocationList.ActionTypes.CompanyNameExists) {
+		<div id="content-locked">
+			<i class="fad fa-exclamation-triangle fa-2x"></i>
+			<span>This company already exists in our records!</span>
+		</div>
+	}
+
 	if (u.IsAuthenticated) {
 
 		<div class="some-spacing">
@@ -430,12 +444,12 @@
 							<div>
 								<div class="some-spacing">
 									<div id="label">@Html.LabelFor(model => model.lstLocations[index].BizYear, "Year Established:")</div>
-									@Html.TextBoxFor(model => model.lstLocations[index].BizYear, new { id="textboxYear" })
+									@Html.TextBoxFor(model => model.lstLocations[index].BizYear, new { id = "textboxYear" })
 								</div>
 
 								<div class="some-spacing">
 									<div id="label">@Html.LabelFor(model => model.lstLocations[index].Bio, "About us:")</div>
-									<div>@Html.TextAreaFor(model => model.lstLocations[index].Bio, new { @spellcheck = "true", rows = "5", style = "width: 500px;", placeholder = "Tell us about your business...", id="textboxBio" })</div>
+									<div>@Html.TextAreaFor(model => model.lstLocations[index].Bio, new { @spellcheck = "true", rows = "5", style = "width: 500px;", placeholder = "Tell us about your business...", id = "textboxBio" })</div>
 								</div>
 							</div>
 						</td>
@@ -534,17 +548,17 @@
 								<h2 class="some-spacing"><u>Additional Websites</u></h2>
 								<div class="some-spacing">
 									<div id="label">@Html.LabelFor(model => model.lstLocations[index].MainWeb, "Main Website URL")</div>
-									<div>@Html.TextBoxFor(model => model.lstLocations[index].MainWeb.strURL, new { placeholder = "Example: https://www.samplewebsite.com", style = "width: 375px", id="textboxMainWeb" })</div>
+									<div>@Html.TextBoxFor(model => model.lstLocations[index].MainWeb.strURL, new { placeholder = "Example: https://www.samplewebsite.com", style = "width: 375px", id = "textboxMainWeb" })</div>
 								</div>
 
 								<div class="some-spacing">
 									<div id="label">@Html.LabelFor(model => model.lstLocations[index].OrderingWeb, "Ordering Webpage URL") </div>
-									<div>@Html.TextBoxFor(model => model.lstLocations[index].OrderingWeb.strURL, new { placeholder = "Example: https://www.samplewebsite.com/ordering", style = "width: 375px", id="textboxOrderWeb" }) </div>
+									<div>@Html.TextBoxFor(model => model.lstLocations[index].OrderingWeb.strURL, new { placeholder = "Example: https://www.samplewebsite.com/ordering", style = "width: 375px", id = "textboxOrderWeb" }) </div>
 								</div>
 
 								<div class="some-spacing">
 									<div id="label">@Html.LabelFor(model => model.lstLocations[index].KettleWeb, "Donation Kettle URL") </div>
-									<div>@Html.TextBoxFor(model => model.lstLocations[index].KettleWeb.strURL, new { placeholder = "Example: https://www.salvationarmy.com", style = "width: 375px", id="textboxDonateWeb" }) </div>
+									<div>@Html.TextBoxFor(model => model.lstLocations[index].KettleWeb.strURL, new { placeholder = "Example: https://www.salvationarmy.com", style = "width: 375px", id = "textboxDonateWeb" }) </div>
 								</div>
 							</div>
 						</td>
