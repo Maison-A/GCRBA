@@ -695,11 +695,10 @@ namespace GCRBA.Models
 
 					cm.ExecuteReader();
 
-					intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
-					locList.lstLocations[i].lngLocationID = (long)cm.Parameters["@intLocationID"].Value;
 					CloseDBConnection(ref cn);
-
+					intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
 					if (intReturnValue != 1) return Models.LocationList.ActionTypes.LocationExists;
+					locList.lstLocations[i].lngLocationID = (long)cm.Parameters["@intLocationID"].Value;
 					/*
 					switch (intReturnValue) {
 						case 1: // new user created
@@ -1675,7 +1674,7 @@ namespace GCRBA.Models
 				{
 					foreach (Models.Website item in websites[i])
 					{
-						if (item.strURL == string.Empty) continue;
+						if (item.strURL == string.Empty || item.strURL == null) continue;
 						SqlConnection cn = null;
 						if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
 						SqlCommand cm = new SqlCommand("INSERT_WEBSITE", cn);

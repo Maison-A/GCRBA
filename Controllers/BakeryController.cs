@@ -515,7 +515,61 @@ namespace GCRBA.Views.Bakery {
                         case Models.LocationList.ActionTypes.DeleteSuccessful:
                             return RedirectToAction("Index");
                         default:
-                            locList.lstLocations = new Models.NewLocation[] { };
+                            Models.Database db = new Models.Database();
+                            
+
+                            Models.NewLocation loc = new Models.NewLocation();
+
+                            loc.lstStates = db.GetStates();
+
+                            loc.lstCompanies = db.GetCompanies();
+                            Models.Company nonValue = new Models.Company { CompanyID = 0, Name = "Select Existing Company" };
+                            loc.lstCompanies.Add(nonValue);
+
+                            loc.Donuts = new Models.CategoryItem() { ItemID = 1, ItemDesc = "Donuts" };
+                            loc.Bagels = new Models.CategoryItem() { ItemID = 2, ItemDesc = "Bagels" };
+                            loc.Muffins = new Models.CategoryItem() { ItemID = 3, ItemDesc = "Muffins" };
+                            loc.IceCream = new Models.CategoryItem() { ItemID = 4, ItemDesc = "Ice Cream" };
+                            loc.FineCandies = new Models.CategoryItem() { ItemID = 5, ItemDesc = "Fine Candies & Chocolates" };
+                            loc.WeddingCakes = new Models.CategoryItem() { ItemID = 6, ItemDesc = "Wedding Cakes" };
+                            loc.Breads = new Models.CategoryItem() { ItemID = 7, ItemDesc = "Breads" };
+                            loc.DecoratedCakes = new Models.CategoryItem() { ItemID = 8, ItemDesc = "Decorated Cakes" };
+                            loc.Cupcakes = new Models.CategoryItem() { ItemID = 9, ItemDesc = "Cupcakes" };
+                            loc.Cookies = new Models.CategoryItem() { ItemID = 10, ItemDesc = "Cookies" };
+                            loc.Desserts = new Models.CategoryItem() { ItemID = 11, ItemDesc = "Desserts/Tortes" };
+                            loc.Full = new Models.CategoryItem() { ItemID = 12, ItemDesc = "Full-line Bakery" };
+                            loc.Deli = new Models.CategoryItem() { ItemID = 13, ItemDesc = "Deli/Catering" };
+                            loc.Other = new Models.CategoryItem() { ItemID = 14, ItemDesc = "Other Carryout Deli" };
+                            loc.Wholesale = new Models.CategoryItem() { ItemID = 15, ItemDesc = "Wholesale" };
+                            loc.Delivery = new Models.CategoryItem() { ItemID = 16, ItemDesc = "Delivery (3rd Party)" };
+                            loc.Shipping = new Models.CategoryItem() { ItemID = 17, ItemDesc = "Shipping" };
+                            loc.Online = new Models.CategoryItem() { ItemID = 18, ItemDesc = "Online Ordering" };
+
+                            //Hours of Operation
+                            loc.Sunday = new Models.Days() { strDay = "Sunday" };
+                            loc.Monday = new Models.Days() { strDay = "Monday" };
+                            loc.Tuesday = new Models.Days() { strDay = "Tuesday" };
+                            loc.Wednesday = new Models.Days() { strDay = "Wednesday" };
+                            loc.Thursday = new Models.Days() { strDay = "Thursday" };
+                            loc.Friday = new Models.Days() { strDay = "Friday" };
+                            loc.Saturday = new Models.Days() { strDay = "Saturday" };
+
+                            //Special Options
+
+                            //Website
+                            loc.MainWeb = new Models.Website() { strWebsiteType = "Main Website URL" };
+                            loc.OrderingWeb = new Models.Website() { strWebsiteType = "Ordering URL" };
+                            loc.KettleWeb = new Models.Website() { strWebsiteType = "Donation Kettle URL" };
+
+                            //SocialMedia
+                            loc.Facebook = new Models.SocialMedia() { strPlatform = "Facebook" };
+                            loc.Twitter = new Models.SocialMedia() { strPlatform = "Twitter" };
+                            loc.Instagram = new Models.SocialMedia() { strPlatform = "Instagram" };
+                            loc.Snapchat = new Models.SocialMedia() { strPlatform = "Snapchat" };
+                            loc.TikTok = new Models.SocialMedia() { strPlatform = "TikTok" };
+                            loc.Yelp = new Models.SocialMedia() { strPlatform = "Yelp" };
+
+                            locList.lstLocations = new Models.NewLocation[] { loc };
                             return View(locList);
                     }
                 }
