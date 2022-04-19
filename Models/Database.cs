@@ -115,6 +115,33 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+		public LocationList.ActionTypes DeleteLocations(Models.LocationList lstLocations) {
+			int i = 0;
+
+			try {
+				foreach (GCRBA.Models.NewLocation item in lstLocations.lstLocations) {
+					if (lstLocations.lstLocations[i] != null) {
+						SqlConnection cn = null;
+						if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+						SqlCommand cm = new SqlCommand("DELETE_LOCATION", cn);
+						int intReturnValue = -1;
+
+						SetParameter(ref cm, "@lngLocationID", lstLocations.lstLocations[i].lngLocationID, SqlDbType.BigInt);
+						SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
+
+						cm.ExecuteReader();
+
+						intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+						CloseDBConnection(ref cn);
+
+						if (intReturnValue != 1) return LocationList.ActionTypes.DeleteFailed;
+						i += 1;
+					}
+				}
+				return LocationList.ActionTypes.DeleteSuccessful;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
 
 		// this user object will be retrieved from where the user types in their data
 		public User.ActionTypes InsertUser(User u)
@@ -669,9 +696,10 @@ namespace GCRBA.Models
 					cm.ExecuteReader();
 
 					intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+					locList.lstLocations[i].lngLocationID = (long)cm.Parameters["@intLocationID"].Value;
 					CloseDBConnection(ref cn);
 
-					locList.lstLocations[i].lngLocationID = (long)cm.Parameters["@intLocationID"].Value;
+					if (intReturnValue != 1) return Models.LocationList.ActionTypes.LocationExists;
 					/*
 					switch (intReturnValue) {
 						case 1: // new user created
@@ -1344,18 +1372,11 @@ namespace GCRBA.Models
 
 					cm.ExecuteReader();
 
-					intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+					
 					CloseDBConnection(ref cn);
-
-					/*
-					switch (intReturnValue) {
-						case 1: // new user created
-							locList.lstLocations[0].lngCompanyID = (long)cm.Parameters["@intCompanyID"].Value;
-							return LocationList.ActionTypes.InsertSuccessful;
-						default:
-							return LocationList.ActionTypes.Unknown;
-					}
-					*/
+					intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+					if (intReturnValue == -1) return Models.LocationList.ActionTypes.CompanyNameExists;
+					locList.lstLocations[i].lngCompanyID = (long)cm.Parameters["@intCompanyID"].Value;
 					i += 1;
 				}
 				catch (Exception ex) { throw new Exception(ex.Message); }
@@ -1387,24 +1408,14 @@ namespace GCRBA.Models
 					SetParameter(ref cm, "@strPhone", PhoneNumber, SqlDbType.NVarChar);
 					SetParameter(ref cm, "@strEmail", locList.lstLocations[i].BusinessEmail, SqlDbType.NVarChar);
 
-
 					SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
 
 					cm.ExecuteReader();
-
-					intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+					
 					CloseDBConnection(ref cn);
-
+					intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+					if (intReturnValue != 1) return LocationList.ActionTypes.LocationExists;
 					locList.lstLocations[i].lngLocationID = (long)cm.Parameters["@intLocationID"].Value;
-					/*
-					switch (intReturnValue) {
-						case 1: // new user created
-							locList.lstLocations[0].lngLocationID = (long)cm.Parameters["@intLocationID"].Value;
-							return LocationList.ActionTypes.InsertSuccessful;
-						default:
-							return LocationList.ActionTypes.Unknown;
-					}
-					*/
 					i += 1;
 				}
 				catch (Exception ex) { throw new Exception(ex.Message); }
@@ -1451,14 +1462,12 @@ namespace GCRBA.Models
 
 		public LocationList.ActionTypes InsertSpecialties(LocationList locList, List<Models.CategoryItem>[] categories)
 		{
+			int intReturnValue = 0;
 			int i = 0;
 			do
 			{
 				try
 				{
-					int[] arrReturnValue = new int[] { 1 };
-					List<int> ls = arrReturnValue.ToList();
-
 					foreach (Models.CategoryItem item in categories[i])
 					{
 						if (item.blnAvailable == true)
@@ -1474,25 +1483,15 @@ namespace GCRBA.Models
 							SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
 
 							cm.ExecuteReader();
+							
+							CloseDBConnection(ref cn);
+							intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+							if (intReturnValue != 1) return Models.LocationList.ActionTypes.CategoryLocationExists;
 
 							item.lngCategoryLocationID = (long)cm.Parameters["@intCategoryLocationID"].Value;
-							ls.Add((int)cm.Parameters["ReturnValue"].Value);
-							CloseDBConnection(ref cn);
 						}
 					}
 					i += 1;
-					/*
-					arrReturnValue = ls.ToArray();
-					foreach (int item in arrReturnValue) {
-						switch (item) {
-							case 1: // new user created
-								break;
-							default:
-								return LocationList.ActionTypes.Unknown;
-						}
-					}
-					return LocationList.ActionTypes.InsertSuccessful;
-					*/
 				}
 				catch (Exception ex) { throw new Exception(ex.Message); }
 			} while (locList.lstLocations[i] != null);
@@ -1501,10 +1500,9 @@ namespace GCRBA.Models
 
 		public LocationList.ActionTypes InsertLocationHours(LocationList locList, List<Models.Days>[] LocationHours)
 		{
+			int i = 0;
+			int intReturnValue = -1;
 			try { 
-				int i = 0;
-				int[] arrReturnValue = new int[] { 1 };
-				List<int> ls = arrReturnValue.ToList();
 				do {
 					foreach (Models.Days item in LocationHours[i]) {
 
@@ -1533,10 +1531,12 @@ namespace GCRBA.Models
 						SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
 
 						cm.ExecuteReader();
+						
+						CloseDBConnection(ref cn);
+						intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+						if (intReturnValue != 1) return Models.LocationList.ActionTypes.LocationHourExists;
 
 						item.intLocationHoursID = (long)cm.Parameters["@intLocationHoursID"].Value;
-						ls.Add((int)cm.Parameters["ReturnValue"].Value);
-						CloseDBConnection(ref cn);
 					}
 					i += 1;
 				}
@@ -1561,13 +1561,12 @@ namespace GCRBA.Models
 
 		public LocationList.ActionTypes InsertSocialMedia(LocationList locList, List<Models.SocialMedia>[] socialMedias)
 		{
+			int intReturnValue = 0;
 			int i = 0;
 			do
 			{
 				try
 				{
-					int[] arrReturnValue = new int[] { 1 };
-					List<int> ls = arrReturnValue.ToList();
 
 					foreach (Models.SocialMedia item in socialMedias[i])
 					{
@@ -1585,9 +1584,11 @@ namespace GCRBA.Models
 
 						cm.ExecuteReader();
 
-						item.intCompanySocialMediaID = (long)cm.Parameters["@intCompanySocialMediaID"].Value;
-						ls.Add((int)cm.Parameters["ReturnValue"].Value);
 						CloseDBConnection(ref cn);
+						intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+						if (intReturnValue != 1) return Models.LocationList.ActionTypes.SocialMediaExists;
+
+						item.intCompanySocialMediaID = (long)cm.Parameters["@intCompanySocialMediaID"].Value;
 					}
 					i += 1;
 					/*
@@ -1615,9 +1616,6 @@ namespace GCRBA.Models
 			{
 				try
 				{
-					int[] arrReturnValue = new int[] { 1 };
-					List<int> ls = arrReturnValue.ToList();
-
 					foreach (Models.ContactPerson item in contacts[i])
 					{
 						string name = item.strContactLastName + ", " + item.strContactFirstName;
@@ -1643,9 +1641,10 @@ namespace GCRBA.Models
 						SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
 
 						cm.ExecuteReader();
-
-						intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+						
 						CloseDBConnection(ref cn);
+						intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+						if (intReturnValue != 1) return Models.LocationList.ActionTypes.ContactPersonExists;
 					}
 					i += 1;
 					/*
@@ -1669,13 +1668,11 @@ namespace GCRBA.Models
 		public LocationList.ActionTypes InsertWebsite(LocationList locList, List<Models.Website>[] websites)
 		{
 			int i = 0;
+			int intReturnValue = 0;
 			do
 			{
 				try
 				{
-					int[] arrReturnValue = new int[] { 1 };
-					List<int> ls = arrReturnValue.ToList();
-
 					foreach (Models.Website item in websites[i])
 					{
 						if (item.strURL == string.Empty) continue;
@@ -1691,24 +1688,16 @@ namespace GCRBA.Models
 						SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
 
 						cm.ExecuteReader();
-
-						item.intWebsiteID = (long)cm.Parameters["@intWebsiteID"].Value;
-						ls.Add((int)cm.Parameters["ReturnValue"].Value);
+						
 						CloseDBConnection(ref cn);
+						intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+						if (intReturnValue != 1) return Models.LocationList.ActionTypes.WebpageURLExists;
+						item.intWebsiteID = (long)cm.Parameters["@intWebsiteID"].Value;
+						
+						
+
 					}
 					i += 1;
-					/*
-					arrReturnValue = ls.ToArray();
-					foreach (int item in arrReturnValue) {
-						switch (item) {
-							case 1: // new user created
-								break;
-							default:
-								return LocationList.ActionTypes.Unknown;
-						}
-					}
-					return LocationList.ActionTypes.InsertSuccessful;
-					*/
 				}
 				catch (Exception ex) { throw new Exception(ex.Message); }
 			} while (locList.lstLocations[i] != null);

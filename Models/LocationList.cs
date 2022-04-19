@@ -14,12 +14,15 @@ namespace GCRBA.Models {
 				try {
 					Database db = new Database();
 					if (this.lstLocations[0].CompanyName != string.Empty) this.ActionType = db.InsertCompany(this);
-					if (this.ActionType != ActionTypes.Unknown) this.ActionType = db.InsertLocations(this);
-					if (this.ActionType != ActionTypes.Unknown) this.ActionType = db.InsertLocationHours(this, LocationHours);
-					if (this.ActionType != ActionTypes.Unknown) this.ActionType = db.InsertSpecialties(this, categories);
-					if (this.ActionType != ActionTypes.Unknown) this.ActionType = db.InsertSocialMedia(this, socialMedias);
-					if (this.ActionType != ActionTypes.Unknown) this.ActionType = db.InsertWebsite(this, websites);
-					if (this.ActionType != ActionTypes.Unknown) this.ActionType = db.InsertContactPerson(this, contacts);
+					if (this.ActionType != ActionTypes.CompanyNameExists) this.ActionType = db.InsertLocations(this);
+					if (this.ActionType != ActionTypes.LocationExists) this.ActionType = db.InsertLocationHours(this, LocationHours);
+					if (this.ActionType != ActionTypes.LocationHourExists) this.ActionType = db.InsertSpecialties(this, categories);
+					if (this.ActionType != ActionTypes.CategoryLocationExists) this.ActionType = db.InsertSocialMedia(this, socialMedias);
+					if (this.ActionType != ActionTypes.SocialMediaExists) this.ActionType = db.InsertWebsite(this, websites);
+					if (this.ActionType != ActionTypes.WebpageURLExists) this.ActionType = db.InsertContactPerson(this, contacts);
+
+					//if something goes bad with new location entry, delete anything related to the new locations entered.
+					if(this.ActionType != ActionTypes.InsertSuccessful) { db.DeleteLocations(this); }
 				}
 				catch (Exception ex) { throw new Exception(ex.Message); }
 			return this.ActionType;
@@ -34,7 +37,15 @@ namespace GCRBA.Models {
 			CompanyFieldsMissing = 5,
 			CategoryFieldsMissing = 6,
 			HoursFieldsMissing = 7,
-			Unknown = 8
+			CompanyNameExists = 8,
+			LocationHourExists = 9,
+			LocationExists = 10,
+			CategoryLocationExists = 11,
+			SocialMediaExists = 12,
+			WebpageURLExists = 13,
+			ContactPersonExists = 14,
+			DeleteFailed = 15,
+			Unknown = 16
 		}
 	}
 }
