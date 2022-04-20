@@ -2197,7 +2197,7 @@ namespace GCRBA.Models
 
 				if (intReturnValue == 1)
 				{
-					vm.MainBanner.BannerID = Convert.ToInt16(cm.Parameters["@intNewBannerID"].Value);
+					//vm.MainBanner.BannerID = Convert.ToInt16(cm.Parameters["@intNewBannerID"].Value);
 					return true;
 				}
 				else

@@ -211,6 +211,11 @@ namespace GCRBA.Controllers
                 user.MemberShipType = col["MemberShipType"];
                 user.PaymentType = col["PaymentType"];
 
+
+
+
+
+
                 //permissions
                 user.isMember = 1;
                 user.isAdmin = 0;
