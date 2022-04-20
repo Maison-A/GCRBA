@@ -58,6 +58,10 @@
 		display: table;
 	}
 
+	#td-contact{
+		height: 50px;
+	}
+
 	table {
 		border-collapse: collapse;
 		border-spacing: 0;
@@ -69,15 +73,27 @@
 	#table-scroll {
 		overflow-y: scroll;
 		height: 400px;
-		display: inline-block;
+		display:flex;
+		width:100%;
 	}
 
-	th, td {
-		text-align: left;
+	th {
+		text-align: center;
+		padding-top: 5px;
+		padding-bottom: 5px;
+		height: 30px;
+	}
+
+	#td-expand{
+		width:400px;
+	}
+
+	tr:nth-child(odd) {
+		background-color: lightgoldenrodyellow;
 	}
 
 	tr:nth-child(even) {
-		background-color: #f2f2f2;
+		background-color: burlywood;
 	}
 
 	@@media only screen and (max-width: 75em) {
@@ -98,9 +114,9 @@
 		}
 	}
 </style>
-
+<div id="site-banner">
 <h2>@ViewBag.Title</h2>
-
+</div>
 
 @using (Html.BeginForm(FormMethod.Post)) {
 	int indexSpecial = 0;
@@ -120,7 +136,8 @@
 			}
 		}
 	}
-
+
+
 	if (user.myLocation == true) {
 		<button class="button-alert" name="btnSubmit" value="deleteLocation">Delete Location</button>
 		@Html.HiddenFor(model=>model.lngLocationID)
@@ -131,20 +148,21 @@
 
 		<div class="row">
 			<div class="member-column">
-				@Html.LabelFor(model => model.landingSpecials, "Specials:")
 				<table>
 					<tr>
-						<td></td>
+						<th>
+							@Html.LabelFor(model => model.landingSpecials, "Specials")
+						</th>
 					</tr>
 					@foreach (GCRBA.Models.SaleSpecial spcItem in Model.landingSpecials) {
 						<tr>
-							<td>
+							<td style="text-align:center">
 								@Html.TextAreaFor(model => model.landingSpecials[indexSpecial].strDescription, new { @readonly = true, rows = "5", style = "width: 250px;" })
 							</td>
 						</tr>
 						<tr>
 							<td>
-								@Html.DisplayFor(models => models.landingSpecials[indexSpecial].monPrice)
+								Price: $@Html.DisplayFor(models => models.landingSpecials[indexSpecial].monPrice)
 							</td>
 						</tr>
 						<tr>
@@ -158,8 +176,12 @@
 				</table>
 			</div>
 			<div class="member-column">
-				@Html.Label("Shop Info:")
 				<table>
+					<tr>
+						<th style="text-align:center" colspan="2">
+							@Html.Label("Shop Info")
+						</th>
+					</tr>
 					<tr>
 						<td>
 							@Html.LabelFor(model => model.landingLocation.LocationName, "Bakery Name:")
@@ -190,17 +212,21 @@
 							@Html.LabelFor(models => models.landingLocation.BusinessEmail, "Shop Email:")
 						</td>
 						<td>
-							@Html.DisplayFor(models => models.landingLocation.BusinessEmail)
+							<a href="mailto:@Model.landingLocation.BusinessEmail">@Html.DisplayFor(models => models.landingLocation.BusinessEmail)</a>
 						</td>
 					</tr>
 				</table>
 			</div>
 			<div class="member-column">
-				@Html.LabelFor(model => model.landingCategories, "Specialties:")
 				<table id="table-scroll">
+					<tr>
+						<th style="text-align:center">
+							@Html.LabelFor(model => model.landingCategories, "Categories")
+						</th>
+					</tr>
 					@foreach (GCRBA.Models.CategoryItem catItem in Model.landingCategories) {
 						<tr>
-							<td style="width: 100%">
+							<td id="td-expand">
 								@Html.DisplayFor(model => model.landingCategories[indexCategory].ItemDesc)
 							</td>
 						</tr>
@@ -212,8 +238,12 @@
 		<br />
 		<div class="row">
 			<div class="member-column">
-				@Html.LabelFor(model => model.landingAwards, "Awards:")
 				<table id="table-scroll">
+					<tr>
+						<th colspan="2">
+							@Html.LabelFor(model => model.landingAwards, "Awards")
+						</th>
+					</tr>
 					@foreach (GCRBA.Models.Awards awardItem in Model.landingAwards) {
 						<tr>
 							<td>
@@ -228,8 +258,12 @@
 				</table>
 			</div>
 			<div class="member-column">
-				@Html.LabelFor(model => model.landingWebsite, "Websites:")
 				<table>
+					<tr>
+						<th>
+							@Html.LabelFor(model => model.landingWebsite, "Websites")
+						</th>
+					</tr>
 					@if (Model.MainURL != string.Empty) {
 						<tr>
 							<td>
@@ -254,8 +288,12 @@
 				</table>
 			</div>
 			<div class="member-column">
-				@Html.LabelFor(model => model.landingSocialMedia, "Social Media:")
 				<table>
+					<tr>
+						<th>
+							@Html.LabelFor(model => model.landingSocialMedia, "Social Media")
+						</th>
+					</tr>
 					@foreach (GCRBA.Models.SocialMedia item in Model.landingSocialMedia) {
 						if (string.Empty != item.strSocialMediaLink) {
 							<tr>
@@ -270,17 +308,21 @@
 		</div>
 		<div class="row">
 			<div class="member-column">
-				@Html.LabelFor(model => model.landingContacts, "Contact Us!")
 				<table id="table-scroll">
+					<tr>
+						<th>
+							@Html.LabelFor(model => model.landingContacts, "Contact Us!")
+						</th>
+					</tr>
 					<tr>
 						<td>
 							@foreach (GCRBA.Models.ContactPerson item in Model.landingContacts) {
 								if (string.Empty != item.strFullName) {
-									<table>
+									<table style="border: 1px solid black; height: 170px">	
 										<tr>
-											<td style="text-align:center" colspan="2">
-												@item.strContactPersonType
-											</td>
+											<th colspan="2">
+												@Html.Label(@item.strContactPersonType)
+											</th>
 										</tr>
 										<tr>
 											<td>
@@ -306,7 +348,7 @@
 													@Html.Label("Contact Email")
 												</td>
 												<td>
-													@item.strContactEmail
+													<a href="mailto:@item.strContactEmail">@item.strContactEmail</a>
 												</td>
 											</tr>
 										}
@@ -314,15 +356,16 @@
 									<br />
 								}
 							}
-						</td>
-					</tr>
+							</td>
+						</tr>
 				</table>
 			</div>
 			<div class="member-column-wide-x2">
-				@Html.Label("Photos")
 				<table id="table-scroll">
 					<tr>
-						<td></td>
+						<th id="text-center">
+							@Html.Label("Photos")
+						</th>
 					</tr>
 				</table>
 			</div>

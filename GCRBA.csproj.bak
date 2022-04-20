@@ -165,6 +165,9 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\Photos\BakedGoods.jpg" />
+    <Content Include="Content\Photos\Breads.jpeg" />
+    <Content Include="Content\Photos\GCRBAlogo.jpg" />
     <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
     <Content Include="Python\Scripts\.idea\.gitignore" />
@@ -206,6 +209,7 @@
     <Compile Include="Controllers\SendMailerController.cs" />
     <Compile Include="Controllers\VendorController.cs" />
     <Compile Include="Models\Awards.cs" />
+    <Compile Include="Models\Button.cs" />
     <Compile Include="Models\ExportToCsv.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -218,7 +222,6 @@
     <Compile Include="Models\Location.cs" />
     <Compile Include="Models\LocationList.cs" />
     <Compile Include="Models\MailModel.cs" />
-    <Compile Include="Models\MainBanner.cs" />
     <Compile Include="Models\NewLocation.cs" />
     <Compile Include="Models\PhoneNumber.cs" />
     <Compile Include="Models\SaleSpecial.cs" />
@@ -234,6 +237,7 @@
     <Compile Include="ViewModels\AdminBannerViewModel.cs" />
     <Compile Include="ViewModels\EditCompaniesViewModel.cs" />
     <Compile Include="ViewModels\EditLocationVM.cs" />
+    <Compile Include="ViewModels\UserCompanyVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
@@ -264,7 +268,7 @@
     <Content Include="Views\Vendor\Index.cshtml" />
     <Content Include="Views\Bakery\AddNewLocation.cshtml" />
     <Content Include="Views\Bakery\MemberBakery.cshtml" />
-	<Content Include="Views\Bakery\LandingPage.cshtml" />
+    <Content Include="Views\Bakery\LandingPage.cshtml" />
     <Content Include="Views\User\AddNewUser.cshtml" />
     <Content Include="Python\Scripts\.idea\.name" />
     <Content Include="Python\Scripts\.idea\Scripts.iml" />
@@ -274,7 +278,6 @@
     <Content Include="Scripts\bootstrap.esm.js.map" />
     <Content Include="Scripts\bootstrap.bundle.min.js.map" />
     <Content Include="Scripts\bootstrap.bundle.js.map" />
-    <Content Include="Views\User\Index.cshtml" />
     <Content Include="Views\Profile\Index.cshtml" />
     <Content Include="Views\Shared\UserTabMenu.cshtml" />
     <Content Include="Views\Bakery\Map.cshtml" />
@@ -284,6 +287,7 @@
     <Content Include="Views\AdminPortal\Index.cshtml" />
     <Content Include="Views\Profile\AdminLogin.cshtml" />
     <Content Include="Views\SendMailer\Index.cshtml" />
+    <Content Include="CSV_Folder\Bakery.csv" />
     <Content Include="Views\AdminPortal\EditMainBanner.cshtml" />
     <Content Include="Views\Troubleshoot\Index.cshtml" />
     <Content Include="Views\Troubleshoot\EmailIssue.cshtml" />
@@ -294,8 +298,17 @@
     <Content Include="Views\Shared\UpdateSuccessful.cshtml" />
     <Content Include="Views\Shared\AdminOnly.cshtml" />
     <Content Include="Views\Profile\EditAwards.cshtml" />
-    <Content Include="Views\AdminPortal\EditLocationInfo.cshtml" />
+    <Content Include="Views\AdminPortal\AddNewLocation.cshtml" />
     <Content Include="Views\AdminPortal\EditGeneralInfo.cshtml" />
+    <Content Include="Views\AdminPortal\DeleteLocation.cshtml" />
+    <Content Include="Views\AdminPortal\AddContactPerson.cshtml" />
+    <Content Include="Views\AdminPortal\AddExistingContact.cshtml" />
+    <Content Include="Views\Shared\Locations.cshtml" />
+    <Content Include="Views\Shared\ErrorNoLocationsForContact.cshtml" />
+    <Content Include="Views\AdminPortal\EditCategories.cshtml" />
+    <Content Include="Views\Shared\NoLocations.cshtml" />
+    <Content Include="Views\Shared\Categories.cshtml" />
+    <Content Include="Views\Shared\ChangeSuccessful.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

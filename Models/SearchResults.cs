@@ -28,6 +28,9 @@ namespace GCRBA.Models
 		public string YelpURL = string.Empty;
 		public string TikTokURL = string.Empty;
 
+		public string strSpecialStartDisplay = string.Empty;
+		public string strSpecialEndDisplay = string.Empty;
+
 		//Bakery Good For User Search
 		public CategoryItem Donuts = new CategoryItem();
 		public CategoryItem Bagels = new CategoryItem();
