@@ -177,10 +177,12 @@ namespace GCRBA.Controllers
         {
             try
             {
+               
                 // get current user session
                 Models.User user = new Models.User();
                 user = user.GetUserSession();
-                  
+
+
                 // contact info
                 user.FirstName = col["FirstName"];
                 user.LastName = col["LastName"];
@@ -195,6 +197,7 @@ namespace GCRBA.Controllers
                 else if (user.intState == 3) user.State = "Ohio";                
                 user.Zip = col["Zip"];
 
+                // set sign in info if user is new
                 if (user.UID == 0)
                 {
                     // username/pass setup
@@ -202,15 +205,7 @@ namespace GCRBA.Controllers
                     user.Username = col["Username"];
                     user.Password = col["Password"];
                 }
-                //else
-                //{
-                //    user.Email = user.GetType().GetField(user.Email);
-                //foo.GetType()
-                //     .GetFields()
-                //     .Select(field => field.GetValue(foo))
-                //     .ToList();
 
-                //}
 
                 // membership type
                 user.MemberShipType = col["MemberShipType"];
@@ -241,33 +236,41 @@ namespace GCRBA.Controllers
                     {
                         // initialize action type
                         Models.User.ActionTypes at = Models.User.ActionTypes.NoType;
-
+                        
+    
                         // create database object 
                         Database db = new Database();
 
-                        // save action type based on what Save() returns 
-                        at = user.Save();
-
-                        switch (at)
+                        // if user is authenticated then update member table
+                        if (user.UID > 0)
                         {
-                            // insert successful
-                            case Models.User.ActionTypes.InsertSuccessful:
+                            // update member table
+                            db.InsertUserToMember(user);
 
-                                user.SaveUserSession();
-                                // check to see if user is a member or not 
-                                db.IsUserMember(user);
+                            // update user info
 
-                                if (user.isMember == 0)
-                                {
-                                    return RedirectToAction("NonMember", "Profile");
-                                }
-                                else
-                                {
+
+                        }
+                        else
+                        {
+
+                            // save action type based on what Save() returns 
+                            at = user.Save();
+
+                            switch (at)
+                            {
+                                // insert successful- redirect as necessary 
+                                case Models.User.ActionTypes.InsertSuccessful:
+
+                                    user.SaveUserSession();
+
                                     return RedirectToAction("Member", "Profile");
-                                }
+                                    
 
-                            default:
-                                return View(user);
+                                default:
+                                    return View(user);
+                            }
+                        
                         }
                     }
                 }

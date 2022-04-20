@@ -2130,5 +2130,83 @@ namespace GCRBA.Models
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
+
+
+		public bool InsertUserToMember(User u)
+		{
+
+			try
+			{
+				SqlConnection cn = null; // inside System.Data.SqlClient
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("INSERT_USER_TO_MEMBER", cn);
+				int intReturnValue = -1;
+
+				// set values of member and payment type to string to create a switch 
+				string mt = u.MemberShipType;
+				string pt = u.PaymentType;
+				int imt = 0;
+				int ipt = 0;
+
+
+				switch (mt)
+				{
+					
+					case "Associate":
+						imt = 1;
+						break;
+
+					case "Business":
+						imt = 2;
+						break;
+
+					case "Allied":
+						imt = 3;
+						break;
+
+					default:
+						imt = 0;
+						break;
+				}
+
+				switch (pt)
+				{
+
+					case "Zelle":
+						ipt = 1;
+						break;
+
+					case "Check":
+						ipt = 2;
+						break;
+					
+					default:
+						ipt = 0;
+						break;
+				}
+				SetParameter(ref cm, "@intNewMemberID", "null", SqlDbType.SmallInt, Direction: ParameterDirection.Output);
+				SetParameter(ref cm, "@intUserID", u.UID, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@intMemberLevelID", imt, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@intPaymentTypeID", ipt, SqlDbType.NVarChar);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1)
+				{
+					vm.MainBanner.BannerID = Convert.ToInt16(cm.Parameters["@intNewBannerID"].Value);
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
 	}
 }
