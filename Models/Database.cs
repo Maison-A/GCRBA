@@ -2182,6 +2182,7 @@ namespace GCRBA.Models
 						ipt = 0;
 						break;
 				}
+
 				SetParameter(ref cm, "@intNewMemberID", "null", SqlDbType.SmallInt, Direction: ParameterDirection.Output);
 				SetParameter(ref cm, "@intUserID", u.UID, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@intMemberLevelID", imt, SqlDbType.NVarChar);
