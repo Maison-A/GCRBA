@@ -2150,8 +2150,7 @@ namespace GCRBA.Models
 
 
 				switch (mt)
-				{
-					
+				{					
 					case "Associate":
 						imt = 1;
 						break;
@@ -2171,7 +2170,6 @@ namespace GCRBA.Models
 
 				switch (pt)
 				{
-
 					case "Zelle":
 						ipt = 1;
 						break;
