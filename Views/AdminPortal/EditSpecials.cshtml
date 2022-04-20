@@ -1,65 +1,71 @@
 ﻿@using GCRBA.ViewModels
 @model EditCompaniesViewModel
 
+<style>
+	td{
+		text-align:center;
+	}
+</style>
+
 @{
 	ViewBag.Title = "Add/Delete Specials";
 }
 
-<h2>@ViewBag.Title</h2>
-
-@if (Model.CurrentUser.isAdmin == 0)
-{
+@if (Model.CurrentUser.isAdmin == 0) {
 	@Html.Partial("AdminOnly");
-} else
-{
-	using (Html.BeginForm(FormMethod.Post))
-	{
+}
+else {
+	<div id="site-banner" class="some-spacing">
+	<h2>@ViewBag.Title</h2>
+	</div>
+	
+	<table>
+		<tr>
+			<td>
+				using (Html.BeginForm(FormMethod.Post)) {
 
-		if (Model.Special.ActionType == GCRBA.Models.SaleSpecial.ActionTypes.InsertSuccessful)
-		{
-			@Html.Partial("ChangeSuccessful");
-		}
-
-		if (Model.Special.ActionType == GCRBA.Models.SaleSpecial.ActionTypes.DeleteSuccessful)
-		{					
-			@Html.Partial("ChangeSuccessful");
-		}
-
-		if (Model.CurrentLocation.ActionType == GCRBA.Models.Location.ActionTypes.RequiredFieldMissing)
-		{
-			<p>You must select a location before proceeding.</p>
-		}
-
-		if (Model.Locations.Count > 0)
-		{
-
-			@Html.Partial("Locations");
-
-			// show buttons to select what use wants to do - add or delete special
-			<button name="btnSubmit" value="addSpecial" id="btnAddSpecial" formnovalidate>Add Special</button>
-			<button name="btnSubmit" value="deleteSpecial" id="btnDeleteSpecial" formnovalidate>Delete Special</button>
-
-			if (Model.CurrentLocation.LocationID > 0)
-			{
-				if (Model.Button.CurrentButton == "add")
-				{
-					@Html.Partial("AddSpecial");
+				if (Model.Special.ActionType == GCRBA.Models.SaleSpecial.ActionTypes.InsertSuccessful) {
+				@Html.Partial("ChangeSuccessful");
 				}
 
-				if (Model.Button.CurrentButton == "delete")
-				{
-					@Html.Partial("DeleteSpecial");
+				if (Model.Special.ActionType == GCRBA.Models.SaleSpecial.ActionTypes.DeleteSuccessful) {
+				@Html.Partial("ChangeSuccessful");
+				}
+
+				if (Model.CurrentLocation.ActionType == GCRBA.Models.Location.ActionTypes.RequiredFieldMissing) {
+				<p>You must select a location before proceeding.</p>
+				}
+
+				if (Model.Locations.Count > 0) {
+
+				@Html.Partial("Locations");
+
+				// show buttons to select what use wants to do - add or delete special
+				<button name="btnSubmit" value="addSpecial" id="btnAddSpecial" formnovalidate>Add Special</button>
+				<button name="btnSubmit" value="deleteSpecial" id="btnDeleteSpecial" formnovalidate>Delete Special</button>
+
+				if (Model.CurrentLocation.LocationID > 0) {
+				if (Model.Button.CurrentButton == "add") {
+				@Html.Partial("AddSpecial");
+				}
+
+				if (Model.Button.CurrentButton == "delete") {
+				@Html.Partial("DeleteSpecial");
 				}
 
 				<button name="btnSubmit" value="submit">Submit</button>
 				<button name="btnSubmit" value="cancel">Cancel</button>
-			}
+				}
 
-		} else
-		{
-			@Html.Partial("NoLocations");
-			<button name="btnSubmit" value="addLocation">Add Location</button>
-		}
-	}
+				}
+				else {
+				@Html.Partial("NoLocations");
+				<button name="btnSubmit" value="addLocation">Add Location</button>
+				}
+				}
+			</td>
+		</tr>
+	</table>
+		
 }
 
