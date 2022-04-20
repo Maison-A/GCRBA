@@ -5,6 +5,8 @@
     ViewBag.Title = "Add/Delete Category";
 }
 
+<h2>ViewBag.Title</h2>
+
 @if (Model.CurrentUser.isAdmin == 0)
 {
     @Html.Partial("AdminOnly");

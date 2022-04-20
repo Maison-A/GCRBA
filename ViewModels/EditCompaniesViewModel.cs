@@ -20,5 +20,8 @@ namespace GCRBA.ViewModels
         public List<ContactPerson> Contacts { get; set; }
         public CategoryItem Category { get; set; }
         public List<CategoryItem> Categories { get; set; }
+        public SaleSpecial Special { get; set; }
+        public List<SaleSpecial> Specials { get; set; }
+        public Button Button { get; set; }
     }
 }

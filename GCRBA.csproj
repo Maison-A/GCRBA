@@ -307,6 +307,10 @@
     <Content Include="Views\Shared\NoLocations.cshtml" />
     <Content Include="Views\Shared\Categories.cshtml" />
     <Content Include="Views\Shared\ChangeSuccessful.cshtml" />
+    <Content Include="Views\AdminPortal\EditSpecials.cshtml" />
+    <Content Include="Views\Shared\AddSpecial.cshtml" />
+    <Content Include="Views\Shared\DeleteSpecial.cshtml" />
+    <Content Include="Views\Shared\LocationsAllowMultiple.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

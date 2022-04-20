@@ -1,0 +1,21 @@
+﻿@using GCRBA.ViewModels
+@model EditCompaniesViewModel
+
+<div id="addSpecial">
+	<div>
+		@Html.LabelFor(Model => Model.Special.strDescription, new { @class = "form-label" })
+		@Html.TextAreaFor(Model => Model.Special.strDescription, new { @class = "form-control", @required = "required" })
+	</div>
+	<div>
+		@Html.LabelFor(Model => Model.Special.monPrice, new { @class = "form-label" })
+		@Html.TextBoxFor(Model => Model.Special.monPrice, new { @class = "form-control" })
+	</div>
+	<div>
+		@Html.LabelFor(Model => Model.Special.dtmStart, new { @class = "form-label" })
+		@Html.TextBoxFor(Model => Model.Special.dtmStart, new { @class = "form-control", @type = "date", @required = "required" })
+	</div>
+	<div>
+		@Html.LabelFor(Model => Model.Special.dtmEnd, new { @class = "form-label" })
+		@Html.TextBoxFor(Model => Model.Special.dtmEnd, new { @class = "form-control", @type = "date", @required = "required" })
+	</div>
+</div>

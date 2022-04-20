@@ -291,6 +291,11 @@ namespace GCRBA.Controllers
                 return RedirectToAction("EditCategories", "AdminPortal");
             }
 
+            if (col["btnSubmit"].ToString() == "editSpecials")
+            {
+                return RedirectToAction("EditSpecials", "AdminPortal");
+            }
+
             if (col["btnSubmit"].ToString() == "editGeneralInfo")
             {
                 return RedirectToAction("EditGeneralInfo", "AdminPortal");
@@ -623,16 +628,230 @@ namespace GCRBA.Controllers
                 
                 return View(vm);
             }
-
- 
             return View(vm);
         }
+
+        public ActionResult EditSpecials()
+        {
+            // initialize EditCompaniesVM, CurrentUser, and CurrentCompany 
+            // get CurrentUser session
+            EditCompaniesViewModel vm = InitEditCompanies();
+
+            // get current company session 
+            vm.CurrentCompany = vm.CurrentCompany.GetCompanySession();
+
+            // create Locations object
+            vm.Locations = new List<Location>();
+
+            // get locations available for this company 
+            vm = GetLocations(vm);
+
+            // create location object
+            vm.CurrentLocation = new Location();
+
+            // create special object
+            vm.Special = new SaleSpecial();
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        public ActionResult EditSpecials(FormCollection col)
+        {
+            // initialize EditCompaniesVM, CurrentUser, and CurrentCompany 
+            // get CurrentUser session
+            EditCompaniesViewModel vm = InitEditCompanies();
+
+            // get current company session 
+            vm.CurrentCompany = vm.CurrentCompany.GetCompanySession();
+
+            // create Locations object
+            vm.Locations = new List<Location>();
+
+            // get locations available for this company 
+            vm = GetLocations(vm);
+
+            // create list of specials 
+            vm.Specials = new List<SaleSpecial>();
+
+            // create location object
+            vm.CurrentLocation = new Location();
+
+            // get current location session
+            vm.CurrentLocation = vm.CurrentLocation.GetLocationSession();
+
+            // create new button object so we can track which button was selected
+            vm.Button = new Button();
+
+            // get current button session 
+            vm.Button = vm.Button.GetButtonSession();
+
+            // create new special object
+            vm.Special = new SaleSpecial();
+
+            // button to add location clicked 
+            if (col["btnSubmit"].ToString() == "addLocation") {
+
+                // redirect to add location page 
+                return RedirectToAction("AddNewLocation", "AdminPortal");
+			}
+
+            // button to add new special clicked 
+            if (col["btnSubmit"].ToString() == "addSpecial") {
+
+                // remove previous location session 
+                vm.CurrentLocation.RemoveLocationSession();
+
+                // are there any location selections?
+                if (col["locations"] == null)
+				{
+                    // no, so let user know they need to select a location before proceeding 
+                    vm.CurrentLocation.ActionType = Location.ActionTypes.RequiredFieldMissing;
+                    return View(vm);
+				} else
+				{
+                    // yes, so save LocationID
+                    vm.CurrentLocation.LocationID = Convert.ToInt16(col["locations"]);
+                    vm.CurrentLocation.SaveLocationSession();
+				}
+
+                // remove current button session 
+                vm.Button.RemoveButtonSession();
+
+                // add new current button session
+                vm.Button.CurrentButton = "add";
+
+                // save new button session 
+                vm.Button.SaveButtonSession();
+            }
+
+            if (col["btnSubmit"].ToString() == "deleteSpecial") 
+            {
+
+                // remove previous location session 
+                vm.CurrentLocation.RemoveLocationSession();
+
+                // are there any location selections?
+                if (col["locations"] == null)
+                {
+                    // no, so let user know they need to select a location before proceeding 
+                    vm.CurrentLocation.ActionType = Location.ActionTypes.RequiredFieldMissing;
+                    return View(vm);
+                } else
+                {
+                    // yes, so save LocationID
+                    vm.CurrentLocation.LocationID = Convert.ToInt16(col["locations"]);
+                    vm.CurrentLocation.SaveLocationSession();
+                }
+
+                vm.Specials = GetSpecials(vm.CurrentLocation.LocationID);
+
+                // remove current button session 
+                vm.Button.RemoveButtonSession();
+
+                // add new current button session
+                vm.Button.CurrentButton = "delete";
+
+                // save new button session 
+                vm.Button.SaveButtonSession();
+            }
+
+            // button to add special to locations clicked 
+            if (col["btnSubmit"].ToString() == "submit") {
+
+                if (vm.Button.CurrentButton == "add") 
+                {
+
+                    // get input
+                    vm.Special.strDescription = col["Special.strDescription"];
+                    vm.Special.monPrice = Convert.ToDecimal(col["Special.monPrice"]);
+                    vm.Special.dtmStart = Convert.ToDateTime(col["Special.dtmStart"]);
+                    vm.Special.dtmEnd = Convert.ToDateTime(col["Special.dtmEnd"]);
+
+                    // add special to tblSpecial
+                    // then add special and location to tblSpecialLocation
+                    vm.Special.ActionType = AddSpecialToLocation(vm);
+
+                    return View(vm);
+
+				} 
+                else if (vm.Button.CurrentButton == "delete") 
+                {
+
+                    // get specialID of selected special 
+                    vm.Special.SpecialID = Convert.ToInt16(col["specials"]);
+
+                    // delete from db 
+                    vm.Special.ActionType = DeleteSpecialFromLocation(vm);
+
+                    return View(vm);
+				}
+
+                if (col["btnSubmit"].ToString() == "cancel")
+				{
+                    return RedirectToAction("EditExistingCompany", "AdminPortal");
+				}
+			}
+
+            return View(vm);
+        }
+
+        private SaleSpecial.ActionTypes DeleteSpecialFromLocation(EditCompaniesViewModel vm)
+		{
+            try
+			{
+                // create db object
+                Database db = new Database();
+
+                // delete from table 
+                vm.Special.ActionType = db.DeleteSpecialLocation(vm);
+
+                return vm.Special.ActionType;
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+        private SaleSpecial.ActionTypes AddSpecialToLocation(EditCompaniesViewModel vm) 
+        {
+            try
+			{
+                // create db object
+                Database db = new Database();
+
+                // add new special to tblSpecial first 
+                vm.Special = db.InsertSpecial(vm);
+
+                // then add special and location to tblSpecialLocation 
+                vm.Special.ActionType = db.InsertSpecialLocation(vm);
+
+                return vm.Special.ActionType;
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
 
         public ActionResult EditGeneralInfo()
         {
 
             return View();
         }
+
+        private List<SaleSpecial> GetSpecials(int intLocationID) 
+        {
+            try 
+            {
+                // create specials list object
+                List<SaleSpecial> specials = new List<SaleSpecial>();
+
+                // create db object
+                Database db = new Database();
+
+                // get list of specials 
+                specials = db.GetLandingSpecials(intLocationID);
+
+                return specials;
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
 
         public ActionResult EditCompanyInfo()
         {
@@ -841,6 +1060,23 @@ namespace GCRBA.Controllers
             vm.Categories = new List<CategoryItem>();
 
             return vm; 
+        }
+
+        private EditCompaniesViewModel InitEditSpecials(EditCompaniesViewModel vm)
+        {
+            // get current company session
+            vm = GetCompanySession(vm);
+
+            // get list of locations 
+            vm = GetLocations(vm);
+
+            // create location object to hold selected location
+            vm.CurrentLocation = new Location();
+
+            // create new Specials object
+            vm.Special = new SaleSpecial();
+
+            return vm;
         }
 
         private string GetState(int intStateID)

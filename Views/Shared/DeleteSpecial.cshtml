@@ -1,0 +1,12 @@
+﻿@using GCRBA.ViewModels
+@model EditCompaniesViewModel
+
+<div>
+    <label for="specials" class="form-label">Select a Special:</label>
+    <select name="specials" class="form-control">
+        @foreach (var item in Model.Specials)
+            {
+                <option value="@item.SpecialID">@item.strDescription</option>
+            }
+    </select>
+</div>

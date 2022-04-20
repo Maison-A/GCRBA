@@ -1137,6 +1137,35 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+		public SaleSpecial.ActionTypes DeleteSpecialLocation(EditCompaniesViewModel vm)
+		{
+			try
+			{
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("DELETE_SPECIALLOCATION", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intSpecialID", vm.Special.SpecialID, SqlDbType.SmallInt);
+				SetParameter(ref cm, "@intLocationID", vm.CurrentLocation.LocationID, SqlDbType.BigInt);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1)
+				{
+					return SaleSpecial.ActionTypes.DeleteSuccessful;
+				}
+				else
+				{
+					return SaleSpecial.ActionTypes.Unknown;
+				}
+			} catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
 		public CategoryItem.ActionTypes DeleteCategories(EditCompaniesViewModel vm)
         {
 			try
@@ -1317,6 +1346,62 @@ namespace GCRBA.Models
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 
+		}
+
+		public SaleSpecial InsertSpecial(EditCompaniesViewModel vm) {
+			try 
+			{
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("INSERT_SPECIAL", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intSpecialID", null, SqlDbType.SmallInt, Direction: ParameterDirection.Output);
+				SetParameter(ref cm, "@strDescription", vm.Special.strDescription, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@monPrice", vm.Special.monPrice, SqlDbType.Money);
+				SetParameter(ref cm, "@dtmStart", vm.Special.dtmStart, SqlDbType.Date);
+				SetParameter(ref cm, "@dtmEnd", vm.Special.dtmEnd, SqlDbType.Date);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1) {
+					vm.Special.SpecialID = Convert.ToInt16(cm.Parameters["@intSpecialID"].Value);
+					return vm.Special;
+				}
+				return vm.Special;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public SaleSpecial.ActionTypes InsertSpecialLocation(EditCompaniesViewModel vm) 
+		{
+			try 
+			{
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("INSERT_SPECIALLOCATION", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intSpecialLocationID", null, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+				SetParameter(ref cm, "@intSpecialID", vm.Special.SpecialID, SqlDbType.SmallInt);
+				SetParameter(ref cm, "@intLocationID", vm.CurrentLocation.LocationID, SqlDbType.BigInt);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1) {
+					return SaleSpecial.ActionTypes.InsertSuccessful;
+				}
+				return SaleSpecial.ActionTypes.Unknown;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
 		public CategoryItem.ActionTypes InsertCategories(EditCompaniesViewModel vm)
@@ -1863,6 +1948,7 @@ namespace GCRBA.Models
 					foreach (DataRow dr in ds.Tables[0].Rows)
 					{
 						Models.SaleSpecial item = new SaleSpecial();
+						item.SpecialID = Convert.ToInt16(dr["intSpecialID"]);
 						item.strDescription = (string)dr["strDescription"];
 						item.monPrice = (decimal)dr["monPrice"];
 						item.dtmStart = (DateTime)dr["dtmStart"];
