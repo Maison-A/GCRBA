@@ -238,5 +238,17 @@ namespace GCRBA.Controllers
             return View();
         }
 
+        public ActionResult Logout()
+        {
+            // create user object
+            User u = new User();
+
+            // remove current session, which "logs them out"
+            u.RemoveUserSession();
+
+            // redirect to main page
+            return RedirectToAction("Index", "Home");
+        }
+
     }
 }
