@@ -101,6 +101,8 @@ namespace GCRBA.Views.Bakery {
             results.TwitterURL = results.landingSocialMedia.Where(s => s.intSocialMediaID.Equals(5)).Select(name => name.strSocialMediaLink).FirstOrDefault();
             results.YelpURL = results.landingSocialMedia.Where(s => s.intSocialMediaID.Equals(6)).Select(name => name.strSocialMediaLink).FirstOrDefault();
 
+            //results.strSpecialStartDisplay = results.landingSpecials.Where(spec => spec.dtmStart.g)
+
             return View(results);
         }
 

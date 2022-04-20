@@ -31,15 +31,17 @@
 	table {
 		border-collapse: collapse;
 		border-spacing: 0;
-		width: 560px;
+		width: 650px;
 		height: 200px;
-		border: 1px solid #ddd;
+		border: 1px solid black;
+
 	}
 
 	#table-scroll {
 		overflow-y: scroll;
 		height: 443px;
 		display: block;
+		border: 1px solid black;
 	}
 
 	.center {
@@ -87,11 +89,11 @@
 	}
 
 	tr:nth-child(odd) {
-		background-color: rgb(163 85 40 / 0.72)
+		background-color: lightgoldenrodyellow;
 	}
 
 	tr:nth-child(even) {
-		background-color: rgb(248 185 132 / 0.82)
+		background-color: burlywood
 	}
 
 	/* Clearfix (clear floats) */
@@ -110,13 +112,13 @@
 		}
 	}
 </style>
-
 @{
 	ViewBag.Title = "Find Your Next Favorite Bakery";
 }
 
-<h2 class="some-spacing">@ViewBag.Title</h2>
-
+<div id="site-banner" class="some-spacing">
+	<h2 id="">@ViewBag.Title</h2>
+</div>
 
 @Html.Partial("UserTabMenu")
 

@@ -165,6 +165,9 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\Photos\BakedGoods.jpg" />
+    <Content Include="Content\Photos\Breads.jpeg" />
+    <Content Include="Content\Photos\GCRBAlogo.jpg" />
     <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
     <Content Include="Python\Scripts\.idea\.gitignore" />
@@ -218,8 +221,8 @@
     <Compile Include="Models\Days.cs" />
     <Compile Include="Models\Location.cs" />
     <Compile Include="Models\LocationList.cs" />
-    <Compile Include="Models\MailModel.cs" />
     <Compile Include="Models\MainBanner.cs" />
+    <Compile Include="Models\MailModel.cs" />
     <Compile Include="Models\NewLocation.cs" />
     <Compile Include="Models\PhoneNumber.cs" />
     <Compile Include="Models\SaleSpecial.cs" />
@@ -316,7 +319,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Photos\" />
     <Folder Include="Views\Default\" />
     <Folder Include="Views\IndexViewModel\" />
   </ItemGroup>

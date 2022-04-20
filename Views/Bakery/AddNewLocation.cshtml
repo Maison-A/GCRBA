@@ -830,7 +830,13 @@
 			checkboxInstagram = document.getElementById('checkboxInstagram'),
 			checkboxSnapchat = document.getElementById('checkboxSnapchat'),
 			checkboxTikTok = document.getElementById('checkboxTikTok'),
-			checkboxYelp = document.getElementById('checkboxYelp');
+			checkboxYelp = document.getElementById('checkboxYelp'),
+			textFacebook = document.getElementById('textFacebook'),
+			textInstagram = document.getElementById('textInstagram'),
+			textSnapchat = document.getElementById('textSnapchat'),
+			textYelp = document.getElementById('textYelp'),
+			textTikTok = document.getElementById('textTikTok'),
+			textTwitter = document.getElementById('textTwitter');
 
 		if (dropdownCompany.value > 0) {
 			textboxCompany.disabled = true;
@@ -845,6 +851,19 @@
 			checkboxSnapchat.disabled = true;
 			checkboxTikTok.disabled = true;
 			checkboxYelp.disabled = true;
+			textFacebook.placeholder = 'Modify inside Member Portal';
+			textInstagram.placeholder = 'Modify inside Member Portal';
+			textSnapchat.placeholder = 'Modify inside Member Portal';
+			textYelp.placeholder = 'Modify inside Member Portal';
+			textTikTok.placeholder = 'Modify inside Member Portal';
+			textTwitter.placeholder = 'Modify inside Member Portal';
+			textboxMainWeb.placeholder = 'Modify inside Member Portal';
+			textboxOrderWeb.placeholder = 'Modify inside Member Portal';
+			textboxDonateWeb.placeholder = 'Modify inside Member Portal';
+			textboxBio.placeholder = 'Modify inside Member Portal';
+			textboxYear.placeholder = 'Modify inside Member Portal';
+
+
 		}
 		else if (textboxCompany.value != 0) {
 			dropdownCompany.value = 0;

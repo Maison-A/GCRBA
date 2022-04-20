@@ -1935,9 +1935,10 @@ namespace GCRBA.Models
 					foreach (DataRow dr in ds.Tables[0].Rows) {
 						Models.ContactPerson item = new ContactPerson();
 						item.strFullName = (string)dr["strContactName"];
-						//item.strFullPhone = (string)dr["strContactPhone"];
+						item.strFullPhone = (string)dr["strContactPhone"];
 						item.strContactEmail = (string)dr["strContactEmail"];
 						item.intContactTypeID = (short)dr["intContactPersonTypeID"];
+						item.strContactPersonType = (string)dr["strContactPersonType"];
 						lstContactPerson.Add(item);
 					}
 				}
