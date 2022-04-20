@@ -1,34 +1,48 @@
 ﻿@using GCRBA.ViewModels
 @model EditCompaniesViewModel
 
+<style>
+	td{
+		text-align:center;
+	}
+</style>
+
 @{
-    ViewBag.Title = "Edit Existing Company";
+	ViewBag.Title = "Edit Existing Company";
 }
 
-<h2>@ViewBag.Title</h2>
-
-@if (Model.CurrentUser.isAdmin == 0)
-{
-    @Html.Partial("AdminOnly");
+@if (Model.CurrentUser.isAdmin == 0) {
+	<div id="site-banner">
+		@Html.Partial("AdminOnly");
+	</div>
 }
-else
-{
-    using (Html.BeginForm(FormMethod.Post))
-    {
-        <label for="companies" class="form-label">Select Company to Edit:</label>
-        <select name="companies" class="form-control" required="required">
-            @foreach (var item in Model.Companies)
-            {
-                <option value="@item.CompanyID">@item.Name</option>
-            }
-        </select>
+else {
+<div id="site-banner">
+	<h2>@ViewBag.Title</h2>
+</div>
 
-        <button name="btnSubmit" value="addNewLocation">Add Location</button>
-        <button name="btnSubmit" value="deleteLocation">Delete Location</button>
-        <button name="btnSubmit" value="addContactPerson">Add Contact Person</button>
-        <button name="btnSubmit" value="editCategories">Edit Categories</button>
-        <button name="btnSubmit" value="editSpecials">Edit Specials</button>
-        <button name="btnSubmit" value="editGeneralInfo">Edit General Info</button>
-        <button name="btnSubmit" value="cancel" formnovalidate>Return to Admin Portal</button>
-    }
+<br />
+<table>
+	<tr>
+		<td>
+			@using (Html.BeginForm(FormMethod.Post)) {
+				<label for="companies" class="form-label">Select Company to Edit:</label>
+				<select name="companies" class="form-control" required="required">
+					@foreach (var item in Model.Companies) {
+						<option value="@item.CompanyID">@item.Name</option>
+					}
+				</select>
+				<br />
+				<button name="btnSubmit" value="addNewLocation">Add Location</button>
+				<button name="btnSubmit" value="deleteLocation">Delete Location</button>
+				<button name="btnSubmit" value="addContactPerson">Add Contact Person</button>
+				<button name="btnSubmit" value="editCategories">Edit Categories</button>
+				<button name="btnSubmit" value="editSpecials">Edit Specials</button>
+				<button name="btnSubmit" value="editGeneralInfo">Edit General Info</button>
+				<br /><br />
+				<button name="btnSubmit" value="cancel" formnovalidate>Return to Admin Portal</button>
+			}
+		</td>
+	</tr>
+</table>
 }

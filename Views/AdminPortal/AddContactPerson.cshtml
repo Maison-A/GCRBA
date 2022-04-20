@@ -1,14 +1,16 @@
 ﻿@using GCRBA.ViewModels
 @model EditCompaniesViewModel
 
-<h2>Add Contact Person for: @Model.CurrentCompany.Name</h2>
-
 @if (Model.CurrentUser.isAdmin == 0)
 {
     @Html.Partial("AdminOnly");
 }
 else
 {
+<div id="site-banner" class="some-spacing">
+	<h2>Add Contact Person for: @Model.CurrentCompany.Name</h2>
+</div>
+
     if (Model.ContactPerson.ActionType == GCRBA.Models.ContactPerson.ActionTypes.InsertSuccessful)
     {
         <p>Contact person successfully added.</p>

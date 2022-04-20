@@ -1,33 +1,30 @@
 ﻿@using GCRBA.ViewModels
 @model EditCompaniesViewModel
 
-<h2>Delete Location for: @Model.CurrentCompany.Name</h2>
+@if (Model.CurrentUser.isAdmin == 0) {
+	@Html.Partial("AdminOnly");
+}
+else {
+	<div id="site-banner" class="some-spacing">
+		<h2>Delete Location for: @Model.CurrentCompany.Name</h2>
+	</div>
 
-@if (Model.CurrentUser.isAdmin == 0) 
-{
-    @Html.Partial("AdminOnly");
-} 
-else 
-{
-    if (Model.NewLocation.ActionType == GCRBA.Models.NewLocation.ActionTypes.DeleteSuccessful) 
-    {
-        <p>Location successfully removed.</p>
-    }
+	if (Model.NewLocation.ActionType == GCRBA.Models.NewLocation.ActionTypes.DeleteSuccessful) {
+		<p>Location successfully removed.</p>
+	}
 
-    <div class="container card bg-light w-50 p-4">
-        @using (Html.BeginForm(FormMethod.Post))
-                {
-                    <label for="locations" class="form-label">Select Location:</label>
-                    <select name="locations" class="form-control">
-                        @foreach(var item in Model.Locations)
-                    {
-                        <option value="@item.LocationID">@item.Address @item.City, @item.State @item.Zip</option>
-                    }
-                    </select>
-                    
-                    <button name="btnSubmit" value="submit">Submit</button>
-                    <button name="btnSubmit" value="cancel" formnovalidate>Cancel</button>
-                }
-    </div>
+	<div class="container card bg-light w-50 p-4">
+		@using (Html.BeginForm(FormMethod.Post)) {
+			<label for="locations" class="form-label">Select Location:</label>
+			<select name="locations" class="form-control">
+				@foreach (var item in Model.Locations) {
+					<option value="@item.LocationID">@item.Address @item.City, @item.State @item.Zip</option>
+				}
+			</select>
+
+			<button name="btnSubmit" value="submit">Submit</button>
+			<button name="btnSubmit" value="cancel" formnovalidate>Cancel</button>
+		}
+	</div>
 }
 
