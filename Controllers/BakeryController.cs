@@ -101,7 +101,8 @@ namespace GCRBA.Views.Bakery {
             results.TwitterURL = results.landingSocialMedia.Where(s => s.intSocialMediaID.Equals(5)).Select(name => name.strSocialMediaLink).FirstOrDefault();
             results.YelpURL = results.landingSocialMedia.Where(s => s.intSocialMediaID.Equals(6)).Select(name => name.strSocialMediaLink).FirstOrDefault();
 
-            //results.strSpecialStartDisplay = results.landingSpecials.Where(spec => spec.dtmStart.g)
+            results.strSpecialStartDisplay = results.landingSpecials.Where(m=>m.dtmStart != null).Select(dt=>dt.dtmStart).FirstOrDefault().ToShortDateString();
+            results.strSpecialEndDisplay = results.landingSpecials.Where(m=>m.dtmEnd != null).Select(dt=>dt.dtmEnd).FirstOrDefault().ToShortDateString();
 
             return View(results);
         }

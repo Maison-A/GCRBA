@@ -4,20 +4,34 @@
     ViewBag.Title = "Edit Companies";
 }
 
+<style>
+	td{
+		text-align: center;
+	}
+</style>
+
 @if (Model.isAdmin == 0) 
 {
     <p>This page is for admins only. If you are an admin, please log in and try again.</p>
 }
 else 
 {
-    using (Html.BeginForm(FormMethod.Post)) 
-    {
-        <div class="container">
-            <h2>@ViewBag.Title</h2>
+	<br />
+    <table>
+        <tr>
+			<td>
+				@using (Html.BeginForm(FormMethod.Post))
+				{
+				<div class="container">
+					<h2>@ViewBag.Title</h2>
 
-            <button name="btnSubmit" value="addCompany">Add New Company</button>
-            <button name="btnSubmit" value="deleteCompany">Delete Existing Company</button>
-            <button name="btnSubmit" value="editCompany">Edit an Existing Company</button>
-        </div>
-    }
+					<button name="btnSubmit" value="addCompany">Add New Company</button>
+					<button name="btnSubmit" value="deleteCompany">Delete Existing Company</button>
+					<button name="btnSubmit" value="editCompany">Edit an Existing Company</button>
+				</div>
+				}
+			</td>
+        </tr>
+    </table>
+    
 }

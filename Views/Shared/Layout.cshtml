@@ -26,17 +26,26 @@
 	</div>
 
 	<div class="topcorner">
-		<a href="~/User/AddNewMember"><button class="button-action" id="icon-bar-join" title="Join GCRBA"> Join the GCRBA! <i class="fas fa-user-plus"></i></button></a>
-		@if (!currentUser.IsAuthenticated)
-		{
-			<a href="~/Profile/Login"><button class="button-action" id="icon-bar-login" title="Login/Become a user">Login | Join <i class="fas fa-user-circle"></i></button></a>
-			<a href="~/Profile/AdminLogin"><button class="button-action" id="icon-bar-admin" title="Admin Login">Admin Login <i class="fas fa-sign-in-alt"></i></button></a>
 
-		} 
-		else
-		{
+		@if (!currentUser.IsAuthenticated) {
+			<a href="~/Profile/Login"><button class="button-action" id="icon-bar-login" title="Login/Become a user">Login | Join <i class="fas fa-user-circle"></i></button></a>
+			<a href="~/User/AddNewMember"><button class="button-action" id="icon-bar-join" title="Join GCRBA"> Become a Member! <i class="fas fa-user-plus"></i></button></a>
+			<a href="~/Profile/AdminLogin"><button class="button-action" id="icon-bar-admin" title="Admin Login">Admin Login <i class="fas fa-sign-in-alt"></i></button></a>
+		}
+		else {
+			if (currentUser.isMember == 1 && currentUser.isAdmin == 0) {
+				<a><button class="button-action" id="icon-bar-login" title="Member Portal">Member Portal <i class="fas fa-user-circle"></i></button></a>
+			}
+			else if (currentUser.isMember == 0 && currentUser.isAdmin == 0) {
+				<a href="~/User/AddNewMember"><button class="button-action" id="icon-bar-join" title="Join GCRBA"> Join the GCRBA! <i class="fas fa-user-plus"></i></button></a>
+			}
+			else if (currentUser.isAdmin == 1) {
+				<a><button class="button-action" id="icon-bar-login" title="Member Portal">Member Portal <i class="fas fa-user-circle"></i></button></a>
+				<a href="@Url.Action("Index", "AdminPortal")"><button class="button-action" id="icon-bar-login" title="Member Portal">Admin Portal <i class="fas fa-user-circle"></i></button></a>
+			}
 			<a href="@Url.Action("Logout", "Profile")"><button class="button-action" id="icon-bar-admin" title="Logout">Logout <i class="fa-solid fa-right-from-bracket"></i></button></a>
 		}
+
 	</div>
 
 	<div class="icon-bar">
