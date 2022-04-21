@@ -18,14 +18,17 @@ IF OBJECT_ID('tblCompany')				IS NOT NULL DROP TABLE tblCompany
 IF OBJECT_ID('tblContactPersonType')	IS NOT NULL DROP TABLE tblContactPersonType
 IF OBJECT_ID('tblSocialMedia')			IS NOT NULL DROP TABLE tblSocialMedia
 IF OBJECT_ID('tblMember')				IS NOT NULL DROP TABLE tblMember 
+IF OBJECT_ID('tblTempMember')			IS NOT NULL DROP TABLE tblTempMember 
+IF OBJECT_ID('tblTempCompany')			IS NOT NULL DROP TABLE tblTempCompany 
+IF OBJECT_ID('tblTempLocation')			IS NOT NULL DROP TABLE tblTempLocation 
 IF OBJECT_ID('tblMemberLevel')			IS NOT NULL DROP TABLE tblMemberLevel 
 IF OBJECT_ID('tblPaymentType')			IS NOT NULL DROP TABLE tblPaymentType 
-IF OBJECT_ID('tblApprovalStatus')		IS NOT NULL DROP TABLE tblApprovalStatus 
 IF OBJECT_ID('tblDay')					IS NOT NULL DROP TABLE tblDay
 IF OBJECT_ID('tblMainBanner')			IS NOT NULL DROP TABLE tblMainBanner
 IF OBJECT_ID('tblAboutGCRBA')			IS NOT NULL DROP TABLE tblAboutGCRBA
 IF OBJECT_ID('tblUser')					IS NOT NULL DROP TABLE tblUser 
 IF OBJECT_ID('tblState')				IS NOT NULL DROP TABLE tblState 
+IF OBJECT_ID('tblRequestTable')			IS NOT NULL DROP TABLE tblRequestTable 
 
 --DROP STORED PROCEDURES
 IF OBJECT_ID('LOGIN')							IS NOT NULL DROP PROCEDURE LOGIN 
@@ -64,6 +67,8 @@ IF OBJECT_ID('DELETE_CATEGORY_FROM_LOCATION') IS NOT NULL DROP PROCEDURE DELETE_
 IF OBJECT_ID('INSERT_SPECIALLOCATION') IS NOT NULL DROP PROCEDURE INSERT_SPECIALLOCATION
 IF OBJECT_ID('INSERT_SPECIAL') IS NOT NULL DROP PROCEDURE INSERT_SPECIAL
 IF OBJECT_ID('DELETE_SPECIALLOCATION') IS NOT NULL DROP PROCEDURE DELETE_SPECIALLOCATION
+IF OBJECT_ID('INSERT_TEMP_MEMBER') IS NOT NULL DROP PROCEDURE INSERT_TEMP_MEMBER
+IF OBJECT_ID('GET_TOTAL_REQUESTS') IS NOT NULL DROP PROCEDURE GET_TOTAL_REQUESTS
 
 CREATE TABLE tblState
 (
@@ -142,6 +147,15 @@ CREATE TABLE tblCompany
 	CONSTRAINT tblCompany_PK PRIMARY KEY (intCompanyID)
 )
 
+CREATE TABLE tblTempCompany
+(
+	intTempCompanyID	BIGINT IDENTITY(1,1)	NOT NULL, 
+	strCompanyName			NVARCHAR(50)		NOT NULL, 
+	strAbout			NVARCHAR(2000)			NOT NULL, 
+	strBizYear			NVARCHAR(10),
+	CONSTRAINT tblTempCompany_PK PRIMARY KEY (intTempCompanyID)
+)
+
 CREATE TABLE tblSocialMedia
 (
 	intSocialMediaID		SMALLINT IDENTITY (1,1) NOT NULL,
@@ -182,7 +196,6 @@ CREATE TABLE tblCategory
 	CONSTRAINT tblCategory_PK PRIMARY KEY (intCategoryID)
 )
 
--- brackets around table name to make explicit b/c location is reserved keyword
 CREATE TABLE tblLocation
 (
 	intLocationID			BIGINT IDENTITY(1,1)	NOT NULL, 
@@ -194,6 +207,19 @@ CREATE TABLE tblLocation
 	strPhone			NVARCHAR(20)		NOT NULL,
 	strEmail			NVARCHAR(50),		
 	CONSTRAINT tblLocation_PK PRIMARY KEY (intLocationID)
+)
+
+CREATE TABLE tblTempLocation
+(
+	intTempLocationID	BIGINT IDENTITY(1,1)	NOT NULL, 
+	intCompanyID		BIGINT				NOT NULL, 
+	strAddress			NVARCHAR(100)		NOT NULL, 
+	strCity				NVARCHAR(20)		NOT NULL, 
+	intStateID			SMALLINT			NOT NULL, 
+	strZip				NVARCHAR(15)		NOT NULL,
+	strPhone			NVARCHAR(20)		NOT NULL,
+	strEmail			NVARCHAR(50),		
+	CONSTRAINT tblTempLocation_PK PRIMARY KEY (intTempLocationID)
 )
 
 CREATE TABLE tblContactPerson
@@ -223,13 +249,6 @@ CREATE TABLE tblCategoryLocation
 	CONSTRAINT tblCategoryLocation_PK PRIMARY KEY (intCategoryLocationID)
 )
 
-CREATE TABLE tblApprovalStatus
-(
-	intApprovalStatusID		SMALLINT IDENTITY(1,1)	NOT NULL,
-	strApprovalStatus		NVARCHAR(20)		NOT NULL, 
-	CONSTRAINT tblApprovalStatus_PK PRIMARY KEY (intApprovalStatusID)
-)
-
 CREATE TABLE tblRequestTable
 (
 	intRequestTableID		SMALLINT IDENTITY(1,1)	NOT NULL, 
@@ -242,7 +261,7 @@ CREATE TABLE tblAdminRequest
 	intAdminRequestID		SMALLINT IDENTITY(1,1)	NOT NULL,
 	intMemberID				SMALLINT			NOT NULL,
 	intRequestTableID		SMALLINT			NOT NULL,
-	intApprovalStatusID		SMALLINT			NOT NULL,
+	intTempTableID			SMALLINT			NOT NULL,
 	CONSTRAINT tblAdminRequest_PK PRIMARY KEY (intAdminRequestID)
 )
 
@@ -341,7 +360,6 @@ CREATE TABLE tblMainBanner
 -- tblEventLocation			tblLocation				intLocationID
 -- tblAdminRequest			tblMember				intMemberID
 -- tblAdminRequest			tblRequestTable			intRequestTableID
--- tblAdminRequest			tblApprovalStatus		intApprovalStatusID
 -- tblSpecialLocation		tblSpecial				intSpecialID
 -- tblSpecialLocation		tblLocation				intLocationID
 -- tblLocationHours			tblLocation				intLocationID
@@ -352,6 +370,11 @@ CREATE TABLE tblMainBanner
 -- tblContactPerson			tblLocation				intLocationID
 -- tblContactPerson			tblCompanyID			intCompanyID
 -- tblContactPerson			tblContactPersonType	intContactPersonTypeID
+-- tblTempMember			tblUser					intUserID
+-- tblTempMember			tblMemberLevel			intMemberLevelID
+-- tblTempMember			tblPaymentType			intPaymentTypeID
+-- tblTempLocation			tblCompany				intCompanyID
+-- tblTempLocation			tblState				intStateID
 
 ALTER TABLE tblUser ADD CONSTRAINT tblUser_tblState_FK
 FOREIGN KEY (intStateID) REFERENCES tblState (intStateID)
@@ -395,9 +418,6 @@ FOREIGN KEY (intMemberID) REFERENCES tblMember (intMemberID)
 ALTER TABLE tblAdminRequest ADD CONSTRAINT tblAdminRequest_tblRequestTable_FK
 FOREIGN KEY (intRequestTableID) REFERENCES tblRequestTable (intRequestTableID)
 
-ALTER TABLE tblAdminRequest ADD CONSTRAINT tblAdminRequest_tblApprovalStatus_FK
-FOREIGN KEY (intApprovalStatusID) REFERENCES tblApprovalStatus (intApprovalStatusID)
-
 ALTER TABLE tblSpecialLocation ADD CONSTRAINT tblSpecialLocation_tblSpecial_FK
 FOREIGN KEY (intSpecialID) REFERENCES tblSpecial (intSpecialID)
 
@@ -434,6 +454,20 @@ FOREIGN KEY (intCompanyID) REFERENCES tblCompany (intCompanyID)
 ALTER TABLE tblContactPerson ADD CONSTRAINT tblContactPerson_tblContactPersonType_FK
 FOREIGN KEY (intContactPersonTypeID) REFERENCES tblContactPersonType (intContactPersonTypeID)
 
+ALTER TABLE tblTempMember ADD CONSTRAINT tblTempMember_tblUser_FK
+FOREIGN KEY (intUserID) REFERENCES tblUser (intUserID)
+
+ALTER TABLE tblTempMember ADD CONSTRAINT tblTempMember_tblMemberLevel_FK
+FOREIGN KEY (intMemberLevelID) REFERENCES tblMemberLevel (intMemberLevelID)
+
+ALTER TABLE tblTempMember ADD CONSTRAINT tblTempMember_tblPaymentType_FK
+FOREIGN KEY (intPaymentTypeID) REFERENCES tblPaymentType (intPaymentTypeID)
+
+ALTER TABLE tblTempLocation ADD CONSTRAINT tblTempLocation_tblCompany_FK
+FOREIGN KEY (intCompanyID) REFERENCES tblCompany (intCompanyID)
+
+ALTER TABLE tblTempLocation ADD CONSTRAINT tblTempLocation_tblState_FK
+FOREIGN KEY (intStateID) REFERENCES tblState (intStateID)
 
 -- -----------------------------------------------------------------------------------------
 -- STORED PROCEDURES 
@@ -451,7 +485,7 @@ AS
 BEGIN	
 	SET NOCOUNT ON;
 
-	SELECT		u.intUserID, u.strFirstName, u.strLastName, u.strAddress, u.strCity, s.strState, u.strZip, u.strPhone, u.strEmail, u.strUsername, u.strPassword, u.isAdmin
+	SELECT		u.intUserID, u.strFirstName, u.strLastName, u.strAddress, u.strCity, u.intStateID, s.strState, u.strZip, u.strPhone, u.strEmail, u.strUsername, u.strPassword, u.isAdmin
 	FROM		tblState as s FULL OUTER JOIN tblUser as u 
 				ON s.intStateID = u.intStateID
 	WHERE		u.strUsername = @strUsername and u.strPassword = @strPassword 
@@ -487,6 +521,17 @@ BEGIN
 	END
 END
 GO
+
+CREATE PROCEDURE [db_owner].[GET_TOTAL_REQUESTS]
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT	COUNT(intAdminRequestID) as TotalRequests
+	FROM	tblAdminRequest
+END
+GO
+
 
 CREATE PROCEDURE [dbo].[SELECT_ALLCATEGORY_FORLOCATION]
 @intLocationID BIGINT = NULL
@@ -560,6 +605,35 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [db_owner].[INSERT_TEMP_MEMBER]
+@intTempMemberID SMALLINT = NULL OUTPUT,
+@intUserID SMALLINT,
+@intMemberLevelID SMALLINT, 
+@intPaymentTypeID SMALLINT
+AS 
+SET NOCOUNT ON 
+SET XACT_ABORT ON
+BEGIN
+
+	DECLARE @COUNT AS TINYINT
+
+	-- MAKE SURE USER ISN'T ALREADY MEMBER 
+	SELECT @COUNT=COUNT(*) FROM db_owner.tblMember WHERE intUserID = @intUserID 
+	IF @COUNT > 0 RETURN -1 -- USER IS ALREADY A MEMBER 
+
+	INSERT INTO [db_owner].[tblTempMember] WITH (TABLOCKX)
+				([intUserID]
+				,[intMemberLevelID]
+				,[intPaymentTypeID])
+			VALUES
+				(@intUserID
+				,@intMemberLevelID
+				,@intPaymentTypeID)
+			SELECT @intTempMemberID=@@IDENTITY
+			RETURN 1
+
+END 
+GO
 
 CREATE PROCEDURE [dbo].[INSERT_NEW_USER]
 @intNewUserID SMALLINT  = null OUTPUT, 
@@ -1135,6 +1209,8 @@ BEGIN
 	DELETE FROM tblCompanyMember WHERE intCompanyID = @intCompanyID 
 	DELETE FROM tblCategoryLocation WHERE intLocationID IN (SELECT intLocationID FROM tblLocation WHERE intCompanyID = @intCompanyID)
 	DELETE FROM tblLocationHours WHERE intLocationID IN (SELECT intLocationID FROM  tblLocation WHERE intCompanyID = @intCompanyID)
+	DELETE FROM tblSpecialLocation WHERE intLocationID IN (SELECT intLocationID FROM tblLocation WHERE intCompanyID = @intCompanyID)
+	DELETE FROM tblContactPerson WHERE intLocationID IN (SELECT intLocationID FROM tblLocation WHERE intCompanyID = @intCompanyID)
 	DELETE FROM tblLocation WHERE intCompanyID = @intCompanyID
 	DELETE FROM tblCompanyAward WHERE intCompanyID = @intCompanyID
 	DELETE FROM tblCompanySocialMedia WHERE intCompanyID = @intCompanyID
@@ -1339,10 +1415,8 @@ VALUES		('https://twitter.com/servatiipastry', 3, 5),
 INSERT INTO tblUser (strFirstName, strLastName, strAddress, strCity, intStateID, strZip, strPhone, strEmail, strUsername, strPassword, isAdmin)
 VALUES	('Katie', 'Schmidt', '6036 Flyer Drive', 'Cincinnati', 3, '45248', '5133103965', 'klschmidt16178@cincinnatistate.edu', 'test2', 'test2', 0),
 		('Random', 'User', '1234 Main St', 'Lawrenceburg', 1, '41010', '5135555555', 'random_user@gmail.com', 'test3', 'test3', 0),
-		('Shane', 'Winslow', NULL, NULL, NULL, NULL, NULL, 'winslows1@gmail.com', 'winslows1', 'password', 0)
--- ADMIN USER 
-INSERT INTO tblUser (strFirstName, strLastName, strAddress, strCity, intStateID, strZip, strPhone, strEmail, strUsername, strPassword, isAdmin)
-VALUES	('Grace', 'Gottenbusch', '123 Elm St', 'Covington', 2, '41212', '5135555555', 'grace@gmail.com', 'grace', 'grace', 1)
+		('Shane', 'Winslow', NULL, NULL, NULL, NULL, NULL, 'winslows1@gmail.com', 'winslows1', 'password', 0),
+		('Grace', 'Gottenbusch', '123 Elm St', 'Covington', 2, '41212', '5135555555', 'grace@gmail.com', 'grace', 'grace', 1)
 
 -- ADD USER TO MEMBER TABLE 
 INSERT INTO  tblMember (intUserID, intMemberLevelID, intPaymentTypeID)
@@ -1365,11 +1439,6 @@ VALUES			('Celebrate National Apple Pie Day! $5.85 for an 8" Dutch Apple at all 
 INSERT INTO tblSpecialLocation (intSpecialID, intLocationID)
 VALUES				(1, 3)
 					,(1, 4)
-
-INSERT INTO tblApprovalStatus (strApprovalStatus)
-VALUES		('Pending'), 
-			('Approved'), 
-			('Denied')
 
 INSERT INTO tblRequestTable (strTable)
 VALUES		('tblTempMember')
@@ -1416,4 +1485,3 @@ VALUES		(6, 1),
 			(13, 4),
 			(15, 4),
 			(16, 4)
-
