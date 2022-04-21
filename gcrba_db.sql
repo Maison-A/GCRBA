@@ -60,6 +60,10 @@ IF OBJECT_ID('GET_LOCATIONS_NOT_CONTACT') IS NOT NULL DROP PROCEDURE GET_LOCATIO
 IF OBJECT_ID('GET_CONTACTS_BY_COMPANY') IS NOT NULL DROP PROCEDURE GET_CONTACTS_BY_COMPANY
 IF OBJECT_ID('GET_NOT_CATEGORIES') IS NOT NULL DROP PROCEDURE GET_NOT_CATEGORIES
 IF OBJECT_ID('GET_CURRENT_CATEGORIES') IS NOT NULL DROP PROCEDURE GET_CURRENT_CATEGORIES
+IF OBJECT_ID('DELETE_CATEGORY_FROM_LOCATION') IS NOT NULL DROP PROCEDURE DELETE_CATEGORY_FROM_LOCATION
+IF OBJECT_ID('INSERT_SPECIALLOCATION') IS NOT NULL DROP PROCEDURE INSERT_SPECIALLOCATION
+IF OBJECT_ID('INSERT_SPECIAL') IS NOT NULL DROP PROCEDURE INSERT_SPECIAL
+IF OBJECT_ID('DELETE_SPECIALLOCATION') IS NOT NULL DROP PROCEDURE DELETE_SPECIALLOCATION
 
 CREATE TABLE tblState
 (
@@ -117,6 +121,16 @@ CREATE TABLE tblMember
 	intMemberLevelID		SMALLINT		NOT NULL, 
 	intPaymentTypeID		SMALLINT		NOT NULL,
 	CONSTRAINT tblMember_PK PRIMARY KEY (intMemberID)
+)	
+
+-- HOLDS MEMBER INFO UNTIL ADMIN APPROVES MEMBERSHIP, THEN MEMBER ADDED TO REGULAR MEMBER TABLE 
+CREATE TABLE tblTempMember 
+(
+	intTempMemberID			SMALLINT IDENTITY(1,1)	NOT NULL, 
+	intUserID				SMALLINT		NOT NULL, 
+	intMemberLevelID		SMALLINT		NOT NULL, 
+	intPaymentTypeID		SMALLINT		NOT NULL,
+	CONSTRAINT tblTempMember_PK PRIMARY KEY (intTempMemberID)
 )	
 
 CREATE TABLE tblCompany
@@ -216,12 +230,18 @@ CREATE TABLE tblApprovalStatus
 	CONSTRAINT tblApprovalStatus_PK PRIMARY KEY (intApprovalStatusID)
 )
 
+CREATE TABLE tblRequestTable
+(
+	intRequestTableID		SMALLINT IDENTITY(1,1)	NOT NULL, 
+	strTable				NVARCHAR(50)			NOT NULL, 
+	CONSTRAINT tblRequestTable_PK PRIMARY KEY (intRequestTableID)
+)
+
 CREATE TABLE tblAdminRequest
 (
-	intAdminRequestID		SMALLINT IDENTITY(1,1)		NOT NULL,
-	intMemberID			SMALLINT			NOT NULL,
-	strRequestType			NVARCHAR(50)			NOT NULL, 
-	strRequestedChange		NVARCHAR(500)			NOT NULL,
+	intAdminRequestID		SMALLINT IDENTITY(1,1)	NOT NULL,
+	intMemberID				SMALLINT			NOT NULL,
+	intRequestTableID		SMALLINT			NOT NULL,
 	intApprovalStatusID		SMALLINT			NOT NULL,
 	CONSTRAINT tblAdminRequest_PK PRIMARY KEY (intAdminRequestID)
 )
@@ -320,6 +340,7 @@ CREATE TABLE tblMainBanner
 -- tblEventLocation			tblEvent				intEventID
 -- tblEventLocation			tblLocation				intLocationID
 -- tblAdminRequest			tblMember				intMemberID
+-- tblAdminRequest			tblRequestTable			intRequestTableID
 -- tblAdminRequest			tblApprovalStatus		intApprovalStatusID
 -- tblSpecialLocation		tblSpecial				intSpecialID
 -- tblSpecialLocation		tblLocation				intLocationID
@@ -370,6 +391,9 @@ FOREIGN KEY (intLocationID) REFERENCES tblLocation (intLocationID)
 
 ALTER TABLE tblAdminRequest ADD CONSTRAINT tblAdminRequest_tblMember_FK
 FOREIGN KEY (intMemberID) REFERENCES tblMember (intMemberID)
+
+ALTER TABLE tblAdminRequest ADD CONSTRAINT tblAdminRequest_tblRequestTable_FK
+FOREIGN KEY (intRequestTableID) REFERENCES tblRequestTable (intRequestTableID)
 
 ALTER TABLE tblAdminRequest ADD CONSTRAINT tblAdminRequest_tblApprovalStatus_FK
 FOREIGN KEY (intApprovalStatusID) REFERENCES tblApprovalStatus (intApprovalStatusID)
@@ -591,9 +615,32 @@ BEGIN
 	SELECT @intNewUserID=@@IDENTITY
 	RETURN 1
 END 
-
 GO
 
+CREATE PROCEDURE [db_owner].[INSERT_SPECIAL]
+@intSpecialID SMALLINT OUTPUT, 
+@strDescription NVARCHAR(100), 
+@monPrice MONEY, 
+@dtmStart DATE, 
+@dtmEnd DATE
+AS 
+SET NOCOUNT ON 
+SET XACT_ABORT ON
+BEGIN
+	INSERT INTO [db_owner].[tblSpecial] WITH (TABLOCKX)
+				([strDescription]	
+				,[monPrice]
+				,[dtmStart]
+				,[dtmEnd])
+			VALUES
+				(@strDescription
+				,@monPrice
+				,@dtmStart
+				,@dtmEnd)
+			SELECT @intSpecialID=@@IDENTITY
+			RETURN 1
+END
+GO
 
 CREATE PROCEDURE [dbo].[INSERT_CONTACTPERSON]
 @intContactPersonID AS BIGINT OUTPUT
@@ -795,6 +842,30 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [db_owner].[INSERT_SPECIALLOCATION]
+@intSpecialLocationID BIGINT OUT,
+@intSpecialID SMALLINT, 
+@intLocationID BIGINT
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+	DECLARE @COUNT AS TINYINT
+
+	SELECT @COUNT=COUNT(*) FROM db_owner.tblSpecialLocation WHERE intSpecialID = @intSpecialID and intLocationID = @intLocationID
+	IF @COUNT > 0 RETURN -1 --SPECIAL ALREADY EXISTS FOR LOCATION 
+
+	INSERT INTO [db_owner].[tblSpecialLocation] WITH (TABLOCKX)
+				([intSpecialID],				
+				 [intLocationID]) 
+			VALUES
+				(@intSpecialID,
+				 @intLocationID)
+			SELECT @intSpecialLocationID=@@IDENTITY
+			RETURN 1
+END
+GO
+
 CREATE PROCEDURE [dbo].[SELECT_LOCATION_SPECIALS]
 @intLocationID BIGINT = NULL
 AS 
@@ -805,7 +876,7 @@ BEGIN
 	BEGIN
 		SELECT *
 		FROM db_owner.tblSpecial as special
-		JOIN db_owner.tblSpecialLocation as specLoc
+		FULL OUTER JOIN db_owner.tblSpecialLocation as specLoc
 		ON special.intSpecialID = specLoc.intSpecialID
 		WHERE [intLocationID] = @intLocationID
 	END
@@ -1006,6 +1077,19 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [db_owner].[DELETE_CATEGORY_FROM_LOCATION]
+@intLocationID BIGINT,
+@intCategoryID BIGINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DELETE FROM tblCategoryLocation WHERE intLocationID = @intLocationID and intCategoryID = @intCategoryID
+
+	RETURN @@ROWCOUNT
+END
+GO
+
 CREATE PROCEDURE [dbo].[INSERT_NEW_MAIN_BANNER]
 @intNewBannerID SMALLINT = null OUTPUT, 
 @strBanner NVARCHAR(2000)
@@ -1058,6 +1142,18 @@ BEGIN
 	DELETE FROM tblWebsite WHERE intCompanyID = @intCompanyID
 	DELETE FROM tblCompany WHERE intCompanyID = @intCompanyID
 	RETURN @@rowcount
+END
+GO
+
+CREATE PROCEDURE [db_owner].[DELETE_SPECIALLOCATION]
+@intSpecialID SMALLINT, 
+@intLocationID BIGINT
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON 
+BEGIN
+	DELETE FROM tblSpecialLocation WHERE intSpecialID = @intSpecialID and intLocationID = @intLocationID 
+	RETURN @@ROWCOUNT
 END
 GO
 
@@ -1269,6 +1365,14 @@ VALUES			('Celebrate National Apple Pie Day! $5.85 for an 8" Dutch Apple at all 
 INSERT INTO tblSpecialLocation (intSpecialID, intLocationID)
 VALUES				(1, 3)
 					,(1, 4)
+
+INSERT INTO tblApprovalStatus (strApprovalStatus)
+VALUES		('Pending'), 
+			('Approved'), 
+			('Denied')
+
+INSERT INTO tblRequestTable (strTable)
+VALUES		('tblTempMember')
 
 INSERT INTO tblCategoryLocation (intCategoryID, intLocationID)
 VALUES		(6, 1),
