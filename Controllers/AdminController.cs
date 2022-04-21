@@ -10,7 +10,9 @@ namespace GCRBA.Controllers
 {
     public class AdminPortalController : Controller
     {
-        
+        // -------------------------------------------------------------------------------------------------
+        // ACTIONRESULT METHODS  
+        // -------------------------------------------------------------------------------------------------
 
         public ActionResult Index()
         {
@@ -59,37 +61,6 @@ namespace GCRBA.Controllers
             vm.Request.TotalRequests = GetTotalRequests();
 
             return View(vm);
-		}
-
-        private int GetTotalRequests()
-		{
-            try
-			{
-                // create db object
-                Database db = new Database();
-
-                // create variable to hold total requests 
-                int total = 0;
-
-                // get total requests 
-                total = db.GetTotalRequests();
-
-                return total;
-			}
-            catch (Exception ex) { throw new Exception(ex.Message); }
-		}
-
-        private RequestsVM InitRequestsVM()
-		{
-            // create instance of RequestsVM
-            RequestsVM vm = new RequestsVM();
-
-            // create new User object
-            // then get current user session 
-            vm.User = new User();
-            vm.User = vm.User.GetUserSession();
-
-            return vm;
 		}
 
         public ActionResult EditMainBanner()
@@ -878,62 +849,11 @@ namespace GCRBA.Controllers
             return View(vm);
         }
 
-        private SaleSpecial.ActionTypes DeleteSpecialFromLocation(AdminVM vm)
-		{
-            try
-			{
-                // create db object
-                Database db = new Database();
-
-                // delete from table 
-                vm.Special.ActionType = db.DeleteSpecialLocation(vm);
-
-                return vm.Special.ActionType;
-			}
-            catch (Exception ex) { throw new Exception(ex.Message); }
-		}
-
-        private SaleSpecial.ActionTypes AddSpecialToLocation(AdminVM vm) 
-        {
-            try
-			{
-                // create db object
-                Database db = new Database();
-
-                // add new special to tblSpecial first 
-                vm.Special = db.InsertSpecial(vm);
-
-                // then add special and location to tblSpecialLocation 
-                vm.Special.ActionType = db.InsertSpecialLocation(vm);
-
-                return vm.Special.ActionType;
-			}
-            catch (Exception ex) { throw new Exception(ex.Message); }
-		}
-
         public ActionResult EditGeneralInfo()
         {
 
             return View();
         }
-
-        private List<SaleSpecial> GetSpecials(int intLocationID) 
-        {
-            try 
-            {
-                // create specials list object
-                List<SaleSpecial> specials = new List<SaleSpecial>();
-
-                // create db object
-                Database db = new Database();
-
-                // get list of specials 
-                specials = db.GetLandingSpecials(intLocationID);
-
-                return specials;
-			}
-            catch (Exception ex) { throw new Exception(ex.Message); }
-		}
 
         public ActionResult EditCompanyInfo()
         {
@@ -955,20 +875,319 @@ namespace GCRBA.Controllers
             return View(vm);
         }
 
-        public void SaveButtonSession(string buttonValue)
+        // -------------------------------------------------------------------------------------------------
+        // INITIALIZING COMMONLY USED CLASSES 
+        // -------------------------------------------------------------------------------------------------
+
+        private RequestsVM InitRequestsVM()
+        {
+            // create instance of RequestsVM
+            RequestsVM vm = new RequestsVM();
+
+            // create new User object
+            // then get current user session 
+            vm.User = new User();
+            vm.User = vm.User.GetUserSession();
+
+            return vm;
+        }
+
+        private AdminVM InitEditCategories(AdminVM vm)
+        {
+            // get current company session 
+            vm = GetCompanySession(vm);
+
+            // get list of locations for current company 
+            vm = GetLocations(vm);
+
+            // create Location object that will hold selected location 
+            vm.Location = new Location();
+
+            // create Category object
+            vm.Category = new CategoryItem();
+
+            // create list of categories
+            vm.Categories = new List<CategoryItem>();
+
+            return vm; 
+        }
+
+        private AdminVM InitEditSpecials(AdminVM vm)
+        {
+            // get current company session
+            vm = GetCompanySession(vm);
+
+            // get list of locations 
+            vm = GetLocations(vm);
+
+            // create location object to hold selected location
+            vm.Location = new Location();
+
+            // create new Specials object
+            vm.Special = new SaleSpecial();
+
+            return vm;
+        }
+
+
+        private AdminVM InitEditCompanies()
+        {
+            // create EditCompaniesVM object 
+            AdminVM vm = new AdminVM();
+
+            // create VM user object
+            vm.User = new User();
+
+            // get current user session
+            vm.User = vm.User.GetUserSession();
+
+            // create new VM company object 
+            vm.Company = new Company();
+
+            return vm;
+        }
+
+        private AdminBannerViewModel InitAdminBannerVM()
+        {
+            // create view model object
+            AdminBannerViewModel vm = new AdminBannerViewModel();
+
+            // create user objects and populate 
+            vm.CurrentUser = new User();
+
+            // get admin status because page should only be viewable by admin
+            vm.CurrentUser = vm.CurrentUser.GetUserSession();
+
+            return vm;
+        }
+
+        private AdminVM InitLocationInfo(AdminVM vm)
+        {
+            // create VM location objects 
+            vm.NewLocation = new NewLocation();
+            vm.Locations = new List<Location>();
+            vm.States = new List<State>();
+
+            // get states to display in drop down 
+            vm.States = GetStatesList();
+
+            return vm;
+        }
+
+        // -------------------------------------------------------------------------------------------------
+        // SUBMITTING DATA TO DATABASE 
+        // -------------------------------------------------------------------------------------------------
+
+        private CategoryItem.ActionTypes AddCategoriesToDB(AdminVM vm, string categoryIDs)
         {
             try
             {
-                // create button object 
-                Button button = new Button();
+                // create database object
+                Database db = new Database();
 
-                // get value of button pressed 
-                button.CurrentButton = buttonValue;
+                // create array by splitting string at each comma 
+                string[] AllStrings = categoryIDs.Split(',');
 
-                // save button session 
-                button.SaveButtonSession();
-            }
-            catch (Exception ex) { throw new Exception(ex.Message); }
+                // loop through array and assign CategoryID to Category object 
+                // then add object to list of category items
+                foreach (string item in AllStrings)
+                {
+                    // get categoryID 
+                    vm.Category.ItemID = int.Parse(item);
+
+                    // add to database
+                    vm.Category.ActionType = db.InsertCategories(vm);
+                }
+                return vm.Category.ActionType;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private CategoryItem.ActionTypes DeleteCategories(AdminVM vm, string categoryIDs)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // create array by splitting string at each comma 
+                string[] AllStrings = categoryIDs.Split(',');
+
+                // loop through array and assign CategoryID to Category object 
+                // then add object to list of category items
+                foreach (string item in AllStrings)
+                {
+                    // get categoryID 
+                    vm.Category.ItemID = int.Parse(item);
+
+                    // add to database
+                    vm.Category.ActionType = db.DeleteCategories(vm);
+                }
+                return vm.Category.ActionType;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private NewLocation.ActionTypes SubmitLocationToDB(AdminVM vm)
+        {
+            try
+            {
+                Database db = new Database();
+
+                // submit to db 
+                vm.NewLocation.ActionType = db.AddNewLocation(vm);
+
+                return vm.NewLocation.ActionType;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private NewLocation.ActionTypes DeleteLocation(AdminVM vm)
+        {
+            // create db object 
+            Database db = new Database();
+
+            // get action type from attemp to delete location from db 
+            vm.NewLocation.ActionType = db.DeleteLocation(vm.Location.LocationID);
+
+            return vm.NewLocation.ActionType;
+        }
+
+        private SaleSpecial.ActionTypes DeleteSpecialFromLocation(AdminVM vm)
+        {
+            try
+            {
+                // create db object
+                Database db = new Database();
+
+                // delete from table 
+                vm.Special.ActionType = db.DeleteSpecialLocation(vm);
+
+                return vm.Special.ActionType;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private SaleSpecial.ActionTypes AddSpecialToLocation(AdminVM vm)
+        {
+            try
+            {
+                // create db object
+                Database db = new Database();
+
+                // add new special to tblSpecial first 
+                vm.Special = db.InsertSpecial(vm);
+
+                // then add special and location to tblSpecialLocation 
+                vm.Special.ActionType = db.InsertSpecialLocation(vm);
+
+                return vm.Special.ActionType;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        // -------------------------------------------------------------------------------------------------
+        // RETRIEVING DATA FROM DATABASE 
+        // -------------------------------------------------------------------------------------------------
+
+        private int GetTotalRequests()
+        {
+            try
+            {
+                // create db object
+                Database db = new Database();
+
+                // create variable to hold total requests 
+                int total = 0;
+
+                // get total requests 
+                total = db.GetTotalRequests();
+
+                return total;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private string GetState(int intStateID)
+        {
+            try
+            {
+                // create db object
+                Database db = new Database();
+
+                // create variable to hold state
+                string state = "";
+
+                // get state
+                state = db.GetState(intStateID);
+
+                return state;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        public List<State> GetStatesList()
+        {
+            // create EditCompaniesVM object
+            AdminVM vm = new AdminVM();
+
+            // create database object 
+            Database db = new Database();
+
+            // get states from database 
+            vm.States = db.GetStates();
+
+            return vm.States;
+        }
+
+        private List<MainBanner> GetBannersList(AdminBannerViewModel vm)
+        {
+            // create new database object 
+            Database db = new Database();
+
+            // create VM banner list object 
+            vm.MainBanners = new List<MainBanner>();
+
+            // get list of banners
+            vm.MainBanners = db.GetMainBanners();
+
+            return vm.MainBanners;
+        }
+
+        private AdminVM GetNotCategories(AdminVM vm)
+        {
+            try
+            {
+                // create db object 
+                Database db = new Database();
+
+                // get category list 
+                vm.Categories = db.GetNotCategories(vm);
+
+                return vm;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private AdminVM GetCurrentCategories(AdminVM vm)
+        {
+            try
+            {
+                // create db object
+                Database db = new Database();
+
+                // get current category list
+                vm.Categories = db.GetCurrentCategories(vm);
+
+                return vm;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+
+        private AdminVM GetLocations(AdminVM vm)
+        {
+            try
+            {
+                // create db object
+                Database db = new Database();
+
+                // get list of locations from db 
+                vm.Locations = db.GetLocations(vm);
+
+                return vm;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         private List<ContactPerson> GetContactsByCompany(AdminVM vm)
@@ -1013,6 +1232,42 @@ namespace GCRBA.Controllers
             return vm.Companies;
         }
 
+        private List<SaleSpecial> GetSpecials(int intLocationID)
+        {
+            try
+            {
+                // create specials list object
+                List<SaleSpecial> specials = new List<SaleSpecial>();
+
+                // create db object
+                Database db = new Database();
+
+                // get list of specials 
+                specials = db.GetLandingSpecials(intLocationID);
+
+                return specials;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        // -------------------------------------------------------------------------------------------------
+        // HANDLING SESSIONS 
+        // -------------------------------------------------------------------------------------------------
+
+        public void SaveButtonSession(string buttonValue)
+        {
+            try
+            {
+                // create button object 
+                Button button = new Button();
+
+                // get value of button pressed 
+                button.CurrentButton = buttonValue;
+
+                // save button session 
+                button.SaveButtonSession();
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
         private AdminVM GetCompanySession(AdminVM vm)
         {
             try
@@ -1027,255 +1282,7 @@ namespace GCRBA.Controllers
                 vm.Company = db.GetCompanyInfo(vm);
 
                 return vm;
-            }
-            catch (Exception ex) { throw new Exception(ex.Message); }
-        }
-
-        private AdminVM GetNotCategories(AdminVM vm)
-        {
-            try
-            {
-                // create db object 
-                Database db = new Database();
-
-                // get category list 
-                vm.Categories = db.GetNotCategories(vm);
-
-                return vm;
-            }
-            catch (Exception ex) { throw new Exception(ex.Message); }
-        }
-
-        private AdminVM GetCurrentCategories(AdminVM vm)
-        {
-            try
-            {
-                // create db object
-                Database db = new Database();
-
-                // get current category list
-                vm.Categories = db.GetCurrentCategories(vm);
-
-                return vm;
-            }
-            catch (Exception ex) { throw new Exception(ex.Message); }
-        }
-
-        private CategoryItem.ActionTypes DeleteCategories(AdminVM vm, string categoryIDs)
-        {
-            try
-            {
-                // create database object
-                Database db = new Database();
-
-                // create array by splitting string at each comma 
-                string[] AllStrings = categoryIDs.Split(',');
-
-                // loop through array and assign CategoryID to Category object 
-                // then add object to list of category items
-                foreach (string item in AllStrings)
-                {
-                    // get categoryID 
-                    vm.Category.ItemID = int.Parse(item);
-
-                    // add to database
-                    vm.Category.ActionType = db.DeleteCategories(vm);
-                }
-                return vm.Category.ActionType;
-            }
-            catch (Exception ex) { throw new Exception(ex.Message); }
-        }
-
-        private AdminVM GetLocations(AdminVM vm)
-        {
-            try
-            {
-                // create db object
-                Database db = new Database();
-
-                // get list of locations from db 
-                vm.Locations = db.GetLocations(vm);            
-
-                return vm;
-            }
-            catch (Exception ex) { throw new Exception(ex.Message); }
-        }
-
-        private NewLocation.ActionTypes DeleteLocation(AdminVM vm)
-        {
-            // create db object 
-            Database db = new Database();
-
-            // get action type from attemp to delete location from db 
-            vm.NewLocation.ActionType = db.DeleteLocation(vm.Location.LocationID);
-
-            return vm.NewLocation.ActionType;
-        }
-
-        private AdminVM InitEditCategories(AdminVM vm)
-        {
-            // get current company session 
-            vm = GetCompanySession(vm);
-
-            // get list of locations for current company 
-            vm = GetLocations(vm);
-
-            // create Location object that will hold selected location 
-            vm.Location = new Location();
-
-            // create Category object
-            vm.Category = new CategoryItem();
-
-            // create list of categories
-            vm.Categories = new List<CategoryItem>();
-
-            return vm; 
-        }
-
-        private AdminVM InitEditSpecials(AdminVM vm)
-        {
-            // get current company session
-            vm = GetCompanySession(vm);
-
-            // get list of locations 
-            vm = GetLocations(vm);
-
-            // create location object to hold selected location
-            vm.Location = new Location();
-
-            // create new Specials object
-            vm.Special = new SaleSpecial();
-
-            return vm;
-        }
-
-        private string GetState(int intStateID)
-        {
-            try
-            {
-                // create db object
-                Database db = new Database();
-
-                // create variable to hold state
-                string state = "";
-
-                // get state
-                state = db.GetState(intStateID);
-
-                return state;
-            }
-            catch (Exception ex) { throw new Exception(ex.Message); }
-        }
-
-        public List<State> GetStatesList()
-        {
-            // create EditCompaniesVM object
-            AdminVM vm = new AdminVM();
-
-            // create database object 
-            Database db = new Database();
-
-            // get states from database 
-            vm.States = db.GetStates();
-
-            return vm.States;
-        }
-
-        private List<MainBanner> GetBannersList(AdminBannerViewModel vm)
-        {
-            // create new database object 
-            Database db = new Database();
-
-            // create VM banner list object 
-            vm.MainBanners = new List<MainBanner>();
-
-            // get list of banners
-            vm.MainBanners = db.GetMainBanners();
-
-            return vm.MainBanners;
-        }
-
-        private NewLocation.ActionTypes SubmitLocationToDB(AdminVM vm)
-        {
-            try
-            {
-                Database db = new Database();
-
-                // submit to db 
-                vm.NewLocation.ActionType = db.AddNewLocation(vm);
-
-                return vm.NewLocation.ActionType;
-            }
-            catch (Exception ex) { throw new Exception(ex.Message); }
-        }
-
-        private CategoryItem.ActionTypes AddCategoriesToDB(AdminVM vm, string categoryIDs)
-        {
-            try
-            {
-                // create database object
-                Database db = new Database();
-
-                // create array by splitting string at each comma 
-                string[] AllStrings = categoryIDs.Split(',');
-
-                // loop through array and assign CategoryID to Category object 
-                // then add object to list of category items
-                foreach (string item in AllStrings)
-                {
-                    // get categoryID 
-                    vm.Category.ItemID = int.Parse(item);
-
-                    // add to database
-                    vm.Category.ActionType = db.InsertCategories(vm);
-                }
-                return vm.Category.ActionType;
-            }
-            catch (Exception ex) { throw new Exception(ex.Message); }
-        }
-
-        private AdminVM InitEditCompanies()
-        {
-            // create EditCompaniesVM object 
-            AdminVM vm = new AdminVM();
-
-            // create VM user object
-            vm.User = new User();
-
-            // get current user session
-            vm.User = vm.User.GetUserSession();
-
-            // create new VM company object 
-            vm.Company = new Company();
-
-            return vm;
-        }
-
-        private AdminBannerViewModel InitAdminBannerVM()
-        {
-            // create view model object
-            AdminBannerViewModel vm = new AdminBannerViewModel();
-
-            // create user objects and populate 
-            vm.CurrentUser = new User();
-
-            // get admin status because page should only be viewable by admin
-            vm.CurrentUser = vm.CurrentUser.GetUserSession();
-
-            return vm;
-        }
-
-        private AdminVM InitLocationInfo(AdminVM vm)
-        {
-            // create VM location objects 
-            vm.NewLocation = new NewLocation();
-            vm.Locations = new List<Location>();
-            vm.States = new List<State>();
-
-            // get states to display in drop down 
-            vm.States = GetStatesList();
-
-            return vm;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
     }
