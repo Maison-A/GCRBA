@@ -1,24 +1,27 @@
-﻿@using GCRBA.Models
+﻿@using GCRBA.ViewModels
+@model AdminVM
+
 
 @{
-    ViewBag.Title = "Admin Portal";
+	ViewBag.Title = "Admin Portal";
 }
 
-@if (Model.isAdmin == 0)
+@if (Model.User.isAdmin == 0)
 {
-    <p>This page is for admins only. If you are an admin, please log in and try again.</p>
-}
-else
+	<p>This page is for admins only. If you are an admin, please log in and try again.</p>
+} else
 {
-<div class="container w-75">
-    <h2>@ViewBag.Title</h2>
+	<div class="container w-75">
+		<h2>@ViewBag.Title</h2>
 
-    @using (Html.BeginForm(FormMethod.Post))
-    {
+		@using (Html.BeginForm(FormMethod.Post))
+		{
+			<p>You currently have @Model.Request.TotalRequests requests</p>
 
-        <button name="btnSubmit" value="editMainBanner">Edit Homepage Banner</button>
-        <button name="btnSubmit" value="editCompanies">Edit Companies</button>
-    }
+			<button name="btnSubmit" value="editMainBanner">Edit Homepage Banner</button>
+			<button name="btnSubmit" value="editCompanies">Edit Companies</button>
+			<button name="btnSubmit" value="viewRequests">View Requests</button>
+		}
 
-</div>
+	</div>
 }

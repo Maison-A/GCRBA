@@ -373,6 +373,13 @@ namespace GCRBA.Models
 							newUser.UID = Convert.ToInt16(dr["intUserID"]);
 							newUser.FirstName = (string)dr["strFirstName"];
 							newUser.LastName = (string)dr["strLastName"];
+							newUser.Address = (string)dr["strAddress"];
+							newUser.City = (string)dr["strCity"];
+							newUser.intState = Convert.ToInt16(dr["intStateID"]);
+							newUser.State = (string)dr["strState"];
+							newUser.Zip = (string)dr["strZip"];
+							newUser.Phone = (string)dr["strPhone"];
+							newUser.Email = (string)dr["strEmail"];
 
 							// db allows address, city, state, zip, and phone to be null in user table 
 							// so must check if null here before adding to User object 
@@ -584,7 +591,7 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public Company GetCompanyInfo(EditCompaniesViewModel vm)
+		public Company GetCompanyInfo(AdminVM vm)
 		{
 			try
 			{
@@ -603,7 +610,7 @@ namespace GCRBA.Models
 				// specify command type as stored procedure 
 				da.SelectCommand.CommandType = CommandType.StoredProcedure;
 
-				SetParameter(ref da, "@intCompanyID", vm.CurrentCompany.CompanyID, SqlDbType.BigInt);
+				SetParameter(ref da, "@intCompanyID", vm.Company.CompanyID, SqlDbType.BigInt);
 
 				try
 				{
@@ -612,18 +619,57 @@ namespace GCRBA.Models
 					if (ds.Tables[0].Rows.Count > 0)
 					{
 						DataRow dr = ds.Tables[0].Rows[0];
-						vm.CurrentCompany.Name = (string)dr["strCompanyName"];
-						vm.CurrentCompany.About = (string)dr["strAbout"];
-						vm.CurrentCompany.Year = (string)dr["strBizYear"];
-						return vm.CurrentCompany;
+						vm.Company.Name = (string)dr["strCompanyName"];
+						vm.Company.About = (string)dr["strAbout"];
+						vm.Company.Year = (string)dr["strBizYear"];
+						return vm.Company;
 					}
-					return vm.CurrentCompany;
+					return vm.Company;
 				}
 				catch (Exception ex) { throw new Exception(ex.Message); }
 				finally { CloseDBConnection(ref cn); }
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
+
+		public int GetTotalRequests()
+		{
+			try
+			{
+				// create new SqlConnection object
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to db 
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+
+				// create new SqlDataAdapter object
+				SqlDataAdapter da = new SqlDataAdapter("GET_TOTAL_REQUESTS", cn);
+
+				// create instance of DataSet
+				DataSet ds;
+
+				// specify command type 
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				// create variable to hold total requests 
+				int total = 0;
+
+				try
+				{
+					ds = new DataSet();
+					da.Fill(ds);
+					if (ds.Tables[0].Rows.Count > 0)
+					{
+						DataRow dr = ds.Tables[0].Rows[0];
+						total = Convert.ToInt16(dr["TotalRequests"]);
+					}
+					return total;
+				}
+				catch (Exception ex) { throw new Exception(ex.Message); }
+				finally { CloseDBConnection(ref cn); }
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		} 
 
 		public string GetMainBanner()
 		{
@@ -761,7 +807,7 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public List<Location> GetLocations(EditCompaniesViewModel vm)
+		public List<Location> GetLocations(AdminVM vm)
 		{
 			try
 			{
@@ -774,7 +820,7 @@ namespace GCRBA.Models
 				// specify which stored procedure we are using 
 				SqlDataAdapter da = new SqlDataAdapter("GET_LOCATIONS", cn);
 
-				SetParameter(ref da, "@intCompanyID", vm.CurrentCompany.CompanyID, SqlDbType.BigInt);
+				SetParameter(ref da, "@intCompanyID", vm.Company.CompanyID, SqlDbType.BigInt);
 
 				// create new list object with type string  
 				List<Location> locations = new List<Location>();
@@ -812,21 +858,21 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public List<CategoryItem> GetNotCategories(EditCompaniesViewModel vm)
+		public List<CategoryItem> GetNotCategories(AdminVM vm)
         {
 			vm.Categories = GetCategories(vm, "GET_NOT_CATEGORIES");
 
 			return vm.Categories;
         }
 
-		public List<CategoryItem> GetCurrentCategories(EditCompaniesViewModel vm)
+		public List<CategoryItem> GetCurrentCategories(AdminVM vm)
         {
 			vm.Categories = GetCategories(vm, "GET_CURRENT_CATEGORIES");
 
 			return vm.Categories;
 		}
 
-		public List<CategoryItem> GetCategories(EditCompaniesViewModel vm, string sproc)
+		public List<CategoryItem> GetCategories(AdminVM vm, string sproc)
         {
 			try
 			{
@@ -839,7 +885,7 @@ namespace GCRBA.Models
 				// specify which stored procedure we are using 
 				SqlDataAdapter da = new SqlDataAdapter(sproc, cn);
 
-				SetParameter(ref da, "@intLocationID", vm.CurrentLocation.LocationID, SqlDbType.BigInt);
+				SetParameter(ref da, "@intLocationID", vm.Location.LocationID, SqlDbType.BigInt);
 
 				// create new list object with type string  
 				List<CategoryItem> categories = new List<CategoryItem>();
@@ -872,7 +918,7 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public List<ContactPerson> GetContactsByCompany(EditCompaniesViewModel vm)
+		public List<ContactPerson> GetContactsByCompany(AdminVM vm)
         {
 			try
             {
@@ -885,7 +931,7 @@ namespace GCRBA.Models
 				// specify which stored procedure we are using 
 				SqlDataAdapter da = new SqlDataAdapter("GET_CONTACTS_BY_COMPANY", cn);
 
-				SetParameter(ref da, "@intCompanyID", vm.CurrentCompany.CompanyID, SqlDbType.BigInt);
+				SetParameter(ref da, "@intCompanyID", vm.Company.CompanyID, SqlDbType.BigInt);
 
 				// create new list object with type string  
 				List<ContactPerson> contacts = new List<ContactPerson>();
@@ -936,7 +982,7 @@ namespace GCRBA.Models
 
 		}
 
-		public List<Location> GetLocationsNotContact(EditCompaniesViewModel vm)
+		public List<Location> GetLocationsNotContact(AdminVM vm)
         {
 			try
             {
@@ -950,7 +996,7 @@ namespace GCRBA.Models
 				SqlDataAdapter da = new SqlDataAdapter("GET_LOCATIONS_NOT_CONTACT", cn);
 
 				SetParameter(ref da, "@intContactPersonID", vm.ContactPerson.lngContactPersonID, SqlDbType.BigInt);
-				SetParameter(ref da, "@intCompanyID", vm.CurrentCompany.CompanyID, SqlDbType.BigInt);
+				SetParameter(ref da, "@intCompanyID", vm.Company.CompanyID, SqlDbType.BigInt);
 
 				// create new list object with type string  
 				List<Location> locations = new List<Location>();
@@ -1107,7 +1153,7 @@ namespace GCRBA.Models
 		
 		}
 
-		public Company.ActionTypes DeleteCompany(Company c)
+		public Company.ActionTypes DeleteCompany(AdminVM vm)
 		{
 			try
 			{
@@ -1116,7 +1162,7 @@ namespace GCRBA.Models
 				SqlCommand cm = new SqlCommand("DELETE_COMPANY", cn);
 				int intReturnValue = -1;
 
-				SetParameter(ref cm, "@intCompanyID", c.CompanyID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@intCompanyID", vm.Company.CompanyID, SqlDbType.BigInt);
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
 
 				cm.ExecuteReader();
@@ -1136,7 +1182,7 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public SaleSpecial.ActionTypes DeleteSpecialLocation(EditCompaniesViewModel vm)
+		public SaleSpecial.ActionTypes DeleteSpecialLocation(AdminVM vm)
 		{
 			try
 			{
@@ -1146,7 +1192,7 @@ namespace GCRBA.Models
 				int intReturnValue = -1;
 
 				SetParameter(ref cm, "@intSpecialID", vm.Special.SpecialID, SqlDbType.SmallInt);
-				SetParameter(ref cm, "@intLocationID", vm.CurrentLocation.LocationID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@intLocationID", vm.Location.LocationID, SqlDbType.BigInt);
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
 
 				cm.ExecuteReader();
@@ -1165,7 +1211,7 @@ namespace GCRBA.Models
 			} catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public CategoryItem.ActionTypes DeleteCategories(EditCompaniesViewModel vm)
+		public CategoryItem.ActionTypes DeleteCategories(AdminVM vm)
         {
 			try
             {
@@ -1174,7 +1220,7 @@ namespace GCRBA.Models
 				SqlCommand cm = new SqlCommand("DELETE_CATEGORY_FROM_LOCATION", cn);
 				int intReturnValue = -1;
 
-				SetParameter(ref cm, "@intLocationID", vm.CurrentLocation.LocationID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@intLocationID", vm.Location.LocationID, SqlDbType.BigInt);
 				SetParameter(ref cm, "@intCategoryID", vm.Category.ItemID, SqlDbType.BigInt);
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
 
@@ -1311,7 +1357,7 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public Company.ActionTypes InsertNewCompany(Company c)
+		public Company.ActionTypes InsertNewCompany(AdminVM vm)
 		{
 			try
 			{
@@ -1321,9 +1367,9 @@ namespace GCRBA.Models
 				int intReturnValue = -1;
 
 				SetParameter(ref cm, "@intCompanyID", null, SqlDbType.BigInt, Direction: ParameterDirection.Output);
-				SetParameter(ref cm, "@strCompanyName", c.Name, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@strAbout", c.About, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@strBizYear", c.Year, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strCompanyName", vm.Company.Name, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strAbout", vm.Company.About, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strBizYear", vm.Company.Year, SqlDbType.NVarChar);
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
 
 				cm.ExecuteReader();
@@ -1336,7 +1382,7 @@ namespace GCRBA.Models
 					case -1:
 						return Company.ActionTypes.DuplicateName;
 					case 1: // new user created
-						c.CompanyID = Convert.ToInt16(cm.Parameters["@intCompanyID"].Value);
+						vm.Company.CompanyID = Convert.ToInt16(cm.Parameters["@intCompanyID"].Value);
 						return Company.ActionTypes.InsertSuccessful;
 					default:
 						return Company.ActionTypes.Unknown;
@@ -1347,7 +1393,7 @@ namespace GCRBA.Models
 
 		}
 
-		public SaleSpecial InsertSpecial(EditCompaniesViewModel vm) {
+		public SaleSpecial InsertSpecial(AdminVM vm) {
 			try 
 			{
 				SqlConnection cn = null;
@@ -1376,7 +1422,7 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public SaleSpecial.ActionTypes InsertSpecialLocation(EditCompaniesViewModel vm) 
+		public SaleSpecial.ActionTypes InsertSpecialLocation(AdminVM vm) 
 		{
 			try 
 			{
@@ -1387,7 +1433,7 @@ namespace GCRBA.Models
 
 				SetParameter(ref cm, "@intSpecialLocationID", null, SqlDbType.BigInt, Direction: ParameterDirection.Output);
 				SetParameter(ref cm, "@intSpecialID", vm.Special.SpecialID, SqlDbType.SmallInt);
-				SetParameter(ref cm, "@intLocationID", vm.CurrentLocation.LocationID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@intLocationID", vm.Location.LocationID, SqlDbType.BigInt);
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
 
 				cm.ExecuteReader();
@@ -1403,7 +1449,7 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public CategoryItem.ActionTypes InsertCategories(EditCompaniesViewModel vm)
+		public CategoryItem.ActionTypes InsertCategories(AdminVM vm)
         {
 			try
             {
@@ -1414,7 +1460,7 @@ namespace GCRBA.Models
 
 				SetParameter(ref cm, "@intCategoryLocationID", null, SqlDbType.BigInt, Direction: ParameterDirection.Output);
 				SetParameter(ref cm, "@intCategoryID", vm.Category.ItemID, SqlDbType.BigInt);
-				SetParameter(ref cm, "@intLocationID", vm.CurrentLocation.LocationID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@intLocationID", vm.Location.LocationID, SqlDbType.BigInt);
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
 
 				cm.ExecuteReader();
@@ -1509,7 +1555,7 @@ namespace GCRBA.Models
 			return LocationList.ActionTypes.InsertSuccessful;
 		}
 
-		public NewLocation.ActionTypes AddNewLocation(EditCompaniesViewModel vm)
+		public NewLocation.ActionTypes AddNewLocation(AdminVM vm)
         {
 			try
             {
@@ -1519,7 +1565,7 @@ namespace GCRBA.Models
 				int intReturnValue = -1;
 
 				SetParameter(ref cm, "@intLocationID", null, SqlDbType.BigInt, Direction: ParameterDirection.Output);
-				SetParameter(ref cm, "@intCompanyID", vm.CurrentCompany.CompanyID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@intCompanyID", vm.Company.CompanyID, SqlDbType.BigInt);
 				SetParameter(ref cm, "strAddress", vm.NewLocation.StreetAddress, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strCity", vm.NewLocation.City, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@intStateID", vm.NewLocation.intState, SqlDbType.SmallInt);

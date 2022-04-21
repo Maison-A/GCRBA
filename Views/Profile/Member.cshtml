@@ -1,13 +1,20 @@
 ﻿
 @{
-    ViewBag.Title = "Member";
+	ViewBag.Title = "Member Portal";
 }
-@using (Html.BeginForm()) {
 
-if (Model.isMember == 0) {
-    <p>This page is for members only.</p>
-}
-else {
-    <p>Hello,  @Model.FirstName, you are logged in as a member.</p>
-}
+@if (Model.isMember == 0)
+{
+	@Html.Partial("MemberOnly");
+} else
+{
+	<p>Hello,  @Model.FirstName, thank you for being a member of the GCRBA.</p>
+
+	using (Html.BeginForm())
+	{
+		<button name="btnSubmit" value="editProfile">Edit Profile</button>
+		<button name="btnSubmit" value="editCompanyInfo">Edit Company Information</button>
+		<button name="btnSubmit" value="editLandingPage">Edit GCRBA Landing Page</button>
+	}
+
 }

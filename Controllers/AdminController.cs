@@ -14,11 +14,17 @@ namespace GCRBA.Controllers
 
         public ActionResult Index()
         {
-            // get current user session so we know who is logged in (member, nonmember, admin)  
-            User u = new User();
-            u = u.GetUserSession();
 
-            return View(u);
+            AdminVM vm = new AdminVM();
+
+            vm.User = new User();
+            vm.User = vm.User.GetUserSession();
+
+            vm.Request = new Request();
+
+            vm.Request.TotalRequests = GetTotalRequests();
+
+            return View(vm);
         }
 
         [HttpPost]
@@ -36,8 +42,55 @@ namespace GCRBA.Controllers
                 return RedirectToAction("EditCompanies", "AdminPortal");
             }
 
+            if (col["btnSubmit"].ToString() == "viewRequests")
+			{
+                return RedirectToAction("Requests", "AdminPortal");
+			}
+
             return View();
         }
+
+        public ActionResult Requests()
+		{
+            // initialize RequestsVM
+            RequestsVM vm = InitRequestsVM();
+
+            // get total requests 
+            vm.Request.TotalRequests = GetTotalRequests();
+
+            return View(vm);
+		}
+
+        private int GetTotalRequests()
+		{
+            try
+			{
+                // create db object
+                Database db = new Database();
+
+                // create variable to hold total requests 
+                int total = 0;
+
+                // get total requests 
+                total = db.GetTotalRequests();
+
+                return total;
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+        private RequestsVM InitRequestsVM()
+		{
+            // create instance of RequestsVM
+            RequestsVM vm = new RequestsVM();
+
+            // create new User object
+            // then get current user session 
+            vm.User = new User();
+            vm.User = vm.User.GetUserSession();
+
+            return vm;
+		}
 
         public ActionResult EditMainBanner()
         {
@@ -161,13 +214,13 @@ namespace GCRBA.Controllers
         public ActionResult AddCompany()
         {
             // create object of view model
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             // create new user object with vm 
-            vm.CurrentUser = new User();
+            vm.User = new User();
 
             // get current user session
-            vm.CurrentUser = vm.CurrentUser.GetUserSession();
+            vm.User = vm.User.GetUserSession();
 
             return View(vm);
         }
@@ -176,34 +229,63 @@ namespace GCRBA.Controllers
         public ActionResult AddCompany(FormCollection col)
         {
             // create objects of what we will use 
-            EditCompaniesViewModel vm = InitEditCompanies();
-            vm.CurrentCompany = new Company();
+            AdminVM vm = InitEditCompanies();
+            vm.Company = new Company();
             Database db = new Database();
 
             // get input from form 
             if (col["btnSubmit"].ToString() == "submit")
             {
-                vm.CurrentCompany.Name = col["CurrentCompany.Name"];
-                vm.CurrentCompany.About = col["CurrentCompany.About"];
-                vm.CurrentCompany.Year = col["CurrentCompany.Year"];
+                vm.Company.Name = col["Company.Name"];
+                vm.Company.About = col["Company.About"];
+                vm.Company.Year = col["Company.Year"];
             }
 
             // add to database
-            vm.CurrentCompany.ActionType = vm.CurrentCompany.SaveInsert();
+            vm.Company.ActionType = InsertNewCompany(vm);
 
             return View(vm);
         }
 
+        private Company.ActionTypes InsertNewCompany(AdminVM vm)
+		{
+            try
+			{
+                // create database object
+                Database db = new Database();
+
+                // add new company to db 
+                vm.Company.ActionType = db.InsertNewCompany(vm);
+                return vm.Company.ActionType;
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
         public ActionResult DeleteCompany()
         {
             // create VM object
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             vm.Companies = GetCompaniesList(vm);
 
             // return view 
             return View(vm);
         }
+
+        private Company.ActionTypes DeleteCompany(AdminVM vm)
+		{
+            try
+			{
+                // create database object
+                Database db = new Database();
+
+                // delete company from database 
+                vm.Company.ActionType = db.DeleteCompany(vm);
+
+                return vm.Company.ActionType;
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
 
         [HttpPost]
         public ActionResult DeleteCompany(FormCollection col)
@@ -212,19 +294,19 @@ namespace GCRBA.Controllers
             ViewBag.Flag = 0;
 
             // create VM object
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             // get list of companies
             vm.Companies = GetCompaniesList(vm);
 
             // get selection 
-            vm.CurrentCompany.CompanyID = Convert.ToInt16(col["companies"].ToString());
+            vm.Company.CompanyID = Convert.ToInt16(col["companies"].ToString());
 
             // delete button pressed
             if (col["btnSubmit"].ToString() == "delete")
             {
                 // save action type correlating to success of deletion from database
-                vm.CurrentCompany.ActionType = vm.CurrentCompany.SaveDelete();
+                vm.Company.ActionType = DeleteCompany(vm);
 
                 return View(vm);
             }
@@ -242,13 +324,13 @@ namespace GCRBA.Controllers
         public ActionResult EditExistingCompany()
         {
             // create EditCompaniesVM object 
-            EditCompaniesViewModel vm = new EditCompaniesViewModel();
+            AdminVM vm = new AdminVM();
 
             // create VM user object
-            vm.CurrentUser = new User();
+            vm.User = new User();
 
             // get current user session
-            vm.CurrentUser = vm.CurrentUser.GetUserSession();
+            vm.User = vm.User.GetUserSession();
 
             // get companies list 
             vm.Companies = GetCompaniesList(vm);
@@ -260,16 +342,16 @@ namespace GCRBA.Controllers
         public ActionResult EditExistingCompany(FormCollection col)
         {
             // create EditCompaniesVM object 
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             // get companies list 
             vm.Companies = GetCompaniesList(vm);
 
             // get companyID from company selected from dropdown
-            vm.CurrentCompany.CompanyID = Convert.ToInt16(col["companies"]);
+            vm.Company.CompanyID = Convert.ToInt16(col["companies"]);
 
             // save current  ID so we can access it in other view 
-            vm.CurrentCompany.SaveCompanySession();
+            vm.Company.SaveCompanySession();
 
             if (col["btnSubmit"].ToString() == "addNewLocation")
             {
@@ -311,7 +393,7 @@ namespace GCRBA.Controllers
 
         public ActionResult AddNewLocation()
         {
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             vm = InitLocationInfo(vm);
 
@@ -329,7 +411,7 @@ namespace GCRBA.Controllers
         {
            try
             {
-                EditCompaniesViewModel vm = InitEditCompanies();
+                AdminVM vm = InitEditCompanies();
 
                 // initial location objects 
                 vm = InitLocationInfo(vm);
@@ -340,7 +422,7 @@ namespace GCRBA.Controllers
                 // get list of locations 
                 vm = GetLocations(vm);
 
-                vm.NewLocation.lngCompanyID = vm.CurrentCompany.CompanyID;
+                vm.NewLocation.lngCompanyID = vm.Company.CompanyID;
 
                 if (col["btnSubmit"].ToString() == "addLocation")
                 {
@@ -368,7 +450,7 @@ namespace GCRBA.Controllers
         public ActionResult DeleteLocation()
         {
             // initialize EditCompaniesVM 
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             // get current company session 
             vm = GetCompanySession(vm);
@@ -391,7 +473,7 @@ namespace GCRBA.Controllers
             try
             {
                 // initialize EditCompaniesVM
-                EditCompaniesViewModel vm = InitEditCompanies();
+                AdminVM vm = InitEditCompanies();
 
                 // get current company session so we know which company we are making edits to
                 vm = GetCompanySession(vm);
@@ -403,7 +485,7 @@ namespace GCRBA.Controllers
                 vm = GetLocations(vm);
 
                 // create Location object to hold location selected in dropdown to be deleted 
-                vm.CurrentLocation = new Location();
+                vm.Location = new Location();
 
                 // create NewLocation object 
                 vm.NewLocation = new NewLocation();
@@ -412,7 +494,7 @@ namespace GCRBA.Controllers
                 if (col["btnSubmit"].ToString() == "submit")
                 {
                     // get ID of location selected to be deleted 
-                    vm.CurrentLocation.LocationID = Convert.ToInt16(col["locations"]);
+                    vm.Location.LocationID = Convert.ToInt16(col["locations"]);
 
                     // send to database
                     vm.NewLocation.ActionType = DeleteLocation(vm);
@@ -436,7 +518,7 @@ namespace GCRBA.Controllers
         public ActionResult AddContactPerson()
         {
             // create EditCompaniesVM object
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             // get current company session
             vm = GetCompanySession(vm);
@@ -457,7 +539,7 @@ namespace GCRBA.Controllers
         public ActionResult AddContactPerson(FormCollection col)
         {
             // create EditCompaniesVM object
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             // get current company session
             vm = GetCompanySession(vm);
@@ -489,7 +571,7 @@ namespace GCRBA.Controllers
         public ActionResult AddExistingContact()
         {
             // initialize EditCompaniesVM
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             // get current company session 
             vm = GetCompanySession(vm);
@@ -514,7 +596,7 @@ namespace GCRBA.Controllers
         {
             ViewBag.PersonSelected = 0;
 
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             vm = GetCompanySession(vm);
 
@@ -526,7 +608,7 @@ namespace GCRBA.Controllers
 
             vm.Locations = new List<Location>();
 
-            vm.CurrentLocation = new Location();
+            vm.Location = new Location();
 
             if (col["btnSubmit"].ToString() == "getLocations")
             {
@@ -550,7 +632,7 @@ namespace GCRBA.Controllers
         public ActionResult EditCategories()
         {
             // initialize EditCompaniesVM object 
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             // get current company session 
             vm = InitEditCategories(vm);
@@ -561,7 +643,7 @@ namespace GCRBA.Controllers
         [HttpPost]
         public ActionResult EditCategories(FormCollection col)
         {
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             vm = InitEditCategories(vm);
 
@@ -576,7 +658,7 @@ namespace GCRBA.Controllers
                 SaveButtonSession("add");
 
                 // get current LocationID
-                vm.CurrentLocation.LocationID = Convert.ToInt16(col["locations"]);
+                vm.Location.LocationID = Convert.ToInt16(col["locations"]);
 
                 // get list of categories not current applied to location
                 vm = GetNotCategories(vm);
@@ -588,7 +670,7 @@ namespace GCRBA.Controllers
                 SaveButtonSession("delete");
 
                 // get current LocationID
-                vm.CurrentLocation.LocationID = Convert.ToInt16(col["locations"]);
+                vm.Location.LocationID = Convert.ToInt16(col["locations"]);
 
                 // get list of categories currently applied to location 
                 vm = GetCurrentCategories(vm);
@@ -602,7 +684,7 @@ namespace GCRBA.Controllers
                 // get current button session
                 button = button.GetButtonSession();
 
-                vm.CurrentLocation.LocationID = Convert.ToInt16(col["locations"]);
+                vm.Location.LocationID = Convert.ToInt16(col["locations"]);
 
                 // get category(s) selected (by ID)
                 string categoryIDs = col["categories"];
@@ -621,7 +703,7 @@ namespace GCRBA.Controllers
                 }
 
                 // reset LocationID to 0 to reset form
-                vm.CurrentLocation.LocationID = 0;
+                vm.Location.LocationID = 0;
 
                 // remove current button session b/c we no longer need it 
                 button.RemoveButtonSession();
@@ -635,10 +717,10 @@ namespace GCRBA.Controllers
         {
             // initialize EditCompaniesVM, CurrentUser, and CurrentCompany 
             // get CurrentUser session
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             // get current company session 
-            vm.CurrentCompany = vm.CurrentCompany.GetCompanySession();
+            vm.Company = vm.Company.GetCompanySession();
 
             // create Locations object
             vm.Locations = new List<Location>();
@@ -647,7 +729,7 @@ namespace GCRBA.Controllers
             vm = GetLocations(vm);
 
             // create location object
-            vm.CurrentLocation = new Location();
+            vm.Location = new Location();
 
             // create special object
             vm.Special = new SaleSpecial();
@@ -660,10 +742,10 @@ namespace GCRBA.Controllers
         {
             // initialize EditCompaniesVM, CurrentUser, and CurrentCompany 
             // get CurrentUser session
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             // get current company session 
-            vm.CurrentCompany = vm.CurrentCompany.GetCompanySession();
+            vm.Company = vm.Company.GetCompanySession();
 
             // create Locations object
             vm.Locations = new List<Location>();
@@ -675,10 +757,10 @@ namespace GCRBA.Controllers
             vm.Specials = new List<SaleSpecial>();
 
             // create location object
-            vm.CurrentLocation = new Location();
+            vm.Location = new Location();
 
             // get current location session
-            vm.CurrentLocation = vm.CurrentLocation.GetLocationSession();
+            vm.Location = vm.Location.GetLocationSession();
 
             // create new button object so we can track which button was selected
             vm.Button = new Button();
@@ -700,19 +782,19 @@ namespace GCRBA.Controllers
             if (col["btnSubmit"].ToString() == "addSpecial") {
 
                 // remove previous location session 
-                vm.CurrentLocation.RemoveLocationSession();
+                vm.Location.RemoveLocationSession();
 
                 // are there any location selections?
                 if (col["locations"] == null)
 				{
                     // no, so let user know they need to select a location before proceeding 
-                    vm.CurrentLocation.ActionType = Location.ActionTypes.RequiredFieldMissing;
+                    vm.Location.ActionType = Location.ActionTypes.RequiredFieldMissing;
                     return View(vm);
 				} else
 				{
                     // yes, so save LocationID
-                    vm.CurrentLocation.LocationID = Convert.ToInt16(col["locations"]);
-                    vm.CurrentLocation.SaveLocationSession();
+                    vm.Location.LocationID = Convert.ToInt16(col["locations"]);
+                    vm.Location.SaveLocationSession();
 				}
 
                 // remove current button session 
@@ -729,22 +811,22 @@ namespace GCRBA.Controllers
             {
 
                 // remove previous location session 
-                vm.CurrentLocation.RemoveLocationSession();
+                vm.Location.RemoveLocationSession();
 
                 // are there any location selections?
                 if (col["locations"] == null)
                 {
                     // no, so let user know they need to select a location before proceeding 
-                    vm.CurrentLocation.ActionType = Location.ActionTypes.RequiredFieldMissing;
+                    vm.Location.ActionType = Location.ActionTypes.RequiredFieldMissing;
                     return View(vm);
                 } else
                 {
                     // yes, so save LocationID
-                    vm.CurrentLocation.LocationID = Convert.ToInt16(col["locations"]);
-                    vm.CurrentLocation.SaveLocationSession();
+                    vm.Location.LocationID = Convert.ToInt16(col["locations"]);
+                    vm.Location.SaveLocationSession();
                 }
 
-                vm.Specials = GetSpecials(vm.CurrentLocation.LocationID);
+                vm.Specials = GetSpecials(vm.Location.LocationID);
 
                 // remove current button session 
                 vm.Button.RemoveButtonSession();
@@ -796,7 +878,7 @@ namespace GCRBA.Controllers
             return View(vm);
         }
 
-        private SaleSpecial.ActionTypes DeleteSpecialFromLocation(EditCompaniesViewModel vm)
+        private SaleSpecial.ActionTypes DeleteSpecialFromLocation(AdminVM vm)
 		{
             try
 			{
@@ -811,7 +893,7 @@ namespace GCRBA.Controllers
             catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-        private SaleSpecial.ActionTypes AddSpecialToLocation(EditCompaniesViewModel vm) 
+        private SaleSpecial.ActionTypes AddSpecialToLocation(AdminVM vm) 
         {
             try
 			{
@@ -856,16 +938,16 @@ namespace GCRBA.Controllers
         public ActionResult EditCompanyInfo()
         {
             // initialize EditCompaniesVM object
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             // get companyID that was selected from  dropdown on previous page and saved in company session
-            vm.CurrentCompany = vm.CurrentCompany.GetCompanySession();
+            vm.Company = vm.Company.GetCompanySession();
 
             // create database object
             Database db = new Database();
 
             // get current company info based on selected company from previous page
-            vm.CurrentCompany = db.GetCompanyInfo(vm);
+            vm.Company = db.GetCompanyInfo(vm);
 
             // get locations list
             vm.Locations = db.GetLocations(vm);
@@ -889,7 +971,7 @@ namespace GCRBA.Controllers
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
-        private List<ContactPerson> GetContactsByCompany(EditCompaniesViewModel vm)
+        private List<ContactPerson> GetContactsByCompany(AdminVM vm)
         {
             // create db object
             Database db = new Database();
@@ -903,7 +985,7 @@ namespace GCRBA.Controllers
             return vm.Contacts;
         }
 
-        private List<Location> GetLocationWhereNotContact(EditCompaniesViewModel vm)
+        private List<Location> GetLocationWhereNotContact(AdminVM vm)
         {
             // create db object
             Database db = new Database();
@@ -917,7 +999,7 @@ namespace GCRBA.Controllers
             return vm.Locations;
         }
 
-        public List<Company> GetCompaniesList(EditCompaniesViewModel vm)
+        public List<Company> GetCompaniesList(AdminVM vm)
         {
             // create database object
             Database db = new Database();
@@ -931,7 +1013,7 @@ namespace GCRBA.Controllers
             return vm.Companies;
         }
 
-        private EditCompaniesViewModel GetCompanySession(EditCompaniesViewModel vm)
+        private AdminVM GetCompanySession(AdminVM vm)
         {
             try
             {
@@ -939,17 +1021,17 @@ namespace GCRBA.Controllers
                 Database db = new Database();
 
                 // get current companyID from session
-                vm.CurrentCompany = vm.CurrentCompany.GetCompanySession();
+                vm.Company = vm.Company.GetCompanySession();
 
                 // get rest of current company information using companyID we get from session
-                vm.CurrentCompany = db.GetCompanyInfo(vm);
+                vm.Company = db.GetCompanyInfo(vm);
 
                 return vm;
             }
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
-        private EditCompaniesViewModel GetNotCategories(EditCompaniesViewModel vm)
+        private AdminVM GetNotCategories(AdminVM vm)
         {
             try
             {
@@ -964,7 +1046,7 @@ namespace GCRBA.Controllers
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
-        private EditCompaniesViewModel GetCurrentCategories(EditCompaniesViewModel vm)
+        private AdminVM GetCurrentCategories(AdminVM vm)
         {
             try
             {
@@ -979,7 +1061,7 @@ namespace GCRBA.Controllers
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
-        private CategoryItem.ActionTypes DeleteCategories(EditCompaniesViewModel vm, string categoryIDs)
+        private CategoryItem.ActionTypes DeleteCategories(AdminVM vm, string categoryIDs)
         {
             try
             {
@@ -1004,7 +1086,7 @@ namespace GCRBA.Controllers
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
-        private EditCompaniesViewModel GetLocations(EditCompaniesViewModel vm)
+        private AdminVM GetLocations(AdminVM vm)
         {
             try
             {
@@ -1019,18 +1101,18 @@ namespace GCRBA.Controllers
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
-        private NewLocation.ActionTypes DeleteLocation(EditCompaniesViewModel vm)
+        private NewLocation.ActionTypes DeleteLocation(AdminVM vm)
         {
             // create db object 
             Database db = new Database();
 
             // get action type from attemp to delete location from db 
-            vm.NewLocation.ActionType = db.DeleteLocation(vm.CurrentLocation.LocationID);
+            vm.NewLocation.ActionType = db.DeleteLocation(vm.Location.LocationID);
 
             return vm.NewLocation.ActionType;
         }
 
-        private EditCompaniesViewModel InitEditCategories(EditCompaniesViewModel vm)
+        private AdminVM InitEditCategories(AdminVM vm)
         {
             // get current company session 
             vm = GetCompanySession(vm);
@@ -1039,7 +1121,7 @@ namespace GCRBA.Controllers
             vm = GetLocations(vm);
 
             // create Location object that will hold selected location 
-            vm.CurrentLocation = new Location();
+            vm.Location = new Location();
 
             // create Category object
             vm.Category = new CategoryItem();
@@ -1050,7 +1132,7 @@ namespace GCRBA.Controllers
             return vm; 
         }
 
-        private EditCompaniesViewModel InitEditSpecials(EditCompaniesViewModel vm)
+        private AdminVM InitEditSpecials(AdminVM vm)
         {
             // get current company session
             vm = GetCompanySession(vm);
@@ -1059,7 +1141,7 @@ namespace GCRBA.Controllers
             vm = GetLocations(vm);
 
             // create location object to hold selected location
-            vm.CurrentLocation = new Location();
+            vm.Location = new Location();
 
             // create new Specials object
             vm.Special = new SaleSpecial();
@@ -1088,7 +1170,7 @@ namespace GCRBA.Controllers
         public List<State> GetStatesList()
         {
             // create EditCompaniesVM object
-            EditCompaniesViewModel vm = new EditCompaniesViewModel();
+            AdminVM vm = new AdminVM();
 
             // create database object 
             Database db = new Database();
@@ -1113,7 +1195,7 @@ namespace GCRBA.Controllers
             return vm.MainBanners;
         }
 
-        private NewLocation.ActionTypes SubmitLocationToDB(EditCompaniesViewModel vm)
+        private NewLocation.ActionTypes SubmitLocationToDB(AdminVM vm)
         {
             try
             {
@@ -1127,7 +1209,7 @@ namespace GCRBA.Controllers
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
-        private CategoryItem.ActionTypes AddCategoriesToDB(EditCompaniesViewModel vm, string categoryIDs)
+        private CategoryItem.ActionTypes AddCategoriesToDB(AdminVM vm, string categoryIDs)
         {
             try
             {
@@ -1152,19 +1234,19 @@ namespace GCRBA.Controllers
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
-        private EditCompaniesViewModel InitEditCompanies()
+        private AdminVM InitEditCompanies()
         {
             // create EditCompaniesVM object 
-            EditCompaniesViewModel vm = new EditCompaniesViewModel();
+            AdminVM vm = new AdminVM();
 
             // create VM user object
-            vm.CurrentUser = new User();
+            vm.User = new User();
 
             // get current user session
-            vm.CurrentUser = vm.CurrentUser.GetUserSession();
+            vm.User = vm.User.GetUserSession();
 
             // create new VM company object 
-            vm.CurrentCompany = new Company();
+            vm.Company = new Company();
 
             return vm;
         }
@@ -1183,7 +1265,7 @@ namespace GCRBA.Controllers
             return vm;
         }
 
-        private EditCompaniesViewModel InitLocationInfo(EditCompaniesViewModel vm)
+        private AdminVM InitLocationInfo(AdminVM vm)
         {
             // create VM location objects 
             vm.NewLocation = new NewLocation();

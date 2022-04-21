@@ -1,5 +1,5 @@
 ﻿@using GCRBA.ViewModels
-@model EditCompaniesViewModel
+@model AdminVM
 
 @{
 	ViewBag.Title = "Add/Delete Specials";
@@ -7,7 +7,7 @@
 
 <h2>@ViewBag.Title</h2>
 
-@if (Model.CurrentUser.isAdmin == 0)
+@if (Model.User.isAdmin == 0)
 {
 	@Html.Partial("AdminOnly");
 } else
@@ -25,7 +25,7 @@
 			@Html.Partial("ChangeSuccessful");
 		}
 
-		if (Model.CurrentLocation.ActionType == GCRBA.Models.Location.ActionTypes.RequiredFieldMissing)
+		if (Model.Location.ActionType == GCRBA.Models.Location.ActionTypes.RequiredFieldMissing)
 		{
 			<p>You must select a location before proceeding.</p>
 		}
@@ -39,7 +39,7 @@
 			<button name="btnSubmit" value="addSpecial" id="btnAddSpecial" formnovalidate>Add Special</button>
 			<button name="btnSubmit" value="deleteSpecial" id="btnDeleteSpecial" formnovalidate>Delete Special</button>
 
-			if (Model.CurrentLocation.LocationID > 0)
+			if (Model.Location.LocationID > 0)
 			{
 				if (Model.Button.CurrentButton == "add")
 				{

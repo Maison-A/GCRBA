@@ -1,5 +1,5 @@
 ﻿@using GCRBA.ViewModels
-@model EditCompaniesViewModel
+@model AdminVM
 
 @{
     ViewBag.Title = "Delete Company";
@@ -7,15 +7,15 @@
 
 <h2>@ViewBag.Title</h2>
 
-@if (Model.CurrentUser.isAdmin == 0) 
+@if (Model.User.isAdmin == 0) 
 {
     <p>This page is for admins only. If you are an admin, please log in and try again.</p>
 }
 else 
 {
-    if (Model.CurrentCompany != null) 
+    if (Model.Company != null) 
     {
-        if (Model.CurrentCompany.ActionType == GCRBA.Models.Company.ActionTypes.DeleteSuccessful) 
+        if (Model.Company.ActionType == GCRBA.Models.Company.ActionTypes.DeleteSuccessful) 
         {
             @Html.Partial("UpdateSuccessful");
         }
@@ -28,7 +28,7 @@ else
         <select name="companies">
             @foreach (var item in Model.Companies) 
             {
-                <option value="@item.intCompanyID">@item.strCompanyName</option>
+                <option value="@item.CompanyID">@item.Name</option>
             }
         </select>
 

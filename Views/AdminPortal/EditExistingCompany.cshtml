@@ -1,5 +1,5 @@
 ﻿@using GCRBA.ViewModels
-@model EditCompaniesViewModel
+@model AdminVM
 
 @{
     ViewBag.Title = "Edit Existing Company";
@@ -7,13 +7,13 @@
 
 <h2>@ViewBag.Title</h2>
 
-@if (Model.CurrentUser.isAdmin == 0)
+@if (Model.User.isAdmin == 0)
 {
     @Html.Partial("AdminOnly");
 }
 else
 {
-    using (Html.BeginForm(FormMethod.Post))
+    using (Html.BeginForm(null, null, null, FormMethod.Post, new { @class = "mx-auto w-50" }))
     {
         <label for="companies" class="form-label">Select Company to Edit:</label>
         <select name="companies" class="form-control" required="required">

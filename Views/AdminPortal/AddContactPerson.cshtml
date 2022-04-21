@@ -1,9 +1,9 @@
 ﻿@using GCRBA.ViewModels
-@model EditCompaniesViewModel
+@model AdminVM
 
-<h2>Add Contact Person for: @Model.CurrentCompany.Name</h2>
+<h2>Add Contact Person for: @Model.Company.Name</h2>
 
-@if (Model.CurrentUser.isAdmin == 0)
+@if (Model.User.isAdmin == 0)
 {
     @Html.Partial("AdminOnly");
 }
