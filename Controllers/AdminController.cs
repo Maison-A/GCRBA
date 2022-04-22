@@ -110,20 +110,21 @@ namespace GCRBA.Controllers
 
         public List<SelectListItem> GetAllAdminRequest(List<Models.AdminRequest> lstAdminRequest) {
             List<SelectListItem> items = new List<SelectListItem>();
-            foreach(Models.AdminRequest req in lstAdminRequest) {
+            foreach (Models.AdminRequest req in lstAdminRequest) {
                 items.Add(new SelectListItem { Text = req.strRequestedChange, Value = req.intAdminRequest.ToString() });
-			}
+            }
             return items;
-        /*
-		}
-            if (col["btnSubmit"].ToString() == "viewRequests")
-			{
-                return RedirectToAction("Requests", "AdminPortal");
-			}
+            /*
+            }
+                if (col["btnSubmit"].ToString() == "viewRequests")
+                {
+                    return RedirectToAction("Requests", "AdminPortal");
+                }
 
-            return View();
+                return View();
+            }
+            */
         }
-        */
 
         public ActionResult Requests()
 		{
