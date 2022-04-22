@@ -10,10 +10,6 @@ IF OBJECT_ID('tblCategory')				IS NOT NULL DROP TABLE tblCategory
 IF OBJECT_ID('tblEvent')				IS NOT NULL DROP TABLE tblEvent
 IF OBJECT_ID('tblContactPerson')		IS NOT NULL DROP TABLE tblContactPerson
 IF OBJECT_ID('tblLocation')				IS NOT NULL DROP TABLE tblLocation 
-IF OBJECT_ID('tblEditedTable')			IS NOT NULL DROP TABLE tblEditedTable 
-IF OBJECT_ID('tblEditedColumn')			IS NOT NULL DROP TABLE tblEditedColumn 
-IF OBJECT_ID('tblTypeOfChange')			IS NOT NULL DROP TABLE tblTypeOfChange 
-IF OBJECT_ID('tblAdminRequest')			IS NOT NULL DROP TABLE tblAdminRequest  
 IF OBJECT_ID('tblCompanySocialMedia')	IS NOT NULL DROP TABLE tblCompanySocialMedia
 IF OBJECT_ID('tblWebsite')				IS NOT NULL DROP TABLE tblWebsite 
 IF OBJECT_ID('tblWebsiteType')			IS NOT NULL DROP TABLE tblWebsiteType
@@ -28,8 +24,6 @@ IF OBJECT_ID('tblMainBanner')			IS NOT NULL DROP TABLE tblMainBanner
 IF OBJECT_ID('tblAboutGCRBA')			IS NOT NULL DROP TABLE tblAboutGCRBA
 IF OBJECT_ID('tblUser')					IS NOT NULL DROP TABLE tblUser 
 IF OBJECT_ID('tblState')				IS NOT NULL DROP TABLE tblState 
-IF OBJECT_ID('tblRequestTable')			IS NOT NULL DROP TABLE tblRequestTable 
-IF OBJECT_ID('tblApprovalStatus')		IS NOT NULL DROP TABLE tblApprovalStatus
 
 --DROP STORED PROCEDURES
 IF OBJECT_ID('LOGIN')							IS NOT NULL DROP PROCEDURE LOGIN 
@@ -69,6 +63,7 @@ IF OBJECT_ID('INSERT_SPECIALLOCATION') IS NOT NULL DROP PROCEDURE INSERT_SPECIAL
 IF OBJECT_ID('INSERT_SPECIAL') IS NOT NULL DROP PROCEDURE INSERT_SPECIAL
 IF OBJECT_ID('DELETE_SPECIALLOCATION') IS NOT NULL DROP PROCEDURE DELETE_SPECIALLOCATION
 IF OBJECT_ID('GET_TOTAL_REQUESTS') IS NOT NULL DROP PROCEDURE GET_TOTAL_REQUESTS
+IF OBJECT_ID('UPDATE_USER') IS NOT NULL DROP PROCEDURE UPDATE_USER 
 
 CREATE TABLE tblState
 (
@@ -125,16 +120,8 @@ CREATE TABLE tblMember
 	intUserID			SMALLINT		NOT NULL, 
 	intMemberLevelID		SMALLINT		NOT NULL, 
 	intPaymentTypeID		SMALLINT		NOT NULL,
-	intApprovalStatusID		SMALLINT		NOT NULL,
 	CONSTRAINT tblMember_PK PRIMARY KEY (intMemberID)
 )	
-
-CREATE TABLE tblApprovalStatus
-(
-	intApprovalStatusID		SMALLINT IDENTITY(1,1) NOT NULL,
-	strStatus				NVARCHAR(20)			NOT NULL, 
-	CONSTRAINT tblApprovalStatus_PK PRIMARY KEY (intApprovalStatusID)
-)
 
 CREATE TABLE tblCompany
 (
@@ -142,7 +129,6 @@ CREATE TABLE tblCompany
 	strCompanyName			NVARCHAR(50)		NOT NULL, 
 	strAbout			NVARCHAR(2000)			NOT NULL, 
 	strBizYear			NVARCHAR(10),
-	intApprovalStatusID		SMALLINT		NOT NULL,
 	CONSTRAINT tblCompany_PK PRIMARY KEY (intCompanyID)
 )
 
@@ -196,7 +182,6 @@ CREATE TABLE tblLocation
 	strZip				NVARCHAR(15)		NOT NULL,
 	strPhone			NVARCHAR(20)		NOT NULL,
 	strEmail			NVARCHAR(50),		
-	intApprovalStatusID		SMALLINT		NOT NULL,
 	CONSTRAINT tblLocation_PK PRIMARY KEY (intLocationID)
 )
 
@@ -227,38 +212,17 @@ CREATE TABLE tblCategoryLocation
 	CONSTRAINT tblCategoryLocation_PK PRIMARY KEY (intCategoryLocationID)
 )
 
-CREATE TABLE tblEditedTable
-(
-	intEditedTableID		SMALLINT IDENTITY(1,1)	NOT NULL, 
-	strTable				NVARCHAR(50)			NOT NULL, 
-	CONSTRAINT tblEditedTable_PK PRIMARY KEY (intEditedTableID)
-)
-
-CREATE TABLE tblEditedColumn
-(
-	intEditedColumnID		SMALLINT IDENTITY(1,1)	NOT NULL, 
-	strColumn				NVARCHAR(20)			NOT NULL,
-	CONSTRAINT tblEditedColumn_PK PRIMARY KEY (intEditedColumnID)
-)
-
-CREATE TABLE tblTypeOfChange
-(
-	intTypeID		SMALLINT IDENTITY(1,1)	NOT NULL, 
-	strType			NVARCHAR(20)			NOT NULL, 
-	CONSTRAINT tblTypeOfChange_PK PRIMARY KEY (intTypeID)
-)
-
-CREATE TABLE tblAdminRequest
-(
-	intAdminRequestID		SMALLINT IDENTITY(1,1)	NOT NULL,
-	intUserID				SMALLINT			NOT NULL,
-	intTypeID				SMALLINT			NOT NULL,
-	intEditedTableID		SMALLINT			NOT NULL, 
-	intEditedColumnID		SMALLINT, 
-	intLocationInTable		SMALLINT, 
-	strRequestedChange      NVARCHAR(2000), 
-	CONSTRAINT tblAdminRequest_PK PRIMARY KEY (intAdminRequestID)
-)
+--CREATE TABLE tblAdminRequest
+--(
+--	intAdminRequestID		SMALLINT IDENTITY(1,1)	NOT NULL,
+--	intUserID				SMALLINT			NOT NULL,
+--	intTypeID				SMALLINT			NOT NULL,
+--	intEditedTableID		SMALLINT			NOT NULL, 
+--	intEditedColumnID		SMALLINT, 
+--	intLocationInTable		SMALLINT, 
+--	strRequestedChange      NVARCHAR(2000), 
+--	CONSTRAINT tblAdminRequest_PK PRIMARY KEY (intAdminRequestID)
+--)
 
 CREATE TABLE tblEvent
 (
@@ -284,7 +248,6 @@ CREATE TABLE tblSpecial
 	monPrice			MONEY, 
 	dtmStart			DATE				NOT NULL, 
 	dtmEnd				DATE				NOT NULL, 
-	intApprovalStatusID		SMALLINT		NOT NULL,
 	CONSTRAINT tblSpecial_PK PRIMARY KEY (intSpecialID)
 )
 
@@ -408,9 +371,6 @@ FOREIGN KEY (intEventID) REFERENCES tblEvent (intEventID)
 ALTER TABLE tblEventLocation ADD CONSTRAINT tblEventLocation_tblLocation_FK
 FOREIGN KEY (intLocationID) REFERENCES tblLocation (intLocationID)
 
-ALTER TABLE tblAdminRequest ADD CONSTRAINT tblAdminRequest_tblUser_FK
-FOREIGN KEY (intUserID) REFERENCES tblUser (intUserID)
-
 ALTER TABLE tblSpecialLocation ADD CONSTRAINT tblSpecialLocation_tblSpecial_FK
 FOREIGN KEY (intSpecialID) REFERENCES tblSpecial (intSpecialID)
 
@@ -447,18 +407,6 @@ FOREIGN KEY (intCompanyID) REFERENCES tblCompany (intCompanyID)
 ALTER TABLE tblContactPerson ADD CONSTRAINT tblContactPerson_tblContactPersonType_FK
 FOREIGN KEY (intContactPersonTypeID) REFERENCES tblContactPersonType (intContactPersonTypeID)
 
-ALTER TABLE tblMember ADD CONSTRAINT tblMember_tblApprovalStatus_FK
-FOREIGN KEY (intApprovalStatusID) REFERENCES tblApprovalStatus (intApprovalStatusID)
-
-ALTER TABLE tblCompany ADD CONSTRAINT tblCompany_tblApprovalStatus_FK
-FOREIGN KEY (intApprovalStatusID) REFERENCES tblApprovalStatus (intApprovalStatusID)
-
-ALTER TABLE tblLocation ADD CONSTRAINT tblLocation_tblApprovalStatus_FK
-FOREIGN KEY (intApprovalStatusID) REFERENCES tblApprovalStatus (intApprovalStatusID)
-
-ALTER TABLE tblSpecial ADD CONSTRAINT tblSpecial_tblApprovalStatus_FK
-FOREIGN KEY (intApprovalStatusID) REFERENCES tblApprovalStatus (intApprovalStatusID)
-
 -- -----------------------------------------------------------------------------------------
 -- STORED PROCEDURES 
 -- -----------------------------------------------------------------------------------------
@@ -494,6 +442,29 @@ BEGIN
 END 
 GO
 
+CREATE PROCEDURE [db_owner].[UPDATE_USER]
+@intUserID SMALLINT, 
+@strFirstName NVARCHAR(25),
+@strLastName NVARCHAR(25),
+@strAddress NVARCHAR(100),
+@strCity NVARCHAR(20),
+@intStateID SMALLINT,
+@strZip NVARCHAR(15),
+@strPhone NVARCHAR(20),
+@strEmail NVARCHAR(50),
+@strPassword NVARCHAR(15)
+AS
+BEGIN 
+	SET NOCOUNT ON;
+
+	UPDATE	tblUser
+	SET		strFirstName = @strFirstName, strLastName = @strLastName, strAddress = @strAddress, strCity = @strCity, intStateID = @intStateID, strZip =				@strZip, strPhone = @strPhone, strEmail = @strEmail, strPassword = @strPassword
+	WHERE	intUserID = @intUserID
+	RETURN 1
+
+END
+GO
+
 CREATE PROCEDURE [dbo].[SELECT_LOCATION_WEBSITE]
 @intLocationID BIGINT = NULL
 AS 
@@ -509,16 +480,6 @@ BEGIN
 		ON Loc.intCompanyID = Website.intCompanyID
 		WHERE intLocationID = @intLocationID
 	END
-END
-GO
-
-CREATE PROCEDURE [db_owner].[GET_TOTAL_REQUESTS]
-AS
-BEGIN
-	SET NOCOUNT ON;
-
-	SELECT	COUNT(intAdminRequestID) as TotalRequests
-	FROM	tblAdminRequest
 END
 GO
 
@@ -1237,11 +1198,6 @@ INSERT INTO tblPaymentType (strPaymentType)
 VALUES	('Zelle'),
 	('Check')
 
-INSERT INTO tblApprovalStatus (strStatus)
-VALUES		('Approved'),
-			('Denied'),
-			('Pending')
-
 INSERT INTO tblCategory (strCategory)
 VALUES	('Donuts'), 
 	('Bagels'),
@@ -1272,11 +1228,10 @@ VALUES	('Monday'),
 	('Sunday')
 
 -- COMPANY INFORMATION FOR THE BONBONERIE
-INSERT INTO tblCompany (strCompanyName, strAbout, strBizYear, intApprovalStatusID)
-VALUES	('The Bonbonerie', 'At BonBonerie, our rule is that everything we make must be two things: beautiful and delicious. That means using quality ingredients like sweet cream butter, cane sugar, fresh lemon juice and zest, Belgian chocolate, and real vanilla from Madagascar. We create everything by hand in the BonBonerie kitchens, including all our doughs, icings, syrups, batters, and fillings.<br /><br />Each of our original recipes have been reworked and refined over years to create pastry that is unique, perfected, and delicious.<br /><br />Our extremely talented staff of bakers and decorators can customize almost anything for your special event. From astonishing cake centerpieces to hand-cut cookies, everything is crafted with the utmost care by true artists in their field.<br /><br />We are proud to be your award-winning choice for all pastries Beautiful and Delicious since 1983.', '1963', 1),
-	('Wyoming Pastry Shop', 'Welcome to Wyoming Pastry Shop<br /><br />Our bakery has been serving the Village of Wyoming and surrounding areas since 1934. Phillip and Kimberly Reschke are the fifth owners of this hometown bakery. Phillip is a second generation Master Baker, working with his father, a Master Baker from Germany, he has learned all aspects of the bakery and pastry trade and takes pride in all of the products he crafts. Kimberly has been decorating cakes for 30 years, spending time in Cincinnati and Las Vegas perfecting her skills and creativity in a variety of pastry and cake design. We strive for complete customer satisfaction. We want you to think of us whenever you have a craving for something sweet, a special cake or cookie, or one of our many products we offer. We are a small business and will keep it small so we can control our quality to provide the best product to you.', '1972', 1),
-	('Servatii Pastry Shop', 'Who We Are and What We Do<br /><br />Wilhelm Gottenbusch, a German immigrant, came to the United States after traveling around the world on an international freighter. In 1963, Wilhelm opened his first bakery on Observatory Avenue in Hyde Park. In a one man shop, with a bakery in the back, he made a name for himself by focusing on one thing - quality. Focusong on the quality of his products, Wilhelm and his sons have expanded and grown over the last 50 years. Wilhelm brought the traditions of his father and grandfather over from Muenster, Germany. His grandfather, George, started out driving a horse drawn wagon door to door selling his fresh baked goods. Wilhelm''s father, George, attended Germany''s most recognizable baking school and received his "Konditor Meister" status - Master Pastry Chef. His father opened Cafe Servatii, on Servatii Platz, in the hear of Muenster, Germany. Wilhelm followed in his father''s footsteps by earning his "Master Baker" status and starting his own business in Cincinnati, Ohio.<br /><br />Wilhelm''s sons Gary and Greg have both apprenticed in Germany earning their journeyman status - Greg in pastry and Gary in baking. Gary continued in his father and grandfather''s footsteps by earning his Master Baker certification in 2001. In turn, the Gottenbusch''s have acquired some of the most talented bakers, decorators and pastry chefs in America. All together they work to uphold the values set forth by Wilhelm Gottenbusch 50 years ago.<br /><br />Today Gary runs a pretzel company from Germany called Pretzel Baron and Greg Gottenbusch runs the day to day business of Servatii. Mr. Gottenbusch still comes in and does his quality checks and keeps everyone in line. Paul, Gary''s son, is now the head night baker learning the family business.<br /><br />The future is bright and we appreciate all of our customers who have made Servatii their tradition.', '1963', 1),
-	('The New Bakery', 'We love baking!', null,  3) -- pending new bakery 
+INSERT INTO tblCompany (strCompanyName, strAbout, strBizYear)
+VALUES	('The Bonbonerie', 'At BonBonerie, our rule is that everything we make must be two things: beautiful and delicious. That means using quality ingredients like sweet cream butter, cane sugar, fresh lemon juice and zest, Belgian chocolate, and real vanilla from Madagascar. We create everything by hand in the BonBonerie kitchens, including all our doughs, icings, syrups, batters, and fillings.<br /><br />Each of our original recipes have been reworked and refined over years to create pastry that is unique, perfected, and delicious.<br /><br />Our extremely talented staff of bakers and decorators can customize almost anything for your special event. From astonishing cake centerpieces to hand-cut cookies, everything is crafted with the utmost care by true artists in their field.<br /><br />We are proud to be your award-winning choice for all pastries Beautiful and Delicious since 1983.', '1963'),
+	('Wyoming Pastry Shop', 'Welcome to Wyoming Pastry Shop<br /><br />Our bakery has been serving the Village of Wyoming and surrounding areas since 1934. Phillip and Kimberly Reschke are the fifth owners of this hometown bakery. Phillip is a second generation Master Baker, working with his father, a Master Baker from Germany, he has learned all aspects of the bakery and pastry trade and takes pride in all of the products he crafts. Kimberly has been decorating cakes for 30 years, spending time in Cincinnati and Las Vegas perfecting her skills and creativity in a variety of pastry and cake design. We strive for complete customer satisfaction. We want you to think of us whenever you have a craving for something sweet, a special cake or cookie, or one of our many products we offer. We are a small business and will keep it small so we can control our quality to provide the best product to you.', '1972'),
+	('Servatii Pastry Shop', 'Who We Are and What We Do<br /><br />Wilhelm Gottenbusch, a German immigrant, came to the United States after traveling around the world on an international freighter. In 1963, Wilhelm opened his first bakery on Observatory Avenue in Hyde Park. In a one man shop, with a bakery in the back, he made a name for himself by focusing on one thing - quality. Focusong on the quality of his products, Wilhelm and his sons have expanded and grown over the last 50 years. Wilhelm brought the traditions of his father and grandfather over from Muenster, Germany. His grandfather, George, started out driving a horse drawn wagon door to door selling his fresh baked goods. Wilhelm''s father, George, attended Germany''s most recognizable baking school and received his "Konditor Meister" status - Master Pastry Chef. His father opened Cafe Servatii, on Servatii Platz, in the hear of Muenster, Germany. Wilhelm followed in his father''s footsteps by earning his "Master Baker" status and starting his own business in Cincinnati, Ohio.<br /><br />Wilhelm''s sons Gary and Greg have both apprenticed in Germany earning their journeyman status - Greg in pastry and Gary in baking. Gary continued in his father and grandfather''s footsteps by earning his Master Baker certification in 2001. In turn, the Gottenbusch''s have acquired some of the most talented bakers, decorators and pastry chefs in America. All together they work to uphold the values set forth by Wilhelm Gottenbusch 50 years ago.<br /><br />Today Gary runs a pretzel company from Germany called Pretzel Baron and Greg Gottenbusch runs the day to day business of Servatii. Mr. Gottenbusch still comes in and does his quality checks and keeps everyone in line. Paul, Gary''s son, is now the head night baker learning the family business.<br /><br />The future is bright and we appreciate all of our customers who have made Servatii their tradition.', '1963')
 
 INSERT INTO tblCompanyAward (intCompanyID, strFrom, strAward)
 VALUES	(1, 'Best of City Search', 'Best of City'),
@@ -1298,12 +1253,11 @@ VALUES	(1, 'Best of City Search', 'Best of City'),
 	(1, 'Trip Advisor', 'Certificate of Excellence'), 
 	(1, 'Cincinnati Chamber of Commerce', 'Small Business Award Winner')
 
-INSERT INTO tblLocation (intCompanyID, strAddress, strCity, intStateID, strZip, strPhone, strEmail, intApprovalStatusID)
-VALUES	(1, '2030 Madison Rd', 'Cincinnati', 3, '45208-3289', '513-321-3399', 'customerservice@bonbonerie.com', 1),
-	(2, '505 Wyoming Ave', 'Wyoming', 3, '45215-4578', '513-821-0742', 'reschke@wyomingpastryshop.com', 1),
-	(3, '3824 Paxton Ave', 'Cincinnati', 3, '45209-2399', '513-871-3244', 'servatiipastryshop@gmail.com', 1),
-	(3, '2010 Anderson Ferry Rd', 'Cincinnati', 3, '45238-3398', '513-922-0033', 'servatiipastryshop@gmail.com', 1),
-	(4, '1234 Main St', 'Covington', 2, '41414', '5555555555', null, 3)
+INSERT INTO tblLocation (intCompanyID, strAddress, strCity, intStateID, strZip, strPhone, strEmail)
+VALUES	(1, '2030 Madison Rd', 'Cincinnati', 3, '45208-3289', '513-321-3399', 'customerservice@bonbonerie.com'),
+	(2, '505 Wyoming Ave', 'Wyoming', 3, '45215-4578', '513-821-0742', 'reschke@wyomingpastryshop.com'),
+	(3, '3824 Paxton Ave', 'Cincinnati', 3, '45209-2399', '513-871-3244', 'servatiipastryshop@gmail.com'),
+	(3, '2010 Anderson Ferry Rd', 'Cincinnati', 3, '45238-3398', '513-922-0033', 'servatiipastryshop@gmail.com')
 
 INSERT INTO tblContactPerson (strContactName, strContactPhone, strContactEmail, intLocationID, intCompanyID, intContactPersonTypeID)
 VALUES					('Briggs, Randall', '5555555555', 'briggs.r@gmail.com', 1, 1, 1)
@@ -1388,68 +1342,30 @@ VALUES	('Katie', 'Schmidt', '6036 Flyer Drive', 'Cincinnati', 3, '45248', '51331
 
 
 -- ADD USER TO MEMBER TABLE 
-INSERT INTO  tblMember (intUserID, intMemberLevelID, intPaymentTypeID, intApprovalStatusID)
-VALUES	(1, 1, 2, 1)
-		,(3, 2, 1, 1)
-		,(4, 2, 1, 1)
-		,(5, 1, 1, 1)
-		,(2, 1, 1, 3) -- pending member 
+INSERT INTO  tblMember (intUserID, intMemberLevelID, intPaymentTypeID)
+VALUES	(1, 1, 2)
+		,(3, 2, 1)
+		,(4, 2, 1)
+		,(5, 1, 1)
 
 -- ADD CONNECTION BETWEEN COMPANY AND MEMBER
 INSERT INTO tblCompanyMember (intCompanyID, intMemberID)
 VALUES				(3, 2) -- SHANE AS MEMBER FOR SERVATII
 					,(3,3) -- GRACE AS MEMBER FOR SERVATII 
-					,(2, 4) -- BOB AS MEMBER FOR WYOMING 
 
-INSERT INTO tblEditedTable (strTable)
-VALUES		('tblMember'),
-			('tblCompany'),
-			('tblLocation'),
-			('tblCategory'),
-			('tblSpecial'),
-			('tblContactPerson'),
-			('tblCategoryLocation'),
-			('tblSpecialLocation')
-
-INSERT INTO tblEditedColumn (strColumn)
-VALUES			('strCompanyName'),
-				('strAbout'),
-				('strBizYear'),
-				('intCompanyID'),
-				('strAddress'),
-				('strCity'),
-				('intStateID'),
-				('strZip'),
-				('strPhone'),
-				('strEmail'),
-				('strDescription'),
-				('monPrice'),
-				('dtmStart'),
-				('dtmEnd'),
-				('intSpecialID'),
-				('intLocationID'),
-				('strCategory'),
-				('intCategoryID')
-
-INSERT INTO tblTypeOfChange (strType)
-VALUES		('Membership'),
-			('Edit'),
-			('Add'),
-			('Delete')
-
-INSERT INTO tblAdminRequest (intUserID, intTypeID, intEditedTableID, intEditedColumnID, intLocationInTable, strRequestedChange)
-VALUES		(2, 1, 1, null, 5, null), -- UserID 2 requesting to become member (is 5th row in member table with status pending)
-			(5, 2, 2, null, 4, null), -- USER BOB REQUESTING TO ADD COMPANY TO DATABASE 
-			(4, 2, 2, 1, 3, 'Servaty'), -- USER GRACE REQUESTING TO CHANGE NAME OF EXISTING COMPANY SERVATII TO SERVATY
-			(5, 3, 3, null, 5, null), -- USER BOB REQUESTING TO ADD NEW LOCATION TO NEW COMPANY -- IF COMPANY IS DENIED LOCATION IS DENIED TOO
-			(3, 2, 3, 5, 4, '2011 Anderson Ferry') -- USER SHANE IS REQUESTING TO EDIT EXISTING SERVATII LOCATION 
+--INSERT INTO tblAdminRequest (intUserID, intTypeID, intEditedTableID, intEditedColumnID, intLocationInTable, strRequestedChange)
+--VALUES		(2, 1, 1, null, 5, null), -- UserID 2 requesting to become member (is 5th row in member table with status pending)
+--			(5, 2, 2, null, 4, null), -- USER BOB REQUESTING TO ADD COMPANY TO DATABASE 
+--			(4, 2, 2, 1, 3, 'Servaty'), -- USER GRACE REQUESTING TO CHANGE NAME OF EXISTING COMPANY SERVATII TO SERVATY
+--			(5, 3, 3, null, 5, null), -- USER BOB REQUESTING TO ADD NEW LOCATION TO NEW COMPANY -- IF COMPANY IS DENIED LOCATION IS DENIED TOO
+--			(3, 2, 3, 5, 4, '2011 Anderson Ferry') -- USER SHANE IS REQUESTING TO EDIT EXISTING SERVATII LOCATION 
 
 INSERT INTO tblMainBanner (strBanner)
 VALUES	('This is an example of the main banner. This will hold information relevant to the GCRBA.'),
 		('This is an example of the most up-to-date banner in this database. This will hold information relevant to the GCRBA')
 
-INSERT INTO tblSpecial (strDescription, monPrice, dtmStart, dtmEnd, intApprovalStatusID)
-VALUES			('Celebrate National Apple Pie Day! $5.85 for an 8" Dutch Apple at all Servatii Locations! Call ahead to ensure availablity', 5.85, '05/13/2022', '05/14/2022', 1)
+INSERT INTO tblSpecial (strDescription, monPrice, dtmStart, dtmEnd)
+VALUES			('Celebrate National Apple Pie Day! $5.85 for an 8" Dutch Apple at all Servatii Locations! Call ahead to ensure availablity', 5.85, '05/13/2022', '05/14/2022')
 
 INSERT INTO tblSpecialLocation (intSpecialID, intLocationID)
 VALUES				(1, 3)
