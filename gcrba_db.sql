@@ -1,69 +1,226 @@
 -- DROP TABLES
-IF OBJECT_ID('tblSpecialLocation')		IS NOT NULL DROP TABLE tblSpecialLocation 
-IF OBJECT_ID('tblCompanyAward')			IS NOT NULL DROP TABLE tblCompanyAward
-IF OBJECT_ID('tblLocationHours')		IS NOT NULL DROP TABLE tblLocationHours
-IF OBJECT_ID('tblCompanyMember')		IS NOT NULL DROP TABLE tblCompanyMember
-IF OBJECT_ID('tblCategoryLocation')		IS NOT NULL DROP TABLE tblCategoryLocation 
-IF OBJECT_ID('tblEventLocation')		IS NOT NULL DROP TABLE tblEventLocation 
-IF OBJECT_ID('tblSpecial')				IS NOT NULL DROP TABLE tblSpecial 
-IF OBJECT_ID('tblCategory')				IS NOT NULL DROP TABLE tblCategory
-IF OBJECT_ID('tblEvent')				IS NOT NULL DROP TABLE tblEvent
-IF OBJECT_ID('tblContactPerson')		IS NOT NULL DROP TABLE tblContactPerson
-IF OBJECT_ID('tblLocation')				IS NOT NULL DROP TABLE tblLocation 
-IF OBJECT_ID('tblCompanySocialMedia')	IS NOT NULL DROP TABLE tblCompanySocialMedia
-IF OBJECT_ID('tblWebsite')				IS NOT NULL DROP TABLE tblWebsite 
-IF OBJECT_ID('tblWebsiteType')			IS NOT NULL DROP TABLE tblWebsiteType
-IF OBJECT_ID('tblCompany')				IS NOT NULL DROP TABLE tblCompany 
-IF OBJECT_ID('tblContactPersonType')	IS NOT NULL DROP TABLE tblContactPersonType
-IF OBJECT_ID('tblSocialMedia')			IS NOT NULL DROP TABLE tblSocialMedia
-IF OBJECT_ID('tblMember')				IS NOT NULL DROP TABLE tblMember 
-IF OBJECT_ID('tblMemberLevel')			IS NOT NULL DROP TABLE tblMemberLevel 
-IF OBJECT_ID('tblPaymentType')			IS NOT NULL DROP TABLE tblPaymentType 
-IF OBJECT_ID('tblDay')					IS NOT NULL DROP TABLE tblDay
-IF OBJECT_ID('tblMainBanner')			IS NOT NULL DROP TABLE tblMainBanner
-IF OBJECT_ID('tblAboutGCRBA')			IS NOT NULL DROP TABLE tblAboutGCRBA
-IF OBJECT_ID('tblUser')					IS NOT NULL DROP TABLE tblUser 
-IF OBJECT_ID('tblState')				IS NOT NULL DROP TABLE tblState 
+IF OBJECT_ID('tblSpecialLocation')			IS NOT NULL DROP TABLE tblSpecialLocation 
+IF OBJECT_ID('tblCompanyAward')				IS NOT NULL DROP TABLE tblCompanyAward
+IF OBJECT_ID('tblLocationHours')			IS NOT NULL DROP TABLE tblLocationHours
+IF OBJECT_ID('tblTempLocationHours')		IS NOT NULL DROP TABLE tblTempLocationHours   
+IF OBJECT_ID('tblCompanyMember')			IS NOT NULL DROP TABLE tblCompanyMember
+IF OBJECT_ID('tblCategoryLocation')			IS NOT NULL DROP TABLE tblCategoryLocation 
+IF OBJECT_ID('tblTempContactLocation')		IS NOT NULL DROP TABLE tblTempContactLocation
+IF OBJECT_ID('tblTempCategoryLocation')		IS NOT NULL DROP TABLE tblTempCategoryLocation
+IF OBJECT_ID('tblEventLocation')			IS NOT NULL DROP TABLE tblEventLocation 
+IF OBJECT_ID('tblSpecial')					IS NOT NULL DROP TABLE tblSpecial 
+IF OBJECT_ID('tblCategory')					IS NOT NULL DROP TABLE tblCategory
+IF OBJECT_ID('tblTempCategory')				IS NOT NULL DROP TABLE tblTempCategory
+IF OBJECT_ID('tblEvent')					IS NOT NULL DROP TABLE tblEvent
+IF OBJECT_ID('tblContactPerson')			IS NOT NULL DROP TABLE tblContactPerson
+IF OBJECT_ID('tblTempContactPerson')		IS NOT NULL DROP TABLE tblTempContactPerson
+IF OBJECT_ID('tblLocation')					IS NOT NULL DROP TABLE tblLocation 
+IF OBJECT_ID('tblTempLocation')				IS NOT NULL DROP TABLE tblTempLocation 
+IF OBJECT_ID('tblAdminRequest')				IS NOT NULL DROP TABLE tblAdminRequest  
+IF OBJECT_ID('tblCompanySocialMedia')		IS NOT NULL DROP TABLE tblCompanySocialMedia
+IF OBJECT_ID('tblTempCompanySocialMedia')	IS NOT NULL DROP TABLE tblTempCompanySocialMedia
+IF OBJECT_ID('tblWebsite')					IS NOT NULL DROP TABLE tblWebsite 
+IF OBJECT_ID('tblTempWebsite')				IS NOT NULL DROP TABLE tblTempWebsite 
+IF OBJECT_ID('tblWebsiteType')				IS NOT NULL DROP TABLE tblWebsiteType
+IF OBJECT_ID('tblTempWebsiteType')			IS NOT NULL DROP TABLE tblTempWebsiteType
+IF OBJECT_ID('tblCompany')					IS NOT NULL DROP TABLE tblCompany 
+IF OBJECT_ID('tblTempCompany')				IS NOT NULL DROP TABLE tblTempCompany     
+IF OBJECT_ID('tblContactPersonType')		IS NOT NULL DROP TABLE tblContactPersonType
+IF OBJECT_ID('tblTempContactPersonType')	IS NOT NULL DROP TABLE tblTempContactPersonType
+IF OBJECT_ID('tblSocialMedia')				IS NOT NULL DROP TABLE tblSocialMedia
+IF OBJECT_ID('tblTempSocialMedia')			IS NOT NULL DROP TABLE tblTempSocialMedia
+IF OBJECT_ID('tblMember')					IS NOT NULL DROP TABLE tblMember 
+IF OBJECT_ID('tblMemberLevel')				IS NOT NULL DROP TABLE tblMemberLevel 
+IF OBJECT_ID('tblPaymentType')				IS NOT NULL DROP TABLE tblPaymentType 
+IF OBJECT_ID('tblApprovalStatus')			IS NOT NULL DROP TABLE tblApprovalStatus 
+IF OBJECT_ID('tblDay')						IS NOT NULL DROP TABLE tblDay
+IF OBJECT_ID('tblTempDay')					IS NOT NULL DROP TABLE tblTempDay
+IF OBJECT_ID('tblMainBanner')				IS NOT NULL DROP TABLE tblMainBanner
+IF OBJECT_ID('tblAboutGCRBA')				IS NOT NULL DROP TABLE tblAboutGCRBA
+IF OBJECT_ID('tblUser')						IS NOT NULL DROP TABLE tblUser 
+IF OBJECT_ID('tblState')					IS NOT NULL DROP TABLE tblState 
+IF OBJECT_ID('tblTempState')				IS NOT NULL DROP TABLE tblTempState 
 
 --DROP STORED PROCEDURES
-IF OBJECT_ID('LOGIN')							IS NOT NULL DROP PROCEDURE LOGIN 
-IF OBJECT_ID('VERIFY_MEMBER')					IS NOT NULL DROP PROCEDURE VERIFY_MEMBER
-IF OBJECT_ID('INSERT_WEBSITE')					IS NOT NULL DROP PROCEDURE INSERT_WEBSITE
-IF OBJECT_ID('INSERT_CONTACTPERSON')			IS NOT NULL DROP PROCEDURE INSERT_CONTACTPERSON
-IF OBJECT_ID('INSERT_SOCIALMEDIA')				IS NOT NULL DROP PROCEDURE INSERT_SOCIALMEDIA
-IF OBJECT_ID('INSERT_LOCATION')					IS NOT NULL DROP PROCEDURE INSERT_LOCATION
-IF OBJECT_ID('INSERT_COMPANY')					IS NOT NULL DROP PROCEDURE INSERT_COMPANY
-IF OBJECT_ID('INSERT_CATEGORYLOCATION')			IS NOT NULL DROP PROCEDURE INSERT_CATEGORYLOCATION
-IF OBJECT_ID('INSERT_LOCATIONHOURS')			IS NOT NULL DROP PROCEDURE INSERT_LOCATIONHOURS
-IF OBJECT_ID('GET_MAIN_BANNER')					IS NOT NULL DROP PROCEDURE GET_MAIN_BANNER
-IF OBJECT_ID('GET_COMPANY_INFO')				IS NOT NULL DROP PROCEDURE GET_COMPANY_INFO
-IF OBJECT_ID('GET_ALL_MAIN_BANNERS')			IS NOT NULL DROP PROCEDURE GET_ALL_MAIN_BANNERS
-IF OBJECT_ID('SELECT_LOCATION')					IS NOT NULL DROP PROCEDURE SELECT_LOCATION
-IF OBJECT_ID('INSERT_NEW_USER')					IS NOT NULL	DROP PROCEDURE INSERT_NEW_USER
-IF OBJECT_ID('SELECT_STATES')					IS NOT NULL	DROP PROCEDURE SELECT_STATES
-IF OBJECT_ID('DELETE_LOCATION')					IS NOT NULL	DROP PROCEDURE DELETE_LOCATION
-IF OBJECT_ID('INSERT_NEW_MAIN_BANNER')			IS NOT NULL	DROP PROCEDURE INSERT_NEW_MAIN_BANNER
-IF OBJECT_ID('REUSE_MAIN_BANNER')				IS NOT NULL	DROP PROCEDURE REUSE_MAIN_BANNER
-IF OBJECT_ID('DELETE_COMPANY')					IS NOT NULL	DROP PROCEDURE DELETE_COMPANY
-IF OBJECT_ID('GET_LOCATIONS')					IS NOT NULL	DROP PROCEDURE GET_LOCATIONS
-IF OBJECT_ID('GET_SPECIFIC_COMPANY')			IS NOT NULL DROP PROCEDURE GET_SPECIFIC_COMPANY
-IF OBJECT_ID('SELECT_ALLCATEGORY_FORLOCATION') IS NOT NULL DROP PROCEDURE SELECT_ALLCATEGORY_FORLOCATION
-IF OBJECT_ID('SELECT_LOCATION_BYCATEGORY')		IS NOT NULL DROP PROCEDURE SELECT_LOCATION_BYCATEGORY
-IF OBJECT_ID ('SELECT_LOCATION_SPECIALS')		IS NOT NULL DROP PROCEDURE SELECT_LOCATION_SPECIALS
-IF OBJECT_ID('SELECT_LOCATION_CONTACTS') IS NOT NULL DROP PROCEDURE SELECT_LOCATION_CONTACTS
-IF OBJECT_ID('SELECT_LOCATION_SOCIALMEDIA') IS NOT NULL DROP PROCEDURE SELECT_LOCATION_SOCIALMEDIA
-IF OBJECT_ID('SELECT_LOCATION_WEBSITE') IS NOT NULL DROP PROCEDURE SELECT_LOCATION_WEBSITE
-IF OBJECT_ID('SELECT_USERLOCATION_ASSOCIATION') IS NOT NULL DROP PROCEDURE SELECT_USERLOCATION_ASSOCIATION
-IF OBJECT_ID('GET_LOCATIONS_NOT_CONTACT') IS NOT NULL DROP PROCEDURE GET_LOCATIONS_NOT_CONTACT
-IF OBJECT_ID('GET_CONTACTS_BY_COMPANY') IS NOT NULL DROP PROCEDURE GET_CONTACTS_BY_COMPANY
-IF OBJECT_ID('GET_NOT_CATEGORIES') IS NOT NULL DROP PROCEDURE GET_NOT_CATEGORIES
-IF OBJECT_ID('GET_CURRENT_CATEGORIES') IS NOT NULL DROP PROCEDURE GET_CURRENT_CATEGORIES
-IF OBJECT_ID('DELETE_CATEGORY_FROM_LOCATION') IS NOT NULL DROP PROCEDURE DELETE_CATEGORY_FROM_LOCATION
-IF OBJECT_ID('INSERT_SPECIALLOCATION') IS NOT NULL DROP PROCEDURE INSERT_SPECIALLOCATION
-IF OBJECT_ID('INSERT_SPECIAL') IS NOT NULL DROP PROCEDURE INSERT_SPECIAL
-IF OBJECT_ID('DELETE_SPECIALLOCATION') IS NOT NULL DROP PROCEDURE DELETE_SPECIALLOCATION
-IF OBJECT_ID('GET_TOTAL_REQUESTS') IS NOT NULL DROP PROCEDURE GET_TOTAL_REQUESTS
-IF OBJECT_ID('UPDATE_USER') IS NOT NULL DROP PROCEDURE UPDATE_USER 
+IF OBJECT_ID('LOGIN')								IS NOT NULL DROP PROCEDURE LOGIN 
+IF OBJECT_ID('VERIFY_MEMBER')						IS NOT NULL DROP PROCEDURE VERIFY_MEMBER
+IF OBJECT_ID('INSERT_WEBSITE')						IS NOT NULL DROP PROCEDURE INSERT_WEBSITE
+IF OBJECT_ID('INSERT_CONTACTPERSON')				IS NOT NULL DROP PROCEDURE INSERT_CONTACTPERSON
+IF OBJECT_ID('INSERT_SOCIALMEDIA')					IS NOT NULL DROP PROCEDURE INSERT_SOCIALMEDIA
+IF OBJECT_ID('INSERT_LOCATION')						IS NOT NULL DROP PROCEDURE INSERT_LOCATION
+IF OBJECT_ID('INSERT_COMPANY')						IS NOT NULL DROP PROCEDURE INSERT_COMPANY
+IF OBJECT_ID('INSERT_CATEGORYLOCATION')				IS NOT NULL DROP PROCEDURE INSERT_CATEGORYLOCATION
+IF OBJECT_ID('INSERT_LOCATIONHOURS')				IS NOT NULL DROP PROCEDURE INSERT_LOCATIONHOURS
+IF OBJECT_ID('GET_MAIN_BANNER')						IS NOT NULL DROP PROCEDURE GET_MAIN_BANNER
+IF OBJECT_ID('GET_COMPANY_INFO')					IS NOT NULL DROP PROCEDURE GET_COMPANY_INFO
+IF OBJECT_ID('GET_ALL_MAIN_BANNERS')				IS NOT NULL DROP PROCEDURE GET_ALL_MAIN_BANNERS
+IF OBJECT_ID('SELECT_LOCATION')						IS NOT NULL DROP PROCEDURE SELECT_LOCATION
+IF OBJECT_ID('INSERT_NEW_USER')						IS NOT NULL	DROP PROCEDURE INSERT_NEW_USER
+IF OBJECT_ID('SELECT_STATES')						IS NOT NULL	DROP PROCEDURE SELECT_STATES
+IF OBJECT_ID('DELETE_LOCATION')						IS NOT NULL	DROP PROCEDURE DELETE_LOCATION
+IF OBJECT_ID('INSERT_NEW_MAIN_BANNER')				IS NOT NULL	DROP PROCEDURE INSERT_NEW_MAIN_BANNER
+IF OBJECT_ID('REUSE_MAIN_BANNER')					IS NOT NULL	DROP PROCEDURE REUSE_MAIN_BANNER
+IF OBJECT_ID('DELETE_COMPANY')						IS NOT NULL	DROP PROCEDURE DELETE_COMPANY
+IF OBJECT_ID('GET_LOCATIONS')						IS NOT NULL	DROP PROCEDURE GET_LOCATIONS
+IF OBJECT_ID('GET_SPECIFIC_COMPANY')				IS NOT NULL DROP PROCEDURE GET_SPECIFIC_COMPANY
+IF OBJECT_ID('SELECT_ALLCATEGORY_FORLOCATION') 		IS NOT NULL DROP PROCEDURE SELECT_ALLCATEGORY_FORLOCATION
+IF OBJECT_ID('SELECT_LOCATION_BYCATEGORY')			IS NOT NULL DROP PROCEDURE SELECT_LOCATION_BYCATEGORY
+IF OBJECT_ID ('SELECT_LOCATION_SPECIALS')			IS NOT NULL DROP PROCEDURE SELECT_LOCATION_SPECIALS
+IF OBJECT_ID('SELECT_LOCATION_CONTACTS') 			IS NOT NULL DROP PROCEDURE SELECT_LOCATION_CONTACTS
+IF OBJECT_ID('SELECT_LOCATION_SOCIALMEDIA') 		IS NOT NULL DROP PROCEDURE SELECT_LOCATION_SOCIALMEDIA
+IF OBJECT_ID('SELECT_LOCATION_WEBSITE') 			IS NOT NULL DROP PROCEDURE SELECT_LOCATION_WEBSITE
+IF OBJECT_ID('SELECT_USERLOCATION_ASSOCIATION') 	IS NOT NULL DROP PROCEDURE SELECT_USERLOCATION_ASSOCIATION
+IF OBJECT_ID('GET_LOCATIONS_NOT_CONTACT') 			IS NOT NULL DROP PROCEDURE GET_LOCATIONS_NOT_CONTACT
+IF OBJECT_ID('GET_CONTACTS_BY_COMPANY') 			IS NOT NULL DROP PROCEDURE GET_CONTACTS_BY_COMPANY
+IF OBJECT_ID('GET_NOT_CATEGORIES') 					IS NOT NULL DROP PROCEDURE GET_NOT_CATEGORIES
+IF OBJECT_ID('GET_CURRENT_CATEGORIES') 				IS NOT NULL DROP PROCEDURE GET_CURRENT_CATEGORIES
+IF OBJECT_ID('DELETE_CATEGORY_FROM_LOCATION') 		IS NOT NULL DROP PROCEDURE DELETE_CATEGORY_FROM_LOCATION
+IF OBJECT_ID('INSERT_SPECIALLOCATION') 				IS NOT NULL DROP PROCEDURE INSERT_SPECIALLOCATION
+IF OBJECT_ID('INSERT_SPECIAL') 						IS NOT NULL DROP PROCEDURE INSERT_SPECIAL
+IF OBJECT_ID('DELETE_SPECIALLOCATION') 				IS NOT NULL DROP PROCEDURE DELETE_SPECIALLOCATION
+IF OBJECT_ID('GET_TOTAL_REQUESTS') 					IS NOT NULL DROP PROCEDURE GET_TOTAL_REQUESTS
+IF OBJECT_ID('UPDATE_USER') 						IS NOT NULL DROP PROCEDURE UPDATE_USER 
+IF OBJECT_ID('INSERT_TEMP_WEBSITE')					IS NOT NULL DROP PROCEDURE INSERT_TEMP_WEBSITE
+IF OBJECT_ID('INSERT_TEMP_CONTACTPERSON')			IS NOT NULL DROP PROCEDURE INSERT_TEMP_CONTACTPERSON
+IF OBJECT_ID('INSERT_TEMP_SOCIALMEDIA')				IS NOT NULL DROP PROCEDURE INSERT_TEMP_SOCIALMEDIA
+IF OBJECT_ID('INSERT_TEMP_LOCATION')				IS NOT NULL DROP PROCEDURE INSERT_TEMP_LOCATION
+IF OBJECT_ID('INSERT_TEMP_COMPANY')					IS NOT NULL DROP PROCEDURE INSERT_TEMP_COMPANY   
+IF OBJECT_ID('INSERT_TEMP_CATEGORYLOCATION')		IS NOT NULL DROP PROCEDURE INSERT_TEMP_CATEGORYLOCATION
+IF OBJECT_ID('INSERT_TEMP_LOCATIONHOURS')			IS NOT NULL DROP PROCEDURE INSERT_TEMP_LOCATIONHOURS
+IF OBJECT_ID('INSERT_ADMIN_REQUEST')				IS NOT NULL DROP PROCEDURE INSERT_ADMIN_REQUEST
+IF OBJECT_ID('INSERT_CONTACTLOCATION_RELATIONSHIP') IS NOT NULL DROP PROCEDURE INSERT_CONTACTLOCATION_RELATIONSHIP
+IF OBJECT_ID('INSERT_TEMP_CONTACTLOCATION')			IS NOT NULL DROP PROCEDURE INSERT_TEMP_CONTACTLOCATION
+IF OBJECT_ID('SELECT_ADMINREQUESTS')				IS NOT NULL DROP PROCEDURE SELECT_ADMINREQUESTS
+IF OBJECT_ID('SELECT_TEMP_LOCATION')				IS NOT NULL DROP PROCEDURE SELECT_TEMP_LOCATION
+IF OBJECT_ID('SELECT_ALLCATEGORY_FORTEMPLOCATION')	IS NOT NULL DROP PROCEDURE SELECT_ALLCATEGORY_FORTEMPLOCATION
+IF OBJECT_ID('SELECT_LOCATIONHOURS')				IS NOT NULL DROP PROCEDURE SELECT_LOCATIONHOURS
+IF OBJECT_ID('SELECT_TEMP_LOCATIONHOURS')			IS NOT NULL DROP PROCEDURE SELECT_TEMP_LOCATIONHOURS
+IF OBJECT_ID('SELECT_TEMP_LOCATION_CONTACTS')		IS NOT NULL DROP PROCEDURE SELECT_TEMP_LOCATION_CONTACTS
+IF OBJECT_ID('SELECT_TEMP_LOCATION_SOCIALMEDIA')	IS NOT NULL DROP PROCEDURE SELECT_TEMP_LOCATION_SOCIALMEDIA
+IF OBJECT_ID('SELECT_TEMP_LOCATION_WEBSITE')		IS NOT NULL DROP PROCEDURE SELECT_TEMP_LOCATION_WEBSITE
+IF OBJECT_ID('CHECK_IF_MEMBERLOCATION')				IS NOT NULL DROP PROC CHECK_IF_MEMBERLOCATION
+IF OBJECT_ID ('SELECT_LOCATION_AWARDS')				IS NOT NULL DROP PROCEDURE SELECT_LOCATION_AWARDS
+
+CREATE TABLE tblTempCompany   
+(
+	intCompanyID		BIGINT IDENTITY(1,1)	NOT NULL, 
+	strCompanyName		NVARCHAR(50)			NOT NULL, 
+	strAbout			NVARCHAR(2000)				NOT NULL, 
+	strBizYear			NVARCHAR(10),
+	CONSTRAINT tblTempCompany_PK PRIMARY KEY (intCompanyID)
+)
+
+CREATE TABLE tblTempLocationHours   
+(
+	intLocationHoursID	BIGINT IDENTITY(1,1)	NOT NULL, 
+	intLocationID		BIGINT					NOT NULL, 
+	intDayID			SMALLINT				NOT NULL, 
+	strOpen				NVARCHAR(100), 
+	strClose			NVARCHAR(100), 
+	CONSTRAINT tblTempLocationHours_PK PRIMARY KEY (intLocationHoursID)
+)
+
+CREATE TABLE tblTempCompanySocialMedia   
+(
+	intCompanySocialMediaID BIGINT IDENTITY NOT NULL,
+	strSocialMediaLink		NVARCHAR(100)	NOT NULL,
+	intCompanyID			BIGINT			NOT NULL,
+	intSocialMediaID		SMALLINT		NOT NULL,
+	CONSTRAINT tblTempCompanySocialMedia_PK PRIMARY KEY (intCompanySocialMediaID)
+)
+
+CREATE TABLE tblTempLocation
+(
+	intLocationID		BIGINT IDENTITY(1,1)	NOT NULL, 
+	intCompanyID		BIGINT					NOT NULL, 
+	strAddress			NVARCHAR(100)			NOT NULL, 
+	strCity				NVARCHAR(20)			NOT NULL, 
+	intStateID			SMALLINT				NOT NULL, 
+	strZip				NVARCHAR(15)			NOT NULL,
+	strPhone			NVARCHAR(20)			NOT NULL,
+	strEmail			NVARCHAR(50),
+	intAdminRequestID	SMALLINT				NOT NULL,
+	CONSTRAINT tblTempLocation_PK PRIMARY KEY (intLocationID)
+)
+
+CREATE TABLE tblTempContactLocation
+(
+	intContactLocationID BIGINT IDENTITY(1,1)	NOT NULL,
+	intLocationID		BIGINT					NOT NULL,
+	intContactPersonID		BIGINT 				NOT NULL,
+	CONSTRAINT tblTempContactLocation_PK PRIMARY KEY (intContactLocationID)
+)
+
+CREATE TABLE tblTempContactPerson
+(
+	intContactPersonID		BIGINT IDENTITY(1,1)	NOT NULL,
+	strContactName		NVARCHAR(50)				NOT NULL,
+	strContactPhone			NVARCHAR(20)		,
+	strContactEmail			NVARCHAR(50)		,
+	intCompanyID			BIGINT				NOT NULL,
+	intContactPersonTypeID	SMALLINT			NOT NULL,
+	CONSTRAINT tblTempContactPerson_PK PRIMARY KEY (intContactPersonID)
+)
+
+CREATE TABLE tblTempCategoryLocation
+(
+	intCategoryLocationID		BIGINT IDENTITY(1,1)	NOT NULL,
+	intCategoryID			SMALLINT		NOT NULL,
+	intLocationID			BIGINT			NOT NULL,
+	CONSTRAINT tblTempCategoryLocation_PK PRIMARY KEY (intCategoryLocationID)
+)
+
+CREATE TABLE tblTempWebsite
+(
+	intWebsiteID			BIGINT IDENTITY(1,1)		NOT NULL, 
+	intCompanyID			BIGINT				NOT NULL,
+	strURL				NVARCHAR(100)			NOT NULL, 
+	intWebsiteTypeID	SMALLINT				NOT NULL,
+	CONSTRAINT tblTempWebsite_PK PRIMARY KEY (intWebsiteID)
+)
+
+CREATE TABLE tblTempState
+(
+	intStateID		SMALLINT IDENTITY(1,1)	NOT NULL,
+	strState		NVARCHAR(20)		NOT NULL, 
+	CONSTRAINT tblTempState_PK PRIMARY KEY (intStateID)
+)
+
+
+CREATE TABLE tblTempCategory
+(
+	intCategoryID		SMALLINT IDENTITY(1,1)	NOT NULL, 
+	strCategory			NVARCHAR(50)		NOT NULL, 
+	CONSTRAINT tblTempCategory_PK PRIMARY KEY (intCategoryID)
+)
+
+CREATE TABLE tblTempDay
+(
+	intDayID		SMALLINT IDENTITY(1,1)	NOT NULL, 
+	strDay			NVARCHAR(20)		NOT NULL, 
+	CONSTRAINT tblTempDay_PK PRIMARY KEY (intDayID)
+)
+
+CREATE TABLE tblTempContactPersonType
+(
+	intContactPersonTypeID		SMALLINT IDENTITY(1,1)	NOT NULL,
+	strContactPersonType		NVARCHAR(50)			NOT NULL,
+	CONSTRAINT tblTempContactPersonType_PK PRIMARY KEY (intContactPersonTypeID)
+)
+
+CREATE TABLE tblTempSocialMedia
+(
+	intSocialMediaID		SMALLINT IDENTITY (1,1) NOT NULL,
+	strPlatform				NVARCHAR(50)			NOT NULL,
+	CONSTRAINT tblTempSocialMedia_PK PRIMARY KEY (intSocialMediaID)
+)
+
+CREATE TABLE tblTempWebsiteType
+(
+	intWebsiteTypeID  SMALLINT IDENTITY(1,1) NOT NULL,
+	strWebsiteType		VARCHAR(20)			NOT NULL,
+	CONSTRAINT tblTempWebsiteType_PK PRIMARY KEY (intWebsiteTypeID)
+)
 
 CREATE TABLE tblState
 (
@@ -299,41 +456,69 @@ CREATE TABLE tblMainBanner
 	CONSTRAINT tblMainBanner_PK PRIMARY KEY (intMainBannerID)
 )
 
+CREATE TABLE tblAdminRequest
+(
+	intAdminRequestID		SMALLINT IDENTITY(1,1)		NOT NULL,
+	intMemberID			SMALLINT			NOT NULL,
+	strRequestType			NVARCHAR(50)			NOT NULL, 
+	strRequestedChange		NVARCHAR(500)			NOT NULL,
+	intApprovalStatusID		SMALLINT			NOT NULL,
+	CONSTRAINT tblAdminRequest_PK PRIMARY KEY (intAdminRequestID)
+)
+
+CREATE TABLE tblApprovalStatus
+(
+	intApprovalStatusID		SMALLINT IDENTITY(1,1)	NOT NULL,
+	strApprovalStatus		NVARCHAR(20)		NOT NULL, 
+	CONSTRAINT tblApprovalStatus_PK PRIMARY KEY (intApprovalStatusID)
+)
+
 -------------------------------------------------------------------------------------------------------------------------------
 -- FOREIGN KEYS 
 -------------------------------------------------------------------------------------------------------------------------------
 
 -- CHILD					PARENT					COLUMN(s)
 -- -----					-----					------
--- tblUser					tblState				intStateID
--- tblMember				tblUser					intUserID
--- tblMember				tblMemberLevel			intMemberLevelID
--- tblMember				tblPaymentType			intPaymentTypeID
--- tblCompanyMember			tblCompany				intCompanyID
--- tblCompanyMember			tblMember				intMemberID
--- tblLocation				tblCompany				intCompanyID
--- tblLocation				tblState				intStateID
--- tblCategoryLocation		tblCategory				intCategoryID
--- tblCategoryLocation		tblLocation				intLocationID
--- tblEventLocation			tblEvent				intEventID
--- tblEventLocation			tblLocation				intLocationID
--- tblAdminRequest			tblMember				intMemberID
--- tblAdminRequest			tblRequestTable			intRequestTableID
--- tblSpecialLocation		tblSpecial				intSpecialID
--- tblSpecialLocation		tblLocation				intLocationID
--- tblLocationHours			tblLocation				intLocationID
--- tblLocationHours			tblDay					intDayID
--- tblCompanyAward			tblCompany				intCompanyID
--- tblCompanySocialMedia	tblCompany				intCompanyID
--- tblCompanySocialMedia	tblSocialMedia			intSocialMedia
--- tblContactPerson			tblLocation				intLocationID
--- tblContactPerson			tblCompanyID			intCompanyID
--- tblContactPerson			tblContactPersonType	intContactPersonTypeID
--- tblTempMember			tblUser					intUserID
--- tblTempMember			tblMemberLevel			intMemberLevelID
--- tblTempMember			tblPaymentType			intPaymentTypeID
--- tblTempLocation			tblCompany				intCompanyID
--- tblTempLocation			tblState				intStateID
+-- tblUser						tblState				intStateID
+-- tblMember					tblUser					intUserID
+-- tblMember					tblMemberLevel			intMemberLevelID
+-- tblMember					tblPaymentType			intPaymentTypeID
+-- tblCompanyMember				tblCompany				intCompanyID
+-- tblCompanyMember				tblMember				intMemberID
+-- tblLocation					tblCompany				intCompanyID
+-- tblLocation					tblState				intStateID
+-- tblCategoryLocation			tblCategory				intCategoryID
+-- tblCategoryLocation			tblLocation				intLocationID
+-- tblEventLocation				tblEvent				intEventID
+-- tblEventLocation				tblLocation				intLocationID
+-- tblAdminRequest				tblMember				intMemberID
+-- tblAdminRequest				tblRequestTable			intRequestTableID
+-- tblSpecialLocation			tblSpecial				intSpecialID
+-- tblSpecialLocation			tblLocation				intLocationID
+-- tblLocationHours				tblLocation				intLocationID
+-- tblLocationHours				tblDay					intDayID
+-- tblCompanyAward				tblCompany				intCompanyID
+-- tblCompanySocialMedia		tblCompany				intCompanyID
+-- tblCompanySocialMedia		tblSocialMedia			intSocialMedia
+-- tblContactPerson				tblLocation				intLocationID
+-- tblContactPerson				tblCompanyID			intCompanyID
+-- tblContactPerson				tblContactPersonType	intContactPersonTypeID
+-- tblTempMember				tblUser					intUserID
+-- tblTempMember				tblMemberLevel			intMemberLevelID
+-- tblTempMember				tblPaymentType			intPaymentTypeID
+-- tblTempLocation				tblTempCompany			intCompanyID
+-- tblTempLocation				tblTempState			intStateID
+-- tblTempCategoryLocation		tblTempCategory			intCategoryID
+-- tblTempCategoryLocation		tblTempLocation			intLocationID
+-- tblTempLocationHours			tblTempLocation			intLocationID
+-- tblTempLocationHours			tblTempDay				intDayID
+-- tblTempCompanySocialMedia	tblTempCompany			intCompanyID
+-- tblTempCompanySocialMedia	tblTempSocialMedia		intSocialMedia
+-- tblTempContactPerson			tblTempCompanyID		intCompanyID
+-- tblTempContactLocation		tblTempContactPerson	intContactPersonID
+-- tblTempContactLocation		tblTempLocation			intLocationID
+-- tblTempLocation				tblAdminRequest			intAdminRequestID
+-- tblTempContactPerson			tblContactPersonType	intContactPersonTypeID
 
 ALTER TABLE tblUser ADD CONSTRAINT tblUser_tblState_FK
 FOREIGN KEY (intStateID) REFERENCES tblState (intStateID)
@@ -406,6 +591,51 @@ FOREIGN KEY (intCompanyID) REFERENCES tblCompany (intCompanyID)
 
 ALTER TABLE tblContactPerson ADD CONSTRAINT tblContactPerson_tblContactPersonType_FK
 FOREIGN KEY (intContactPersonTypeID) REFERENCES tblContactPersonType (intContactPersonTypeID)
+
+ALTER TABLE tblTempLocation ADD CONSTRAINT tblTempLocation_tblTempCompany_FK
+FOREIGN KEY (intCompanyID) REFERENCES tblTempCompany (intCompanyID)
+
+ALTER TABLE tblTempLocation ADD CONSTRAINT tblTempLocation_tblState_FK
+FOREIGN KEY (intStateID) REFERENCES tblTempState (intStateID)
+
+ALTER TABLE tblTempCategoryLocation ADD CONSTRAINT tblTempCategoryLocation_tblTempCategory_FK
+FOREIGN KEY (intCategoryID) REFERENCES tblTempCategory (intCategoryID)
+
+ALTER TABLE tblTempCategoryLocation ADD CONSTRAINT tblTempCategoryLocation_tblTempLocation_FK
+FOREIGN KEY (intLocationID) REFERENCES tblTempLocation (intLocationID)
+
+ALTER TABLE tblTempLocationHours ADD CONSTRAINT tblTempLocationHours_tblTempLocation_FK
+FOREIGN KEY (intLocationID) REFERENCES tblTempLocation (intLocationID)
+
+ALTER TABLE tblTempLocationHours ADD CONSTRAINT tblTempLocationHours_tblTempDay_FK
+FOREIGN KEY (intDayID) REFERENCES tblTempDay (intDayID)
+
+ALTER TABLE tblTempCompanySocialMedia ADD CONSTRAINT tblTempCompanySocialMedia_tblTempCompany_FK
+FOREIGN KEY (intCompanyID) REFERENCES tblTempCompany (intCompanyID)
+
+ALTER TABLE tblTempCompanySocialMedia ADD CONSTRAINT tblTempCompanySocialMedia_tblTempSocialMedia_FK
+FOREIGN KEY (intSocialMediaID) REFERENCES tblTempSocialMedia (intSocialMediaID)
+
+ALTER TABLE tblTempWebsite ADD CONSTRAINT tblTempWebsite_tblTempWebsiteType_FK
+FOREIGN KEY (intWebsiteTypeID) REFERENCES tblTempWebsiteType (intWebsiteTypeID)
+
+ALTER TABLE tblTempWebsite ADD CONSTRAINT tblTempWebsite_tblTempCompany_FK
+FOREIGN KEY (intCompanyID) REFERENCES tblTempCompany (intCompanyID)
+
+ALTER TABLE tblTempContactPerson ADD CONSTRAINT tblTempContactPerson_tblTempCompany_FK
+FOREIGN KEY (intCompanyID) REFERENCES tblTempCompany (intCompanyID)
+
+ALTER TABLE tblTempContactLocation ADD CONSTRAINT tblTempContactLocation_tblTempContactPerson_FK
+FOREIGN KEY (intContactPersonID) REFERENCES tblTempContactPerson (intContactPersonID)
+
+ALTER TABLE tblTempContactLocation ADD CONSTRAINT tblTempContactLocation_tblTempLocation_FK
+FOREIGN KEY (intLocationID) REFERENCES tblTempLocation (intLocationID)
+
+ALTER TABLE tblTempLocation ADD CONSTRAINT tblTempLocation_tblAdminRequest_FK
+FOREIGN KEY (intAdminRequestID) REFERENCES tblAdminRequest (intAdminRequestID)
+
+ALTER TABLE tblTempContactPerson ADD CONSTRAINT tblTempContactPerson_tblTempContactPersonType_FK
+FOREIGN KEY (intContactPersonTypeID) REFERENCES tblTempContactPersonType (intContactPersonTypeID)
 
 -- -----------------------------------------------------------------------------------------
 -- STORED PROCEDURES 
@@ -1175,6 +1405,458 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [dbo].[SELECT_TEMP_LOCATION_WEBSITE]
+@intLocationID BIGINT = NULL
+AS 
+BEGIN
+	SET NOCOUNT ON;
+	
+	IF @intLocationID IS NOT NULL
+	BEGIN
+		SELECT * FROM db_owner.tblTempWebsite AS Website
+		JOIN db_owner.tblTempWebsiteType AS WebType
+		ON Website.intWebsiteTypeID = WebType.intWebsiteTypeID
+		JOIN db_owner.tblTempLocation AS Loc
+		ON Loc.intCompanyID = Website.intCompanyID
+		WHERE intLocationID = @intLocationID
+	END
+END
+GO
+
+CREATE PROCEDURE [dbo].[SELECT_LOCATION_AWARDS]
+@intLocationID BIGINT = NULL
+AS 
+BEGIN
+	SET NOCOUNT ON;
+	
+	IF @intLocationID IS NOT NULL
+	BEGIN
+		SELECT *
+		FROM db_owner.tblCompanyAward AS compAwards
+		JOIN db_owner.tblCompany AS comp
+		ON comp.intCompanyID = compAwards.intCompanyID
+		JOIN db_owner.tblLocation AS loc
+		ON loc.intCompanyID = comp.intCompanyID
+		WHERE [intLocationID] = @intLocationID;
+	END
+END
+GO
+
+CREATE PROCEDURE [dbo].[SELECT_TEMP_LOCATION_CONTACTS]
+@intLocationID BIGINT = NULL
+AS 
+BEGIN
+	SET NOCOUNT ON;
+	
+	IF @intLocationID IS NOT NULL
+	BEGIN
+		SELECT * FROM db_owner.tblTempContactPerson AS person
+		JOIN db_owner.tblTempContactPersonType AS type
+		ON type.intContactPersonTypeID = person.intContactPersonTypeID
+		JOIN db_owner.tblTempContactLocation as LocCon
+		ON LocCon.intContactPersonID = person.intContactPersonID
+		WHERE intLocationID = @intLocationID
+	END
+END
+GO
+
+CREATE PROCEDURE [dbo].[SELECT_TEMP_LOCATION_SOCIALMEDIA]
+@intLocationID BIGINT = NULL
+AS 
+BEGIN
+	SET NOCOUNT ON;
+	
+	IF @intLocationID IS NOT NULL
+	BEGIN
+		SELECT * FROM db_owner.tblTempCompanySocialMedia AS compSocMed
+		JOIN db_owner.tblTempLocation AS Loc
+		ON Loc.intCompanyID = compSocMed.intCompanyID
+		JOIN db_owner.tblTempSocialMedia AS SocMed
+		ON SocMed.intSocialMediaID = compSocMed.intSocialMediaID
+		WHERE Loc.intLocationID = @intLocationID
+	END
+END
+GO
+
+CREATE PROCEDURE [dbo].[INSERT_TEMP_COMPANY]
+@intCompanyID AS BIGINT OUTPUT
+,@strCompanyName AS NVARCHAR(50)
+,@strAbout AS NVARCHAR(2000)
+,@strBizYear NVARCHAR(10)
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+
+	DECLARE @COUNT AS TINYINT
+
+	--DONT ALLOW MORE THAN ONE COMPANY NAME IN THIS TABLE
+	SELECT @COUNT=COUNT(*) FROM db_owner.tblTempCompany  WHERE strCompanyName = @strCompanyName
+	IF @COUNT >0 RETURN -1 --COMPANY NAME EXISTS
+
+	INSERT INTO [db_owner].[tblTempCompany] WITH (TABLOCKX)
+				([strCompanyName]
+				,[strAbout]
+				,[strBizYear])
+			VALUES
+				(@strCompanyName
+				,@strAbout
+				,@strBizYear)
+	SELECT @intCompanyID=@@IDENTITY
+	RETURN 1
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[SELECT_TEMP_LOCATION]
+@intAdminRequestKey SMALLINT = NULL
+AS 
+BEGIN
+	SET NOCOUNT ON;
+	
+	IF @intAdminRequestKey IS NOT NULL
+	BEGIN
+		SELECT *
+		FROM db_owner.tblTempLocation as Loc
+		JOIN db_owner.tblTempCompany as Comp
+		ON Comp.intCompanyID = Loc.intCompanyID
+		JOIN db_owner.tblTempState as St
+		ON St.intStateID = Loc.intStateID
+		WHERE [intAdminRequestID] = @intAdminRequestKey
+	END
+END
+GO
+
+CREATE PROCEDURE [dbo].[INSERT_TEMP_WEBSITE]
+@intWebsiteID AS BIGINT OUTPUT
+,@intCompanyID AS BIGINT
+,@strURL AS NVARCHAR(100)
+,@intWebsiteTypeID AS SMALLINT
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+
+	DECLARE @COUNT AS TINYINT
+
+	--DONT ALLOW MORE THAN ONE COMPANY NAME IN THIS TABLE
+	SELECT @COUNT=COUNT(*) FROM db_owner.tblTempWebsite  WHERE intCompanyID = @intCompanyID AND strURL = @strURL 
+	IF @COUNT >0 RETURN -1 --COMPANY WEBPAGE CONNECTION ALREADY EXISTS
+
+	INSERT INTO [db_owner].[tblTempWebsite] WITH (TABLOCKX)
+				([intCompanyID]
+				,[strURL]
+				,[intWebsiteTypeID])
+			VALUES
+				(@intCompanyID
+				,@strURL
+				,@intWebsiteTypeID)
+	SELECT @intWebsiteID=@@IDENTITY
+	RETURN 1
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[INSERT_TEMP_CONTACTPERSON]
+@intContactPersonID AS BIGINT OUTPUT
+,@PROC_TEST AS INT OUTPUT
+,@strContactName AS NVARCHAR(50)
+,@strContactPhone AS NVARCHAR(20)
+,@strContactEmail AS NVARCHAR(50)
+,@intCompanyID AS BIGINT
+,@intContactPersonTypeID AS SMALLINT
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+	
+	DECLARE @COUNT AS TINYINT
+
+	SELECT @COUNT=COUNT(*) FROM db_owner.tblTempContactPerson  WHERE strContactName = @strContactName AND intCompanyID = @intCompanyID AND strContactEmail = @strContactEmail
+	IF @COUNT >0 
+		BEGIN
+			SET @intContactPersonID = -1
+			SET @PROC_TEST = -1 
+			RETURN
+		END
+	ELSE
+		BEGIN
+			INSERT INTO [db_owner].[tblTempContactPerson] WITH (TABLOCKX)
+						([strContactName]
+						,[strContactPhone]
+						,[strContactEmail]
+						,[intCompanyID]
+						,[intContactPersonTypeID])
+					VALUES
+						(@strContactName
+						,@strContactPhone
+						,@strContactEmail
+						,@intCompanyID
+						,@intContactPersonTypeID)
+			SELECT @intContactPersonID=@@IDENTITY
+			SET @PROC_TEST = 1
+		END
+END
+GO	
+
+CREATE PROCEDURE [dbo].[INSERT_TEMP_CONTACTLOCATION]
+@intContactLocationID AS BIGINT OUTPUT
+,@PROC_TEST AS INT OUTPUT
+,@intLocationID AS BIGINT
+,@intContactPersonID AS BIGINT
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+
+	DECLARE @COUNT AS TINYINT
+
+	SELECT @COUNT=COUNT(*) FROM db_owner.tblTempContactLocation  WHERE intLocationID = @intLocationID AND intContactPersonID = @intContactPersonID
+	IF @COUNT >0 
+		BEGIN
+			SET @intContactPersonID = -1
+			SET @PROC_TEST = -1 
+			RETURN
+		END
+	ELSE
+		BEGIN
+			INSERT INTO [db_owner].[tblTempContactLocation] WITH (TABLOCKX)
+				([intLocationID]
+				,[intContactPersonID])
+			VALUES
+				(@intLocationID
+				,@intContactPersonID)
+			SELECT @intContactLocationID=@@IDENTITY
+			SET @PROC_TEST = 1
+		END
+END
+GO
+
+CREATE PROCEDURE[dbo].[INSERT_CONTACTLOCATION_RELATIONSHIP]
+@strContactName AS NVARCHAR(50)
+,@strContactPhone AS NVARCHAR(20)
+,@strContactEmail AS NVARCHAR(50)
+,@intCompanyID AS BIGINT
+,@intContactPersonTypeID AS SMALLINT
+,@intLocationID AS BIGINT
+,@intContactPersonID AS BIGINT OUTPUT
+,@intContactLocationID AS BIGINT OUTPUT
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+	DECLARE @PROC_TEST AS INT
+	EXECUTE dbo.INSERT_TEMP_CONTACTPERSON @intContactPersonID OUTPUT, @PROC_TEST OUTPUT, @strContactName, @strContactPhone, @strContactEmail, @intCompanyID, @intContactPersonTypeID
+END
+BEGIN
+	EXECUTE dbo.INSERT_TEMP_CONTACTLOCATION @intContactLocationID OUTPUT, @PROC_TEST OUTPUT, @intLocationID, @intContactPersonID
+END
+IF @PROC_TEST = -1
+	RETURN -1
+ELSE
+	RETURN 1
+GO
+
+CREATE PROCEDURE [dbo].[INSERT_TEMP_LOCATION]
+@intLocationID AS BIGINT OUTPUT
+,@intAdminRequestID AS SMALLINT
+,@intCompanyID AS BIGINT
+,@strAddress AS NVARCHAR(100)
+,@strCity AS NVARCHAR(20)
+,@intStateID AS SMALLINT
+,@strZip NVARCHAR(15)
+,@strPhone NVARCHAR(20)
+,@strEmail NVARCHAR(50)
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+
+	DECLARE @COUNT AS TINYINT
+
+	--DONT ALLOW MORE THAN ONE EXACT ADDRESS IN THIS TABLE
+	SELECT @COUNT=COUNT(*) FROM db_owner.tblTempLocation  WHERE strAddress = @strAddress AND strZip = @strZip
+	IF @COUNT >0 RETURN -1 --Location already exists
+
+	INSERT INTO [db_owner].[tblTempLocation] WITH (TABLOCKX)
+				([intCompanyID]
+				,[strAddress]
+				,[strCity]
+				,[intStateID]
+				,[strZip]
+				,[strPhone]
+				,[strEmail]
+				,[intAdminRequestID])
+			VALUES
+				(@intCompanyID
+				,@strAddress
+				,@strCity
+				,@intStateID
+				,@strZip
+				,@strPhone
+				,@strEmail
+				,@intAdminRequestID)
+	SELECT @intLocationID=@@IDENTITY
+	RETURN 1
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[INSERT_ADMIN_REQUEST]
+@intAdminRequestID AS SMALLINT OUTPUT
+,@intMemberID AS SMALLINT
+,@strRequestType AS NVARCHAR(100)
+,@strRequestedChange AS NVARCHAR(20)
+,@intApprovalStatusID AS SMALLINT
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+
+	--DONT ALLOW MORE THAN ONE EXACT ADDRESS IN THIS TABLE
+
+	INSERT INTO [db_owner].[tblAdminRequest] WITH (TABLOCKX)
+				([intMemberID]
+				,[strRequestType]
+				,[strRequestedChange]
+				,[intApprovalStatusID])
+			VALUES
+				(@intMemberID
+				,@strRequestType
+				,@strRequestedChange
+				,@intApprovalStatusID)
+	SELECT @intAdminRequestID=@@IDENTITY
+	RETURN 1
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[INSERT_TEMP_SOCIALMEDIA]
+@intCompanySocialMediaID AS BIGINT OUTPUT
+,@strSocialMediaLink AS NVARCHAR(100)
+,@intCompanyID AS BIGINT
+,@intSocialMediaID AS SMALLINT
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+
+	DECLARE @COUNT AS TINYINT
+
+	SELECT @COUNT=COUNT(*) FROM db_owner.tblTempCompanySocialMedia WHERE intSocialMediaID = @intSocialMediaID AND intCompanyID = @intCompanyID
+	IF @COUNT >0 RETURN -1 --SOCIAL MEDIA ACCOUNT ALREADY EXISTS FOR COMPANY
+
+	INSERT INTO [db_owner].[tblTempCompanySocialMedia] WITH (TABLOCKX)
+				([strSocialMediaLink]
+				,[intCompanyID]
+				,[intSocialMediaID])
+			VALUES
+				(@strSocialMediaLink
+				,@intCompanyID
+				,@intSocialMediaID)
+	SELECT @intCompanySocialMediaID=@@IDENTITY
+	RETURN 1
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[INSERT_TEMP_CATEGORYLOCATION]
+@intCategoryLocationID AS BIGINT OUTPUT
+,@intCategoryID AS SMALLINT
+,@intLocationID AS BIGINT
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+
+	DECLARE @COUNT AS TINYINT
+
+	--DONT ALLOW MORE THAN ONE EXACT ADDRESS IN THIS TABLE
+	SELECT @COUNT=COUNT(*) FROM db_owner.tblTempCategoryLocation  WHERE intCategoryID = @intCategoryID AND intLocationID = @intLocationID
+	IF @COUNT >0 RETURN -1 --CATEGORY NAME ALREADY EXISTS FOR LOCATION
+
+	INSERT INTO [db_owner].[tblTempCategoryLocation] WITH (TABLOCKX)
+				([intCategoryID]
+				,[intLocationID])
+			VALUES
+				(@intCategoryID
+				,@intLocationID)
+	SELECT @intCategoryLocationID=@@IDENTITY
+	RETURN 1
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[INSERT_TEMP_LOCATIONHOURS]
+@intLocationHoursID AS BIGINT OUTPUT
+,@intLocationID AS SMALLINT
+,@intDayID AS BIGINT
+,@strOpen AS NVARCHAR(100)
+,@strClose AS NVARCHAR(100)
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+
+	DECLARE @COUNT AS TINYINT
+
+	--DONT ALLOW MORE THAN ONE EXACT ADDRESS IN THIS TABLE
+	SELECT @COUNT=COUNT(*) FROM db_owner.tblTempLocationHours  WHERE intLocationID = @intLocationID AND @intDayID = intDayID
+	IF @COUNT >0 RETURN -1 --LOCATION HOURS ALREADY EXIST
+
+	INSERT INTO [db_owner].[tblTempLocationHours] WITH (TABLOCKX)
+				([intLocationID]
+				,[intDayID]
+				,[strOpen]
+				,[strClose])
+			VALUES
+				(@intLocationID
+				,@intDayID
+				,@strOpen
+				,@strClose)
+	SELECT @intLocationHoursID=@@IDENTITY
+	RETURN 1
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[SELECT_TEMP_LOCATIONHOURS]
+@intLocationID BIGINT = NULL
+AS 
+BEGIN
+	SET NOCOUNT ON;
+	
+	IF @intLocationID IS NOT NULL
+	BEGIN
+		SELECT * FROM db_owner.tblTempLocationHours AS LocHours
+		JOIN db_owner.tblTempDay AS Days
+		ON Days.intDayID = LocHours.intDayID
+		WHERE [intLocationID] = @intLocationID
+	END
+END
+GO
+
+CREATE PROC [dbo].CHECK_IF_MEMBERLOCATION
+@intLocationID AS BIGINT = NULL
+AS 
+BEGIN
+	SET NOCOUNT ON
+	BEGIN
+		IF @intLocationID IS NOT NULL
+
+		SELECT DISTINCT mem.intMemberLevelID
+		FROM db_owner.tblMember AS mem
+		JOIN db_owner.tblCompanyMember AS compMem
+		ON compMem.intMemberID = mem.intMemberID
+		JOIN db_owner.tblCompany AS comp
+		ON comp.intCompanyID = compMem.intCompanyID
+		JOIN db_owner.tblLocation AS loc
+		ON loc.intCompanyID = comp.intCompanyID
+		WHERE loc.intLocationID = @intLocationID;
+	END
+END
+GO
+
 -- -----------------------------------------------------------------------------------------
 -- ADD TEST DATA
 -- -----------------------------------------------------------------------------------------
@@ -1413,3 +2095,86 @@ VALUES		(6, 1),
 			(13, 4),
 			(15, 4),
 			(16, 4)
+
+INSERT INTO tblTempContactPersonType (strContactPersonType)
+VALUES			('Location Contact')
+				,('Web Admin')
+				,('Customer Service Representative')
+
+INSERT INTO tblTempState (strState)
+VALUES			('Indiana'),
+				('Kentucky'),
+				('Ohio')
+
+INSERT INTO tblTempCategory (strCategory)
+VALUES			('Donuts'), 
+				('Bagels'),
+				('Muffins'),
+				('Ice Cream'),
+				('Fine Candies and Chocolates'),
+				('Wedding Cakes'),
+				('Breads'),
+				('Decorated Cakes'),
+				('Cupcakes'),
+				('Cookies'),
+				('Desserts/Tortes'),
+				('Full-line Bakery'),
+				('Deli/Catering'),
+				('Other'),
+				('Wholesale'),
+				('Delivery (3rd Party)'),
+				('Shipping'),
+				('Online Ordering')
+
+INSERT INTO tblTempDay (strDay)
+VALUES			('Monday'),
+				('Tuesday'),
+				('Wednesday'),
+				('Thursday'),
+				('Friday'),
+				('Saturday'),
+				('Sunday')
+
+INSERT INTO tblTempWebsiteType(strWebsiteType)
+VALUES				('Main')
+					,('Ordering')
+					,('Kettle')
+
+INSERT INTO tblApprovalStatus (strApprovalStatus)
+VALUES						('Not Approved')
+							,('Approved')
+
+INSERT INTO tblAdminRequest(intMemberID, strRequestType, strRequestedChange, intApprovalStatusID)
+VALUES						(3, 'Add', 'Add Location', 1)
+
+INSERT INTO tblTempCompany(strCompanyName, strAbout, strBizYear)
+VALUES						('BIZ1', 'WE ARE BIZ', '2050')
+
+INSERT INTO tblTempLocation (intCompanyID, strAddress, strCity, intStateID, strZip, strPhone, strEmail, intAdminRequestID)
+VALUES							(1, 'MyStreet', 'MyCity', 1, 'MyZip', '5555555555', 'MyEmail@gmail.com', 1)
+
+INSERT INTO tblTempContactPerson(strContactName, strContactPhone, strContactEmail, intCompanyID, intContactPersonTypeID)
+VALUES								('Winslow, Shane', '5555555555', 'winslow.shane2@gmail.com', 1, 1)
+
+INSERT INTO tblTempCategoryLocation (intCategoryID, intLocationID)
+VALUES								(1, 1)
+
+INSERT INTO tblTempLocationHours (intDayID, intLocationID, strOpen, strClose)
+VALUES								(1, 1, '9:00 AM', '10:00 PM')
+
+INSERT INTO tblTempWebsite (intCompanyID, intWebsiteTypeID, strURL)
+VALUES						(1, 1, 'https://www.mymain.com')
+
+INSERT INTO tblTempSocialMedia (strPlatform)
+VALUES					('Facebook')
+						,('Instagram')
+						,('Snapchat')
+						,('TikTok')
+						,('Twitter')
+						,('Yelp')
+
+INSERT INTO tblTempContactLocation (intContactPersonID, intLocationID)
+VALUES									(1, 1)
+
+INSERT INTO tblTempCompanySocialMedia (intCompanyID, strSocialMediaLink, intSocialMediaID)
+VALUES					(1, 'https://www.facebook.com', 1)
