@@ -228,6 +228,7 @@
     <Compile Include="Models\MailModel.cs" />
     <Compile Include="Models\NewLocation.cs" />
     <Compile Include="Models\PhoneNumber.cs" />
+    <Compile Include="Models\Request.cs" />
     <Compile Include="Models\SaleSpecial.cs" />
     <Compile Include="Models\SearchResults.cs" />
     <Compile Include="Models\SocialMedia.cs" />
@@ -239,8 +240,10 @@
     <Compile Include="Controllers\BakeryController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="ViewModels\AdminBannerViewModel.cs" />
-    <Compile Include="ViewModels\EditCompaniesViewModel.cs" />
+    <Compile Include="ViewModels\AdminVM.cs" />
     <Compile Include="ViewModels\EditLocationVM.cs" />
+    <Compile Include="ViewModels\MemberVM.cs" />
+    <Compile Include="ViewModels\RequestsVM.cs" />
     <Compile Include="ViewModels\UserCompanyVM.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -317,6 +320,12 @@
     <Content Include="Views\Shared\AddSpecial.cshtml" />
     <Content Include="Views\Shared\DeleteSpecial.cshtml" />
     <Content Include="Views\Shared\LocationsAllowMultiple.cshtml" />
+    <Content Include="Views\Shared\MemberOnly.cshtml" />
+    <Content Include="Views\Profile\EditProfile.cshtml" />
+    <Content Include="Views\Profile\EditCompanyInfo.cshtml" />
+    <Content Include="Views\Profile\EditLandingPage.cshtml" />
+    <Content Include="Views\Shared\UserProfileInput.cshtml" />
+    <Content Include="Views\AdminPortal\Requests.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

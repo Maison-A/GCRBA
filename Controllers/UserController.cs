@@ -102,12 +102,12 @@ namespace GCRBA.Controllers
                 u.isAdmin = 0;
 
                 // some blank values to return to db
-                u.Address = "NO DATA";
-                u.City = "NO DATA";
-                u.State = "NO DATA";
-                u.Zip = "NO DATA";
-                u.Phone = "NO DATA";
-                u.MemberShipType = "NO DATA";
+                u.Address = "";
+                u.City = "";
+                u.State = "";
+                u.Zip = "";
+                u.Phone = "";
+                u.MemberShipType = "";
 
                 // submit new user button pressed
                 if (col["btnSubmit"].ToString() == "newuser")

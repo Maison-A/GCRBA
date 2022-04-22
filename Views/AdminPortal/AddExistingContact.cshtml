@@ -1,9 +1,9 @@
 ﻿@using GCRBA.ViewModels
-@model EditCompaniesViewModel
+@model AdminVM
 
-<h2>Add Existing Contact Person to Location for: @Model.CurrentCompany.Name</h2>
+<h2>Add Existing Contact Person to Location for: @Model.Company.Name</h2>
 
-@if (Model.CurrentUser.isAdmin == 0)
+@if (Model.User.isAdmin == 0)
 {
     @Html.Partial("AdminOnly");
 }

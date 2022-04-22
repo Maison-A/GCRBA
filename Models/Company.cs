@@ -68,27 +68,5 @@ namespace GCRBA.Models
             RequiredFieldMissing = 6
         }
 
-        public Company.ActionTypes SaveInsert()
-        {
-            try
-            {
-                Database db = new Database();
-                this.ActionType = db.InsertNewCompany(this);
-                return this.ActionType;
-            }
-            catch (Exception ex) { throw new Exception(ex.Message); }
-        }
-
-        public Company.ActionTypes SaveDelete()
-        {
-            try
-            {
-                Database db = new Database();
-                this.ActionType = db.DeleteCompany(this);
-                return this.ActionType;
-            }
-            catch (Exception ex) { throw new Exception(ex.Message); }
-        }
-
     }
 }

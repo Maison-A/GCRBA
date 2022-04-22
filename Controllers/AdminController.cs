@@ -10,7 +10,9 @@ namespace GCRBA.Controllers
 {
     public class AdminPortalController : Controller
     {
-        
+        // -------------------------------------------------------------------------------------------------
+        // ACTIONRESULT METHODS  
+        // -------------------------------------------------------------------------------------------------
 
         public ActionResult Index()
         {
@@ -26,6 +28,18 @@ namespace GCRBA.Controllers
             };
 
             return View(adminRequestList);
+            /*
+            AdminVM vm = new AdminVM();
+
+            vm.User = new User();
+            vm.User = vm.User.GetUserSession();
+
+            vm.Request = new Request();
+
+            vm.Request.TotalRequests = GetTotalRequests();
+
+            return View(vm);
+            */
         }
 
         [HttpPost]
@@ -100,6 +114,26 @@ namespace GCRBA.Controllers
                 items.Add(new SelectListItem { Text = req.strRequestedChange, Value = req.intAdminRequest.ToString() });
 			}
             return items;
+        /*
+		}
+            if (col["btnSubmit"].ToString() == "viewRequests")
+			{
+                return RedirectToAction("Requests", "AdminPortal");
+			}
+
+            return View();
+        }
+        */
+
+        public ActionResult Requests()
+		{
+            // initialize RequestsVM
+            RequestsVM vm = InitRequestsVM();
+
+            // get total requests 
+            vm.Request.TotalRequests = GetTotalRequests();
+
+            return View(vm);
 		}
 
         public ActionResult EditMainBanner()
@@ -224,13 +258,13 @@ namespace GCRBA.Controllers
         public ActionResult AddCompany()
         {
             // create object of view model
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             // create new user object with vm 
-            vm.CurrentUser = new User();
+            vm.User = new User();
 
             // get current user session
-            vm.CurrentUser = vm.CurrentUser.GetUserSession();
+            vm.User = vm.User.GetUserSession();
 
             return View(vm);
         }
@@ -239,34 +273,63 @@ namespace GCRBA.Controllers
         public ActionResult AddCompany(FormCollection col)
         {
             // create objects of what we will use 
-            EditCompaniesViewModel vm = InitEditCompanies();
-            vm.CurrentCompany = new Company();
+            AdminVM vm = InitEditCompanies();
+            vm.Company = new Company();
             Database db = new Database();
 
             // get input from form 
             if (col["btnSubmit"].ToString() == "submit")
             {
-                vm.CurrentCompany.Name = col["CurrentCompany.Name"];
-                vm.CurrentCompany.About = col["CurrentCompany.About"];
-                vm.CurrentCompany.Year = col["CurrentCompany.Year"];
+                vm.Company.Name = col["Company.Name"];
+                vm.Company.About = col["Company.About"];
+                vm.Company.Year = col["Company.Year"];
             }
 
             // add to database
-            vm.CurrentCompany.ActionType = vm.CurrentCompany.SaveInsert();
+            vm.Company.ActionType = InsertNewCompany(vm);
 
             return View(vm);
         }
 
+        private Company.ActionTypes InsertNewCompany(AdminVM vm)
+		{
+            try
+			{
+                // create database object
+                Database db = new Database();
+
+                // add new company to db 
+                vm.Company.ActionType = db.InsertNewCompany(vm);
+                return vm.Company.ActionType;
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
         public ActionResult DeleteCompany()
         {
             // create VM object
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             vm.Companies = GetCompaniesList(vm);
 
             // return view 
             return View(vm);
         }
+
+        private Company.ActionTypes DeleteCompany(AdminVM vm)
+		{
+            try
+			{
+                // create database object
+                Database db = new Database();
+
+                // delete company from database 
+                vm.Company.ActionType = db.DeleteCompany(vm);
+
+                return vm.Company.ActionType;
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
 
         [HttpPost]
         public ActionResult DeleteCompany(FormCollection col)
@@ -275,19 +338,19 @@ namespace GCRBA.Controllers
             ViewBag.Flag = 0;
 
             // create VM object
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             // get list of companies
             vm.Companies = GetCompaniesList(vm);
 
             // get selection 
-            vm.CurrentCompany.CompanyID = Convert.ToInt16(col["companies"].ToString());
+            vm.Company.CompanyID = Convert.ToInt16(col["companies"].ToString());
 
             // delete button pressed
             if (col["btnSubmit"].ToString() == "delete")
             {
                 // save action type correlating to success of deletion from database
-                vm.CurrentCompany.ActionType = vm.CurrentCompany.SaveDelete();
+                vm.Company.ActionType = DeleteCompany(vm);
 
                 return View(vm);
             }
@@ -305,13 +368,13 @@ namespace GCRBA.Controllers
         public ActionResult EditExistingCompany()
         {
             // create EditCompaniesVM object 
-            EditCompaniesViewModel vm = new EditCompaniesViewModel();
+            AdminVM vm = new AdminVM();
 
             // create VM user object
-            vm.CurrentUser = new User();
+            vm.User = new User();
 
             // get current user session
-            vm.CurrentUser = vm.CurrentUser.GetUserSession();
+            vm.User = vm.User.GetUserSession();
 
             // get companies list 
             vm.Companies = GetCompaniesList(vm);
@@ -323,16 +386,16 @@ namespace GCRBA.Controllers
         public ActionResult EditExistingCompany(FormCollection col)
         {
             // create EditCompaniesVM object 
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             // get companies list 
             vm.Companies = GetCompaniesList(vm);
 
             // get companyID from company selected from dropdown
-            vm.CurrentCompany.CompanyID = Convert.ToInt16(col["companies"]);
+            vm.Company.CompanyID = Convert.ToInt16(col["companies"]);
 
             // save current  ID so we can access it in other view 
-            vm.CurrentCompany.SaveCompanySession();
+            vm.Company.SaveCompanySession();
 
             if (col["btnSubmit"].ToString() == "addNewLocation")
             {
@@ -374,7 +437,7 @@ namespace GCRBA.Controllers
 
         public ActionResult AddNewLocation()
         {
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             vm = InitLocationInfo(vm);
 
@@ -392,7 +455,7 @@ namespace GCRBA.Controllers
         {
            try
             {
-                EditCompaniesViewModel vm = InitEditCompanies();
+                AdminVM vm = InitEditCompanies();
 
                 // initial location objects 
                 vm = InitLocationInfo(vm);
@@ -403,7 +466,7 @@ namespace GCRBA.Controllers
                 // get list of locations 
                 vm = GetLocations(vm);
 
-                vm.NewLocation.lngCompanyID = vm.CurrentCompany.CompanyID;
+                vm.NewLocation.lngCompanyID = vm.Company.CompanyID;
 
                 if (col["btnSubmit"].ToString() == "addLocation")
                 {
@@ -431,7 +494,7 @@ namespace GCRBA.Controllers
         public ActionResult DeleteLocation()
         {
             // initialize EditCompaniesVM 
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             // get current company session 
             vm = GetCompanySession(vm);
@@ -454,7 +517,7 @@ namespace GCRBA.Controllers
             try
             {
                 // initialize EditCompaniesVM
-                EditCompaniesViewModel vm = InitEditCompanies();
+                AdminVM vm = InitEditCompanies();
 
                 // get current company session so we know which company we are making edits to
                 vm = GetCompanySession(vm);
@@ -466,7 +529,7 @@ namespace GCRBA.Controllers
                 vm = GetLocations(vm);
 
                 // create Location object to hold location selected in dropdown to be deleted 
-                vm.CurrentLocation = new Location();
+                vm.Location = new Location();
 
                 // create NewLocation object 
                 vm.NewLocation = new NewLocation();
@@ -475,7 +538,7 @@ namespace GCRBA.Controllers
                 if (col["btnSubmit"].ToString() == "submit")
                 {
                     // get ID of location selected to be deleted 
-                    vm.CurrentLocation.LocationID = Convert.ToInt16(col["locations"]);
+                    vm.Location.LocationID = Convert.ToInt16(col["locations"]);
 
                     // send to database
                     vm.NewLocation.ActionType = DeleteLocation(vm);
@@ -499,7 +562,7 @@ namespace GCRBA.Controllers
         public ActionResult AddContactPerson()
         {
             // create EditCompaniesVM object
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             // get current company session
             vm = GetCompanySession(vm);
@@ -520,7 +583,7 @@ namespace GCRBA.Controllers
         public ActionResult AddContactPerson(FormCollection col)
         {
             // create EditCompaniesVM object
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             // get current company session
             vm = GetCompanySession(vm);
@@ -552,7 +615,7 @@ namespace GCRBA.Controllers
         public ActionResult AddExistingContact()
         {
             // initialize EditCompaniesVM
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             // get current company session 
             vm = GetCompanySession(vm);
@@ -577,7 +640,7 @@ namespace GCRBA.Controllers
         {
             ViewBag.PersonSelected = 0;
 
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             vm = GetCompanySession(vm);
 
@@ -589,7 +652,7 @@ namespace GCRBA.Controllers
 
             vm.Locations = new List<Location>();
 
-            vm.CurrentLocation = new Location();
+            vm.Location = new Location();
 
             if (col["btnSubmit"].ToString() == "getLocations")
             {
@@ -613,7 +676,7 @@ namespace GCRBA.Controllers
         public ActionResult EditCategories()
         {
             // initialize EditCompaniesVM object 
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             // get current company session 
             vm = InitEditCategories(vm);
@@ -624,7 +687,7 @@ namespace GCRBA.Controllers
         [HttpPost]
         public ActionResult EditCategories(FormCollection col)
         {
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             vm = InitEditCategories(vm);
 
@@ -639,7 +702,7 @@ namespace GCRBA.Controllers
                 SaveButtonSession("add");
 
                 // get current LocationID
-                vm.CurrentLocation.LocationID = Convert.ToInt16(col["locations"]);
+                vm.Location.LocationID = Convert.ToInt16(col["locations"]);
 
                 // get list of categories not current applied to location
                 vm = GetNotCategories(vm);
@@ -651,7 +714,7 @@ namespace GCRBA.Controllers
                 SaveButtonSession("delete");
 
                 // get current LocationID
-                vm.CurrentLocation.LocationID = Convert.ToInt16(col["locations"]);
+                vm.Location.LocationID = Convert.ToInt16(col["locations"]);
 
                 // get list of categories currently applied to location 
                 vm = GetCurrentCategories(vm);
@@ -665,7 +728,7 @@ namespace GCRBA.Controllers
                 // get current button session
                 button = button.GetButtonSession();
 
-                vm.CurrentLocation.LocationID = Convert.ToInt16(col["locations"]);
+                vm.Location.LocationID = Convert.ToInt16(col["locations"]);
 
                 // get category(s) selected (by ID)
                 string categoryIDs = col["categories"];
@@ -684,7 +747,7 @@ namespace GCRBA.Controllers
                 }
 
                 // reset LocationID to 0 to reset form
-                vm.CurrentLocation.LocationID = 0;
+                vm.Location.LocationID = 0;
 
                 // remove current button session b/c we no longer need it 
                 button.RemoveButtonSession();
@@ -698,10 +761,10 @@ namespace GCRBA.Controllers
         {
             // initialize EditCompaniesVM, CurrentUser, and CurrentCompany 
             // get CurrentUser session
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             // get current company session 
-            vm.CurrentCompany = vm.CurrentCompany.GetCompanySession();
+            vm.Company = vm.Company.GetCompanySession();
 
             // create Locations object
             vm.Locations = new List<Location>();
@@ -710,7 +773,7 @@ namespace GCRBA.Controllers
             vm = GetLocations(vm);
 
             // create location object
-            vm.CurrentLocation = new Location();
+            vm.Location = new Location();
 
             // create special object
             vm.Special = new SaleSpecial();
@@ -723,10 +786,10 @@ namespace GCRBA.Controllers
         {
             // initialize EditCompaniesVM, CurrentUser, and CurrentCompany 
             // get CurrentUser session
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             // get current company session 
-            vm.CurrentCompany = vm.CurrentCompany.GetCompanySession();
+            vm.Company = vm.Company.GetCompanySession();
 
             // create Locations object
             vm.Locations = new List<Location>();
@@ -738,10 +801,10 @@ namespace GCRBA.Controllers
             vm.Specials = new List<SaleSpecial>();
 
             // create location object
-            vm.CurrentLocation = new Location();
+            vm.Location = new Location();
 
             // get current location session
-            vm.CurrentLocation = vm.CurrentLocation.GetLocationSession();
+            vm.Location = vm.Location.GetLocationSession();
 
             // create new button object so we can track which button was selected
             vm.Button = new Button();
@@ -763,19 +826,19 @@ namespace GCRBA.Controllers
             if (col["btnSubmit"].ToString() == "addSpecial") {
 
                 // remove previous location session 
-                vm.CurrentLocation.RemoveLocationSession();
+                vm.Location.RemoveLocationSession();
 
                 // are there any location selections?
                 if (col["locations"] == null)
 				{
                     // no, so let user know they need to select a location before proceeding 
-                    vm.CurrentLocation.ActionType = Location.ActionTypes.RequiredFieldMissing;
+                    vm.Location.ActionType = Location.ActionTypes.RequiredFieldMissing;
                     return View(vm);
 				} else
 				{
                     // yes, so save LocationID
-                    vm.CurrentLocation.LocationID = Convert.ToInt16(col["locations"]);
-                    vm.CurrentLocation.SaveLocationSession();
+                    vm.Location.LocationID = Convert.ToInt16(col["locations"]);
+                    vm.Location.SaveLocationSession();
 				}
 
                 // remove current button session 
@@ -792,22 +855,22 @@ namespace GCRBA.Controllers
             {
 
                 // remove previous location session 
-                vm.CurrentLocation.RemoveLocationSession();
+                vm.Location.RemoveLocationSession();
 
                 // are there any location selections?
                 if (col["locations"] == null)
                 {
                     // no, so let user know they need to select a location before proceeding 
-                    vm.CurrentLocation.ActionType = Location.ActionTypes.RequiredFieldMissing;
+                    vm.Location.ActionType = Location.ActionTypes.RequiredFieldMissing;
                     return View(vm);
                 } else
                 {
                     // yes, so save LocationID
-                    vm.CurrentLocation.LocationID = Convert.ToInt16(col["locations"]);
-                    vm.CurrentLocation.SaveLocationSession();
+                    vm.Location.LocationID = Convert.ToInt16(col["locations"]);
+                    vm.Location.SaveLocationSession();
                 }
 
-                vm.Specials = GetSpecials(vm.CurrentLocation.LocationID);
+                vm.Specials = GetSpecials(vm.Location.LocationID);
 
                 // remove current button session 
                 vm.Button.RemoveButtonSession();
@@ -859,76 +922,25 @@ namespace GCRBA.Controllers
             return View(vm);
         }
 
-        private SaleSpecial.ActionTypes DeleteSpecialFromLocation(EditCompaniesViewModel vm)
-		{
-            try
-			{
-                // create db object
-                Database db = new Database();
-
-                // delete from table 
-                vm.Special.ActionType = db.DeleteSpecialLocation(vm);
-
-                return vm.Special.ActionType;
-			}
-            catch (Exception ex) { throw new Exception(ex.Message); }
-		}
-
-        private SaleSpecial.ActionTypes AddSpecialToLocation(EditCompaniesViewModel vm) 
-        {
-            try
-			{
-                // create db object
-                Database db = new Database();
-
-                // add new special to tblSpecial first 
-                vm.Special = db.InsertSpecial(vm);
-
-                // then add special and location to tblSpecialLocation 
-                vm.Special.ActionType = db.InsertSpecialLocation(vm);
-
-                return vm.Special.ActionType;
-			}
-            catch (Exception ex) { throw new Exception(ex.Message); }
-		}
-
         public ActionResult EditGeneralInfo()
         {
 
             return View();
         }
 
-        private List<SaleSpecial> GetSpecials(int intLocationID) 
-        {
-            try 
-            {
-                // create specials list object
-                List<SaleSpecial> specials = new List<SaleSpecial>();
-
-                // create db object
-                Database db = new Database();
-
-                // get list of specials 
-                specials = db.GetLandingSpecials(intLocationID);
-
-                return specials;
-			}
-            catch (Exception ex) { throw new Exception(ex.Message); }
-		}
-
         public ActionResult EditCompanyInfo()
         {
             // initialize EditCompaniesVM object
-            EditCompaniesViewModel vm = InitEditCompanies();
+            AdminVM vm = InitEditCompanies();
 
             // get companyID that was selected from  dropdown on previous page and saved in company session
-            vm.CurrentCompany = vm.CurrentCompany.GetCompanySession();
+            vm.Company = vm.Company.GetCompanySession();
 
             // create database object
             Database db = new Database();
 
             // get current company info based on selected company from previous page
-            vm.CurrentCompany = db.GetCompanyInfo(vm);
+            vm.Company = db.GetCompanyInfo(vm);
 
             // get locations list
             vm.Locations = db.GetLocations(vm);
@@ -936,113 +948,134 @@ namespace GCRBA.Controllers
             return View(vm);
         }
 
-        public void SaveButtonSession(string buttonValue)
+        // -------------------------------------------------------------------------------------------------
+        // INITIALIZING COMMONLY USED CLASSES 
+        // -------------------------------------------------------------------------------------------------
+
+        private RequestsVM InitRequestsVM()
         {
-            try
-            {
-                // create button object 
-                Button button = new Button();
+            // create instance of RequestsVM
+            RequestsVM vm = new RequestsVM();
 
-                // get value of button pressed 
-                button.CurrentButton = buttonValue;
+            // create new User object
+            // then get current user session 
+            vm.User = new User();
+            vm.User = vm.User.GetUserSession();
 
-                // save button session 
-                button.SaveButtonSession();
-            }
-            catch (Exception ex) { throw new Exception(ex.Message); }
+            return vm;
         }
 
-        private List<ContactPerson> GetContactsByCompany(EditCompaniesViewModel vm)
+        private AdminVM InitEditCategories(AdminVM vm)
         {
-            // create db object
-            Database db = new Database();
+            // get current company session 
+            vm = GetCompanySession(vm);
 
-            // create contacts list object
-            vm.Contacts = new List<ContactPerson>();
+            // get list of locations for current company 
+            vm = GetLocations(vm);
 
-            // get list of contacts based on company selected
-            vm.Contacts = db.GetContactsByCompany(vm);
+            // create Location object that will hold selected location 
+            vm.Location = new Location();
 
-            return vm.Contacts;
+            // create Category object
+            vm.Category = new CategoryItem();
+
+            // create list of categories
+            vm.Categories = new List<CategoryItem>();
+
+            return vm; 
         }
 
-        private List<Location> GetLocationWhereNotContact(EditCompaniesViewModel vm)
+        private AdminVM InitEditSpecials(AdminVM vm)
         {
-            // create db object
-            Database db = new Database();
+            // get current company session
+            vm = GetCompanySession(vm);
 
-            // create location list objects 
+            // get list of locations 
+            vm = GetLocations(vm);
+
+            // create location object to hold selected location
+            vm.Location = new Location();
+
+            // create new Specials object
+            vm.Special = new SaleSpecial();
+
+            return vm;
+        }
+
+
+        private AdminVM InitEditCompanies()
+        {
+            // create EditCompaniesVM object 
+            AdminVM vm = new AdminVM();
+
+            // create VM user object
+            vm.User = new User();
+
+            // get current user session
+            vm.User = vm.User.GetUserSession();
+
+            // create new VM company object 
+            vm.Company = new Company();
+
+            return vm;
+        }
+
+        private AdminBannerViewModel InitAdminBannerVM()
+        {
+            // create view model object
+            AdminBannerViewModel vm = new AdminBannerViewModel();
+
+            // create user objects and populate 
+            vm.CurrentUser = new User();
+
+            // get admin status because page should only be viewable by admin
+            vm.CurrentUser = vm.CurrentUser.GetUserSession();
+
+            return vm;
+        }
+
+        private AdminVM InitLocationInfo(AdminVM vm)
+        {
+            // create VM location objects 
+            vm.NewLocation = new NewLocation();
             vm.Locations = new List<Location>();
+            vm.States = new List<State>();
 
-            // get list of locations where selected contact is not a contact
-            vm.Locations = db.GetLocationsNotContact(vm);
+            // get states to display in drop down 
+            vm.States = GetStatesList();
 
-            return vm.Locations;
+            return vm;
         }
 
-        public List<Company> GetCompaniesList(EditCompaniesViewModel vm)
-        {
-            // create database object
-            Database db = new Database();
+        // -------------------------------------------------------------------------------------------------
+        // SUBMITTING DATA TO DATABASE 
+        // -------------------------------------------------------------------------------------------------
 
-            // create VM company list object 
-            vm.Companies = new List<Company>();
-
-            // get list of companies
-            vm.Companies = db.GetCompanies();
-
-            return vm.Companies;
-        }
-
-        private EditCompaniesViewModel GetCompanySession(EditCompaniesViewModel vm)
+        private CategoryItem.ActionTypes AddCategoriesToDB(AdminVM vm, string categoryIDs)
         {
             try
             {
                 // create database object
                 Database db = new Database();
 
-                // get current companyID from session
-                vm.CurrentCompany = vm.CurrentCompany.GetCompanySession();
+                // create array by splitting string at each comma 
+                string[] AllStrings = categoryIDs.Split(',');
 
-                // get rest of current company information using companyID we get from session
-                vm.CurrentCompany = db.GetCompanyInfo(vm);
+                // loop through array and assign CategoryID to Category object 
+                // then add object to list of category items
+                foreach (string item in AllStrings)
+                {
+                    // get categoryID 
+                    vm.Category.ItemID = int.Parse(item);
 
-                return vm;
-            }
-            catch (Exception ex) { throw new Exception(ex.Message); }
+                    // add to database
+                    vm.Category.ActionType = db.InsertCategories(vm);
+                }
+                return vm.Category.ActionType;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
-        private EditCompaniesViewModel GetNotCategories(EditCompaniesViewModel vm)
-        {
-            try
-            {
-                // create db object 
-                Database db = new Database();
-
-                // get category list 
-                vm.Categories = db.GetNotCategories(vm);
-
-                return vm;
-            }
-            catch (Exception ex) { throw new Exception(ex.Message); }
-        }
-
-        private EditCompaniesViewModel GetCurrentCategories(EditCompaniesViewModel vm)
-        {
-            try
-            {
-                // create db object
-                Database db = new Database();
-
-                // get current category list
-                vm.Categories = db.GetCurrentCategories(vm);
-
-                return vm;
-            }
-            catch (Exception ex) { throw new Exception(ex.Message); }
-        }
-
-        private CategoryItem.ActionTypes DeleteCategories(EditCompaniesViewModel vm, string categoryIDs)
+        private CategoryItem.ActionTypes DeleteCategories(AdminVM vm, string categoryIDs)
         {
             try
             {
@@ -1063,71 +1096,83 @@ namespace GCRBA.Controllers
                     vm.Category.ActionType = db.DeleteCategories(vm);
                 }
                 return vm.Category.ActionType;
-            }
-            catch (Exception ex) { throw new Exception(ex.Message); }
+            } catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
-        private EditCompaniesViewModel GetLocations(EditCompaniesViewModel vm)
+        private NewLocation.ActionTypes SubmitLocationToDB(AdminVM vm)
+        {
+            try
+            {
+                Database db = new Database();
+
+                // submit to db 
+                vm.NewLocation.ActionType = db.AddNewLocation(vm);
+
+                return vm.NewLocation.ActionType;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private NewLocation.ActionTypes DeleteLocation(AdminVM vm)
+        {
+            // create db object 
+            Database db = new Database();
+
+            // get action type from attemp to delete location from db 
+            vm.NewLocation.ActionType = db.DeleteLocation(vm.Location.LocationID);
+
+            return vm.NewLocation.ActionType;
+        }
+
+        private SaleSpecial.ActionTypes DeleteSpecialFromLocation(AdminVM vm)
         {
             try
             {
                 // create db object
                 Database db = new Database();
 
-                // get list of locations from db 
-                vm.Locations = db.GetLocations(vm);            
+                // delete from table 
+                vm.Special.ActionType = db.DeleteSpecialLocation(vm);
 
-                return vm;
-            }
-            catch (Exception ex) { throw new Exception(ex.Message); }
+                return vm.Special.ActionType;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
-        private NewLocation.ActionTypes DeleteLocation(EditCompaniesViewModel vm)
+        private SaleSpecial.ActionTypes AddSpecialToLocation(AdminVM vm)
         {
-            // create db object 
-            Database db = new Database();
+            try
+            {
+                // create db object
+                Database db = new Database();
 
-            // get action type from attemp to delete location from db 
-            vm.NewLocation.ActionType = db.DeleteLocation(vm.CurrentLocation.LocationID);
+                // add new special to tblSpecial first 
+                vm.Special = db.InsertSpecial(vm);
 
-            return vm.NewLocation.ActionType;
+                // then add special and location to tblSpecialLocation 
+                vm.Special.ActionType = db.InsertSpecialLocation(vm);
+
+                return vm.Special.ActionType;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
-        private EditCompaniesViewModel InitEditCategories(EditCompaniesViewModel vm)
+        // -------------------------------------------------------------------------------------------------
+        // RETRIEVING DATA FROM DATABASE 
+        // -------------------------------------------------------------------------------------------------
+
+        private int GetTotalRequests()
         {
-            // get current company session 
-            vm = GetCompanySession(vm);
+            try
+            {
+                // create db object
+                Database db = new Database();
 
-            // get list of locations for current company 
-            vm = GetLocations(vm);
+                // create variable to hold total requests 
+                int total = 0;
 
-            // create Location object that will hold selected location 
-            vm.CurrentLocation = new Location();
+                // get total requests 
+                total = db.GetTotalRequests();
 
-            // create Category object
-            vm.Category = new CategoryItem();
-
-            // create list of categories
-            vm.Categories = new List<CategoryItem>();
-
-            return vm; 
-        }
-
-        private EditCompaniesViewModel InitEditSpecials(EditCompaniesViewModel vm)
-        {
-            // get current company session
-            vm = GetCompanySession(vm);
-
-            // get list of locations 
-            vm = GetLocations(vm);
-
-            // create location object to hold selected location
-            vm.CurrentLocation = new Location();
-
-            // create new Specials object
-            vm.Special = new SaleSpecial();
-
-            return vm;
+                return total;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         private string GetState(int intStateID)
@@ -1144,14 +1189,13 @@ namespace GCRBA.Controllers
                 state = db.GetState(intStateID);
 
                 return state;
-            }
-            catch (Exception ex) { throw new Exception(ex.Message); }
+            } catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         public List<State> GetStatesList()
         {
             // create EditCompaniesVM object
-            EditCompaniesViewModel vm = new EditCompaniesViewModel();
+            AdminVM vm = new AdminVM();
 
             // create database object 
             Database db = new Database();
@@ -1176,87 +1220,142 @@ namespace GCRBA.Controllers
             return vm.MainBanners;
         }
 
-        private NewLocation.ActionTypes SubmitLocationToDB(EditCompaniesViewModel vm)
+        private AdminVM GetNotCategories(AdminVM vm)
         {
             try
             {
+                // create db object 
                 Database db = new Database();
 
-                // submit to db 
-                vm.NewLocation.ActionType = db.AddNewLocation(vm);
+                // get category list 
+                vm.Categories = db.GetNotCategories(vm);
 
-                return vm.NewLocation.ActionType;
-            }
-            catch (Exception ex) { throw new Exception(ex.Message); }
+                return vm;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
-        private CategoryItem.ActionTypes AddCategoriesToDB(EditCompaniesViewModel vm, string categoryIDs)
+        private AdminVM GetCurrentCategories(AdminVM vm)
+        {
+            try
+            {
+                // create db object
+                Database db = new Database();
+
+                // get current category list
+                vm.Categories = db.GetCurrentCategories(vm);
+
+                return vm;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+
+        private AdminVM GetLocations(AdminVM vm)
+        {
+            try
+            {
+                // create db object
+                Database db = new Database();
+
+                // get list of locations from db 
+                vm.Locations = db.GetLocations(vm);
+
+                return vm;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private List<ContactPerson> GetContactsByCompany(AdminVM vm)
+        {
+            // create db object
+            Database db = new Database();
+
+            // create contacts list object
+            vm.Contacts = new List<ContactPerson>();
+
+            // get list of contacts based on company selected
+            vm.Contacts = db.GetContactsByCompany(vm);
+
+            return vm.Contacts;
+        }
+
+        private List<Location> GetLocationWhereNotContact(AdminVM vm)
+        {
+            // create db object
+            Database db = new Database();
+
+            // create location list objects 
+            vm.Locations = new List<Location>();
+
+            // get list of locations where selected contact is not a contact
+            vm.Locations = db.GetLocationsNotContact(vm);
+
+            return vm.Locations;
+        }
+
+        public List<Company> GetCompaniesList(AdminVM vm)
+        {
+            // create database object
+            Database db = new Database();
+
+            // create VM company list object 
+            vm.Companies = new List<Company>();
+
+            // get list of companies
+            vm.Companies = db.GetCompanies();
+
+            return vm.Companies;
+        }
+
+        private List<SaleSpecial> GetSpecials(int intLocationID)
+        {
+            try
+            {
+                // create specials list object
+                List<SaleSpecial> specials = new List<SaleSpecial>();
+
+                // create db object
+                Database db = new Database();
+
+                // get list of specials 
+                specials = db.GetLandingSpecials(intLocationID);
+
+                return specials;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        // -------------------------------------------------------------------------------------------------
+        // HANDLING SESSIONS 
+        // -------------------------------------------------------------------------------------------------
+
+        public void SaveButtonSession(string buttonValue)
+        {
+            try
+            {
+                // create button object 
+                Button button = new Button();
+
+                // get value of button pressed 
+                button.CurrentButton = buttonValue;
+
+                // save button session 
+                button.SaveButtonSession();
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private AdminVM GetCompanySession(AdminVM vm)
         {
             try
             {
                 // create database object
                 Database db = new Database();
 
-                // create array by splitting string at each comma 
-                string[] AllStrings = categoryIDs.Split(',');
+                // get current companyID from session
+                vm.Company = vm.Company.GetCompanySession();
 
-                // loop through array and assign CategoryID to Category object 
-                // then add object to list of category items
-                foreach (string item in AllStrings)
-                {
-                    // get categoryID 
-                    vm.Category.ItemID = int.Parse(item);
+                // get rest of current company information using companyID we get from session
+                vm.Company = db.GetCompanyInfo(vm);
 
-                    // add to database
-                    vm.Category.ActionType = db.InsertCategories(vm);
-                }
-                return vm.Category.ActionType;
-            }
-            catch (Exception ex) { throw new Exception(ex.Message); }
-        }
-
-        private EditCompaniesViewModel InitEditCompanies()
-        {
-            // create EditCompaniesVM object 
-            EditCompaniesViewModel vm = new EditCompaniesViewModel();
-
-            // create VM user object
-            vm.CurrentUser = new User();
-
-            // get current user session
-            vm.CurrentUser = vm.CurrentUser.GetUserSession();
-
-            // create new VM company object 
-            vm.CurrentCompany = new Company();
-
-            return vm;
-        }
-
-        private AdminBannerViewModel InitAdminBannerVM()
-        {
-            // create view model object
-            AdminBannerViewModel vm = new AdminBannerViewModel();
-
-            // create user objects and populate 
-            vm.CurrentUser = new User();
-
-            // get admin status because page should only be viewable by admin
-            vm.CurrentUser = vm.CurrentUser.GetUserSession();
-
-            return vm;
-        }
-
-        private EditCompaniesViewModel InitLocationInfo(EditCompaniesViewModel vm)
-        {
-            // create VM location objects 
-            vm.NewLocation = new NewLocation();
-            vm.Locations = new List<Location>();
-            vm.States = new List<State>();
-
-            // get states to display in drop down 
-            vm.States = GetStatesList();
-
-            return vm;
+                return vm;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
     }

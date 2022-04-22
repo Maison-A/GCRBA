@@ -1,0 +1,16 @@
+﻿@using GCRBA.ViewModels
+@model MemberVM
+
+@{
+	ViewBag.Title = "Edit Profile";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (Model.User.isMember != 1)
+{
+		@Html.Partial("MemberOnly");
+} else
+{
+	@Html.Partial("UserProfileInput");
+}

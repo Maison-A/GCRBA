@@ -222,21 +222,77 @@ namespace GCRBA.Controllers
         }
 
         public ActionResult Member() {
-            Models.User user = new Models.User();
+            // create user object 
+            User user = new User();
+
+            // get current user session 
             user = user.GetUserSession();
-            if (user.IsAuthenticated) {
-                ViewBag.Name = user.FirstName + " " + user.LastName;
-            }
+
             return View(user);
         }
 
         [HttpPost]
         public ActionResult Member(FormCollection col) {
-            if (col["btnSubmit"] == "home") {
-                return RedirectToAction("Index", "Home");
+            
+            if (col["btnSubmit"].ToString() == "editProfile")
+			{
+                return RedirectToAction("EditProfile", "Profile");
 			}
+
+            if (col["btnSubmit"].ToString() == "editCompanyInfo")
+			{
+                return RedirectToAction("EditCompanyInfo", "Profile");
+			}
+
+            if (col["btnSubmit"].ToString() == "editLandingPage")
+			{
+                return RedirectToAction("EditLandingPage", "Profile");
+			}
+
             return View();
         }
+        
+        public ActionResult EditProfile(FormCollection col)
+		{
+            // initialize MemberVM
+            // - create user object + get current user session 
+            MemberVM vm = InitMemberVM();
+
+            // get list of states 
+            vm = GetStates(vm);
+
+            return View(vm);
+		}
+
+        private MemberVM InitMemberVM()
+		{
+            // create MemberVM object
+            MemberVM vm = new MemberVM();
+
+            // create new user object 
+            // then get current user session
+            vm.User = new User();
+            vm.User = vm.User.GetUserSession();
+
+            return vm;
+		}
+
+        private MemberVM GetStates(MemberVM vm)
+		{
+            try
+			{
+                // create database object
+                Database db = new Database();
+
+                // create states object 
+                // then get list of states from database
+                vm.States = new List<State>();
+                vm.States = db.GetStates();
+
+                return vm;
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
 
         public ActionResult Logout()
         {
