@@ -2177,7 +2177,6 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-
 		public bool InsertUserToMember(User u)
 		{
 
