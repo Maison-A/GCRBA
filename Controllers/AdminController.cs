@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using GCRBA.Models;
 using GCRBA.ViewModels;
-
+//
 namespace GCRBA.Controllers
 {
     public class AdminPortalController : Controller
@@ -16,19 +16,7 @@ namespace GCRBA.Controllers
 
         public ActionResult Index()
         {
-            // get current user session so we know who is logged in (member, nonmember, admin)  
-            User u = new User();
 
-            Models.Database db = new Models.Database();
-            List<Models.AdminRequest> adminRequests = new List<AdminRequest>();
-            adminRequests = db.GetAdminRequests();
-            Models.AdminRequestList adminRequestList = new Models.AdminRequestList() {
-                SelectedAdminRequests = new [] {1},
-                AdminRequests = GetAllAdminRequest(adminRequests)
-            };
-
-            return View(adminRequestList);
-            /*
             AdminVM vm = new AdminVM();
 
             vm.User = new User();
@@ -39,61 +27,11 @@ namespace GCRBA.Controllers
             vm.Request.TotalRequests = GetTotalRequests();
 
             return View(vm);
-            */
         }
 
         [HttpPost]
-        public ActionResult Index(FormCollection col, AdminRequestList request)
+        public ActionResult Index(FormCollection col)
         {
-           Models.Database db = new Models.Database();
-           Models.AdminRequestList adminRequestList = new Models.AdminRequestList();
-           adminRequestList.lstAdminRequest = db.GetAdminRequests();
-           request.AdminRequests = GetAllAdminRequest(adminRequestList.lstAdminRequest);
-           if(col["btnSubmit"].ToString() == "approve" && request.SelectedAdminRequests != null) {
-                List<SelectListItem> selectedItems = request.AdminRequests.Where(p => request.SelectedAdminRequests.Contains(int.Parse(p.Value))).ToList(); 
-                foreach(var Request in selectedItems) {
-                    Request.Selected = true;
-                    Models.LocationList locList = new Models.LocationList();
-                    locList.lstLocations[0] = db.GetTempLocation(Convert.ToInt16(Request.Value));
-
-                    List<Models.CategoryItem> categoryItems = new List<CategoryItem>();
-                    List<Models.CategoryItem>[] arrCategoryInfo = new List<CategoryItem>[10];
-                    categoryItems = db.GetTempCategories(locList.lstLocations[0].lngLocationID);
-                    arrCategoryInfo[0] = categoryItems;
-
-                    foreach (Models.CategoryItem category in categoryItems) {
-                        foreach (Models.CategoryItem categoryCheck in locList.lstLocations[0].bakedGoods.lstBakedGoods) {
-                            if(categoryCheck.ItemID == category.ItemID) {
-                                categoryCheck.blnAvailable = true;
-							}
-						}
-					}
-                    List<Models.Days>[] arrLocHours = new List<Days>[10];
-                    List<Models.Days> LocationHours = new List<Days>();
-                    LocationHours = db.GetTempLocationHours(locList.lstLocations[0].lngLocationID);
-                    arrLocHours[0] = LocationHours;
-
-                    List<Models.ContactPerson>[] arrContactInfo = new List<ContactPerson>[10];
-                    List<Models.ContactPerson> contactPeople = new List<Models.ContactPerson>();
-                    contactPeople = db.GetTempContacts(locList.lstLocations[0].lngLocationID);
-                    arrContactInfo[0] = contactPeople;
-
-                    List<Models.SocialMedia>[] arrSocialMediaInfo = new List<SocialMedia>[10];
-                    List<Models.SocialMedia> socialMedias = new List<SocialMedia>();
-                    socialMedias = db.GetTempSocialMedia(locList.lstLocations[0].lngLocationID);
-                    arrSocialMediaInfo[0] = socialMedias;
-
-                    List<Models.Website>[] arrWebsites = new List<Website>[10];
-                    List<Models.Website> websites = new List<Website>();
-                    websites = db.GetTempWebsite(locList.lstLocations[0].lngLocationID);
-                    arrWebsites[0] = websites;
-
-                    locList.StoreNewLocation(arrCategoryInfo, arrLocHours, arrSocialMediaInfo, arrWebsites, arrContactInfo);
-                }
-                return View(request);
-			}
-
-           
             // Edit Main Banner button pressed
             if (col["btnSubmit"].ToString() == "editMainBanner")
             {
@@ -105,8 +43,6 @@ namespace GCRBA.Controllers
             {
                 return RedirectToAction("EditCompanies", "AdminPortal");
             }
-            return View();
-        }
 
         public List<SelectListItem> GetAllAdminRequest(List<Models.AdminRequest> lstAdminRequest) {
             List<SelectListItem> items = new List<SelectListItem>();
@@ -127,7 +63,7 @@ namespace GCRBA.Controllers
         }
 
         public ActionResult Requests()
-		{
+        {
             // initialize RequestsVM
             RequestsVM vm = InitRequestsVM();
 
@@ -135,7 +71,7 @@ namespace GCRBA.Controllers
             vm.Request.TotalRequests = GetTotalRequests();
 
             return View(vm);
-		}
+        }
 
         public ActionResult EditMainBanner()
         {
@@ -293,18 +229,18 @@ namespace GCRBA.Controllers
         }
 
         private Company.ActionTypes InsertNewCompany(AdminVM vm)
-		{
+        {
             try
-			{
+            {
                 // create database object
                 Database db = new Database();
 
                 // add new company to db 
                 vm.Company.ActionType = db.InsertNewCompany(vm);
                 return vm.Company.ActionType;
-			}
+            }
             catch (Exception ex) { throw new Exception(ex.Message); }
-		}
+        }
 
         public ActionResult DeleteCompany()
         {
@@ -318,9 +254,9 @@ namespace GCRBA.Controllers
         }
 
         private Company.ActionTypes DeleteCompany(AdminVM vm)
-		{
+        {
             try
-			{
+            {
                 // create database object
                 Database db = new Database();
 
@@ -328,9 +264,9 @@ namespace GCRBA.Controllers
                 vm.Company.ActionType = db.DeleteCompany(vm);
 
                 return vm.Company.ActionType;
-			}
+            }
             catch (Exception ex) { throw new Exception(ex.Message); }
-		}
+        }
 
         [HttpPost]
         public ActionResult DeleteCompany(FormCollection col)
@@ -454,7 +390,7 @@ namespace GCRBA.Controllers
         [HttpPost]
         public ActionResult AddNewLocation(FormCollection col)
         {
-           try
+            try
             {
                 AdminVM vm = InitEditCompanies();
 
@@ -559,7 +495,7 @@ namespace GCRBA.Controllers
             }
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
-       
+
         public ActionResult AddContactPerson()
         {
             // create EditCompaniesVM object
@@ -739,7 +675,7 @@ namespace GCRBA.Controllers
                 {
                     // submit to db 
                     vm.Category.ActionType = AddCategoriesToDB(vm, categoryIDs);
-                } 
+                }
                 // handle DELETE 
                 else if (button.CurrentButton == "delete")
                 {
@@ -752,7 +688,7 @@ namespace GCRBA.Controllers
 
                 // remove current button session b/c we no longer need it 
                 button.RemoveButtonSession();
-                
+
                 return View(vm);
             }
             return View(vm);
@@ -817,42 +753,15 @@ namespace GCRBA.Controllers
             vm.Special = new SaleSpecial();
 
             // button to add location clicked 
-            if (col["btnSubmit"].ToString() == "addLocation") {
+            if (col["btnSubmit"].ToString() == "addLocation")
+            {
 
                 // redirect to add location page 
                 return RedirectToAction("AddNewLocation", "AdminPortal");
-			}
-
-            // button to add new special clicked 
-            if (col["btnSubmit"].ToString() == "addSpecial") {
-
-                // remove previous location session 
-                vm.Location.RemoveLocationSession();
-
-                // are there any location selections?
-                if (col["locations"] == null)
-				{
-                    // no, so let user know they need to select a location before proceeding 
-                    vm.Location.ActionType = Location.ActionTypes.RequiredFieldMissing;
-                    return View(vm);
-				} else
-				{
-                    // yes, so save LocationID
-                    vm.Location.LocationID = Convert.ToInt16(col["locations"]);
-                    vm.Location.SaveLocationSession();
-				}
-
-                // remove current button session 
-                vm.Button.RemoveButtonSession();
-
-                // add new current button session
-                vm.Button.CurrentButton = "add";
-
-                // save new button session 
-                vm.Button.SaveButtonSession();
             }
 
-            if (col["btnSubmit"].ToString() == "deleteSpecial") 
+            // button to add new special clicked 
+            if (col["btnSubmit"].ToString() == "addSpecial")
             {
 
                 // remove previous location session 
@@ -864,7 +773,38 @@ namespace GCRBA.Controllers
                     // no, so let user know they need to select a location before proceeding 
                     vm.Location.ActionType = Location.ActionTypes.RequiredFieldMissing;
                     return View(vm);
-                } else
+                }
+                else
+                {
+                    // yes, so save LocationID
+                    vm.Location.LocationID = Convert.ToInt16(col["locations"]);
+                    vm.Location.SaveLocationSession();
+                }
+
+                // remove current button session 
+                vm.Button.RemoveButtonSession();
+
+                // add new current button session
+                vm.Button.CurrentButton = "add";
+
+                // save new button session 
+                vm.Button.SaveButtonSession();
+            }
+
+            if (col["btnSubmit"].ToString() == "deleteSpecial")
+            {
+
+                // remove previous location session 
+                vm.Location.RemoveLocationSession();
+
+                // are there any location selections?
+                if (col["locations"] == null)
+                {
+                    // no, so let user know they need to select a location before proceeding 
+                    vm.Location.ActionType = Location.ActionTypes.RequiredFieldMissing;
+                    return View(vm);
+                }
+                else
                 {
                     // yes, so save LocationID
                     vm.Location.LocationID = Convert.ToInt16(col["locations"]);
@@ -884,9 +824,10 @@ namespace GCRBA.Controllers
             }
 
             // button to add special to locations clicked 
-            if (col["btnSubmit"].ToString() == "submit") {
+            if (col["btnSubmit"].ToString() == "submit")
+            {
 
-                if (vm.Button.CurrentButton == "add") 
+                if (vm.Button.CurrentButton == "add")
                 {
 
                     // get input
@@ -901,8 +842,8 @@ namespace GCRBA.Controllers
 
                     return View(vm);
 
-				} 
-                else if (vm.Button.CurrentButton == "delete") 
+                }
+                else if (vm.Button.CurrentButton == "delete")
                 {
 
                     // get specialID of selected special 
@@ -912,13 +853,13 @@ namespace GCRBA.Controllers
                     vm.Special.ActionType = DeleteSpecialFromLocation(vm);
 
                     return View(vm);
-				}
+                }
 
                 if (col["btnSubmit"].ToString() == "cancel")
-				{
+                {
                     return RedirectToAction("EditExistingCompany", "AdminPortal");
-				}
-			}
+                }
+            }
 
             return View(vm);
         }
@@ -983,7 +924,7 @@ namespace GCRBA.Controllers
             // create list of categories
             vm.Categories = new List<CategoryItem>();
 
-            return vm; 
+            return vm;
         }
 
         private AdminVM InitEditSpecials(AdminVM vm)
@@ -1073,7 +1014,8 @@ namespace GCRBA.Controllers
                     vm.Category.ActionType = db.InsertCategories(vm);
                 }
                 return vm.Category.ActionType;
-            } catch (Exception ex) { throw new Exception(ex.Message); }
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         private CategoryItem.ActionTypes DeleteCategories(AdminVM vm, string categoryIDs)
@@ -1097,7 +1039,8 @@ namespace GCRBA.Controllers
                     vm.Category.ActionType = db.DeleteCategories(vm);
                 }
                 return vm.Category.ActionType;
-            } catch (Exception ex) { throw new Exception(ex.Message); }
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         private NewLocation.ActionTypes SubmitLocationToDB(AdminVM vm)
@@ -1110,7 +1053,8 @@ namespace GCRBA.Controllers
                 vm.NewLocation.ActionType = db.AddNewLocation(vm);
 
                 return vm.NewLocation.ActionType;
-            } catch (Exception ex) { throw new Exception(ex.Message); }
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         private NewLocation.ActionTypes DeleteLocation(AdminVM vm)
@@ -1135,7 +1079,8 @@ namespace GCRBA.Controllers
                 vm.Special.ActionType = db.DeleteSpecialLocation(vm);
 
                 return vm.Special.ActionType;
-            } catch (Exception ex) { throw new Exception(ex.Message); }
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         private SaleSpecial.ActionTypes AddSpecialToLocation(AdminVM vm)
@@ -1152,7 +1097,8 @@ namespace GCRBA.Controllers
                 vm.Special.ActionType = db.InsertSpecialLocation(vm);
 
                 return vm.Special.ActionType;
-            } catch (Exception ex) { throw new Exception(ex.Message); }
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         // -------------------------------------------------------------------------------------------------
@@ -1173,7 +1119,8 @@ namespace GCRBA.Controllers
                 total = db.GetTotalRequests();
 
                 return total;
-            } catch (Exception ex) { throw new Exception(ex.Message); }
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         private string GetState(int intStateID)
@@ -1190,7 +1137,8 @@ namespace GCRBA.Controllers
                 state = db.GetState(intStateID);
 
                 return state;
-            } catch (Exception ex) { throw new Exception(ex.Message); }
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         public List<State> GetStatesList()
@@ -1232,7 +1180,8 @@ namespace GCRBA.Controllers
                 vm.Categories = db.GetNotCategories(vm);
 
                 return vm;
-            } catch (Exception ex) { throw new Exception(ex.Message); }
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         private AdminVM GetCurrentCategories(AdminVM vm)
@@ -1246,7 +1195,8 @@ namespace GCRBA.Controllers
                 vm.Categories = db.GetCurrentCategories(vm);
 
                 return vm;
-            } catch (Exception ex) { throw new Exception(ex.Message); }
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
 
@@ -1261,7 +1211,8 @@ namespace GCRBA.Controllers
                 vm.Locations = db.GetLocations(vm);
 
                 return vm;
-            } catch (Exception ex) { throw new Exception(ex.Message); }
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         private List<ContactPerson> GetContactsByCompany(AdminVM vm)
@@ -1320,7 +1271,8 @@ namespace GCRBA.Controllers
                 specials = db.GetLandingSpecials(intLocationID);
 
                 return specials;
-            } catch (Exception ex) { throw new Exception(ex.Message); }
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         // -------------------------------------------------------------------------------------------------
@@ -1339,7 +1291,8 @@ namespace GCRBA.Controllers
 
                 // save button session 
                 button.SaveButtonSession();
-            } catch (Exception ex) { throw new Exception(ex.Message); }
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         private AdminVM GetCompanySession(AdminVM vm)
@@ -1356,7 +1309,8 @@ namespace GCRBA.Controllers
                 vm.Company = db.GetCompanyInfo(vm);
 
                 return vm;
-            } catch (Exception ex) { throw new Exception(ex.Message); }
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
     }
