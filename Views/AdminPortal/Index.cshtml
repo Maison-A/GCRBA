@@ -36,7 +36,7 @@ if (Model.User.isAdmin == 0)
 } else
 {
 	<div class="container w-75">
-		<h2>@ViewBag.Title</h2>
+		<h2>ViewBag.Title</h2>
 -->
 
 				@Html.ListBoxFor(model => model.SelectedAdminRequests, Model.AdminRequests, new { style = "width: 200px" }) <button class="button-action" name="btnSubmit" value="approve">Approve</button>
@@ -44,7 +44,7 @@ if (Model.User.isAdmin == 0)
 		<!--
 		using (Html.BeginForm(FormMethod.Post))
 		{
-			<p>You currently have @Model.Request.TotalRequests requests</p>
+			<p>You currently have Model.Request.TotalRequests requests</p>
 		-->
 
 				<button name="btnSubmit" value="editMainBanner">Edit Homepage Banner</button>
