@@ -1,27 +1,70 @@
-﻿@using GCRBA.ViewModels
-@model AdminVM
-
+﻿@model GCRBA.Models.AdminRequestList
+/*
+using GCRBA.ViewModels
+model AdminVM
+*/
 
 @{
 	ViewBag.Title = "Admin Portal";
 }
 
-@if (Model.User.isAdmin == 0)
+<style>
+	td {
+		text-align: center;
+	}
+</style>
+@using (Html.BeginForm(FormMethod.Post)) {
+	GCRBA.Models.User user = new GCRBA.Models.User();
+	GCRBA.Models.Database db = new GCRBA.Models.Database();
+	user = user.GetUserSession();
+
+	if (user.isAdmin == 0) {
+<p>This page is for admins only. If you are an admin, please log in and try again.</p>
+	}
+	else {
+
+<br />
+<table>
+	<tr>
+		<td>
+			<div class="container w-75">
+				<h2>@ViewBag.Title</h2>
+<!--
+if (Model.User.isAdmin == 0)
 {
 	<p>This page is for admins only. If you are an admin, please log in and try again.</p>
 } else
 {
 	<div class="container w-75">
-		<h2>@ViewBag.Title</h2>
+		<h2>ViewBag.Title</h2>
+-->
 
-		@using (Html.BeginForm(FormMethod.Post))
+				@Html.ListBoxFor(model => model.SelectedAdminRequests, Model.AdminRequests, new { style = "width: 200px" }) <button class="button-action" name="btnSubmit" value="approve">Approve</button>
+				<br />
+		<!--
+		using (Html.BeginForm(FormMethod.Post))
 		{
-			<p>You currently have @Model.Request.TotalRequests requests</p>
+			<p>You currently have Model.Request.TotalRequests requests</p>
+		-->
 
+				<button name="btnSubmit" value="editMainBanner">Edit Homepage Banner</button>
+				<button name="btnSubmit" value="editCompanies">Edit Companies</button>
+				
+			</div>
+		</td>
+	</tr>
+</table>
+	}
+}
+
+<h4>You Selected</h4>
+<b style="color:red">Admin Request: @ViewBag.Message</b>
+	<!--
 			<button name="btnSubmit" value="editMainBanner">Edit Homepage Banner</button>
 			<button name="btnSubmit" value="editCompanies">Edit Companies</button>
 			<button name="btnSubmit" value="viewRequests">View Requests</button>
 		}
 
 	</div>
+		-->
 }

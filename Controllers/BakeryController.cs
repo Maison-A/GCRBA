@@ -89,6 +89,7 @@ namespace GCRBA.Views.Bakery {
             results.landingContacts = db.GetLandingContacts(Id);
             results.landingSocialMedia = db.GetLandingSocialMedia(Id);
             results.landingWebsite = db.GetLandingWebsite(Id);
+            results.landingDays = db.GetLandingHours(Id);
 
             results.MainURL = results.landingWebsite.Where(r => r.intWebsiteTypeID.Equals(1)).Select(name => name.strURL).FirstOrDefault();
             results.OrderingURL = results.landingWebsite.Where(r => r.intWebsiteTypeID.Equals(2)).Select(name => name.strURL).FirstOrDefault();
@@ -489,10 +490,10 @@ namespace GCRBA.Views.Bakery {
                     TempData["location"] = locList;
 
                     Models.LocationList.ActionTypes at = Models.LocationList.ActionTypes.NoType;
-                    at = locList.StoreNewLocation(arrCategoryInfo, arrLocHours, arrSocialMediaInfo, arrWebsites, arrContactInfo);
+                    at = locList.StoreTempNewLocation(arrCategoryInfo, arrLocHours, arrSocialMediaInfo, arrWebsites, arrContactInfo);
                     switch (at) {
                         case Models.LocationList.ActionTypes.InsertSuccessful:
-
+                            
                             try {
                                 ExportToCsv.StartExport(locList, arrLocInfo, arrBizInfo, arrCategoryInfo, arrLocHours, arrContactInfo, arrSocialMediaInfo, arrWebsites);
                             }

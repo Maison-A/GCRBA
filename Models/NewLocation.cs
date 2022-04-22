@@ -47,6 +47,8 @@ namespace GCRBA.Models {
 		public CategoryItem Shipping = new CategoryItem();
 		public CategoryItem Online = new CategoryItem();
 
+		public Models.BakedGoods bakedGoods = new Models.BakedGoods();
+
 		public string selectedGood = string.Empty;
 
 		//Bakery Days/Times Hours of Operation

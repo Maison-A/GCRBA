@@ -208,7 +208,10 @@
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\SendMailerController.cs" />
     <Compile Include="Controllers\VendorController.cs" />
+    <Compile Include="Models\AdminRequest.cs" />
+    <Compile Include="Models\AdminRequestList.cs" />
     <Compile Include="Models\Awards.cs" />
+    <Compile Include="Models\BakedGoods.cs" />
     <Compile Include="Models\Button.cs" />
     <Compile Include="Models\ExportToCsv.cs" />
     <Compile Include="Global.asax.cs">

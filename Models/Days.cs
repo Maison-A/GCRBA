@@ -6,7 +6,7 @@ using System.Web;
 namespace GCRBA.Models {
 	public class Days {
 		public long intLocationHoursID = 0;
-		public int intDayID = 0;
+		public short intDayID = 0;
 		public DateTime dtClosedTime;
 		public DateTime dtOpenTime;
 		public string strOpenTime = string.Empty;
