@@ -673,8 +673,6 @@ namespace GCRBA.Models
 			int i = 0;
 			do {
 				try {
-					//Convert Phone Class to Concat String
-					string PhoneNumber = locList.lstLocations[i].BusinessPhone.AreaCode + locList.lstLocations[i].BusinessPhone.Prefix + locList.lstLocations[i].BusinessPhone.Suffix;
 
 					SqlConnection cn = null;
 					if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
@@ -683,11 +681,11 @@ namespace GCRBA.Models
 
 					SetParameter(ref cm, "@intLocationID", locList.lstLocations[i].lngLocationID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
 					SetParameter(ref cm, "@intCompanyID", locList.lstLocations[i].lngCompanyID, SqlDbType.BigInt);
-					SetParameter(ref cm, "@strAddress", locList.lstLocations[i].LocationName, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@strAddress", locList.lstLocations[i].StreetAddress, SqlDbType.NVarChar);
 					SetParameter(ref cm, "@strCity", locList.lstLocations[i].City, SqlDbType.NVarChar);
 					SetParameter(ref cm, "@intStateID", locList.lstLocations[i].intState, SqlDbType.NVarChar);
 					SetParameter(ref cm, "@strZip", locList.lstLocations[i].Zip, SqlDbType.NVarChar);
-					SetParameter(ref cm, "@strPhone", PhoneNumber, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@strPhone", locList.lstLocations[i].strFullPhone, SqlDbType.NVarChar);
 					SetParameter(ref cm, "@strEmail", locList.lstLocations[i].BusinessEmail, SqlDbType.NVarChar);
 
 
@@ -1447,6 +1445,9 @@ namespace GCRBA.Models
 					SqlCommand cm = new SqlCommand("INSERT_COMPANY", cn);
 					int intReturnValue = -1;
 
+					//Reset Company ID for Display table storage
+					locList.lstLocations[i].lngCompanyID = 0;
+
 					SetParameter(ref cm, "@intCompanyID", locList.lstLocations[i].lngCompanyID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
 					SetParameter(ref cm, "@strCompanyName", locList.lstLocations[i].CompanyName, SqlDbType.NVarChar);
 					SetParameter(ref cm, "@strAbout", locList.lstLocations[i].Bio, SqlDbType.NVarChar);
@@ -1880,6 +1881,113 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+		public List<Models.Days> GetLandingHours(long lngLocationID = 0) {
+			try {
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlDataAdapter da = new SqlDataAdapter("SELECT_LOCATIONHOURS", cn);
+				List<Models.Days> lstDays = new List<Models.Days>();
+
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				if (lngLocationID > 0) SetParameter(ref da, "@intLocationID", lngLocationID, SqlDbType.BigInt);
+				try {
+					da.Fill(ds);
+				}
+				catch (Exception ex2) {
+					throw new Exception(ex2.Message);
+				}
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0) {
+					foreach (DataRow dr in ds.Tables[0].Rows) {
+						Models.Days day = new Models.Days();
+						day.strDay = (string)dr["strDay"];
+						day.strOpenTime = (string)dr["strOpen"];
+						day.strClosedTime = (string)dr["strClose"];
+						lstDays.Add(day);
+					}
+				}
+				return lstDays;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public List<Models.Days> GetTempLocationHours(long lngLocationID = 0) {
+			try {
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlDataAdapter da = new SqlDataAdapter("SELECT_TEMP_LOCATIONHOURS", cn);
+				List<Models.Days> lstDays = new List<Models.Days>();
+
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				if (lngLocationID > 0) SetParameter(ref da, "@intLocationID", lngLocationID, SqlDbType.BigInt);
+				try {
+					da.Fill(ds);
+				}
+				catch (Exception ex2) {
+					throw new Exception(ex2.Message);
+				}
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0) {
+					foreach (DataRow dr in ds.Tables[0].Rows) {
+						Models.Days day = new Models.Days();
+						day.strDay = (string)dr["strDay"];
+						day.strOpenTime = (string)dr["strOpen"];
+						day.strClosedTime = (string)dr["strClose"];
+						day.intDayID = (short)dr["intDayID"];
+						lstDays.Add(day);
+					}
+				}
+				return lstDays;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public Models.NewLocation GetTempLocation(short AdminRequestKey) {
+			try {
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlDataAdapter da = new SqlDataAdapter("SELECT_TEMP_LOCATION", cn);
+				Models.NewLocation loc = new Models.NewLocation();
+
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				if (AdminRequestKey > 0) SetParameter(ref da, "@intAdminRequestKey", AdminRequestKey, SqlDbType.BigInt);
+				try {
+					da.Fill(ds);
+				}
+				catch (Exception ex2) {
+					throw new Exception(ex2.Message);
+				}
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0) {
+					foreach (DataRow dr in ds.Tables[0].Rows) {
+						loc.lngLocationID = (long)dr["intLocationID"];
+						loc.lngCompanyID = (long)dr["intCompanyID"];
+						loc.CompanyName = (string)dr["strCompanyName"];
+						loc.StreetAddress = (string)dr["strAddress"];
+						loc.City = (string)dr["strCity"];
+						loc.State = (string)dr["strState"];
+						loc.intState = (short)dr["intStateID"];
+						loc.Zip = (string)dr["strZip"];
+						loc.strFullPhone = (string)dr["strPhone"];
+						loc.BusinessEmail = (string)dr["strEmail"];
+						loc.Bio = (string)dr["strAbout"];
+						loc.BizYear = (string)dr["strBizYear"];
+					}
+				}
+				return loc;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
 		public List<Models.CategoryItem> GetLandingCategories(long lngLocationID = 0)
 		{
 			List<Models.CategoryItem> lstCategories = new List<CategoryItem>();
@@ -1907,6 +2015,39 @@ namespace GCRBA.Models
 				{
 					foreach (DataRow dr in ds.Tables[0].Rows)
 					{
+						Models.CategoryItem item = new CategoryItem();
+						item.ItemID = (short)dr["intCategoryID"];
+						item.ItemDesc = (string)dr["strCategory"];
+						item.blnAvailable = true;
+						lstCategories.Add(item);
+					}
+				}
+				return lstCategories;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public List<Models.CategoryItem> GetTempCategories(long lngLocationID = 0) {
+			List<Models.CategoryItem> lstCategories = new List<CategoryItem>();
+			try {
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlDataAdapter da = new SqlDataAdapter("SELECT_ALLCATEGORY_FORTEMPLOCATION", cn);
+
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				if (lngLocationID > 0) SetParameter(ref da, "@intLocationID", lngLocationID, SqlDbType.BigInt);
+				try {
+					da.Fill(ds);
+				}
+				catch (Exception ex2) {
+					throw new Exception(ex2.Message);
+				}
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0) {
+					foreach (DataRow dr in ds.Tables[0].Rows) {
 						Models.CategoryItem item = new CategoryItem();
 						item.ItemID = (short)dr["intCategoryID"];
 						item.ItemDesc = (string)dr["strCategory"];
@@ -1998,6 +2139,41 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+		public List<Models.ContactPerson> GetTempContacts(long lngLocationID = 0) {
+			List<Models.ContactPerson> lstContactPerson = new List<ContactPerson>();
+			try {
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlDataAdapter da = new SqlDataAdapter("SELECT_TEMP_LOCATION_CONTACTS", cn);
+
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				if (lngLocationID > 0) SetParameter(ref da, "@intLocationID", lngLocationID, SqlDbType.BigInt);
+				try {
+					da.Fill(ds);
+				}
+				catch (Exception ex2) {
+					throw new Exception(ex2.Message);
+				}
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0) {
+					foreach (DataRow dr in ds.Tables[0].Rows) {
+						Models.ContactPerson item = new ContactPerson();
+						item.strFullName = (string)dr["strContactName"];
+						item.strFullPhone = (string)dr["strContactPhone"];
+						item.strContactEmail = (string)dr["strContactEmail"];
+						item.intContactTypeID = (short)dr["intContactPersonTypeID"];
+						item.strContactPersonType = (string)dr["strContactPersonType"];
+						lstContactPerson.Add(item);
+					}
+				}
+				return lstContactPerson;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
 		public List<Models.ContactPerson> GetLandingContacts(long lngLocationID = 0) {
 			List<Models.ContactPerson> lstContactPerson = new List<ContactPerson>();
 			try {
@@ -2066,7 +2242,40 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public bool InsertNewMainBanner(AdminBannerViewModel vm)
+		public List<Models.SocialMedia> GetTempSocialMedia(long lngLocationID = 0) {
+			List<Models.SocialMedia> lstSocialMedia = new List<SocialMedia>();
+			try {
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlDataAdapter da = new SqlDataAdapter("SELECT_TEMP_LOCATION_SOCIALMEDIA", cn);
+
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				if (lngLocationID > 0) SetParameter(ref da, "@intLocationID", lngLocationID, SqlDbType.BigInt);
+				try {
+					da.Fill(ds);
+				}
+				catch (Exception ex2) {
+					throw new Exception(ex2.Message);
+				}
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0) {
+					foreach (DataRow dr in ds.Tables[0].Rows) {
+						Models.SocialMedia item = new SocialMedia();
+						item.strSocialMediaLink = (string)dr["strSocialMediaLink"];
+						item.strPlatform = (string)dr["strPlatform"];
+						item.intCompanyID = (long)dr["intCompanyID"];
+						lstSocialMedia.Add(item);
+					}
+				}
+				return lstSocialMedia;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+			public bool InsertNewMainBanner(AdminBannerViewModel vm)
 		{
 
 			try
@@ -2131,6 +2340,38 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+		public List<Models.Website> GetTempWebsite(long lngLocationID = 0) {
+			List<Models.Website> lstWebites = new List<Website>();
+			try {
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlDataAdapter da = new SqlDataAdapter("SELECT_TEMP_LOCATION_WEBSITE", cn);
+
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				if (lngLocationID > 0) SetParameter(ref da, "@intLocationID", lngLocationID, SqlDbType.BigInt);
+				try {
+					da.Fill(ds);
+				}
+				catch (Exception ex2) {
+					throw new Exception(ex2.Message);
+				}
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0) {
+					foreach (DataRow dr in ds.Tables[0].Rows) {
+						Models.Website item = new Website();
+						item.strWebsiteType = (string)dr["strWebsiteType"];
+						item.intWebsiteTypeID = (short)dr["intWebsiteTypeID"];
+						item.strURL = (string)dr["strURL"];
+						lstWebites.Add(item);
+					}
+				}
+				return lstWebites;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
 
 		public bool InsertUserToMember(User u)
 		{
@@ -2206,5 +2447,374 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+		public LocationList.ActionTypes InsertTempCompany(LocationList locList) {
+			int i = 0;
+			do {
+				try {
+					SqlConnection cn = null;
+					if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+					SqlCommand cm = new SqlCommand("INSERT_TEMP_COMPANY", cn);
+					int intReturnValue = -1;
+
+					SetParameter(ref cm, "@intCompanyID", locList.lstLocations[i].lngCompanyID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+					SetParameter(ref cm, "@strCompanyName", locList.lstLocations[i].CompanyName, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@strAbout", locList.lstLocations[i].Bio, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@strBizYear", locList.lstLocations[i].BizYear, SqlDbType.NVarChar);
+
+					SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+					cm.ExecuteReader();
+
+
+					CloseDBConnection(ref cn);
+					intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+					if (intReturnValue == -1) return Models.LocationList.ActionTypes.CompanyNameExists;
+					locList.lstLocations[i].lngCompanyID = (long)cm.Parameters["@intCompanyID"].Value;
+					i += 1;
+				}
+				catch (Exception ex) { throw new Exception(ex.Message); }
+			} while (locList.lstLocations[i] != null);
+			return LocationList.ActionTypes.InsertSuccessful;
+		}
+
+		public LocationList.ActionTypes InsertAdminRequest(Models.AdminRequest adminRequest ) {
+			try {
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("INSERT_ADMIN_REQUEST", cn);
+				int intReturnValue = -1;
+
+				//User ID - DELETE THIS ONLY FOR TESTING
+				int intMemberID = 3;
+
+				SetParameter(ref cm, "@intAdminRequestID", adminRequest.intAdminRequest, SqlDbType.SmallInt, Direction: ParameterDirection.Output);
+				SetParameter(ref cm, "@intMemberID", intMemberID, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strRequestType", adminRequest.strRequestType, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strRequestedChange", adminRequest.strRequestedChange, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@intApprovalStatusID", adminRequest.intApprovalStatusID, SqlDbType.SmallInt);
+
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+
+				CloseDBConnection(ref cn);
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				if (intReturnValue == -1) return Models.LocationList.ActionTypes.CompanyNameExists;
+				adminRequest.intAdminRequest = (short)cm.Parameters["@intAdminRequestID"].Value;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+
+			return LocationList.ActionTypes.InsertSuccessful;
+		}
+
+		public LocationList.ActionTypes InsertTempLocations(LocationList locList) {
+			int i = 0;
+			do {
+				try {
+					//Convert Phone Class to Concat String
+					string PhoneNumber = locList.lstLocations[i].BusinessPhone.AreaCode + locList.lstLocations[i].BusinessPhone.Prefix + locList.lstLocations[i].BusinessPhone.Suffix;
+
+					SqlConnection cn = null;
+					if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+					SqlCommand cm = new SqlCommand("INSERT_TEMP_LOCATION", cn);
+					int intReturnValue = -1;
+
+					SetParameter(ref cm, "@intLocationID", locList.lstLocations[i].lngLocationID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+					SetParameter(ref cm, "@intCompanyID", locList.lstLocations[i].lngCompanyID, SqlDbType.BigInt);
+					SetParameter(ref cm, "@strAddress", locList.lstLocations[i].LocationName, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@strCity", locList.lstLocations[i].City, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@intStateID", locList.lstLocations[i].intState, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@strZip", locList.lstLocations[i].Zip, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@strPhone", PhoneNumber, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@strEmail", locList.lstLocations[i].BusinessEmail, SqlDbType.NVarChar);
+					SetParameter(ref cm, "@intAdminRequestID", locList.adminReq.intAdminRequest, SqlDbType.SmallInt);
+					
+
+					SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+					cm.ExecuteReader();
+
+					CloseDBConnection(ref cn);
+					intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+					if (intReturnValue != 1) return LocationList.ActionTypes.LocationExists;
+					locList.lstLocations[i].lngLocationID = (long)cm.Parameters["@intLocationID"].Value;
+					i += 1;
+				}
+				catch (Exception ex) { throw new Exception(ex.Message); }
+
+			} while (locList.lstLocations[i] != null);
+
+			return LocationList.ActionTypes.InsertSuccessful;
+		}
+
+		public LocationList.ActionTypes InsertTempSpecialties(LocationList locList, List<Models.CategoryItem>[] categories) {
+			int intReturnValue = 0;
+			int i = 0;
+			do {
+				try {
+					foreach (Models.CategoryItem item in categories[i]) {
+						if (item.blnAvailable == true) {
+							SqlConnection cn = null;
+							if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+							SqlCommand cm = new SqlCommand("INSERT_TEMP_CATEGORYLOCATION", cn);
+
+							SetParameter(ref cm, "@intCategoryLocationID", item.lngCategoryLocationID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+							SetParameter(ref cm, "@intCategoryID", item.ItemID, SqlDbType.SmallInt);
+							SetParameter(ref cm, "@intLocationID", locList.lstLocations[i].lngLocationID, SqlDbType.BigInt);
+
+							SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+							cm.ExecuteReader();
+
+							CloseDBConnection(ref cn);
+							intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+							if (intReturnValue != 1) return Models.LocationList.ActionTypes.CategoryLocationExists;
+
+							item.lngCategoryLocationID = (long)cm.Parameters["@intCategoryLocationID"].Value;
+						}
+					}
+					i += 1;
+				}
+				catch (Exception ex) { throw new Exception(ex.Message); }
+			} while (locList.lstLocations[i] != null);
+			return LocationList.ActionTypes.InsertSuccessful;
+		}
+
+		public LocationList.ActionTypes InsertTempLocationHours(LocationList locList, List<Models.Days>[] LocationHours) {
+			int i = 0;
+			int intReturnValue = -1;
+			try {
+				do {
+					foreach (Models.Days item in LocationHours[i]) {
+
+						SqlConnection cn = null;
+						if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+						SqlCommand cm = new SqlCommand("INSERT_TEMP_LOCATIONHOURS", cn);
+
+						if (item.strOpenTime != string.Empty) {
+							item.dtOpenTime = Convert.ToDateTime(item.strOpenTime);
+							item.strOpenTime = item.dtOpenTime.ToShortTimeString();
+						}
+						else item.strOpenTime = "Closed";
+
+						if (item.strClosedTime != string.Empty) {
+							item.dtClosedTime = Convert.ToDateTime(item.strClosedTime);
+							item.strClosedTime = item.dtClosedTime.ToShortTimeString();
+						}
+						else item.strClosedTime = "Closed";
+
+						SetParameter(ref cm, "@intLocationHoursID", item.intLocationHoursID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+						SetParameter(ref cm, "@intLocationID", locList.lstLocations[i].lngLocationID, SqlDbType.BigInt);
+						SetParameter(ref cm, "@intDayID", item.intDayID, SqlDbType.SmallInt);
+						SetParameter(ref cm, "@strOpen", item.strOpenTime, SqlDbType.NVarChar);
+						SetParameter(ref cm, "@strClose", item.strClosedTime, SqlDbType.NVarChar);
+
+						SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+						cm.ExecuteReader();
+
+						CloseDBConnection(ref cn);
+						intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+						if (intReturnValue != 1) return Models.LocationList.ActionTypes.LocationHourExists;
+
+						item.intLocationHoursID = (long)cm.Parameters["@intLocationHoursID"].Value;
+					}
+					i += 1;
+				}
+				while (LocationHours[i] != null);
+
+				/*
+				arrReturnValue = ls.ToArray();
+				foreach (int item in arrReturnValue) {
+					switch (item) {
+						case 1: // new user created
+							break;
+						default:
+							return LocationList.ActionTypes.Unknown;
+					}
+				}
+				return LocationList.ActionTypes.InsertSuccessful;
+				*/
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+			return LocationList.ActionTypes.InsertSuccessful;
+		}
+
+		public LocationList.ActionTypes InsertTempSocialMedia(LocationList locList, List<Models.SocialMedia>[] socialMedias) {
+			int intReturnValue = 0;
+			int i = 0;
+			do {
+				try {
+
+					foreach (Models.SocialMedia item in socialMedias[i]) {
+						if (item.blnAvailable == false) continue;
+						SqlConnection cn = null;
+						if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+						SqlCommand cm = new SqlCommand("INSERT_TEMP_SOCIALMEDIA", cn);
+
+						SetParameter(ref cm, "@intCompanySocialMediaID", item.intCompanySocialMediaID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+						SetParameter(ref cm, "@strSocialMediaLink", item.strSocialMediaLink, SqlDbType.NVarChar);
+						SetParameter(ref cm, "@intCompanyID", locList.lstLocations[i].lngCompanyID, SqlDbType.BigInt);
+						SetParameter(ref cm, "@intSocialMediaID", item.intSocialMediaID, SqlDbType.SmallInt);
+
+						SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+						cm.ExecuteReader();
+
+						CloseDBConnection(ref cn);
+						intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+						if (intReturnValue != 1) return Models.LocationList.ActionTypes.SocialMediaExists;
+
+						item.intCompanySocialMediaID = (long)cm.Parameters["@intCompanySocialMediaID"].Value;
+					}
+					i += 1;
+					/*
+					arrReturnValue = ls.ToArray();
+					foreach (int item in arrReturnValue) {
+						switch (item) {
+							case 1: // new user created
+								break;
+							default:
+								return LocationList.ActionTypes.Unknown;
+						}
+					}
+					return LocationList.ActionTypes.InsertSuccessful;
+					*/
+				}
+				catch (Exception ex) { throw new Exception(ex.Message); }
+			} while (locList.lstLocations[i] != null);
+			return LocationList.ActionTypes.InsertSuccessful;
+		}
+
+		public LocationList.ActionTypes InsertTempContactPerson(LocationList locList, List<Models.ContactPerson>[] contacts) {
+			int i = 0;
+			do {
+				try {
+					foreach (Models.ContactPerson item in contacts[i]) {
+						if (!string.IsNullOrEmpty(item.strContactFirstName) && !string.IsNullOrEmpty(item.strContactLastName)) {
+							string name = item.strContactLastName + ", " + item.strContactFirstName;
+							string phone = "(" + item.contactPhone.AreaCode + ") " + item.contactPhone.Prefix + "-" + item.contactPhone.Suffix;
+
+
+							//if (item.strContactFirstName == string.Empty || item.strContactLastName == string.Empty) continue;
+							//if (item.contactPhone.AreaCode == string.Empty || item.contactPhone.Prefix == string.Empty) continue;
+
+							SqlConnection cn = null;
+							if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+							SqlCommand cm = new SqlCommand("INSERT_CONTACTLOCATION_RELATIONSHIP", cn);
+							int intReturnValue = -1;
+
+							SetParameter(ref cm, "@intContactPersonID", item.lngContactPersonID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+							SetParameter(ref cm, "@intContactLocationID", item.lngContactPersonID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+							SetParameter(ref cm, "@strContactName", name, SqlDbType.NVarChar);
+							SetParameter(ref cm, "@strContactPhone", phone, SqlDbType.NVarChar);
+							SetParameter(ref cm, "@strContactEmail", item.strContactEmail, SqlDbType.NVarChar);
+							SetParameter(ref cm, "@intLocationID", locList.lstLocations[i].lngLocationID, SqlDbType.BigInt);
+							SetParameter(ref cm, "@intCompanyID", locList.lstLocations[i].lngCompanyID, SqlDbType.BigInt);
+							SetParameter(ref cm, "@intContactPersonTypeID", item.intContactTypeID, SqlDbType.SmallInt);
+
+							SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+							cm.ExecuteReader();
+
+							CloseDBConnection(ref cn);
+							intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+							if (intReturnValue != 1) return Models.LocationList.ActionTypes.ContactPersonExists;
+						}
+					}
+					i += 1;
+					/*
+					arrReturnValue = ls.ToArray();
+					foreach (int item in arrReturnValue) {
+						switch (item) {
+							case 1: // new user created
+								break;
+							default:
+								return LocationList.ActionTypes.Unknown;
+						}
+					}
+					return LocationList.ActionTypes.InsertSuccessful;
+					*/
+				}
+				catch (Exception ex) { throw new Exception(ex.Message); }
+			} while (locList.lstLocations[i] != null);
+			return LocationList.ActionTypes.InsertSuccessful;
+		}
+
+		public LocationList.ActionTypes InsertTempWebsite(LocationList locList, List<Models.Website>[] websites) {
+			int i = 0;
+			int intReturnValue = 0;
+			do {
+				try {
+					foreach (Models.Website item in websites[i]) {
+						if (item.strURL == string.Empty || item.strURL == null) continue;
+						SqlConnection cn = null;
+						if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+						SqlCommand cm = new SqlCommand("INSERT_TEMP_WEBSITE", cn);
+
+						SetParameter(ref cm, "@intWebsiteID", item.intWebsiteID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+						SetParameter(ref cm, "@intCompanyID", locList.lstLocations[i].lngCompanyID, SqlDbType.BigInt);
+						SetParameter(ref cm, "@strURL", item.strURL, SqlDbType.NVarChar);
+						SetParameter(ref cm, "@intWebsiteTypeID", item.intWebsiteTypeID, SqlDbType.SmallInt);
+
+						SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+						cm.ExecuteReader();
+
+						CloseDBConnection(ref cn);
+						intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+						if (intReturnValue != 1) return Models.LocationList.ActionTypes.WebpageURLExists;
+						item.intWebsiteID = (long)cm.Parameters["@intWebsiteID"].Value;
+					}
+					i += 1;
+				}
+				catch (Exception ex) { throw new Exception(ex.Message); }
+			} while (locList.lstLocations[i] != null);
+			return LocationList.ActionTypes.InsertSuccessful;
+		}
+
+		public List<Models.AdminRequest> GetAdminRequests() {
+			try {
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to database -- throw error if unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// specify which stored procedure we are using 
+				SqlDataAdapter da = new SqlDataAdapter("SELECT_ADMINREQUESTS", cn);
+
+				// set command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				List<Models.AdminRequest> lstAdminRequests = new List<Models.AdminRequest>();
+
+				try { da.Fill(ds); }
+				catch (Exception ex) { throw new Exception(ex.Message); }
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0) {
+					// loop through results and add to list 
+					foreach (DataRow dr in ds.Tables[0].Rows) {
+						// create new Company object
+						AdminRequest adminRequest = new AdminRequest();
+
+						// add values to CompanyID and Name properties 
+						adminRequest.intAdminRequest = (short)(dr["intAdminRequestID"]);
+						adminRequest.intMemberID = (short)dr["intMemberID"];
+						adminRequest.strRequestType = (string)dr["strRequestType"];
+						adminRequest.strRequestedChange = (string)dr["strRequestedChange"];
+						adminRequest.intApprovalStatusID = (short)dr["intApprovalStatusID"];
+
+						// add Company object (c) to Company list (companies) 
+						lstAdminRequests.Add(adminRequest);
+					}
+				}
+				// return list of companies 
+				return lstAdminRequests;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
 	}
 }

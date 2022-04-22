@@ -212,7 +212,7 @@ namespace GCRBA.Controllers
                 user.PaymentType = col["PaymentType"];
 
 
-
+                /* The email procedure for new member should go somewhere here....*/
 
 
 
@@ -254,7 +254,7 @@ namespace GCRBA.Controllers
 
                             // update user info
 
-                            // send Grace email
+                            // send Grace email and send to admin controller
 // -------------------------------------------------------------------------------------- //
 // SHANE
 // -------------------------------------------------------------------------------------- //

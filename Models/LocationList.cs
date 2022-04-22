@@ -7,7 +7,42 @@ namespace GCRBA.Models {
 	public class LocationList {
 		public Models.NewLocation[] lstLocations = new Models.NewLocation[100];
 		public ActionTypes ActionType = ActionTypes.NoType;
+		public Models.AdminRequest adminReq = new Models.AdminRequest();
 		public int  isMember { get; set; }
+		public int intRequestNumber { get; set; }
+
+		public LocationList.ActionTypes StoreTempNewLocation(List<Models.CategoryItem>[] categories, List<Models.Days>[] LocationHours, List<Models.SocialMedia>[] socialMedias, List<Models.Website>[] websites, List<Models.ContactPerson>[] contacts) {
+
+			try {
+				Database db = new Database();
+				this.adminReq = new AdminRequest() {
+					strRequestType = "INSERT",
+					strRequestedChange = "Add Location",
+					intApprovalStatusID = 1
+				};
+				this.ActionType = db.InsertAdminRequest(this.adminReq);
+				if (this.lstLocations[0].CompanyName != string.Empty) this.ActionType = db.InsertTempCompany(this);
+				if (this.ActionType == ActionTypes.InsertSuccessful || this.ActionType == ActionTypes.NoType) this.ActionType = db.InsertTempLocations(this);
+				if (this.ActionType == ActionTypes.InsertSuccessful) this.ActionType = db.InsertTempLocationHours(this, LocationHours);
+				if (this.ActionType == ActionTypes.InsertSuccessful) this.ActionType = db.InsertTempSpecialties(this, categories);
+				if (this.ActionType == ActionTypes.InsertSuccessful) this.ActionType = db.InsertTempSocialMedia(this, socialMedias);
+				if (this.ActionType == ActionTypes.InsertSuccessful) this.ActionType = db.InsertTempWebsite(this, websites);
+				if (this.ActionType == ActionTypes.InsertSuccessful) this.ActionType = db.InsertTempContactPerson(this, contacts);
+
+				//if something goes bad with new location entry, delete anything related to the new locations entered.
+				if (this.ActionType != ActionTypes.InsertSuccessful) {
+					int i = 0;
+					do {
+						if (this.lstLocations[i].lngLocationID != 0 && this.lstLocations[i] != null) {
+							db.DeleteLocation(this.lstLocations[i].lngLocationID);
+						}
+						i++;
+					} while (this.lstLocations[i] != null);
+				}
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+			return this.ActionType;
+		}
 
 		public LocationList.ActionTypes StoreNewLocation(List<Models.CategoryItem>[] categories, List<Models.Days>[] LocationHours, List<Models.SocialMedia>[] socialMedias, List<Models.Website>[] websites, List<Models.ContactPerson>[] contacts) {
 
@@ -19,7 +54,7 @@ namespace GCRBA.Models {
 					if (this.ActionType == ActionTypes.InsertSuccessful) this.ActionType = db.InsertSpecialties(this, categories);
 					if (this.ActionType == ActionTypes.InsertSuccessful) this.ActionType = db.InsertSocialMedia(this, socialMedias);
 					if (this.ActionType == ActionTypes.InsertSuccessful) this.ActionType = db.InsertWebsite(this, websites);
-					if (this.ActionType == ActionTypes.InsertSuccessful) this.ActionType = db.InsertContactPerson(this, contacts);
+					if (this.ActionType == ActionTypes.InsertSuccessful) this.ActionType = db.InsertTempContactPerson(this, contacts);
 
 					//if something goes bad with new location entry, delete anything related to the new locations entered.
 					if(this.ActionType != ActionTypes.InsertSuccessful) {

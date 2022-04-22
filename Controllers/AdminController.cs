@@ -16,14 +16,70 @@ namespace GCRBA.Controllers
         {
             // get current user session so we know who is logged in (member, nonmember, admin)  
             User u = new User();
-            u = u.GetUserSession();
 
-            return View(u);
+            Models.Database db = new Models.Database();
+            List<Models.AdminRequest> adminRequests = new List<AdminRequest>();
+            adminRequests = db.GetAdminRequests();
+            Models.AdminRequestList adminRequestList = new Models.AdminRequestList() {
+                SelectedAdminRequests = new [] {1},
+                AdminRequests = GetAllAdminRequest(adminRequests)
+            };
+
+            return View(adminRequestList);
         }
 
         [HttpPost]
-        public ActionResult Index(FormCollection col)
+        public ActionResult Index(FormCollection col, AdminRequestList request)
         {
+           Models.Database db = new Models.Database();
+           Models.AdminRequestList adminRequestList = new Models.AdminRequestList();
+           adminRequestList.lstAdminRequest = db.GetAdminRequests();
+           request.AdminRequests = GetAllAdminRequest(adminRequestList.lstAdminRequest);
+           if(col["btnSubmit"].ToString() == "approve" && request.SelectedAdminRequests != null) {
+                List<SelectListItem> selectedItems = request.AdminRequests.Where(p => request.SelectedAdminRequests.Contains(int.Parse(p.Value))).ToList(); 
+                foreach(var Request in selectedItems) {
+                    Request.Selected = true;
+                    Models.LocationList locList = new Models.LocationList();
+                    locList.lstLocations[0] = db.GetTempLocation(Convert.ToInt16(Request.Value));
+
+                    List<Models.CategoryItem> categoryItems = new List<CategoryItem>();
+                    List<Models.CategoryItem>[] arrCategoryInfo = new List<CategoryItem>[10];
+                    categoryItems = db.GetTempCategories(locList.lstLocations[0].lngLocationID);
+                    arrCategoryInfo[0] = categoryItems;
+
+                    foreach (Models.CategoryItem category in categoryItems) {
+                        foreach (Models.CategoryItem categoryCheck in locList.lstLocations[0].bakedGoods.lstBakedGoods) {
+                            if(categoryCheck.ItemID == category.ItemID) {
+                                categoryCheck.blnAvailable = true;
+							}
+						}
+					}
+                    List<Models.Days>[] arrLocHours = new List<Days>[10];
+                    List<Models.Days> LocationHours = new List<Days>();
+                    LocationHours = db.GetTempLocationHours(locList.lstLocations[0].lngLocationID);
+                    arrLocHours[0] = LocationHours;
+
+                    List<Models.ContactPerson>[] arrContactInfo = new List<ContactPerson>[10];
+                    List<Models.ContactPerson> contactPeople = new List<Models.ContactPerson>();
+                    contactPeople = db.GetTempContacts(locList.lstLocations[0].lngLocationID);
+                    arrContactInfo[0] = contactPeople;
+
+                    List<Models.SocialMedia>[] arrSocialMediaInfo = new List<SocialMedia>[10];
+                    List<Models.SocialMedia> socialMedias = new List<SocialMedia>();
+                    socialMedias = db.GetTempSocialMedia(locList.lstLocations[0].lngLocationID);
+                    arrSocialMediaInfo[0] = socialMedias;
+
+                    List<Models.Website>[] arrWebsites = new List<Website>[10];
+                    List<Models.Website> websites = new List<Website>();
+                    websites = db.GetTempWebsite(locList.lstLocations[0].lngLocationID);
+                    arrWebsites[0] = websites;
+
+                    locList.StoreNewLocation(arrCategoryInfo, arrLocHours, arrSocialMediaInfo, arrWebsites, arrContactInfo);
+                }
+                return View(request);
+			}
+
+           
             // Edit Main Banner button pressed
             if (col["btnSubmit"].ToString() == "editMainBanner")
             {
@@ -35,9 +91,16 @@ namespace GCRBA.Controllers
             {
                 return RedirectToAction("EditCompanies", "AdminPortal");
             }
-
             return View();
         }
+
+        public List<SelectListItem> GetAllAdminRequest(List<Models.AdminRequest> lstAdminRequest) {
+            List<SelectListItem> items = new List<SelectListItem>();
+            foreach(Models.AdminRequest req in lstAdminRequest) {
+                items.Add(new SelectListItem { Text = req.strRequestedChange, Value = req.intAdminRequest.ToString() });
+			}
+            return items;
+		}
 
         public ActionResult EditMainBanner()
         {

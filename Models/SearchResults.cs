@@ -16,6 +16,7 @@ namespace GCRBA.Models
 		public List<Models.ContactPerson> landingContacts;
 		public List<Models.SocialMedia> landingSocialMedia;
 		public List<Models.Website> landingWebsite;
+		public List<Models.Days> landingDays;
 
 		public string MainURL = string.Empty;
 		public string OrderingURL = string.Empty;
