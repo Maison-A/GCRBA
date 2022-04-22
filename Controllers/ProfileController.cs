@@ -10,7 +10,12 @@ namespace GCRBA.Controllers
 {
     public class ProfileController : Controller
     {
-   
+
+        // -------------------------------------------------------------------------------------------------
+        // ACTIONRESULT METHODS  
+        // -------------------------------------------------------------------------------------------------
+
+
         public ActionResult Index()
         {
             Models.User user = new Models.User();
@@ -252,7 +257,7 @@ namespace GCRBA.Controllers
             return View();
         }
         
-        public ActionResult EditProfile(FormCollection col)
+        public ActionResult EditProfile()
 		{
             // initialize MemberVM
             // - create user object + get current user session 
@@ -262,34 +267,86 @@ namespace GCRBA.Controllers
             vm = GetStates(vm);
 
             return View(vm);
-		}
+        }
 
-        private MemberVM InitMemberVM()
+        [HttpPost]
+        public ActionResult EditProfile(FormCollection col)
 		{
-            // create MemberVM object
-            MemberVM vm = new MemberVM();
+            // initialize MemberVM
+            // - create user object + get current user session 
+            MemberVM vm = InitMemberVM();
 
-            // create new user object 
-            // then get current user session
-            vm.User = new User();
-            vm.User = vm.User.GetUserSession();
+            // get list of states 
+            vm = GetStates(vm);
 
-            return vm;
+            if (col["btnSubmit"].ToString() == "submit")
+			{
+                // declare variable to temporarily hold password while we validate it 
+                string tempPassword = col["User.Password"];
+
+
+                // if new password is different than current password, check if new password was 
+                // re-entered in second input 
+                if (tempPassword != vm.User.Password)
+                {
+                    if (col["password2"].ToString() != tempPassword)
+                    {
+                        // show error message that passwords must match 
+                        vm.User.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
+                        return View(vm);
+                    } else
+                    {
+                        // change class property values to updated changes 
+                        vm.User.FirstName = col["User.FirstName"];
+                        vm.User.LastName = col["User.LastName"];
+                        vm.User.Address = col["User.Address"];
+                        vm.User.City = col["User.City"];
+                        vm.User.intState = Convert.ToInt16(col["states"]);
+                        vm.User.Zip = col["User.Zip"];
+                        vm.User.Phone = col["User.Phone"];
+                        vm.User.Email = col["User.Email"];
+                        vm.User.Password = tempPassword;
+
+                        // submit to db 
+                        vm.User.ActionType = UpdateUser(vm);
+
+                        return View(vm);
+                    }
+                } 
+                else
+				{
+                    // get input 
+                    vm.User.FirstName = col["User.FirstName"];
+                    vm.User.LastName = col["User.LastName"];
+                    vm.User.Address = col["User.Address"];
+                    vm.User.City = col["User.City"];
+                    vm.User.intState = Convert.ToInt16(col["states"]);
+                    vm.User.Zip = col["User.Zip"];
+                    vm.User.Phone = col["User.Phone"];
+                    vm.User.Email = col["User.Email"];
+
+                    // submit to db 
+                    vm.User.ActionType = UpdateUser(vm);
+
+                    return View(vm);
+                }
+            }
+
+            return View(vm);
 		}
 
-        private MemberVM GetStates(MemberVM vm)
+        private User.ActionTypes UpdateUser(MemberVM vm)
 		{
             try
 			{
-                // create database object
+                // create database object 
                 Database db = new Database();
 
-                // create states object 
-                // then get list of states from database
-                vm.States = new List<State>();
-                vm.States = db.GetStates();
+                // submit to db 
+                vm.User.ActionType = db.UpdateUser(vm);
 
-                return vm;
+                // return actiontype
+                return vm.User.ActionType;
 			}
             catch (Exception ex) { throw new Exception(ex.Message); }
 		}
@@ -305,6 +362,51 @@ namespace GCRBA.Controllers
             // redirect to main page
             return RedirectToAction("Index", "Home");
         }
+
+
+        // -------------------------------------------------------------------------------------------------
+        // ADDING DATA TO DATABASE   
+        // -------------------------------------------------------------------------------------------------
+
+
+
+        // -------------------------------------------------------------------------------------------------
+        // RETRIEVING DATA FROM DATABASE   
+        // -------------------------------------------------------------------------------------------------
+        private MemberVM GetStates(MemberVM vm)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // create states object 
+                // then get list of states from database
+                vm.States = new List<State>();
+                vm.States = db.GetStates();
+
+                return vm;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+
+        // -------------------------------------------------------------------------------------------------
+        // INITIALIZING COMMONLY USED CLASSES  
+        // -------------------------------------------------------------------------------------------------
+
+        private MemberVM InitMemberVM()
+        {
+            // create MemberVM object
+            MemberVM vm = new MemberVM();
+
+            // create new user object 
+            // then get current user session
+            vm.User = new User();
+            vm.User = vm.User.GetUserSession();
+
+            return vm;
+        }
+
 
     }
 }

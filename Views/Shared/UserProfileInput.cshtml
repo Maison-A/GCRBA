@@ -49,15 +49,15 @@
 		</div>
 		<div>
 			@Html.LabelFor(m => m.User.Email, new { @class = "form-label" })
-			@Html.TextBoxFor(m => m.User.Email, new { @class = "form-control" })
+			@Html.TextBoxFor(m => m.User.Email, new { @class = "form-control", @type = "email" })
 		</div>
 		<div>
 			@Html.LabelFor(m => m.User.Password, new { @class = "form-label" })
-			@Html.TextBoxFor(m => m.User.Password, new { @class = "form-control" })
+			@Html.TextBoxFor(m => m.User.Password, new { @type = "password", @class = "form-control" })
 		</div>
 		<div>
-			@Html.LabelFor(m => m.User.Password, new { @class = "form-label" })
-			@Html.TextBoxFor(m => m.User.Password, new { @class = "form-control" })
+			<label for="password2">Re-enter your password</label>
+			<input type="password" name="password2" class="form-control" />
 		</div>
 
 		<button name="btnSubmit" value="submit" class="mt-2 mb-2">Update</button>

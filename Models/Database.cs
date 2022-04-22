@@ -1323,7 +1323,7 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public User.ActionTypes UpdateUser(User u)
+		public User.ActionTypes UpdateUser(MemberVM vm)
 		{
 			try
 			{
@@ -1332,12 +1332,16 @@ namespace GCRBA.Models
 				SqlCommand cm = new SqlCommand("UPDATE_USER", cn);
 				int intReturnValue = -1;
 
-				SetParameter(ref cm, "@uid", u.UID, SqlDbType.BigInt);
-				SetParameter(ref cm, "@user_name", u.Username, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@password", u.Password, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@first_name", u.FirstName, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@last_name", u.LastName, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@email", u.Email, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@intUserID", vm.User.UID, SqlDbType.SmallInt);
+				SetParameter(ref cm, "@strFirstName", vm.User.FirstName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strLastName", vm.User.LastName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strAddress", vm.User.Address, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strCity", vm.User.City, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@intStateID", vm.User.intState, SqlDbType.BigInt);
+				SetParameter(ref cm, "@strZip", vm.User.Zip, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strPhone", vm.User.Phone, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strEmail", vm.User.Email, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strPassword", vm.User.Password, SqlDbType.NVarChar);
 
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
 
