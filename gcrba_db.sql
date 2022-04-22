@@ -660,6 +660,35 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [dbo].[SELECT_ADMINREQUESTS]
+AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN
+		SELECT * FROM db_owner.tblAdminRequest
+		WHERE intApprovalStatusID = 1
+	END
+END
+GO
+
+CREATE PROCEDURE [dbo].[SELECT_ALLCATEGORY_FORTEMPLOCATION]
+@intLocationID BIGINT = NULL
+AS 
+BEGIN
+	SET NOCOUNT ON;
+	
+	IF @intLocationID IS NOT NULL
+	BEGIN
+		SELECT *
+		FROM db_owner.tblTempCategoryLocation AS CatLoc
+		JOIN db_owner.tblTempCategory AS Cat
+		ON CatLoc.intCategoryID = Cat.intCategoryID
+		WHERE [intLocationID] = @intLocationID
+		ORDER BY Cat.strCategory
+	END
+END
+GO
+
 CREATE PROCEDURE [db_owner].[GET_NOT_CATEGORIES]
 @intLocationID BIGINT
 AS
