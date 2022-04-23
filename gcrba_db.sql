@@ -1,5 +1,7 @@
 -- DROP TABLES
 IF OBJECT_ID('tblSpecialLocation')			IS NOT NULL DROP TABLE tblSpecialLocation 
+IF OBJECT_ID('tblPaymentStatus')			IS NOT NULL DROP TABLE tblPaymentStatus 
+IF OBJECT_ID('tblMembershipRequest')		IS NOT NULL DROP TABLE tblMembershipRequest 
 IF OBJECT_ID('tblCompanyAward')				IS NOT NULL DROP TABLE tblCompanyAward
 IF OBJECT_ID('tblLocationHours')			IS NOT NULL DROP TABLE tblLocationHours
 IF OBJECT_ID('tblTempLocationHours')		IS NOT NULL DROP TABLE tblTempLocationHours   
@@ -104,6 +106,7 @@ IF OBJECT_ID ('SELECT_SINGLE_ADMINREQUEST')			IS NOT NULL DROP PROCEDURE SELECT_
 IF OBJECT_ID ('INSERT_COMPANYMEMBER_RELATIONSHIP')	IS NOT NULL DROP PROCEDURE INSERT_COMPANYMEMBER_RELATIONSHIP
 IF OBJECT_ID ('DELETE_TEMP_LOCATION')				IS NOT NULL DROP PROCEDURE DELETE_TEMP_LOCATION
 IF OBJECT_ID ('DELETE_ADMIN_REQUEST')				IS NOT NULL DROP PROCEDURE DELETE_ADMIN_REQUEST
+IF OBJECT_ID ('GET_MEMBERSHIP_REQUESTS')				IS NOT NULL DROP PROCEDURE GET_MEMBERSHIP_REQUESTS
 
 CREATE TABLE tblTempCompany   
 (
@@ -275,12 +278,21 @@ CREATE TABLE tblPaymentType
 	CONSTRAINT tblPaymentType_PK PRIMARY KEY (intPaymentTypeID)
 )
 
+CREATE TABLE tblPaymentStatus
+(
+	intPaymentStatusID	SMALLINT IDENTITY(1,1) NOT NULL,
+	strStatus			NVARCHAR(20)			NOT NULL, 
+	CONSTRAINT tblPaymentStatus_PK PRIMARY KEY (intPaymentStatusID)
+)
+
 CREATE TABLE tblMember 
 (
 	intMemberID			SMALLINT IDENTITY(1,1)	NOT NULL, 
 	intUserID			SMALLINT		NOT NULL, 
 	intMemberLevelID		SMALLINT		NOT NULL, 
 	intPaymentTypeID		SMALLINT		NOT NULL,
+	intPaymentStatusID		SMALLINT		NOT NULL,
+	intApprovalStatusID		SMALLINT		NOT NULL,
 	CONSTRAINT tblMember_PK PRIMARY KEY (intMemberID)
 )	
 
@@ -470,6 +482,13 @@ CREATE TABLE tblAdminRequest
 	CONSTRAINT tblAdminRequest_PK PRIMARY KEY (intAdminRequestID)
 )
 
+CREATE TABLE tblMembershipRequest 
+(
+	intMembershipRequestID	SMALLINT IDENTITY(1,1) NOT NULL, 
+	intMemberID				SMALLINT				NOT NULL, 
+	CONSTRAINT tblMembershipRequest_PK PRIMARY KEY (intMembershipRequestID)
+)
+
 CREATE TABLE tblApprovalStatus
 (
 	intApprovalStatusID		SMALLINT IDENTITY(1,1)	NOT NULL,
@@ -640,6 +659,12 @@ FOREIGN KEY (intAdminRequestID) REFERENCES tblAdminRequest (intAdminRequestID)
 
 ALTER TABLE tblTempContactPerson ADD CONSTRAINT tblTempContactPerson_tblTempContactPersonType_FK
 FOREIGN KEY (intContactPersonTypeID) REFERENCES tblTempContactPersonType (intContactPersonTypeID)
+
+ALTER TABLE tblMembershipRequest ADD CONSTRAINT tblMembershipRequest_tblMember_FK
+FOREIGN KEY (intMemberID) REFERENCES tblMember (intMemberID)
+
+ALTER TABLE tblMember ADD CONSTRAINT tblMember_tblApprovalStatus_FK
+FOREIGN KEY (intApprovalStatusID) REFERENCES tblApprovalStatus (intApprovalStatusID)
 
 -- -----------------------------------------------------------------------------------------
 -- STORED PROCEDURES 
@@ -1620,6 +1645,24 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [db_owner].[GET_MEMBERSHIP_REQUESTS]
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT	u.strFirstName, u.strLastName, u.strEmail, u.strPhone, m.intMemberID, ml.strMemberLevel, pt.strPaymentType
+	FROM	tblUser as u FULL OUTER JOIN tblMember as m
+			ON u.intUserID = m.intUserID
+			FULL OUTER JOIN tblMemberLevel as ml
+			ON ml.intMemberLevelID = m.intMemberLevelID
+			FULL OUTER JOIN tblPaymentType as pt
+			ON pt.intPaymentTypeID = m.intPaymentTypeID
+			FULL OUTER JOIN tblPaymentStatus as ps
+			ON ps.intPaymentStatusID = m.intPaymentStatusID
+	WHERE	m.intApprovalStatusID = 1
+END
+GO
+
 CREATE PROCEDURE [dbo].[INSERT_TEMP_WEBSITE]
 @intWebsiteID AS BIGINT OUTPUT
 ,@intCompanyID AS BIGINT
@@ -1985,6 +2028,10 @@ GO
 -- ADD TEST DATA
 -- -----------------------------------------------------------------------------------------
 
+INSERT INTO tblApprovalStatus (strApprovalStatus)
+VALUES						('Not Approved')
+							,('Approved')
+
 INSERT INTO tblContactPersonType (strContactPersonType)
 VALUES			('Location Contact')
 				,('Web Admin')
@@ -2003,6 +2050,10 @@ VALUES	('Associate'),
 INSERT INTO tblPaymentType (strPaymentType)
 VALUES	('Zelle'),
 	('Check')
+
+INSERT INTO tblPaymentStatus (strStatus)
+VALUES		('Paid'),
+			('Not Paid')
 
 INSERT INTO tblCategory (strCategory)
 VALUES	('Donuts'), 
@@ -2148,23 +2199,16 @@ VALUES	('Katie', 'Schmidt', '6036 Flyer Drive', 'Cincinnati', 3, '45248', '51331
 
 
 -- ADD USER TO MEMBER TABLE 
-INSERT INTO  tblMember (intUserID, intMemberLevelID, intPaymentTypeID)
-VALUES	 (1, 1, 2)
-		,(3, 2, 1)
-		,(4, 2, 1)
-		,(5, 1, 1)
+INSERT INTO  tblMember (intUserID, intMemberLevelID, intPaymentTypeID, intApprovalStatusID, intPaymentStatusID)
+VALUES	 (1, 1, 2, 2, 1)
+		,(3, 2, 1, 2, 1)
+		,(4, 2, 1, 2, 1)
+		,(5, 1, 1, 1, 2)
 
 -- ADD CONNECTION BETWEEN COMPANY AND MEMBER
 INSERT INTO tblCompanyMember (intCompanyID, intMemberID)
 VALUES				 (3,2) -- SHANE AS MEMBER FOR SERVATII
 					,(3,3) -- GRACE AS MEMBER FOR SERVATII 
-
---INSERT INTO tblAdminRequest (intUserID, intTypeID, intEditedTableID, intEditedColumnID, intLocationInTable, strRequestedChange)
---VALUES		(2, 1, 1, null, 5, null), -- UserID 2 requesting to become member (is 5th row in member table with status pending)
---			(5, 2, 2, null, 4, null), -- USER BOB REQUESTING TO ADD COMPANY TO DATABASE 
---			(4, 2, 2, 1, 3, 'Servaty'), -- USER GRACE REQUESTING TO CHANGE NAME OF EXISTING COMPANY SERVATII TO SERVATY
---			(5, 3, 3, null, 5, null), -- USER BOB REQUESTING TO ADD NEW LOCATION TO NEW COMPANY -- IF COMPANY IS DENIED LOCATION IS DENIED TOO
---			(3, 2, 3, 5, 4, '2011 Anderson Ferry') -- USER SHANE IS REQUESTING TO EDIT EXISTING SERVATII LOCATION 
 
 INSERT INTO tblMainBanner (strBanner)
 VALUES	('This is an example of the main banner. This will hold information relevant to the GCRBA.'),
@@ -2264,10 +2308,6 @@ VALUES				('Main')
 					,('Ordering')
 					,('Kettle')
 
-INSERT INTO tblApprovalStatus (strApprovalStatus)
-VALUES						('Not Approved')
-							,('Approved')
-
 INSERT INTO tblAdminRequest(intMemberID, strRequestType, strRequestedChange, intApprovalStatusID)
 VALUES						(3, 'Add', 'Add Location', 1)
 
@@ -2302,3 +2342,13 @@ VALUES									(1, 1)
 
 INSERT INTO tblTempCompanySocialMedia (intCompanyID, strSocialMediaLink, intSocialMediaID)
 VALUES					(1, 'https://www.facebook.com', 1)
+
+
+
+
+
+
+
+
+
+
