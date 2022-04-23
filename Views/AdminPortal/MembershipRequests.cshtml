@@ -1,1 +1,38 @@
-﻿
+﻿@model GCRBA.Models.MembershipRequestList
+
+@{
+	ViewBag.Title = "Membership Requests";
+}
+
+<style>
+	td {
+		text-align: center;
+	}
+</style>
+
+@using (Html.BeginForm(FormMethod.Post)) {
+	GCRBA.Models.User user = new GCRBA.Models.User();
+	GCRBA.Models.Database db = new GCRBA.Models.Database();
+	user = user.GetUserSession();
+
+	if (user.isAdmin == 0) {
+		<p>This page is for admins only. If you are an admin, please log in and try again.</p>
+	}
+	else {
+
+		<br />
+		<table>
+			<tr>
+				<td>
+					<div class="container w-75">
+						<h2>@ViewBag.Title</h2>
+						@Html.ListBoxFor(model => model.SelectedMemberRequests, Model.MemberRequests, new { style = "width: 600px" }) <br /><br />
+						<button class="button-action" name="btnSubmit" value="approve">Approve</button> <button class="button-action" name="btnSubmit" value="deny">Decline</button>
+						<br />
+						<br />
+					</div>
+				</td>
+			</tr>
+		</table>
+	}
+}

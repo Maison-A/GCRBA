@@ -224,6 +224,8 @@
     <Compile Include="Models\LocationList.cs" />
     <Compile Include="Models\MainBanner.cs" />
     <Compile Include="Models\MailModel.cs" />
+    <Compile Include="Models\MembershipRequestList.cs" />
+    <Compile Include="Models\MembershipRequests.cs" />
     <Compile Include="Models\NewLocation.cs" />
     <Compile Include="Models\PhoneNumber.cs" />
     <Compile Include="Models\Request.cs" />

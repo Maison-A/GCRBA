@@ -174,8 +174,8 @@
         </div>
         <!-- payment type -->
         <div class="some-spacing">
-            @Html.RadioButtonFor(model => model.PaymentType, "Zelle")@Html.Label("Zelle") |
-            @Html.RadioButtonFor(model => model.PaymentType, "Check")@Html.Label("Check")
+            @Html.RadioButtonFor(model => model.PaymentType, "Zelle", new { value = 1})@Html.Label("Zelle") |
+            @Html.RadioButtonFor(model => model.PaymentType, "Check", new { value = 2})@Html.Label("Check")
         </div>
     </div>
 

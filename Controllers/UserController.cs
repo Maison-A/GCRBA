@@ -169,9 +169,8 @@ namespace GCRBA.Controllers
         [HttpPost]
         public ActionResult AddNewMember(FormCollection col)
         {
-            try
-            {
-               
+            try {
+
                 // get current user session
                 Models.User user = new Models.User();
                 user = user.GetUserSession();
@@ -188,12 +187,11 @@ namespace GCRBA.Controllers
                 //Just doing something quick here... probably should be changed to something more dynamic.
                 if (user.intState == 1) user.State = "Indiana";
                 else if (user.intState == 2) user.State = "Kentucky";
-                else if (user.intState == 3) user.State = "Ohio";                
+                else if (user.intState == 3) user.State = "Ohio";
                 user.Zip = col["Zip"];
 
                 // set sign in info if user is new
-                if (user.UID == 0)
-                {
+                if (user.UID == 0) {
                     // username/pass setup
                     user.Email = col["Email"];
                     user.Username = col["Username"];
@@ -202,20 +200,19 @@ namespace GCRBA.Controllers
 
 
                 // membership type
-                user.MemberShipType = col["MemberShipType"];
-                user.PaymentType = col["PaymentType"];
+                if (col["MemberShipType"] != null) {
+                    if (col["MemberShipType"].ToString() == "Associate") user.intMembershipType = 1;
+                    else if (col["MemberShipType"].ToString() == "Business") user.intMembershipType = 2;
+                    else if (col["MemberShipType"].ToString() == "Allied") user.intMembershipType = 3;
+				}
 
-
-                /* The email procedure for new member should go somewhere here....*/
-
-
-
+                if (col["PaymentType"] != null) {
+                    if(col["PaymentType"].ToString() == "Zelle") user.intPaymentType = 1;
+                    else if(col["PaymentType"].ToString() == "Check") user.intPaymentType = 2;
+                }
                 //permissions
                 //user.isMember = 1;
                 user.isAdmin = 0;
-
-                
-
 
                 // once submit is hit, process member data
                 if (col["btnSubmit"] == "submit")
@@ -223,7 +220,7 @@ namespace GCRBA.Controllers
                     //validate data
                     if (user.FirstName.Length == 0 || user.LastName.Length == 0 || user.Email.Length == 0 ||
                         user.Phone.Length == 0 || user.Address.Length == 0 || user.City.Length == 0 || user.State.Length == 0 ||
-                        user.Zip.Length == 0)
+                        user.Zip.Length == 0 || user.intPaymentType == 0 || user.intMembershipType == 0)
                     {
                         // empty field(s), access action type on view to display relevant error message
                         user.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
@@ -246,7 +243,8 @@ namespace GCRBA.Controllers
                             // update member table
                             db.InsertUserToMember(user);
 
-                            // update user info
+                            // send request to member table to be reviewed by admin
+                            db.InsertMemberRequest(user);
 
                             // send Grace email and send to admin controller
 
@@ -265,7 +263,9 @@ namespace GCRBA.Controllers
 
                                     user.SaveUserSession();
 
-                                    return RedirectToAction("Member", "Profile");
+                                    db.InsertMemberRequest(user);
+
+                                    return RedirectToAction("Index", "Home");
                                     
 
                                 default:
