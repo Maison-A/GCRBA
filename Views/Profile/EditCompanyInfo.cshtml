@@ -7,3 +7,16 @@
 
 <h2>@ViewBag.Title</h2>
 
+@if (Model.User.isMember != 1)
+{
+	@Html.Partial("MemberOnly");
+} 
+else
+{
+	using (Html.BeginForm(null, null, null, FormMethod.Post, new { @class = "mx-auto w-50" }))
+	{
+		 <p>Member account connected with: @Model.Company.Name</p>
+		 <button name="btnSubmit" value="removeCompany">Remove Company from Profile</button>
+		 <button name="btnSubmit" value="editCompany">Edit Company Information</button>
+	}
+}

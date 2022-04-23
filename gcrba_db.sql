@@ -1,5 +1,7 @@
 -- DROP TABLES
 IF OBJECT_ID('tblSpecialLocation')			IS NOT NULL DROP TABLE tblSpecialLocation 
+IF OBJECT_ID('tblPaymentStatus')			IS NOT NULL DROP TABLE tblPaymentStatus 
+IF OBJECT_ID('tblMembershipRequest')		IS NOT NULL DROP TABLE tblMembershipRequest 
 IF OBJECT_ID('tblCompanyAward')				IS NOT NULL DROP TABLE tblCompanyAward
 IF OBJECT_ID('tblLocationHours')			IS NOT NULL DROP TABLE tblLocationHours
 IF OBJECT_ID('tblTempLocationHours')		IS NOT NULL DROP TABLE tblTempLocationHours   
@@ -100,6 +102,11 @@ IF OBJECT_ID('SELECT_TEMP_LOCATION_SOCIALMEDIA')	IS NOT NULL DROP PROCEDURE SELE
 IF OBJECT_ID('SELECT_TEMP_LOCATION_WEBSITE')		IS NOT NULL DROP PROCEDURE SELECT_TEMP_LOCATION_WEBSITE
 IF OBJECT_ID('CHECK_IF_MEMBERLOCATION')				IS NOT NULL DROP PROC CHECK_IF_MEMBERLOCATION
 IF OBJECT_ID ('SELECT_LOCATION_AWARDS')				IS NOT NULL DROP PROCEDURE SELECT_LOCATION_AWARDS
+IF OBJECT_ID ('SELECT_SINGLE_ADMINREQUEST')			IS NOT NULL DROP PROCEDURE SELECT_SINGLE_ADMINREQUEST
+IF OBJECT_ID ('INSERT_COMPANYMEMBER_RELATIONSHIP')	IS NOT NULL DROP PROCEDURE INSERT_COMPANYMEMBER_RELATIONSHIP
+IF OBJECT_ID ('DELETE_TEMP_LOCATION')				IS NOT NULL DROP PROCEDURE DELETE_TEMP_LOCATION
+IF OBJECT_ID ('DELETE_ADMIN_REQUEST')				IS NOT NULL DROP PROCEDURE DELETE_ADMIN_REQUEST
+IF OBJECT_ID ('GET_MEMBERSHIP_REQUESTS')				IS NOT NULL DROP PROCEDURE GET_MEMBERSHIP_REQUESTS
 
 CREATE TABLE tblTempCompany   
 (
@@ -271,12 +278,21 @@ CREATE TABLE tblPaymentType
 	CONSTRAINT tblPaymentType_PK PRIMARY KEY (intPaymentTypeID)
 )
 
+CREATE TABLE tblPaymentStatus
+(
+	intPaymentStatusID	SMALLINT IDENTITY(1,1) NOT NULL,
+	strStatus			NVARCHAR(20)			NOT NULL, 
+	CONSTRAINT tblPaymentStatus_PK PRIMARY KEY (intPaymentStatusID)
+)
+
 CREATE TABLE tblMember 
 (
 	intMemberID			SMALLINT IDENTITY(1,1)	NOT NULL, 
 	intUserID			SMALLINT		NOT NULL, 
 	intMemberLevelID		SMALLINT		NOT NULL, 
 	intPaymentTypeID		SMALLINT		NOT NULL,
+	intPaymentStatusID		SMALLINT		NOT NULL,
+	intApprovalStatusID		SMALLINT		NOT NULL,
 	CONSTRAINT tblMember_PK PRIMARY KEY (intMemberID)
 )	
 
@@ -459,11 +475,18 @@ CREATE TABLE tblMainBanner
 CREATE TABLE tblAdminRequest
 (
 	intAdminRequestID		SMALLINT IDENTITY(1,1)		NOT NULL,
-	intMemberID			SMALLINT			NOT NULL,
+	intMemberID				SMALLINT			NOT NULL,
 	strRequestType			NVARCHAR(50)			NOT NULL, 
 	strRequestedChange		NVARCHAR(500)			NOT NULL,
 	intApprovalStatusID		SMALLINT			NOT NULL,
 	CONSTRAINT tblAdminRequest_PK PRIMARY KEY (intAdminRequestID)
+)
+
+CREATE TABLE tblMembershipRequest 
+(
+	intMembershipRequestID	SMALLINT IDENTITY(1,1) NOT NULL, 
+	intMemberID				SMALLINT				NOT NULL, 
+	CONSTRAINT tblMembershipRequest_PK PRIMARY KEY (intMembershipRequestID)
 )
 
 CREATE TABLE tblApprovalStatus
@@ -637,6 +660,12 @@ FOREIGN KEY (intAdminRequestID) REFERENCES tblAdminRequest (intAdminRequestID)
 ALTER TABLE tblTempContactPerson ADD CONSTRAINT tblTempContactPerson_tblTempContactPersonType_FK
 FOREIGN KEY (intContactPersonTypeID) REFERENCES tblTempContactPersonType (intContactPersonTypeID)
 
+ALTER TABLE tblMembershipRequest ADD CONSTRAINT tblMembershipRequest_tblMember_FK
+FOREIGN KEY (intMemberID) REFERENCES tblMember (intMemberID)
+
+ALTER TABLE tblMember ADD CONSTRAINT tblMember_tblApprovalStatus_FK
+FOREIGN KEY (intApprovalStatusID) REFERENCES tblApprovalStatus (intApprovalStatusID)
+
 -- -----------------------------------------------------------------------------------------
 -- STORED PROCEDURES 
 -- -----------------------------------------------------------------------------------------
@@ -644,6 +673,17 @@ FOREIGN KEY (intContactPersonTypeID) REFERENCES tblTempContactPersonType (intCon
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[DELETE_ADMIN_REQUEST]
+@intAdminRequestID AS SMALLINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DELETE FROM db_owner.tblAdminRequest WHERE intAdminRequestID = @intAdminRequestID
+	RETURN @@ROWCOUNT
+END
 GO
 
 CREATE PROCEDURE [db_owner].[LOGIN]
@@ -668,6 +708,55 @@ BEGIN
 		SELECT * FROM db_owner.tblAdminRequest
 		WHERE intApprovalStatusID = 1
 	END
+END
+GO
+
+CREATE PROCEDURE [dbo].INSERT_COMPANYMEMBER_RELATIONSHIP
+@intMemberID SMALLINT
+,@intCompanyID BIGINT
+AS 
+BEGIN
+	SET NOCOUNT ON;
+	DECLARE @COUNT AS TINYINT
+
+	--DONT ALLOW MORE THAN ONE COMPANY NAME IN THIS TABLE
+	IF @intMemberID IS NOT NULL AND @intCompanyID IS NOT NULL
+	SELECT @COUNT=COUNT(*) FROM db_owner.tblCompanyMember  WHERE intCompanyID = @intCompanyID AND intMemberID = @intMemberID
+	
+	IF @COUNT = 0
+		BEGIN
+			INSERT INTO db_owner.tblCompanyMember WITH (TABLOCKX)
+				([intMemberID]
+				,[intCompanyID])
+			VALUES
+				(@intMemberID
+				,@intCompanyID)
+			PRINT 'Good'
+			RETURN 1
+		END
+	ELSE
+		PRINT 'BAD'
+		RETURN -1
+END
+GO
+
+CREATE PROCEDURE [dbo].[DELETE_TEMP_LOCATION]
+@lngLocationID AS BIGINT
+,@lngCompanyID AS BIGINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+		DELETE FROM db_owner.tblTempCategoryLocation WHERE intLocationID = @lngLocationID
+		DELETE FROM db_owner.tblTempLocationHours WHERE intLocationID = @lngLocationID
+		DELETE FROM db_owner.tblTempCompanySocialMedia WHERE intCompanyID = @lngCompanyID
+		DELETE FROM db_owner.tblTempWebsite WHERE intCompanyID = @lngCompanyID
+		DELETE from db_owner.tblTempContactLocation Where intLocationID = @lngLocationID
+		DELETE FROM db_owner.tblTempContactPerson WHERE intCompanyID = @lngCompanyID
+		DELETE FROM db_owner.tblTempLocation WHERE intLocationID = @lngLocationID
+		DELETE FROM db_owner.tblTempCompany WHERE intCompanyID = @lngCompanyID
+
+	RETURN @@ROWCOUNT
 END
 GO
 
@@ -1556,6 +1645,24 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [db_owner].[GET_MEMBERSHIP_REQUESTS]
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT	u.strFirstName, u.strLastName, u.strEmail, u.strPhone, m.intMemberID, ml.strMemberLevel, pt.strPaymentType
+	FROM	tblUser as u FULL OUTER JOIN tblMember as m
+			ON u.intUserID = m.intUserID
+			FULL OUTER JOIN tblMemberLevel as ml
+			ON ml.intMemberLevelID = m.intMemberLevelID
+			FULL OUTER JOIN tblPaymentType as pt
+			ON pt.intPaymentTypeID = m.intPaymentTypeID
+			FULL OUTER JOIN tblPaymentStatus as ps
+			ON ps.intPaymentStatusID = m.intPaymentStatusID
+	WHERE	m.intApprovalStatusID = 1
+END
+GO
+
 CREATE PROCEDURE [dbo].[INSERT_TEMP_WEBSITE]
 @intWebsiteID AS BIGINT OUTPUT
 ,@intCompanyID AS BIGINT
@@ -1735,7 +1842,7 @@ CREATE PROCEDURE [dbo].[INSERT_ADMIN_REQUEST]
 @intAdminRequestID AS SMALLINT OUTPUT
 ,@intMemberID AS SMALLINT
 ,@strRequestType AS NVARCHAR(100)
-,@strRequestedChange AS NVARCHAR(20)
+,@strRequestedChange AS NVARCHAR(500)
 ,@intApprovalStatusID AS SMALLINT
 AS
 SET NOCOUNT ON
@@ -1849,6 +1956,22 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [dbo].[SELECT_LOCATIONHOURS]
+@intLocationID BIGINT = NULL
+AS 
+BEGIN
+	SET NOCOUNT ON;
+	
+	IF @intLocationID IS NOT NULL
+	BEGIN
+		SELECT * FROM db_owner.tblLocationHours AS LocHours
+		JOIN db_owner.tblDay AS Days
+		ON Days.intDayID = LocHours.intDayID
+		WHERE [intLocationID] = @intLocationID
+	END
+END
+GO
+
 CREATE PROCEDURE [dbo].[SELECT_TEMP_LOCATIONHOURS]
 @intLocationID BIGINT = NULL
 AS 
@@ -1886,9 +2009,28 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [dbo].[SELECT_SINGLE_ADMINREQUEST]
+@intAdminRequestID SMALLINT = NULL
+AS 
+BEGIN
+	SET NOCOUNT ON;
+	
+	IF @intAdminRequestID IS NOT NULL
+	BEGIN
+		SELECT *
+		FROM db_owner.tblAdminRequest
+		WHERE intAdminRequestID = @intAdminRequestID
+	END
+END
+GO
+
 -- -----------------------------------------------------------------------------------------
 -- ADD TEST DATA
 -- -----------------------------------------------------------------------------------------
+
+INSERT INTO tblApprovalStatus (strApprovalStatus)
+VALUES						('Not Approved')
+							,('Approved')
 
 INSERT INTO tblContactPersonType (strContactPersonType)
 VALUES			('Location Contact')
@@ -1908,6 +2050,10 @@ VALUES	('Associate'),
 INSERT INTO tblPaymentType (strPaymentType)
 VALUES	('Zelle'),
 	('Check')
+
+INSERT INTO tblPaymentStatus (strStatus)
+VALUES		('Paid'),
+			('Not Paid')
 
 INSERT INTO tblCategory (strCategory)
 VALUES	('Donuts'), 
@@ -1977,7 +2123,7 @@ VALUES					('Briggs, Randall', '5555555555', 'briggs.r@gmail.com', 1, 1, 1)
 						,('Smith, Bob', '5555555555', 'bob.smith@gmail.com', 3, 3, 1)
 						,('Brown, Erica', '5555555555', 'erica.b@gmail.com', 4, 3, 1)
 						,('Lopez, Maria', '5555555555', 'maria_lopez@gmail.com', 3, 3, 2)
-						,('Frank, Joseph', null, 'joe_frank@gmail.com', 2, 2, 3)
+						,('Frank, Joseph', '5555555555', 'joe_frank@gmail.com', 2, 2, 3)
 
 
 INSERT INTO tblLocationHours (intLocationID, intDayID, strOpen, strClose)
@@ -1987,15 +2133,15 @@ VALUES	(1, 1, '10:00am', '4:00pm'),
 	(1, 4, '10:00am', '4:00pm'),
 	(1, 5, '10:00am', '4:00pm'),
 	(1, 6, '10:00am', '4:00pm'),
-	(1, 7, 'Closed (except for private parties - call for details)', null),
+	(1, 7, 'Closed (except for private parties - call for details)', 'Closed'),
 	(2, 1, '6:00am', '6:00pm'),
 	(2, 2, '6:00am', '6:00pm'),
 	(2, 3, '6:00am', '6:00pm'),
 	(2, 4, '6:00am', '6:00pm'),
 	(2, 5, '6:00am', '6:00pm'),
 	(2, 6, '6:00am', '4:00pm'),
-	(2, 7, 'Closed', null),
-	(3, 1, 'Closed', null),
+	(2, 7, 'Closed', 'Closed'),
+	(3, 1, 'Closed', 'Closed'),
 	(3, 2, '7:00am', '3:00pm'),
 	(3, 3, '7:00am', '3:00pm'),
 	(3, 4, '7:00am', '3:00pm'),
@@ -2047,29 +2193,22 @@ VALUES		('https://twitter.com/servatiipastry', 3, 5),
 INSERT INTO tblUser (strFirstName, strLastName, strAddress, strCity, intStateID, strZip, strPhone, strEmail, strUsername, strPassword, isAdmin)
 VALUES	('Katie', 'Schmidt', '6036 Flyer Drive', 'Cincinnati', 3, '45248', '5133103965', 'klschmidt16178@cincinnatistate.edu', 'test2', 'test2', 0),
 		('Random', 'User', '1234 Main St', 'Lawrenceburg', 1, '41010', '5135555555', 'random_user@gmail.com', 'test3', 'test3', 0),
-		('Shane', 'Winslow', NULL, NULL, NULL, NULL, NULL, 'winslows1@gmail.com', 'winslows1', 'password', 0),
+		('Shane', 'Winslow', '26 Glenway', 'Ft. Thomas', 1, '5555555555', 'winzlizle@gmail.com', 'winslows1@gmail.com', 'winslows1', 'password', 0),
 		('Grace', 'Gottenbusch', '123 Elm St', 'Covington', 2, '41212', '5135555555', 'grace@gmail.com', 'grace', 'grace', 1),
 		('Bob', 'Smith', NULL, NULL, NULL, NULL, NULL, 'bob@gmail.com', 'bob', 'bob', 0)
 
 
 -- ADD USER TO MEMBER TABLE 
-INSERT INTO  tblMember (intUserID, intMemberLevelID, intPaymentTypeID)
-VALUES	(1, 1, 2)
-		,(3, 2, 1)
-		,(4, 2, 1)
-		,(5, 1, 1)
+INSERT INTO  tblMember (intUserID, intMemberLevelID, intPaymentTypeID, intApprovalStatusID, intPaymentStatusID)
+VALUES	 (1, 1, 2, 2, 1)
+		,(3, 2, 1, 2, 1)
+		,(4, 2, 1, 2, 1)
+		,(5, 1, 1, 1, 2)
 
 -- ADD CONNECTION BETWEEN COMPANY AND MEMBER
 INSERT INTO tblCompanyMember (intCompanyID, intMemberID)
-VALUES				(3, 2) -- SHANE AS MEMBER FOR SERVATII
+VALUES				 (3,2) -- SHANE AS MEMBER FOR SERVATII
 					,(3,3) -- GRACE AS MEMBER FOR SERVATII 
-
---INSERT INTO tblAdminRequest (intUserID, intTypeID, intEditedTableID, intEditedColumnID, intLocationInTable, strRequestedChange)
---VALUES		(2, 1, 1, null, 5, null), -- UserID 2 requesting to become member (is 5th row in member table with status pending)
---			(5, 2, 2, null, 4, null), -- USER BOB REQUESTING TO ADD COMPANY TO DATABASE 
---			(4, 2, 2, 1, 3, 'Servaty'), -- USER GRACE REQUESTING TO CHANGE NAME OF EXISTING COMPANY SERVATII TO SERVATY
---			(5, 3, 3, null, 5, null), -- USER BOB REQUESTING TO ADD NEW LOCATION TO NEW COMPANY -- IF COMPANY IS DENIED LOCATION IS DENIED TOO
---			(3, 2, 3, 5, 4, '2011 Anderson Ferry') -- USER SHANE IS REQUESTING TO EDIT EXISTING SERVATII LOCATION 
 
 INSERT INTO tblMainBanner (strBanner)
 VALUES	('This is an example of the main banner. This will hold information relevant to the GCRBA.'),
@@ -2169,10 +2308,6 @@ VALUES				('Main')
 					,('Ordering')
 					,('Kettle')
 
-INSERT INTO tblApprovalStatus (strApprovalStatus)
-VALUES						('Not Approved')
-							,('Approved')
-
 INSERT INTO tblAdminRequest(intMemberID, strRequestType, strRequestedChange, intApprovalStatusID)
 VALUES						(3, 'Add', 'Add Location', 1)
 
@@ -2207,3 +2342,13 @@ VALUES									(1, 1)
 
 INSERT INTO tblTempCompanySocialMedia (intCompanyID, strSocialMediaLink, intSocialMediaID)
 VALUES					(1, 'https://www.facebook.com', 1)
+
+
+
+
+
+
+
+
+
+

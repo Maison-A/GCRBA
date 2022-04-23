@@ -328,6 +328,39 @@ namespace GCRBA.Controllers
             return View(vm);
 		}
 
+        public ActionResult EditCompanyInfo()
+		{
+            // initialize ProfileVM which also creates instance of user object 
+            ProfileViewModel vm = InitProfileViewModel();
+
+            // get current company session
+            vm.Company = GetCompany(vm);
+
+            // save company session 
+            vm.Company.SaveCompanySession();
+
+            return View(vm);
+
+		}
+
+        private Company GetCompany(ProfileViewModel vm)
+		{
+            try
+			{
+                // create database object 
+                Database db = new Database();
+
+                // create new vm company object
+                vm.Company = new Company();
+
+                // get company based on memberID 
+                vm.Company = db.GetCompanyByMember(vm);
+
+                return vm.Company;
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
         private User.ActionTypes UpdateUser(ProfileViewModel vm)
 		{
             try
