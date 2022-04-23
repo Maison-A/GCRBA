@@ -1826,7 +1826,7 @@ BEGIN
 
 	DECLARE @COUNT AS TINYINT
 
-	SELECT @COUNT=COUNT(*) FROM db_owner.tblTempContactLocation  WHERE intLocationID = @intLocationID AND intContactPersonID = @intContactPersonID
+	SELECT @COUNT=COUNT(*) FROM db_owner.tblContactLocation  WHERE intLocationID = @intLocationID AND intContactPersonID = @intContactPersonID
 	IF @COUNT >0 
 		BEGIN
 			SET @intContactPersonID = -1
@@ -1835,7 +1835,7 @@ BEGIN
 		END
 	ELSE
 		BEGIN
-			INSERT INTO [db_owner].[tblTempContactLocation] WITH (TABLOCKX)
+			INSERT INTO [db_owner].[tblContactLocation] WITH (TABLOCKX)
 				([intLocationID]
 				,[intContactPersonID])
 			VALUES
