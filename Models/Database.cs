@@ -125,7 +125,7 @@ namespace GCRBA.Models
 			} catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public NewLocation.ActionTypes DeleteLocation(long lngLocationID)
+		public NewLocation.ActionTypes DeleteLocation(long lngLocationID, long lngCompanyID)
 		{
 			try
 			{
@@ -135,6 +135,7 @@ namespace GCRBA.Models
 				int intReturnValue = -1;
 
 				SetParameter(ref cm, "@lngLocationID", lngLocationID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@lngLocationID", lngCompanyID, SqlDbType.BigInt);
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
 
 				cm.ExecuteReader();
@@ -1756,6 +1757,7 @@ namespace GCRBA.Models
 						if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
 						SqlCommand cm = new SqlCommand("INSERT_LOCATIONHOURS", cn);
 
+						/*
 						if (item.strOpenTime != string.Empty) {
 							item.dtOpenTime = Convert.ToDateTime(item.strOpenTime);
 							item.strOpenTime = item.dtOpenTime.ToShortTimeString();
@@ -1767,6 +1769,7 @@ namespace GCRBA.Models
 							item.strClosedTime = item.dtClosedTime.ToShortTimeString();
 						}
 						else item.strClosedTime = "Closed";
+						*/
 
 						SetParameter(ref cm, "@intLocationHoursID", item.intLocationHoursID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
 						SetParameter(ref cm, "@intLocationID", locList.lstLocations[i].lngLocationID, SqlDbType.BigInt);
@@ -1864,21 +1867,18 @@ namespace GCRBA.Models
 				{
 					foreach (Models.ContactPerson item in contacts[i])
 					{
-						string name = item.strContactLastName + ", " + item.strContactFirstName;
-						string phone = "(" + item.contactPhone.AreaCode + ") " + item.contactPhone.Prefix + "-" + item.contactPhone.Suffix;
-
-
 						//if (item.strContactFirstName == string.Empty || item.strContactLastName == string.Empty) continue;
 						//if (item.contactPhone.AreaCode == string.Empty || item.contactPhone.Prefix == string.Empty) continue;
 
 						SqlConnection cn = null;
 						if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
-						SqlCommand cm = new SqlCommand("INSERT_CONTACTPERSON", cn);
+						SqlCommand cm = new SqlCommand("INSERT_CONTACTLOCATION_RELATIONSHIP", cn);
 						int intReturnValue = -1;
 
 						SetParameter(ref cm, "@intContactPersonID", item.lngContactPersonID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
-						SetParameter(ref cm, "@strContactName", name, SqlDbType.NVarChar);
-						SetParameter(ref cm, "@strContactPhone", phone, SqlDbType.NVarChar);
+						SetParameter(ref cm, "@intContactLocationID", item.lngContactLocationID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+						SetParameter(ref cm, "@strContactName", item.strFullName, SqlDbType.NVarChar);
+						SetParameter(ref cm, "@strContactPhone", item.strFullPhone, SqlDbType.NVarChar);
 						SetParameter(ref cm, "@strContactEmail", item.strContactEmail, SqlDbType.NVarChar);
 						SetParameter(ref cm, "@intLocationID", locList.lstLocations[i].lngLocationID, SqlDbType.BigInt);
 						SetParameter(ref cm, "@intCompanyID", locList.lstLocations[i].lngCompanyID, SqlDbType.BigInt);
@@ -2327,6 +2327,9 @@ namespace GCRBA.Models
 						item.strContactEmail = (string)dr["strContactEmail"];
 						item.intContactTypeID = (short)dr["intContactPersonTypeID"];
 						item.strContactPersonType = (string)dr["strContactPersonType"];
+						item.intLocationID = (long)dr["intLocationID"];
+						item.intCompanyID = (long)dr["intCompanyID"];
+						item.intContactPersonID = (long)dr["intContactPersonID"];
 						lstContactPerson.Add(item);
 					}
 				}
@@ -2362,6 +2365,9 @@ namespace GCRBA.Models
 						item.strContactEmail = (string)dr["strContactEmail"];
 						item.intContactTypeID = (short)dr["intContactPersonTypeID"];
 						item.strContactPersonType = (string)dr["strContactPersonType"];
+						item.intLocationID = (long)dr["intLocationID"];
+						item.intCompanyID = (long)dr["intCompanyID"];
+						item.intContactPersonID = (long)dr["intContactPersonID"];
 						lstContactPerson.Add(item);
 					}
 				}
@@ -2427,7 +2433,9 @@ namespace GCRBA.Models
 						Models.SocialMedia item = new SocialMedia();
 						item.strSocialMediaLink = (string)dr["strSocialMediaLink"];
 						item.strPlatform = (string)dr["strPlatform"];
+						item.intSocialMediaID = (short)dr["intSocialMediaID"];
 						item.intCompanyID = (long)dr["intCompanyID"];
+						item.blnAvailable = true;
 						lstSocialMedia.Add(item);
 					}
 				}
@@ -2618,6 +2626,14 @@ namespace GCRBA.Models
 					SqlCommand cm = new SqlCommand("INSERT_TEMP_COMPANY", cn);
 					int intReturnValue = -1;
 
+					if(string.IsNullOrEmpty(locList.lstLocations[i].Bio)) {
+						locList.lstLocations[i].Bio = string.Empty;
+					}
+
+					if(string.IsNullOrEmpty(locList.lstLocations[i].BizYear)) {
+						locList.lstLocations[i].BizYear = string.Empty;
+					}
+
 					SetParameter(ref cm, "@intCompanyID", locList.lstLocations[i].lngCompanyID, SqlDbType.BigInt, Direction: ParameterDirection.Output);
 					SetParameter(ref cm, "@strCompanyName", locList.lstLocations[i].CompanyName, SqlDbType.NVarChar);
 					SetParameter(ref cm, "@strAbout", locList.lstLocations[i].Bio, SqlDbType.NVarChar);
@@ -2751,13 +2767,15 @@ namespace GCRBA.Models
 						if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
 						SqlCommand cm = new SqlCommand("INSERT_TEMP_LOCATIONHOURS", cn);
 
-						if (item.strOpenTime != string.Empty) {
+						
+						
+						if (!String.IsNullOrEmpty(item.strOpenTime)) {
 							item.dtOpenTime = Convert.ToDateTime(item.strOpenTime);
 							item.strOpenTime = item.dtOpenTime.ToShortTimeString();
 						}
 						else item.strOpenTime = "Closed";
 
-						if (item.strClosedTime != string.Empty) {
+						if (!String.IsNullOrEmpty(item.strClosedTime)) {
 							item.dtClosedTime = Convert.ToDateTime(item.strClosedTime);
 							item.strClosedTime = item.dtClosedTime.ToShortTimeString();
 						}
@@ -2861,7 +2879,7 @@ namespace GCRBA.Models
 
 							SqlConnection cn = null;
 							if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
-							SqlCommand cm = new SqlCommand("INSERT_CONTACTLOCATION_RELATIONSHIP", cn);
+							SqlCommand cm = new SqlCommand("INSERT_TEMP_CONTACTLOCATION_RELATIONSHIP", cn);
 							int intReturnValue = -1;
 
 							SetParameter(ref cm, "@intContactPersonID", item.lngContactPersonID, SqlDbType.BigInt, Direction: ParameterDirection.Output);

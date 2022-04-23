@@ -115,7 +115,7 @@ namespace GCRBA.Views.Bakery {
                 loc.lngLocationID = Convert.ToInt64(col["lngLocationID"]);
                 Models.Database db = new Models.Database();
                 loc.ActionType = Models.NewLocation.ActionTypes.NoType;
-                loc.ActionType = db.DeleteLocation(loc.lngLocationID);
+                loc.ActionType = db.DeleteLocation(loc.lngLocationID, loc.lngCompanyID);
                 return RedirectToAction("Index", "Bakery");
             }
             return View();

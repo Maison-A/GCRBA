@@ -1162,7 +1162,7 @@ namespace GCRBA.Controllers
             Database db = new Database();
 
             // get action type from attemp to delete location from db 
-            vm.NewLocation.ActionType = db.DeleteLocation(vm.Location.LocationID);
+            vm.NewLocation.ActionType = db.DeleteLocation(vm.Location.LocationID, vm.Location.CompanyID);
 
             return vm.NewLocation.ActionType;
         }
