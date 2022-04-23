@@ -1,5 +1,5 @@
 ﻿@using GCRBA.ViewModels
-@model MemberVM
+@model ProfileViewModel
 
 @{
 	ViewBag.Title = "Edit Profile";
@@ -7,9 +7,24 @@
 
 <h2>@ViewBag.Title</h2>
 
-@if (Model.User.isMember != 1)
+@if (Model.User.ActionType == GCRBA.Models.User.ActionTypes.RequiredFieldMissing)
 {
-		@Html.Partial("MemberOnly");
+	<p>Passwords must match. Please try again.</p>
+}
+
+@if (Model.User.ActionType == GCRBA.Models.User.ActionTypes.UpdateSuccessful)
+{
+	@Html.Partial("UpdateSuccessful");
+}
+
+@if (Model.User.ActionType == GCRBA.Models.User.ActionTypes.Unknown)
+{
+	<p>There was an error in updating your profile information. Please try again.</p>
+}
+
+@if (!Model.User.IsAuthenticated)
+{
+	@Html.Partial("PleaseLogin");
 } else
 {
 	@Html.Partial("UserProfileInput");
