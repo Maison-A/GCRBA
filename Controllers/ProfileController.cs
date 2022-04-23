@@ -194,36 +194,29 @@ namespace GCRBA.Controllers
 
         public ActionResult NonMember()
         {
-            Models.User user = new Models.User();
-            user = user.GetUserSession();
-            if (user.IsAuthenticated)
-            {
-                ViewBag.Name = user.FirstName + " " + user.LastName;
-            }
-            return View(user);
+            // create user object
+            User u = new User();
+
+            // get current user session
+            u = u.GetUserSession();
+
+            return View(u);
         }
 
         [HttpPost]
         public ActionResult NonMember(FormCollection col)
         {
-            Models.User user = new Models.User();
-            user = user.GetUserSession();
-            
-            if (col["btnSubmit"] == "join")
-            {
-                return RedirectToAction("AddNewMember", "User");
-            }
+            // create user object
+            User u = new User();
 
-            if (col["btnSubmit"] == "home")
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            // get current user session
+            u = u.GetUserSession();
 
-            if (user.IsAuthenticated)
-            { 
-                ViewBag.Name = user.FirstName + " " + user.LastName; 
-            }
-            return View();
+            if (col["btnSubmit"].ToString() == "editProfile")
+			{
+                return RedirectToAction("EditProfile", "Profile");
+			}
+            return View(u);
         }
 
         public ActionResult Member() {
@@ -261,7 +254,7 @@ namespace GCRBA.Controllers
 		{
             // initialize MemberVM
             // - create user object + get current user session 
-            MemberVM vm = InitMemberVM();
+            ProfileViewModel vm = InitProfileViewModel();
 
             // get list of states 
             vm = GetStates(vm);
@@ -274,7 +267,7 @@ namespace GCRBA.Controllers
 		{
             // initialize MemberVM
             // - create user object + get current user session 
-            MemberVM vm = InitMemberVM();
+            ProfileViewModel vm = InitProfileViewModel();
 
             // get list of states 
             vm = GetStates(vm);
@@ -335,7 +328,7 @@ namespace GCRBA.Controllers
             return View(vm);
 		}
 
-        private User.ActionTypes UpdateUser(MemberVM vm)
+        private User.ActionTypes UpdateUser(ProfileViewModel vm)
 		{
             try
 			{
@@ -373,7 +366,7 @@ namespace GCRBA.Controllers
         // -------------------------------------------------------------------------------------------------
         // RETRIEVING DATA FROM DATABASE   
         // -------------------------------------------------------------------------------------------------
-        private MemberVM GetStates(MemberVM vm)
+        private ProfileViewModel GetStates(ProfileViewModel vm)
         {
             try
             {
@@ -394,10 +387,10 @@ namespace GCRBA.Controllers
         // INITIALIZING COMMONLY USED CLASSES  
         // -------------------------------------------------------------------------------------------------
 
-        private MemberVM InitMemberVM()
+        private ProfileViewModel InitProfileViewModel()
         {
             // create MemberVM object
-            MemberVM vm = new MemberVM();
+            ProfileViewModel vm = new ProfileViewModel();
 
             // create new user object 
             // then get current user session

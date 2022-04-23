@@ -1321,7 +1321,7 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public User.ActionTypes UpdateUser(MemberVM vm)
+		public User.ActionTypes UpdateUser(ProfileViewModel vm)
 		{
 			try
 			{
