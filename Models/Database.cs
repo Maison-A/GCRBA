@@ -92,6 +92,39 @@ namespace GCRBA.Models
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
+
+		public Company GetCompanyByMember(ProfileViewModel vm)
+		{
+			try
+			{
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to db 
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+
+				// specift stored procedure to use
+				SqlDataAdapter da = new SqlDataAdapter("GET_COMPANY_BY_MEMBER", cn);
+
+				SetParameter(ref da, "@intMemberID", vm.User.UID, SqlDbType.BigInt);
+
+				// set command type as stored procedure 
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				try { da.Fill(ds); } catch (Exception ex) { throw new Exception(ex.Message); } finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0)
+				{
+					DataRow dr = ds.Tables[0].Rows[0];
+					vm.Company.CompanyID = Convert.ToInt16(dr["intCompanyID"]);
+					vm.Company.Name = (string)dr["strCompanyName"];
+					vm.Company.About = (string)dr["strAbout"];
+					vm.Company.Year = (string)dr["strBizYear"];
+				}
+				return vm.Company;
+			} catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
 		public NewLocation.ActionTypes DeleteLocation(long lngLocationID)
 		{
 			try
