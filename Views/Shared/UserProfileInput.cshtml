@@ -5,19 +5,19 @@
 {
 	<div>
 		<div>
-			@Html.LabelFor(m => m.User.FirstName, new { @class = "form-label" })
+			@Html.LabelFor(m => m.User.FirstName, "First Name", new { @class = "form-label" })
 			@Html.TextBoxFor(m => m.User.FirstName, new { @class = "form-control", @autofocus = "autofocus" })
 		</div>
 		<div>
-			@Html.LabelFor(m => m.User.LastName, new { @class = "form-label" })
+			@Html.LabelFor(m => m.User.LastName, "Last Name", new { @class = "form-label" })
 			@Html.TextBoxFor(m => m.User.LastName, new { @class = "form-control" })
 		</div>
 		<div>
-			@Html.LabelFor(m => m.User.Address, new { @class = "form-label" })
+			@Html.LabelFor(m => m.User.Address, "Address", new { @class = "form-label" })
 			@Html.TextBoxFor(m => m.User.Address, new { @class = "form-control" })
 		</div>
 		<div>
-			@Html.LabelFor(m => m.User.City, new { @class = "form-label" })
+			@Html.LabelFor(m => m.User.City, "City", new { @class = "form-label" })
 			@Html.TextBoxFor(m => m.User.City, new { @class = "form-control" })
 		</div>
 		<div>
@@ -40,11 +40,11 @@
 			</select>
 		</div>
 		<div>
-			@Html.LabelFor(m => m.User.Zip, new { @class = "form-label" })
+			@Html.LabelFor(m => m.User.Zip, "Zip Code", new { @class = "form-label" })
 			@Html.TextBoxFor(m => m.User.Zip, new { @class = "form-control" })
 		</div>
 		<div>
-			@Html.LabelFor(m => m.User.Phone, new { @class = "form-label" })
+			@Html.LabelFor(m => m.User.Phone, "Phone Number", new { @class = "form-label" })
 			@Html.TextBoxFor(m => m.User.Phone, new { @class = "form-control" })
 		</div>
 		<div>
