@@ -113,6 +113,9 @@ IF OBJECT_ID('INSERT_TEMP_CONTACTLOCATION_RELATIONSHIP')	IS NOT NULL DROP PROCED
 IF OBJECT_ID('INSERT_MEMBER_REQUEST')						IS NOT NULL DROP PROCEDURE INSERT_MEMBER_REQUEST
 IF OBJECT_ID('SELECT_MEMBER_REQUESTS')						IS NOT NULL DROP PROCEDURE SELECT_MEMBER_REQUESTS
 IF OBJECT_ID('UPDATE_MEMBER_REQUESTS')						IS NOT NULL DROP PROCEDURE UPDATE_MEMBER_REQUESTS
+IF OBJECT_ID ('GET_MEMBERSHIP_REQUESTS')				IS NOT NULL DROP PROCEDURE GET_MEMBERSHIP_REQUESTS
+IF OBJECT_ID ('GET_MEMBER_INFO')				IS NOT NULL DROP PROCEDURE GET_MEMBER_INFO
+
 
 CREATE TABLE tblTempCompany   
 (
@@ -806,6 +809,38 @@ BEGIN
 	WHERE	intCategoryID NOT IN (SELECT intCategoryID FROM tblCategoryLocation WHERE intLocationID = @intLocationID)
 END 
 GO
+
+CREATE PROCEDURE [db_owner].[GET_MEMBERSHIP_REQUESTS]
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT	u.strFirstName, u.strLastName, m.intMemberID
+	FROM	tblUser as u FULL OUTER JOIN tblMember as m
+			ON u.intUserID = m.intUserID
+	WHERE	m.intApprovalStatusID = 1
+END
+GO
+
+CREATE PROCEDURE [db_owner].[GET_MEMBER_INFO]
+@intMemberID SMALLINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	
+	SELECT	u.strFirstName, u.strLastName, u.strEmail, u.strPhone, m.intMemberID, ml.strMemberLevel, pt.strPaymentType, ps.strStatus
+	FROM	tblUser as u FULL OUTER JOIN tblMember as m
+			ON u.intUserID = m.intUserID
+			FULL OUTER JOIN tblMemberLevel as ml
+			ON ml.intMemberLevelID = m.intMemberLevelID
+			FULL OUTER JOIN tblPaymentType as pt
+			ON pt.intPaymentTypeID = m.intPaymentTypeID
+			FULL OUTER JOIN tblPaymentStatus as ps
+			ON ps.intPaymentStatusID = m.intPaymentStatusID
+	WHERE	m.intMemberID = @intMemberID
+END
+GO
+
 
 CREATE PROCEDURE [db_owner].[UPDATE_USER]
 @intUserID SMALLINT, 
