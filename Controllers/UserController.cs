@@ -217,7 +217,7 @@ namespace GCRBA.Controllers
 
 
                 //permissions
-                user.isMember = 1;
+                //user.isMember = 1;
                 user.isAdmin = 0;
 
                 

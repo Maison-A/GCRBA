@@ -15,19 +15,35 @@ namespace GCRBA.Models {
 
 			try {
 				Database db = new Database();
+				Models.User user = new Models.User();
+				user = user.GetUserSession();
+				
 				this.adminReq = new AdminRequest() {
 					strRequestType = "INSERT",
-					strRequestedChange = "Add Location",
-					intApprovalStatusID = 1
+					strRequestedChange = "Add Location - " + this.lstLocations[0].StreetAddress + ", " + this.lstLocations[0].City + ' ' + this.lstLocations[0].State + ", " + this.lstLocations[0].Zip,
+					intApprovalStatusID = 1,
+					intUserID = (short)user.UID
 				};
+
+				if (user.isMember == 1) {
+					short intMemberID = db.GetMemberID((short)user.UID);
+					this.adminReq.intMemberID = intMemberID;
+				}
+
 				this.ActionType = db.InsertAdminRequest(this.adminReq);
-				if (this.lstLocations[0].CompanyName != string.Empty) this.ActionType = db.InsertTempCompany(this);
+				if (this.lstLocations[0].CompanyName != string.Empty && this.ActionType == ActionTypes.InsertSuccessful) this.ActionType = db.InsertTempCompany(this);
 				if (this.ActionType == ActionTypes.InsertSuccessful || this.ActionType == ActionTypes.NoType) this.ActionType = db.InsertTempLocations(this);
 				if (this.ActionType == ActionTypes.InsertSuccessful) this.ActionType = db.InsertTempLocationHours(this, LocationHours);
 				if (this.ActionType == ActionTypes.InsertSuccessful) this.ActionType = db.InsertTempSpecialties(this, categories);
 				if (this.ActionType == ActionTypes.InsertSuccessful) this.ActionType = db.InsertTempSocialMedia(this, socialMedias);
 				if (this.ActionType == ActionTypes.InsertSuccessful) this.ActionType = db.InsertTempWebsite(this, websites);
 				if (this.ActionType == ActionTypes.InsertSuccessful) this.ActionType = db.InsertTempContactPerson(this, contacts);
+
+				
+
+					
+
+				
 
 				//if something goes bad with new location entry, delete anything related to the new locations entered.
 				if (this.ActionType != ActionTypes.InsertSuccessful) {
@@ -44,7 +60,7 @@ namespace GCRBA.Models {
 			return this.ActionType;
 		}
 
-		public LocationList.ActionTypes StoreNewLocation(List<Models.CategoryItem>[] categories, List<Models.Days>[] LocationHours, List<Models.SocialMedia>[] socialMedias, List<Models.Website>[] websites, List<Models.ContactPerson>[] contacts) {
+		public LocationList.ActionTypes StoreNewLocation(List<Models.CategoryItem>[] categories, List<Models.Days>[] LocationHours, List<Models.SocialMedia>[] socialMedias, List<Models.Website>[] websites, List<Models.ContactPerson>[] contacts, Models.AdminRequest adminRequest) {
 
 				try {
 					Database db = new Database();
@@ -65,6 +81,10 @@ namespace GCRBA.Models {
 							}
 						i++;
 						} while (this.lstLocations[i] != null);
+					}
+
+					if(adminRequest.intMemberID != 0) {
+					db.InsertCompanyMember(this.lstLocations[0].lngCompanyID, adminRequest.intMemberID);
 					}
 				}
 				catch (Exception ex) { throw new Exception(ex.Message); }
@@ -88,7 +108,8 @@ namespace GCRBA.Models {
 			WebpageURLExists = 13,
 			ContactPersonExists = 14,
 			DeleteFailed = 15,
-			Unknown = 16
+			CompanyMemberExist = 16,
+			Unknown = 17
 		}
 	}
 }

@@ -50,6 +50,8 @@ namespace GCRBA.Controllers
                 List<SelectListItem> selectedItems = request.AdminRequests.Where(p => request.SelectedAdminRequests.Contains(int.Parse(p.Value))).ToList();
                 foreach (var Request in selectedItems) {
                     Request.Selected = true;
+                    Models.AdminRequest adminReq = new Models.AdminRequest();
+                    adminReq = db.GetSingleAdminRequest(Convert.ToInt16(Request.Value));
                     Models.LocationList locList = new Models.LocationList();
                     locList.lstLocations[0] = db.GetTempLocation(Convert.ToInt16(Request.Value));
 
@@ -65,6 +67,8 @@ namespace GCRBA.Controllers
                             }
                         }
                     }
+
+
                     List<Models.Days>[] arrLocHours = new List<Days>[10];
                     List<Models.Days> LocationHours = new List<Days>();
                     LocationHours = db.GetTempLocationHours(locList.lstLocations[0].lngLocationID);
@@ -85,11 +89,36 @@ namespace GCRBA.Controllers
                     websites = db.GetTempWebsite(locList.lstLocations[0].lngLocationID);
                     arrWebsites[0] = websites;
 
-                    locList.StoreNewLocation(arrCategoryInfo, arrLocHours, arrSocialMediaInfo, arrWebsites, arrContactInfo);
+                    db.DeleteTempLocation(locList.lstLocations[0].lngLocationID, locList.lstLocations[0].lngCompanyID);
+                    db.DeleteAdminRequest(adminReq.intAdminRequest);
+
+                    locList.StoreNewLocation(arrCategoryInfo, arrLocHours, arrSocialMediaInfo, arrWebsites, arrContactInfo, adminReq);
+
+                    Models.AdminRequestList updatedRequestList = new Models.AdminRequestList();
+                    updatedRequestList.lstAdminRequest = db.GetAdminRequests();
+                    request.AdminRequests = GetAllAdminRequest(updatedRequestList.lstAdminRequest);
                 }
                 return View(request);
             }
 
+            if (col["btnSubmit"].ToString() == "deny" && request.SelectedAdminRequests != null) {
+                List<SelectListItem> selectedItems = request.AdminRequests.Where(p => request.SelectedAdminRequests.Contains(int.Parse(p.Value))).ToList();
+                foreach (var Request in selectedItems) {
+                    Request.Selected = true;
+                    Models.AdminRequest adminReq = new Models.AdminRequest();
+                    adminReq = db.GetSingleAdminRequest(Convert.ToInt16(Request.Value));
+                    Models.LocationList locList = new Models.LocationList();
+                    locList.lstLocations[0] = db.GetTempLocation(Convert.ToInt16(Request.Value));
+
+                    db.DeleteTempLocation(locList.lstLocations[0].lngLocationID, locList.lstLocations[0].lngCompanyID);
+                    db.DeleteAdminRequest(adminReq.intAdminRequest);
+
+                    Models.AdminRequestList updatedRequestList = new Models.AdminRequestList();
+                    updatedRequestList.lstAdminRequest = db.GetAdminRequests();
+                    request.AdminRequests = GetAllAdminRequest(updatedRequestList.lstAdminRequest);
+                }
+                return View(request);
+            }
 
             // Edit Main Banner button pressed
             if (col["btnSubmit"].ToString() == "editMainBanner") {
@@ -106,6 +135,7 @@ namespace GCRBA.Controllers
         public List<SelectListItem> GetAllAdminRequest(List<Models.AdminRequest> lstAdminRequest) {
             List<SelectListItem> items = new List<SelectListItem>();
             foreach (Models.AdminRequest req in lstAdminRequest) {
+
                 items.Add(new SelectListItem { Text = req.strRequestedChange, Value = req.intAdminRequest.ToString() });
             }
             return items;

@@ -1,8 +1,8 @@
 ﻿@model GCRBA.Models.AdminRequestList
-/*
+<!--
 using GCRBA.ViewModels
 model AdminVM
-*/
+-->
 
 @{
 	ViewBag.Title = "Admin Portal";
@@ -39,7 +39,9 @@ if (Model.User.isAdmin == 0)
 		<h2>ViewBag.Title</h2>
 -->
 
-				@Html.ListBoxFor(model => model.SelectedAdminRequests, Model.AdminRequests, new { style = "width: 200px" }) <button class="button-action" name="btnSubmit" value="approve">Approve</button>
+				@Html.ListBoxFor(model => model.SelectedAdminRequests, Model.AdminRequests, new { style = "width: 600px" }) <br /><br />
+				<button class="button-action" name="btnSubmit" value="approve">Approve</button> <button class="button-action" name="btnSubmit" value="deny">Decline</button>
+				<br />
 				<br />
 		<!--
 		using (Html.BeginForm(FormMethod.Post))
@@ -56,9 +58,6 @@ if (Model.User.isAdmin == 0)
 </table>
 	}
 }
-
-<h4>You Selected</h4>
-<b style="color:red">Admin Request: @ViewBag.Message</b>
 	<!--
 			<button name="btnSubmit" value="editMainBanner">Edit Homepage Banner</button>
 			<button name="btnSubmit" value="editCompanies">Edit Companies</button>
