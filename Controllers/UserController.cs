@@ -11,12 +11,6 @@ namespace GCRBA.Controllers
     public class UserController : Controller
     {
 
-        /// TODO
-        /// - redirecting home after authentication removes home/index within url
-        /// - no logout func
-        /// - redirecting home after authenticated redirects to login?
-        /// tbc..
-        /// - MAISON
 
         public ActionResult Index()
         {
@@ -255,9 +249,7 @@ namespace GCRBA.Controllers
                             // update user info
 
                             // send Grace email and send to admin controller
-// -------------------------------------------------------------------------------------- //
-// SHANE
-// -------------------------------------------------------------------------------------- //
+
 
                         }
                         else
