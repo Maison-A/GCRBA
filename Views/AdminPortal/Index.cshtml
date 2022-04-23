@@ -1,69 +1,27 @@
-﻿@model GCRBA.Models.AdminRequestList
-<!--
-using GCRBA.ViewModels
-model AdminVM
--->
+﻿@model GCRBA.ViewModels.AdminVM
 
 @{
 	ViewBag.Title = "Admin Portal";
 }
 
-<style>
-	td {
-		text-align: center;
-	}
-</style>
-@using (Html.BeginForm(FormMethod.Post)) {
-	GCRBA.Models.User user = new GCRBA.Models.User();
-	GCRBA.Models.Database db = new GCRBA.Models.Database();
-	user = user.GetUserSession();
 
-	if (user.isAdmin == 0) {
-<p>This page is for admins only. If you are an admin, please log in and try again.</p>
-	}
-	else {
-
-<br />
-<table>
-	<tr>
-		<td>
-			<div class="container w-75">
-				<h2>@ViewBag.Title</h2>
-<!--
-if (Model.User.isAdmin == 0)
+@if (Model.User.isAdmin == 0)
 {
-	<p>This page is for admins only. If you are an admin, please log in and try again.</p>
+	@Html.Partial("AdminOnly");
 } else
 {
+	<h2>@ViewBag.Title</h2>
+
 	<div class="container w-75">
-		<h2>ViewBag.Title</h2>
--->
-
-				@Html.ListBoxFor(model => model.SelectedAdminRequests, Model.AdminRequests, new { style = "width: 600px" }) <br /><br />
-				<button class="button-action" name="btnSubmit" value="approve">Approve</button> <button class="button-action" name="btnSubmit" value="deny">Decline</button>
-				<br />
-				<br />
-		<!--
-		using (Html.BeginForm(FormMethod.Post))
+		@using (Html.BeginForm(FormMethod.Post))
 		{
-			<p>You currently have Model.Request.TotalRequests requests</p>
-		-->
-
-				<button name="btnSubmit" value="editMainBanner">Edit Homepage Banner</button>
-				<button name="btnSubmit" value="editCompanies">Edit Companies</button>
-				
-			</div>
-		</td>
-	</tr>
-</table>
-	}
-}
-	<!--
+			<button name="btnSubmit" value="viewLocationRequests">View Location Requests</button>
+			<button name="btnSubmit" value="viewMembershipRequests">View Membership Requests</button>
 			<button name="btnSubmit" value="editMainBanner">Edit Homepage Banner</button>
 			<button name="btnSubmit" value="editCompanies">Edit Companies</button>
-			<button name="btnSubmit" value="viewRequests">View Requests</button>
 		}
-
 	</div>
-		-->
 }
+
+
+

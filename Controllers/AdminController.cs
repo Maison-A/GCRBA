@@ -14,41 +14,86 @@ namespace GCRBA.Controllers
         // ACTIONRESULT METHODS  
         // -------------------------------------------------------------------------------------------------
         public ActionResult Index() {
-            // get current user session so we know who is logged in (member, nonmember, admin)  
-            User u = new User();
-
-            Models.Database db = new Models.Database();
-            List<Models.AdminRequest> adminRequests = new List<AdminRequest>();
-            adminRequests = db.GetAdminRequests();
-            Models.AdminRequestList adminRequestList = new Models.AdminRequestList() {
-                SelectedAdminRequests = new[] { 1 },
-                AdminRequests = GetAllAdminRequest(adminRequests)
-            };
-
-            return View(adminRequestList);
-            /*
+            
             AdminVM vm = new AdminVM();
 
             vm.User = new User();
             vm.User = vm.User.GetUserSession();
 
-            vm.Request = new Request();
-
-            vm.Request.TotalRequests = GetTotalRequests();
-
             return View(vm);
-            */
+            
         }
 
         [HttpPost]
-        public ActionResult Index(FormCollection col, AdminRequestList request) {
+        public ActionResult Index(FormCollection col) {
+            
+            if (col["btnSubmit"].ToString() == "viewLocationRequests")
+			{
+                return RedirectToAction("LocationRequests", "AdminPortal");
+			}
+
+            if (col["btnSubmit"].ToString() == "viewMembershipRequests")
+			{
+                return RedirectToAction("MembershipRequests", "AdminPortal");
+			}
+
+            if (col["btnSubmit"].ToString() == "editMainBanner") {
+                return RedirectToAction("EditMainBanner", "AdminPortal");
+            }
+
+            if (col["btnSubmit"].ToString() == "editCompanies") {
+                return RedirectToAction("EditCompanies", "AdminPortal");
+            }
+            return View();
+        }
+
+        public List<SelectListItem> GetAllAdminRequest(List<Models.AdminRequest> lstAdminRequest) {
+            List<SelectListItem> items = new List<SelectListItem>();
+            foreach (Models.AdminRequest req in lstAdminRequest) {
+
+                items.Add(new SelectListItem { Text = req.strRequestedChange, Value = req.intAdminRequest.ToString() });
+            }
+            return items;
+            /*
+            }
+                if (col["btnSubmit"].ToString() == "viewRequests")
+                {
+                    return RedirectToAction("Requests", "AdminPortal");
+                }
+
+                return View();
+            }
+            */
+        }
+
+        public ActionResult LocationRequests()
+		{
+            User u = new User();
+
+            Models.Database db = new Models.Database();
+            List<Models.AdminRequest> adminRequests = new List<AdminRequest>();
+            adminRequests = db.GetAdminRequests();
+            Models.AdminRequestList adminRequestList = new Models.AdminRequestList()
+            {
+                SelectedAdminRequests = new[] { 1 },
+                AdminRequests = GetAllAdminRequest(adminRequests)
+            };
+
+            return View(adminRequestList);
+        }
+
+        [HttpPost]
+        public ActionResult LocationRequests(FormCollection col, AdminRequestList request)
+        {
             Models.Database db = new Models.Database();
             Models.AdminRequestList adminRequestList = new Models.AdminRequestList();
             adminRequestList.lstAdminRequest = db.GetAdminRequests();
             request.AdminRequests = GetAllAdminRequest(adminRequestList.lstAdminRequest);
-            if (col["btnSubmit"].ToString() == "approve" && request.SelectedAdminRequests != null) {
+            if (col["btnSubmit"].ToString() == "approve" && request.SelectedAdminRequests != null)
+            {
                 List<SelectListItem> selectedItems = request.AdminRequests.Where(p => request.SelectedAdminRequests.Contains(int.Parse(p.Value))).ToList();
-                foreach (var Request in selectedItems) {
+                foreach (var Request in selectedItems)
+                {
                     Request.Selected = true;
                     Models.AdminRequest adminReq = new Models.AdminRequest();
                     adminReq = db.GetSingleAdminRequest(Convert.ToInt16(Request.Value));
@@ -60,9 +105,12 @@ namespace GCRBA.Controllers
                     categoryItems = db.GetTempCategories(locList.lstLocations[0].lngLocationID);
                     arrCategoryInfo[0] = categoryItems;
 
-                    foreach (Models.CategoryItem category in categoryItems) {
-                        foreach (Models.CategoryItem categoryCheck in locList.lstLocations[0].bakedGoods.lstBakedGoods) {
-                            if (categoryCheck.ItemID == category.ItemID) {
+                    foreach (Models.CategoryItem category in categoryItems)
+                    {
+                        foreach (Models.CategoryItem categoryCheck in locList.lstLocations[0].bakedGoods.lstBakedGoods)
+                        {
+                            if (categoryCheck.ItemID == category.ItemID)
+                            {
                                 categoryCheck.blnAvailable = true;
                             }
                         }
@@ -101,9 +149,11 @@ namespace GCRBA.Controllers
                 return View(request);
             }
 
-            if (col["btnSubmit"].ToString() == "deny" && request.SelectedAdminRequests != null) {
+            if (col["btnSubmit"].ToString() == "deny" && request.SelectedAdminRequests != null)
+            {
                 List<SelectListItem> selectedItems = request.AdminRequests.Where(p => request.SelectedAdminRequests.Contains(int.Parse(p.Value))).ToList();
-                foreach (var Request in selectedItems) {
+                foreach (var Request in selectedItems)
+                {
                     Request.Selected = true;
                     Models.AdminRequest adminReq = new Models.AdminRequest();
                     adminReq = db.GetSingleAdminRequest(Convert.ToInt16(Request.Value));
@@ -119,47 +169,7 @@ namespace GCRBA.Controllers
                 }
                 return View(request);
             }
-
-            // Edit Main Banner button pressed
-            if (col["btnSubmit"].ToString() == "editMainBanner") {
-                return RedirectToAction("EditMainBanner", "AdminPortal");
-            }
-
-            // Edit Companites button pressed
-            if (col["btnSubmit"].ToString() == "editCompanies") {
-                return RedirectToAction("EditCompanies", "AdminPortal");
-            }
             return View();
-        }
-
-        public List<SelectListItem> GetAllAdminRequest(List<Models.AdminRequest> lstAdminRequest) {
-            List<SelectListItem> items = new List<SelectListItem>();
-            foreach (Models.AdminRequest req in lstAdminRequest) {
-
-                items.Add(new SelectListItem { Text = req.strRequestedChange, Value = req.intAdminRequest.ToString() });
-            }
-            return items;
-            /*
-            }
-                if (col["btnSubmit"].ToString() == "viewRequests")
-                {
-                    return RedirectToAction("Requests", "AdminPortal");
-                }
-
-                return View();
-            }
-            */
-        }
-
-        public ActionResult Requests()
-        {
-            // initialize RequestsVM
-            RequestsVM vm = InitRequestsVM();
-
-            // get total requests 
-            vm.Request.TotalRequests = GetTotalRequests();
-
-            return View(vm);
         }
 
         public ActionResult EditMainBanner()
@@ -1193,24 +1203,6 @@ namespace GCRBA.Controllers
         // -------------------------------------------------------------------------------------------------
         // RETRIEVING DATA FROM DATABASE 
         // -------------------------------------------------------------------------------------------------
-
-        private int GetTotalRequests()
-        {
-            try
-            {
-                // create db object
-                Database db = new Database();
-
-                // create variable to hold total requests 
-                int total = 0;
-
-                // get total requests 
-                total = db.GetTotalRequests();
-
-                return total;
-            }
-            catch (Exception ex) { throw new Exception(ex.Message); }
-        }
 
         private string GetState(int intStateID)
         {

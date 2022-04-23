@@ -323,8 +323,9 @@
     <Content Include="Views\Profile\EditCompanyInfo.cshtml" />
     <Content Include="Views\Profile\EditLandingPage.cshtml" />
     <Content Include="Views\Shared\UserProfileInput.cshtml" />
-    <Content Include="Views\AdminPortal\Requests.cshtml" />
+    <Content Include="Views\AdminPortal\LocationRequests.cshtml" />
     <Content Include="Views\Shared\PleaseLogin.cshtml" />
+    <Content Include="Views\AdminPortal\MembershipRequests.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
