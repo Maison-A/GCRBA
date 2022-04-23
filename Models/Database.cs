@@ -148,6 +148,50 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+		public NewLocation.ActionTypes DeleteTempLocation(long lngLocationID, long lngCompanyID) {
+			try {
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("DELETE_TEMP_LOCATION", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@lngLocationID", lngLocationID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@lngCompanyID", lngCompanyID, SqlDbType.BigInt);
+				
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1) return NewLocation.ActionTypes.DeleteSuccessful;
+				return NewLocation.ActionTypes.Unknown;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public NewLocation.ActionTypes DeleteAdminRequest(short intAdminRequestID) {
+			try {
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("DELETE_ADMIN_REQUEST", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intAdminRequestID", intAdminRequestID, SqlDbType.SmallInt);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1) return NewLocation.ActionTypes.DeleteSuccessful;
+				return NewLocation.ActionTypes.Unknown;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
 		public LocationList.ActionTypes DeleteLocations(Models.LocationList lstLocations) {
 			int i = 0;
 
@@ -620,6 +664,40 @@ namespace GCRBA.Models
 						CloseDBConnection(ref cn);
 					}
 				}
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public short GetMemberID(short UID) {
+			try {
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to database -- throw error if unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// specify which stored procedure we are using 
+				SqlDataAdapter da = new SqlDataAdapter("VERIFY_MEMBER", cn);
+
+				short intMemberID = 0;
+
+				// set command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				SetParameter(ref da, "@intUserID", UID, SqlDbType.SmallInt);
+
+				try { da.Fill(ds); }
+				catch (Exception ex) { throw new Exception(ex.Message); }
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0) {
+					// loop through results and add to list 
+					foreach (DataRow dr in ds.Tables[0].Rows) {
+						// create new MainBanner object
+						intMemberID = (short)dr["intMemberID"];
+					}
+				}
+				return intMemberID;
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
@@ -2568,14 +2646,11 @@ namespace GCRBA.Models
 				SqlCommand cm = new SqlCommand("INSERT_ADMIN_REQUEST", cn);
 				int intReturnValue = -1;
 
-				//User ID - DELETE THIS ONLY FOR TESTING
-				int intMemberID = 3;
-
 				SetParameter(ref cm, "@intAdminRequestID", adminRequest.intAdminRequest, SqlDbType.SmallInt, Direction: ParameterDirection.Output);
-				SetParameter(ref cm, "@intMemberID", intMemberID, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strRequestType", adminRequest.strRequestType, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strRequestedChange", adminRequest.strRequestedChange, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@intApprovalStatusID", adminRequest.intApprovalStatusID, SqlDbType.SmallInt);
+				SetParameter(ref cm, "@intMemberID", adminRequest.intMemberID, SqlDbType.SmallInt);
 
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
 
@@ -2899,6 +2974,67 @@ namespace GCRBA.Models
 				return lstAdminRequests;
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public Models.AdminRequest GetSingleAdminRequest(short intAdminRequestID) {
+			try {
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to database -- throw error if unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// specify which stored procedure we are using 
+				SqlDataAdapter da = new SqlDataAdapter("SELECT_SINGLE_ADMINREQUEST", cn);
+
+				AdminRequest adminRequest = new AdminRequest();
+
+				// set command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+				if (intAdminRequestID > 0) SetParameter(ref da, "@intAdminRequestID", intAdminRequestID, SqlDbType.SmallInt);
+
+				try { da.Fill(ds); }
+				catch (Exception ex) { throw new Exception(ex.Message); }
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0) {
+					// loop through results and add to list 
+					foreach (DataRow dr in ds.Tables[0].Rows) {
+						// add values to CompanyID and Name properties 
+						adminRequest.intAdminRequest = (short)(dr["intAdminRequestID"]);
+						adminRequest.intMemberID = (short)dr["intMemberID"];
+						adminRequest.strRequestType = (string)dr["strRequestType"];
+						adminRequest.strRequestedChange = (string)dr["strRequestedChange"];
+						adminRequest.intApprovalStatusID = (short)dr["intApprovalStatusID"];
+
+					}
+				}
+				// return list of companies 
+				return adminRequest;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public LocationList.ActionTypes InsertCompanyMember(long intCompanyID, short intMemberID) {
+			int intReturnValue = 0;
+				try {
+						SqlConnection cn = null;
+						if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+						SqlCommand cm = new SqlCommand("INSERT_COMPANYMEMBER_RELATIONSHIP", cn);
+
+						SetParameter(ref cm, "@intMemberID", intMemberID, SqlDbType.SmallInt);
+						SetParameter(ref cm, "@intCompanyID", intCompanyID, SqlDbType.BigInt);
+
+						SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+						cm.ExecuteReader();
+
+						CloseDBConnection(ref cn);
+						intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+						if (intReturnValue != 1) return Models.LocationList.ActionTypes.Unknown;
+				}
+				catch (Exception ex) { throw new Exception(ex.Message); }
+			return LocationList.ActionTypes.InsertSuccessful;
 		}
 	}
 }

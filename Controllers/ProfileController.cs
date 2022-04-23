@@ -30,7 +30,7 @@ namespace GCRBA.Controllers
         public ActionResult Login()
         {
             User u = new User();
-           // u = u.GetUserSession();
+            u = u.GetUserSession();
             return View(u);
         }
 
