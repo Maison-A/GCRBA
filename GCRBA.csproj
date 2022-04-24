@@ -231,6 +231,7 @@
     <Compile Include="Models\Request.cs" />
     <Compile Include="Models\SaleSpecial.cs" />
     <Compile Include="Models\SearchResults.cs" />
+    <Compile Include="Models\SendLocationEmail.cs" />
     <Compile Include="Models\SocialMedia.cs" />
     <Compile Include="Models\State.cs" />
     <Compile Include="Controllers\TroubleshootController.cs" />
@@ -328,6 +329,7 @@
     <Content Include="Views\AdminPortal\LocationRequests.cshtml" />
     <Content Include="Views\Shared\PleaseLogin.cshtml" />
     <Content Include="Views\AdminPortal\MembershipRequests.cshtml" />
+    <Content Include="Views\SendMailer\SendLocationEmail.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

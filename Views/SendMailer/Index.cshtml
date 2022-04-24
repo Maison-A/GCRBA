@@ -1,4 +1,4 @@
-﻿@model GCRBA.Models.MailModel
+﻿@model GCRBA.Models.LocationMailModel
 <!--model GCRBA.Models.MailModel
 
 {
@@ -34,7 +34,7 @@
 	}
 </style>
 
-@using (Html.BeginForm("SendEmail", "SendMailer", FormMethod.Post)) {
+@using (Html.BeginForm("SendLocationEmail", "SendMailer", FormMethod.Post)) {
 	<table class="center">
 	<tr>
 		<td>
@@ -113,7 +113,7 @@
 		i += 1;
 	} while (Model.Content.lstLocations[i] != null);
 
-<input type="submit" name="btnSubmit" value="Send Email" />
+<input type="submit" name="btnSubmit" value="Send Request" />
 			
 	
 }

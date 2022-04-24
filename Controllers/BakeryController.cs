@@ -494,27 +494,10 @@ namespace GCRBA.Views.Bakery {
                     switch (at) {
                         case Models.LocationList.ActionTypes.InsertSuccessful:
                             
-                            try {
-                                ExportToCsv.StartExport(locList, arrLocInfo, arrBizInfo, arrCategoryInfo, arrLocHours, arrContactInfo, arrSocialMediaInfo, arrWebsites);
-                            }
-							catch {
-                                return RedirectToAction("Index", "Troubleshoot");
-							}
-                            /*
-                            using (firstProcess = new Process()) {
-                                firstProcess.StartInfo.FileName = "C:\\Users\\winsl\\AppData\\Local\\ESRI\\conda\\envs\\myenv-py3v2\\python.exe";
-                                firstProcess.StartInfo.CreateNoWindow = true;
-                                firstProcess.StartInfo.Arguments = "C:\\Users\\winsl\\OneDrive\\Desktop\\Capstone\\MVC\\Python\\Scripts\\geocode_arcgis_online.py";
-                                firstProcess.Start();
-                                firstProcess.WaitForExit();
-                            }
-                            */
-                            try {
-                                return RedirectToAction("Index", "SendMailer", "location");
-                            }
-                            catch {
-                                return RedirectToAction("EmailIssue", "Troubleshoot");
-                            }
+                            ExportToCsv.StartExport(locList, arrLocInfo, arrBizInfo, arrCategoryInfo, arrLocHours, arrContactInfo, arrSocialMediaInfo, arrWebsites);
+                            SendLocationEmail.SendEmail(locList);
+                            return RedirectToAction("Index", "Bakery");
+							
 
                         case Models.LocationList.ActionTypes.DeleteSuccessful:
                             return RedirectToAction("Index");

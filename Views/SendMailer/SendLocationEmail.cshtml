@@ -1,0 +1,127 @@
+﻿@model GCRBA.Models.LocationMailModel
+<!--model GCRBA.Models.MailModel
+
+{
+	ViewBag.Title = "Mail GCRBA";
+}
+
+<h2>ViewBag.Title</h2>
+
+<fieldset>
+	<legend>
+		Send Email
+	</legend>
+	using (Html.BeginForm()) {
+		Html.ValidationSummary()
+		<p>From: </p>
+		<p>Html.TextBoxFor(model => model.From)</p>
+		<p>Subject: </p>
+		<p>Html.TextBoxFor(model => model.Subject)</p>
+		<p>Body: </p>
+		<p>Bakery Name:</p>
+		<p>Html.DisplayFor(models => models.content.LocationName)</p>
+	<input type="submit" value="Send" />
+	}
+</fieldset>
+-->
+<style>
+	td {
+		vertical-align: top;
+	}
+
+	.center {
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	table{
+		width: 500px;
+		border: 1px solid black;
+		text-align: left;
+		vertical-align:top;
+	}
+</style>
+
+@using (Html.BeginForm("SendLocationEmail", "SendMailer", FormMethod.Post)) {
+	<table class="center">
+		<tr>
+			<td>
+				@Html.LabelFor(model => model.Subject)
+			</td>
+			<td>
+				@Html.TextAreaFor(model => model.Subject)
+			</td>
+		</tr>
+		<tr>
+			<td>
+				@Html.LabelFor(model => model.UserName)
+			</td>
+			<td>
+				@Html.DropDownListFor(m => m.UserName,
+				new List<SelectListItem>
+					{
+					new SelectListItem{Text="GCRBAWebApp@donotreply.com", Value="GCRBAWebApp@donotreply.com", Selected = true},
+					new SelectListItem{Text="sender2@gmail.com", Value="sender2@gmail.com"}
+					}, "Please select")
+			</td>
+		</tr>
+		<tr>
+			<td>
+				@Html.LabelFor(model => model.Title)
+			</td>
+			<td>
+				@Html.TextBoxFor(model => model.Title)
+			</td>
+		</tr>
+	</table>
+
+	int i = 0;
+	//foreach (GCRBA.Models.NewLocation item in Model.Content.lstLocations) {
+	do {
+
+		<table class="center">
+			<tr>
+				<td>
+					@Html.LabelFor(model => model.Content.lstLocations[i].LocationName, "Bakery:")
+				</td>
+				<td>
+					@Html.DisplayFor(model => model.Content.lstLocations[i].LocationName)
+					@Html.HiddenFor(model => model.Content.lstLocations[i].LocationName)
+				</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.LabelFor(model => model.Content.lstLocations[i].StreetAddress, "Address:")
+				</td>
+				<td>
+					@Html.DisplayFor(model => model.Content.lstLocations[i].StreetAddress) <br />@Html.DisplayFor(model => model.Content.lstLocations[i].City), @Html.DisplayFor(model => model.Content.lstLocations[i].State) @Html.DisplayFor(model => model.Content.lstLocations[i].Zip)
+					@Html.HiddenFor(model => model.Content.lstLocations[i].StreetAddress)	@Html.HiddenFor(model => model.Content.lstLocations[i].City) @Html.HiddenFor(model => model.Content.lstLocations[i].State) @Html.HiddenFor(model => model.Content.lstLocations[i].Zip)
+				</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.LabelFor(model => model.Content.lstLocations[i].BusinessPhone, "Business Information:")
+				</td>
+				<td>
+					Business Phone: (@Html.DisplayFor(model => model.Content.lstLocations[i].BusinessPhone.AreaCode)) @Html.DisplayFor(model => model.Content.lstLocations[i].BusinessPhone.Prefix)-@Html.DisplayFor(model => model.Content.lstLocations[i].BusinessPhone.Suffix)
+					@Html.HiddenFor(model => model.Content.lstLocations[i].BusinessPhone.AreaCode)	@Html.HiddenFor(model => model.Content.lstLocations[i].BusinessPhone.Prefix) @Html.HiddenFor(model => model.Content.lstLocations[i].BusinessPhone.Suffix)
+					<br />
+					Business Email: @Html.DisplayFor(model => model.Content.lstLocations[i].BusinessEmail)
+					@Html.HiddenFor(model => model.Content.lstLocations[i].BusinessEmail)
+					<br />
+					Business Year: @Html.DisplayFor(model => model.Content.lstLocations[i].BizYear)
+					@Html.HiddenFor(model => model.Content.lstLocations[i].BizYear)
+					<br />
+					Business Bio: @Html.DisplayFor(model => model.Content.lstLocations[i].Bio)
+					@Html.HiddenFor(model => model.Content.lstLocations[i].Bio)
+				</td>
+			</tr>
+		</table>
+		<br />
+		i += 1;
+	} while (Model.Content.lstLocations[i] != null);
+
+	<input class="button-action" type="submit" name="btnSubmit" value="Send Request" />
+
+
+}
