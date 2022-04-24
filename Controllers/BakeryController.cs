@@ -322,7 +322,7 @@ namespace GCRBA.Views.Bakery {
                         loc.LocationContact.contactPhone.Prefix = col["lstLocations[" + index + "].LocationContact.contactPhone.Prefix"];
                         loc.LocationContact.contactPhone.Suffix = col["lstLocations[" + index + "].LocationContact.contactPhone.Suffix"];
                         loc.LocationContact.strContactEmail = col["lstLocations[" + index + "].LocationContact.strContactEmail"];
-                        loc.LocationContact.intContactTypeID = 1;
+                        loc.LocationContact.intContactTypeID = (short)Models.ContactPerson.ContactTypes.LocationContact;
 
                         //Web Admin contact information
                         loc.WebAdmin = new Models.ContactPerson();
@@ -333,7 +333,7 @@ namespace GCRBA.Views.Bakery {
                         loc.WebAdmin.contactPhone.Prefix = col["lstLocations[" + index + "].WebAdmin.contactPhone.Prefix"];
                         loc.WebAdmin.contactPhone.Suffix = col["lstLocations[" + index + "].WebAdmin.contactPhone.Suffix"];
                         loc.WebAdmin.strContactEmail = col["lstLocations[" + index + "].WebAdmin.strContactEmail"];
-                        loc.WebAdmin.intContactTypeID = 2;
+                        loc.WebAdmin.intContactTypeID = (short)Models.ContactPerson.ContactTypes.WebAdmin;
 
                         //Customer Service Contact Information
                         loc.CustService = new Models.ContactPerson();
@@ -344,7 +344,7 @@ namespace GCRBA.Views.Bakery {
                         loc.CustService.contactPhone.Prefix = col["lstLocations[" + index + "].CustService.contactPhone.Prefix"];
                         loc.CustService.contactPhone.Suffix = col["lstLocations[" + index + "].CustService.contactPhone.Suffix"];
                         loc.CustService.strContactEmail = col["lstLocations[" + index + "].CustService.strContactEmail"];
-                        loc.CustService.intContactTypeID = 3;
+                        loc.CustService.intContactTypeID = (short)Models.ContactPerson.ContactTypes.CustomerService;
 
                         //Web Portal Information
                         loc.MainWeb = new Models.Website();

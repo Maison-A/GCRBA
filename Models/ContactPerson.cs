@@ -19,7 +19,7 @@ namespace GCRBA.Models {
 		public string strFullName = string.Empty;
 		public string strFullPhone = string.Empty;
 		public string strContactPersonType = string.Empty;
-
+		public ContactPerson.ContactTypes ContactType = ContactTypes.NoType;
 		public ContactPerson.ActionTypes ActionType = ActionTypes.NoType;
 
 		public enum ActionTypes
@@ -31,5 +31,12 @@ namespace GCRBA.Models {
 			Unknown = 4, 
 			RequiredFieldsMissing = 5
         }
+
+		public enum ContactTypes {
+			LocationContact = 1,
+			CustomerService = 2,
+			WebAdmin = 3,
+			NoType = 4
+		}
 	}
 }

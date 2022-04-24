@@ -16,9 +16,19 @@ namespace GCRBA {
         public static void SendEmail(Models.LocationList locationList) { 
             int i = 0;
             do {
+                GCRBA.Models.User user = new Models.User();
+                user = user.GetUserSession();
+
+
                 GCRBA.Models.LocationMailModel locationMailModel = new Models.LocationMailModel();
+
+                locationMailModel.UserEmail = user.Email;
+                locationMailModel.UserFullName = user.LastName + ", " + user.FirstName;
+                locationMailModel.UserTelephone = user.Phone;
+
                 locationMailModel.Content = new Models.LocationList();
                 locationMailModel.Content.lstLocations[i] = new Models.NewLocation();
+                locationMailModel.Content.lstLocations[i].CompanyName = locationList.lstLocations[i].CompanyName;
                 locationMailModel.Content.lstLocations[i].LocationName = locationList.lstLocations[i].LocationName;
                 locationMailModel.Content.lstLocations[i].StreetAddress = locationList.lstLocations[i].StreetAddress;
                 locationMailModel.Content.lstLocations[i].City = locationList.lstLocations[i].City;
@@ -34,141 +44,117 @@ namespace GCRBA {
                 locationMailModel.Content.lstLocations[i].BusinessPhone.Suffix = locationList.lstLocations[i].BusinessPhone.Suffix;
                 locationMailModel.Content.lstLocations[i].BusinessEmail = locationList.lstLocations[i].BusinessEmail;
 
-                /*
-                //Hours of Operation
-                if (col["lstLocations[" + i + "].Sunday.blnOperational"] == null) email.Content.lstLocations[i].Sunday = new Models.Days() { strDay = "Sunday", intDayID = 1, blnOperational = false, strOpenTime = col["lstLocations[" + i + "].Sunday.strOpenTime"], strClosedTime = col["lstLocations[" + i + "].Sunday.strClosedTime"] };
-                else email.Content.lstLocations[i].Sunday = new Models.Days() { strDay = "Sunday", intDayID = 1, blnOperational = Convert.ToBoolean(col["lstLocations[" + i + "].Sunday.blnOperational"].Split(',')[0]), strOpenTime = col["lstLocations[" + i + "].Sunday.strOpenTime"], strClosedTime = col["lstLocations[" + i + "].Sunday.strClosedTime"] };
+                locationMailModel.Content.lstLocations[i].Sunday =          locationList.lstLocations[i].Sunday;
+                locationMailModel.Content.lstLocations[i].Monday =          locationList.lstLocations[i].Monday;
+                locationMailModel.Content.lstLocations[i].Tuesday =         locationList.lstLocations[i].Tuesday;
+                locationMailModel.Content.lstLocations[i].Wednesday =       locationList.lstLocations[i].Wednesday;
+                locationMailModel.Content.lstLocations[i].Thursday =        locationList.lstLocations[i].Thursday;
+                locationMailModel.Content.lstLocations[i].Friday =          locationList.lstLocations[i].Friday;
+                locationMailModel.Content.lstLocations[i].Saturday =        locationList.lstLocations[i].Saturday;
 
-                if (col["lstLocations[" + i + "].Monday.blnOperational"] == null) email.Content.lstLocations[i].Monday = new Models.Days() { strDay = "Monday", intDayID = 2, blnOperational = false, strOpenTime = col["lstLocations[" + i + "].Monday.strOpenTime"], strClosedTime = col["lstLocations[" + i + "].Monday.strClosedTime"] };
-                else email.Content.lstLocations[i].Monday = new Models.Days() { strDay = "Monday", intDayID = 2, blnOperational = Convert.ToBoolean(col["lstLocations[" + i + "].Monday.blnOperational"].Split(',')[0]), strOpenTime = col["lstLocations[" + i + "].Monday.strOpenTime"], strClosedTime = col["lstLocations[" + i + "].Monday.strClosedTime"] };
-
-                if (col["lstLocations[" + i + "].Tuesday.blnOperational"] == null) email.Content.lstLocations[i].Tuesday = new Models.Days() { strDay = "Tuesday", intDayID = 3, blnOperational = false, strOpenTime = col["lstLocations[" + i + "].Tuesday.strOpenTime"], strClosedTime = col["lstLocations[" + i + "].Tuesday.strClosedTime"] };
-                else email.Content.lstLocations[i].Tuesday = new Models.Days() { strDay = "Tuesday", intDayID = 3, blnOperational = Convert.ToBoolean(col["lstLocations[" + i + "].Tuesday.blnOperational"].Split(',')[0]), strOpenTime = col["lstLocations[" + i + "].Tuesday.strOpenTime"], strClosedTime = col["lstLocations[" + i + "].Tuesday.strClosedTime"] };
-
-                if (col["lstLocations[" + i + "].Wednesday.blnOperational"] == null) email.Content.lstLocations[i].Wednesday = new Models.Days() { strDay = "Wednesday", intDayID = 4, blnOperational = false, strOpenTime = col["lstLocations[" + i + "].Wednesday.strOpenTime"], strClosedTime = col["lstLocations[" + i + "].Wednesday.strClosedTime"] };
-                else email.Content.lstLocations[i].Wednesday = new Models.Days() { strDay = "Wednesday", intDayID = 4, blnOperational = Convert.ToBoolean(col["lstLocations[" + i + "].Wednesday.blnOperational"].Split(',')[0]), strOpenTime = col["lstLocations[" + i + "].Wednesday.strOpenTime"], strClosedTime = col["lstLocations[" + i + "].Wednesday.strClosedTime"] };
-
-                if (col["lstLocations[" + i + "].Thursday.blnOperational"] == null) email.Content.lstLocations[i].Thursday = new Models.Days() { strDay = "Thursday", intDayID = 5, blnOperational = false, strOpenTime = col["lstLocations[" + i + "].Thursday.strOpenTime"], strClosedTime = col["lstLocations[" + i + "].Thursday.strClosedTime"] };
-                else email.Content.lstLocations[i].Thursday = new Models.Days() { strDay = "Thursday", intDayID = 5, blnOperational = Convert.ToBoolean(col["lstLocations[" + i + "].Thursday.blnOperational"].Split(',')[0]), strOpenTime = col["lstLocations[" + i + "].Thursday.strOpenTime"], strClosedTime = col["lstLocations[" + i + "].Thursday.strClosedTime"] };
-
-                if (col["lstLocations[" + i + "].Friday.blnOperational"] == null) email.Content.lstLocations[i].Friday = new Models.Days() { strDay = "Friday", intDayID = 6, blnOperational = false, strOpenTime = col["lstLocations[" + i + "].Friday.strOpenTime"], strClosedTime = col["lstLocations[" + i + "].Friday.strClosedTime"] };
-                else email.Content.lstLocations[i].Friday = new Models.Days() { strDay = "Friday", intDayID = 6, blnOperational = Convert.ToBoolean(col["lstLocations[" + i + "].Friday.blnOperational"].Split(',')[0]), strOpenTime = col["lstLocations[" + i + "].Friday.strOpenTime"], strClosedTime = col["lstLocations[" + i + "].Friday.strClosedTime"] };
-
-                if (col["lstLocations[" + i + "].Saturday.blnOperational"] == null) email.Content.lstLocations[i].Saturday = new Models.Days() { strDay = "Saturday", intDayID = 7, blnOperational = false, strOpenTime = col["lstLocations[" + i + "].Saturday.strOpenTime"], strClosedTime = col["lstLocations[" + i + "].Saturday.strClosedTime"] };
-                else email.Content.lstLocations[i].Saturday = new Models.Days() { strDay = "Saturday", intDayID = 7, blnOperational = Convert.ToBoolean(col["lstLocations[" + i + "].Saturday.blnOperational"].Split(',')[0]), strOpenTime = col["lstLocations[" + i + "].Saturday.strOpenTime"], strClosedTime = col["lstLocations[" + i + "].Saturday.strClosedTime"] };
-
-
-
-                //Product Categories
-                if (col["lstLocations[" + i + "].Donuts.blnAvailable"] == null) email.Content.lstLocations[i].Donuts = new Models.CategoryItem() { ItemID = 1, ItemDesc = "Donuts", blnAvailable = false };
-                else email.Content.lstLocations[i].Donuts = new Models.CategoryItem() { ItemID = 1, ItemDesc = "Donuts", blnAvailable = Convert.ToBoolean(col["lstLocations[" + i + "].Donuts.blnAvailable"].Split(',')[0]) };
-
-                if (col["lstLocations[" + i + "].Bagels.blnAvailable"] == null) email.Content.lstLocations[i].Bagels = new Models.CategoryItem() { ItemID = 2, ItemDesc = "Bagels", blnAvailable = false };
-                else email.Content.lstLocations[i].Bagels = new Models.CategoryItem() { ItemID = 2, ItemDesc = "Bagels", blnAvailable = Convert.ToBoolean(col["lstLocations[" + i + "].Bagels.blnAvailable"].Split(',')[0]) };
-
-                if (col["lstLocations[" + i + "].Muffins.blnAvailable"] == null) email.Content.lstLocations[i].Muffins = new Models.CategoryItem() { ItemID = 3, ItemDesc = "Muffins", blnAvailable = false };
-                else email.Content.lstLocations[i].Muffins = new Models.CategoryItem() { ItemID = 3, ItemDesc = "Muffins", blnAvailable = Convert.ToBoolean(col["lstLocations[" + i + "].Muffins.blnAvailable"].Split(',')[0]) };
-
-                if (col["lstLocations[" + i + "].IceCream.blnAvailable"] == null) email.Content.lstLocations[i].IceCream = new Models.CategoryItem() { ItemID = 4, ItemDesc = "IceCream", blnAvailable = false };
-                else email.Content.lstLocations[i].IceCream = new Models.CategoryItem() { ItemID = 4, ItemDesc = "Ice Cream", blnAvailable = Convert.ToBoolean(col["lstLocations[" + i + "].IceCream.blnAvailable"].Split(',')[0]) };
-
-                if (col["lstLocations[" + i + "].FineCandies.blnAvailable"] == null) email.Content.lstLocations[i].FineCandies = new Models.CategoryItem() { ItemID = 5, ItemDesc = "FineCandies", blnAvailable = false };
-                else email.Content.lstLocations[i].FineCandies = new Models.CategoryItem() { ItemID = 5, ItemDesc = "Fine Candies & Chocolates", blnAvailable = Convert.ToBoolean(col["lstLocations[" + i + "].FineCandies.blnAvailable"].Split(',')[0]) };
-
-                if (col["lstLocations[" + i + "].WeddingCakes.blnAvailable"] == null) email.Content.lstLocations[i].WeddingCakes = new Models.CategoryItem() { ItemID = 6, ItemDesc = "WeddingCakes", blnAvailable = false };
-                else email.Content.lstLocations[i].WeddingCakes = new Models.CategoryItem() { ItemID = 6, ItemDesc = "Wedding Cakes", blnAvailable = Convert.ToBoolean(col["lstLocations[" + i + "].WeddingCakes.blnAvailable"].Split(',')[0]) };
-
-                if (col["lstLocations[" + i + "].Breads.blnAvailable"] == null) email.Content.lstLocations[i].Breads = new Models.CategoryItem() { ItemID = 7, ItemDesc = "Breads", blnAvailable = false };
-                else email.Content.lstLocations[i].Breads = new Models.CategoryItem() { ItemID = 7, ItemDesc = "Breads", blnAvailable = Convert.ToBoolean(col["lstLocations[" + i + "].Breads.blnAvailable"].Split(',')[0]) };
-
-                if (col["lstLocations[" + i + "].DecoratedCakes.blnAvailable"] == null) email.Content.lstLocations[i].DecoratedCakes = new Models.CategoryItem() { ItemID = 8, ItemDesc = "DecoratedCakes", blnAvailable = false };
-                else email.Content.lstLocations[i].DecoratedCakes = new Models.CategoryItem() { ItemID = 8, ItemDesc = "Decorated Cakes", blnAvailable = Convert.ToBoolean(col["lstLocations[" + i + "].DecoratedCakes.blnAvailable"].Split(',')[0]) };
-
-                if (col["lstLocations[" + i + "].Cupcakes.blnAvailable"] == null) email.Content.lstLocations[i].Cupcakes = new Models.CategoryItem() { ItemID = 9, ItemDesc = "Cupcakes", blnAvailable = false };
-                else email.Content.lstLocations[i].Cupcakes = new Models.CategoryItem() { ItemID = 9, ItemDesc = "Cupcakes", blnAvailable = Convert.ToBoolean(col["lstLocations[" + i + "].Cupcakes.blnAvailable"].Split(',')[0]) };
-
-                if (col["lstLocations[" + i + "].Cookies.blnAvailable"] == null) email.Content.lstLocations[i].Cookies = new Models.CategoryItem() { ItemID = 10, ItemDesc = "Cookies", blnAvailable = false };
-                else email.Content.lstLocations[i].Cookies = new Models.CategoryItem() { ItemID = 10, ItemDesc = "Cookies", blnAvailable = Convert.ToBoolean(col["lstLocations[" + i + "].Cookies.blnAvailable"].Split(',')[0]) };
-
-                if (col["lstLocations[" + i + "].Desserts.blnAvailable"] == null) email.Content.lstLocations[i].Desserts = new Models.CategoryItem() { ItemID = 11, ItemDesc = "Desserts", blnAvailable = false };
-                else email.Content.lstLocations[i].Desserts = new Models.CategoryItem() { ItemID = 11, ItemDesc = "Desserts/Tortes", blnAvailable = Convert.ToBoolean(col["lstLocations[" + i + "].Desserts.blnAvailable"].Split(',')[0]) };
-
-                if (col["lstLocations[" + i + "].Full.blnAvailable"] == null) email.Content.lstLocations[i].Full = new Models.CategoryItem() { ItemID = 12, ItemDesc = "Full", blnAvailable = false };
-                else email.Content.lstLocations[i].Full = new Models.CategoryItem() { ItemID = 12, ItemDesc = "Full-line Bakery", blnAvailable = Convert.ToBoolean(col["lstLocations[" + i + "].Full.blnAvailable"].Split(',')[0]) };
-
-                if (col["lstLocations[" + i + "].Deli.blnAvailable"] == null) email.Content.lstLocations[i].Deli = new Models.CategoryItem() { ItemID = 13, ItemDesc = "Deli", blnAvailable = false };
-                else email.Content.lstLocations[i].Deli = new Models.CategoryItem() { ItemID = 13, ItemDesc = "Deli/Catering", blnAvailable = Convert.ToBoolean(col["lstLocations[" + i + "].Deli.blnAvailable"].Split(',')[0]) };
-
-                if (col["lstLocations[" + i + "].Other.blnAvailable"] == null) email.Content.lstLocations[i].Other = new Models.CategoryItem() { ItemID = 14, ItemDesc = "Other", blnAvailable = false };
-                else email.Content.lstLocations[i].Other = new Models.CategoryItem() { ItemID = 14, ItemDesc = "Other Carryout Deli", blnAvailable = Convert.ToBoolean(col["lstLocations[" + i + "].Other.blnAvailable"].Split(',')[0]) };
-
-                if (col["lstLocations[" + i + "].Wholesale.blnAvailable"] == null) email.Content.lstLocations[i].Wholesale = new Models.CategoryItem() { ItemID = 15, ItemDesc = "Wholesale", blnAvailable = false };
-                else email.Content.lstLocations[i].Wholesale = new Models.CategoryItem() { ItemID = 15, ItemDesc = "Wholesale", blnAvailable = Convert.ToBoolean(col["lstLocations[" + i + "].Wholesale.blnAvailable"].Split(',')[0]) };
-
-                if (col["lstLocations[" + i + "].Delivery.blnAvailable"] == null) email.Content.lstLocations[i].Delivery = new Models.CategoryItem() { ItemID = 16, ItemDesc = "Delivery", blnAvailable = false };
-                else email.Content.lstLocations[i].Delivery = new Models.CategoryItem() { ItemID = 16, ItemDesc = "Delivery (3rd Party)", blnAvailable = Convert.ToBoolean(col["lstLocations[" + i + "].Delivery.blnAvailable"].Split(',')[0]) };
-
-                if (col["lstLocations[" + i + "].Shipping.blnAvailable"] == null) email.Content.lstLocations[i].Shipping = new Models.CategoryItem() { ItemID = 17, ItemDesc = "Shipping", blnAvailable = false };
-                else email.Content.lstLocations[i].Shipping = new Models.CategoryItem() { ItemID = 17, ItemDesc = "Shipping", blnAvailable = Convert.ToBoolean(col["lstLocations[" + i + "].Shipping.blnAvailable"].Split(',')[0]) };
-
-                if (col["lstLocations[" + i + "].Online.blnAvailable"] == null) email.Content.lstLocations[i].Online = new Models.CategoryItem() { ItemID = 18, ItemDesc = "Online", blnAvailable = false };
-                else email.Content.lstLocations[i].Online = new Models.CategoryItem() { ItemID = 18, ItemDesc = "Online Ordering", blnAvailable = Convert.ToBoolean(col["lstLocations[" + i + "].Online.blnAvailable"].Split(',')[0]) };
-
-
-                //Business Contact Information
-                email.Content.lstLocations[i].BusinessPhone = new Models.PhoneNumber();
-                email.Content.lstLocations[i].BusinessPhone.AreaCode = col["lstLocations[" + i + "].BusinessPhone.AreaCode"];
-                email.Content.lstLocations[i].BusinessPhone.Prefix = col["lstLocations[" + i + "].BusinessPhone.Prefix"];
-                email.Content.lstLocations[i].BusinessPhone.Suffix = col["lstLocations[" + i + "].BusinessPhone.Suffix"];
-                email.Content.lstLocations[i].BusinessEmail = col["lstLocations[" + i + "].BusinessEmail"];
+                locationMailModel.Content.lstLocations[i].Donuts =          locationList.lstLocations[i].Donuts;
+                locationMailModel.Content.lstLocations[i].Bagels =          locationList.lstLocations[i].Breads;
+                locationMailModel.Content.lstLocations[i].Muffins =         locationList.lstLocations[i].Muffins;
+                locationMailModel.Content.lstLocations[i].IceCream =        locationList.lstLocations[i].IceCream;
+                locationMailModel.Content.lstLocations[i].FineCandies =     locationList.lstLocations[i].FineCandies;
+                locationMailModel.Content.lstLocations[i].WeddingCakes =    locationList.lstLocations[i].WeddingCakes;
+                locationMailModel.Content.lstLocations[i].Breads =          locationList.lstLocations[i].Breads;
+                locationMailModel.Content.lstLocations[i].DecoratedCakes =  locationList.lstLocations[i].DecoratedCakes;
+                locationMailModel.Content.lstLocations[i].Cupcakes =        locationList.lstLocations[i].Cupcakes;
+                locationMailModel.Content.lstLocations[i].Cookies =         locationList.lstLocations[i].Cookies;
+                locationMailModel.Content.lstLocations[i].Desserts =        locationList.lstLocations[i].Desserts;
+                locationMailModel.Content.lstLocations[i].Full =            locationList.lstLocations[i].Full;
+                locationMailModel.Content.lstLocations[i].Deli =            locationList.lstLocations[i].Deli;
+                locationMailModel.Content.lstLocations[i].Other =           locationList.lstLocations[i].Other;
+                locationMailModel.Content.lstLocations[i].Wholesale =       locationList.lstLocations[i].Wholesale;
+                locationMailModel.Content.lstLocations[i].Delivery =        locationList.lstLocations[i].Delivery;
+                locationMailModel.Content.lstLocations[i].Shipping =        locationList.lstLocations[i].Shipping;
+                locationMailModel.Content.lstLocations[i].Online =          locationList.lstLocations[i].Online;
 
                 //Member Only Variables
                 //Contact Person Information
-                email.Content.lstLocations[i].LocationContact = new Models.ContactPerson();
-                email.Content.lstLocations[i].LocationContact.strContactFirstName = col["lstLocations[" + i + "].LocationContact.strContactFirstName"];
-                email.Content.lstLocations[i].LocationContact.strContactLastName = col["lstLocations[" + i + "].LocationContact.strContactLastName"];
-                email.Content.lstLocations[i].LocationContact.contactPhone = new Models.PhoneNumber();
-                email.Content.lstLocations[i].LocationContact.contactPhone.AreaCode = col["lstLocations[" + i + "].LocationContact.contactPhone.AreaCode"];
-                email.Content.lstLocations[i].LocationContact.contactPhone.Prefix = col["lstLocations[" + i + "].LocationContact.contactPhone.Prefix"];
-                email.Content.lstLocations[i].LocationContact.contactPhone.Suffix = col["lstLocations[" + i + "].LocationContact.contactPhone.Suffix"];
-                email.Content.lstLocations[i].LocationContact.strContactEmail = col["lstLocations[" + i + "].LocationContact.strContactEmail"];
-                email.Content.lstLocations[i].LocationContact.intContactTypeID = 1;
+                locationMailModel.Content.lstLocations[i].LocationContact                       = new Models.ContactPerson();
+                locationMailModel.Content.lstLocations[i].LocationContact.strContactFirstName   = locationList.lstLocations[i].LocationContact.strContactFirstName;
+                locationMailModel.Content.lstLocations[i].LocationContact.strContactLastName    = locationList.lstLocations[i].LocationContact.strContactLastName;
+                locationMailModel.Content.lstLocations[i].LocationContact.contactPhone          = new Models.PhoneNumber();
+                locationMailModel.Content.lstLocations[i].LocationContact.contactPhone.AreaCode = locationList.lstLocations[i].LocationContact.contactPhone.AreaCode;
+                locationMailModel.Content.lstLocations[i].LocationContact.contactPhone.Prefix   = locationList.lstLocations[i].LocationContact.contactPhone.Prefix;
+                locationMailModel.Content.lstLocations[i].LocationContact.contactPhone.Suffix   = locationList.lstLocations[i].LocationContact.contactPhone.Suffix;
+                locationMailModel.Content.lstLocations[i].LocationContact.strContactEmail       = locationList.lstLocations[i].LocationContact.strContactEmail;
+                locationMailModel.Content.lstLocations[i].LocationContact.intContactTypeID      = (short)Models.ContactPerson.ContactTypes.LocationContact;
+                locationMailModel.Content.lstLocations[i].LocationContact.ContactType           = Models.ContactPerson.ContactTypes.LocationContact;
+
+                if(!String.IsNullOrEmpty(locationList.lstLocations[i].LocationContact.strContactFirstName) && !String.IsNullOrEmpty(locationList.lstLocations[i].LocationContact.strContactLastName)) {
+                    locationMailModel.Content.lstLocations[i].LocationContact.strFullName = locationList.lstLocations[i].LocationContact.strContactLastName + ", " + locationList.lstLocations[i].LocationContact.strContactFirstName;
+                }
+
+                if (!String.IsNullOrEmpty(locationList.lstLocations[i].LocationContact.contactPhone.AreaCode) && !String.IsNullOrEmpty(locationList.lstLocations[i].LocationContact.contactPhone.Prefix) && !String.IsNullOrEmpty(locationList.lstLocations[i].LocationContact.contactPhone.Suffix)) {
+                    locationMailModel.Content.lstLocations[i].LocationContact.strFullPhone = '(' + locationList.lstLocations[i].LocationContact.contactPhone.AreaCode + ") " + locationList.lstLocations[i].LocationContact.contactPhone.Prefix + '-' + locationList.lstLocations[i].LocationContact.contactPhone.Suffix;    
+                }
 
                 //Web Admin contact information
-                email.Content.lstLocations[i].WebAdmin = new Models.ContactPerson();
-                email.Content.lstLocations[i].WebAdmin.strContactFirstName = col["lstLocations[" + i + "].WebAdmin.strContactFirstName"];
-                email.Content.lstLocations[i].WebAdmin.strContactLastName = col["lstLocations[" + i + "].WebAdmin.strContactLastName"];
-                email.Content.lstLocations[i].WebAdmin.contactPhone = new Models.PhoneNumber();
-                email.Content.lstLocations[i].WebAdmin.contactPhone.AreaCode = col["lstLocations[" + i + "].WebAdmin.contactPhone.AreaCode"];
-                email.Content.lstLocations[i].WebAdmin.contactPhone.Prefix = col["lstLocations[" + i + "].WebAdmin.contactPhone.Prefix"];
-                email.Content.lstLocations[i].WebAdmin.contactPhone.Suffix = col["lstLocations[" + i + "].WebAdmin.contactPhone.Suffix"];
-                email.Content.lstLocations[i].WebAdmin.strContactEmail = col["lstLocations[" + i + "].WebAdmin.strContactEmail"];
-                email.Content.lstLocations[i].WebAdmin.intContactTypeID = 2;
+                locationMailModel.Content.lstLocations[i].WebAdmin                          = new Models.ContactPerson();
+                locationMailModel.Content.lstLocations[i].WebAdmin.strContactFirstName      = locationList.lstLocations[i].WebAdmin.strContactFirstName;
+                locationMailModel.Content.lstLocations[i].WebAdmin.strContactLastName       = locationList.lstLocations[i].WebAdmin.strContactLastName;
+                locationMailModel.Content.lstLocations[i].WebAdmin.contactPhone             = new Models.PhoneNumber();
+                locationMailModel.Content.lstLocations[i].WebAdmin.contactPhone.AreaCode    = locationList.lstLocations[i].WebAdmin.contactPhone.AreaCode;
+                locationMailModel.Content.lstLocations[i].WebAdmin.contactPhone.Prefix      = locationList.lstLocations[i].WebAdmin.contactPhone.Prefix;
+                locationMailModel.Content.lstLocations[i].WebAdmin.contactPhone.Suffix      = locationList.lstLocations[i].WebAdmin.contactPhone.Suffix;
+                locationMailModel.Content.lstLocations[i].WebAdmin.strContactEmail          = locationList.lstLocations[i].WebAdmin.strContactEmail;
+                locationMailModel.Content.lstLocations[i].WebAdmin.intContactTypeID         = (short)Models.ContactPerson.ContactTypes.WebAdmin;
+                locationMailModel.Content.lstLocations[i].WebAdmin.ContactType              = Models.ContactPerson.ContactTypes.WebAdmin;
+
+                if (!String.IsNullOrEmpty(locationList.lstLocations[i].WebAdmin.strContactFirstName) && !String.IsNullOrEmpty(locationList.lstLocations[i].WebAdmin.strContactLastName)) {
+                    locationMailModel.Content.lstLocations[i].WebAdmin.strFullName = locationList.lstLocations[i].WebAdmin.strContactLastName + ", " + locationList.lstLocations[i].WebAdmin.strContactFirstName;
+                }
+
+                if (!String.IsNullOrEmpty(locationList.lstLocations[i].WebAdmin.contactPhone.AreaCode) && !String.IsNullOrEmpty(locationList.lstLocations[i].WebAdmin.contactPhone.Prefix) && !String.IsNullOrEmpty(locationList.lstLocations[i].WebAdmin.contactPhone.Suffix)) {
+                    locationMailModel.Content.lstLocations[i].WebAdmin.strFullPhone = '(' + locationList.lstLocations[i].WebAdmin.contactPhone.AreaCode + ") " + locationList.lstLocations[i].WebAdmin.contactPhone.Prefix + '-' + locationList.lstLocations[i].WebAdmin.contactPhone.Suffix;
+                }
 
                 //Customer Service Contact Information
-                email.Content.lstLocations[i].CustService = new Models.ContactPerson();
-                email.Content.lstLocations[i].CustService.strContactFirstName = col["lstLocations[" + i + "].CustService.strContactFirstName"];
-                email.Content.lstLocations[i].CustService.strContactLastName = col["lstLocations[" + i + "].CustService.strContactLastName"];
-                email.Content.lstLocations[i].CustService.contactPhone = new Models.PhoneNumber();
-                email.Content.lstLocations[i].CustService.contactPhone.AreaCode = col["lstLocations[" + i + "].CustService.contactPhone.AreaCode"];
-                email.Content.lstLocations[i].CustService.contactPhone.Prefix = col["lstLocations[" + i + "].CustService.contactPhone.Prefix"];
-                email.Content.lstLocations[i].CustService.contactPhone.Suffix = col["lstLocations[" + i + "].CustService.contactPhone.Suffix"];
-                email.Content.lstLocations[i].CustService.strContactEmail = col["lstLocations[" + i + "].CustService.strContactEmail"];
-                email.Content.lstLocations[i].CustService.intContactTypeID = 3;
+                locationMailModel.Content.lstLocations[i].CustService                       = new Models.ContactPerson();
+                locationMailModel.Content.lstLocations[i].CustService.strContactFirstName   = locationList.lstLocations[i].CustService.strContactFirstName;
+                locationMailModel.Content.lstLocations[i].CustService.strContactLastName    = locationList.lstLocations[i].CustService.strContactLastName;
+                locationMailModel.Content.lstLocations[i].CustService.contactPhone          = new Models.PhoneNumber();
+                locationMailModel.Content.lstLocations[i].CustService.contactPhone.AreaCode = locationList.lstLocations[i].CustService.contactPhone.AreaCode;
+                locationMailModel.Content.lstLocations[i].CustService.contactPhone.Prefix   = locationList.lstLocations[i].CustService.contactPhone.Prefix;
+                locationMailModel.Content.lstLocations[i].CustService.contactPhone.Suffix   = locationList.lstLocations[i].CustService.contactPhone.Suffix;
+                locationMailModel.Content.lstLocations[i].CustService.strContactEmail       = locationList.lstLocations[i].CustService.strContactEmail;
+                locationMailModel.Content.lstLocations[i].CustService.intContactTypeID      = (short)Models.ContactPerson.ContactTypes.CustomerService;
+                locationMailModel.Content.lstLocations[i].CustService.ContactType           = Models.ContactPerson.ContactTypes.CustomerService;
+
+                if (!String.IsNullOrEmpty(locationList.lstLocations[i].CustService.strContactFirstName) && !String.IsNullOrEmpty(locationList.lstLocations[i].CustService.strContactLastName)) {
+                    locationMailModel.Content.lstLocations[i].CustService.strFullName = locationList.lstLocations[i].CustService.strContactLastName + ", " + locationList.lstLocations[i].CustService.strContactFirstName;
+                }
+
+                if (!String.IsNullOrEmpty(locationList.lstLocations[i].CustService.contactPhone.AreaCode) && !String.IsNullOrEmpty(locationList.lstLocations[i].CustService.contactPhone.Prefix) && !String.IsNullOrEmpty(locationList.lstLocations[i].CustService.contactPhone.Suffix)) {
+                    locationMailModel.Content.lstLocations[i].CustService.strFullPhone = '(' + locationList.lstLocations[i].CustService.contactPhone.AreaCode + ") " + locationList.lstLocations[i].CustService.contactPhone.Prefix + '-' + locationList.lstLocations[i].CustService.contactPhone.Suffix;
+                }
 
                 //Web Portal Information
-                email.Content.lstLocations[i].MainWeb = new Models.Website();
-                email.Content.lstLocations[i].MainWeb.intWebsiteTypeID = 1;
-                email.Content.lstLocations[i].MainWeb.strURL = col["lstLocations[" + i + "].MainWeb.strURL"];
+                locationMailModel.Content.lstLocations[i].MainWeb                              = new Models.Website();
+                locationMailModel.Content.lstLocations[i].MainWeb.intWebsiteTypeID             = (short)Models.Website.WebsiteTypes.MainPage;
+                locationMailModel.Content.lstLocations[i].MainWeb.WebsiteType                  = Models.Website.WebsiteTypes.MainPage;
+                locationMailModel.Content.lstLocations[i].MainWeb.strURL                       = locationList.lstLocations[i].MainWeb.strURL;
+                
+                locationMailModel.Content.lstLocations[i].OrderingWeb                          = new Models.Website();
+                locationMailModel.Content.lstLocations[i].OrderingWeb.intWebsiteTypeID         = (short)Models.Website.WebsiteTypes.OrderingPage;
+                locationMailModel.Content.lstLocations[i].OrderingWeb.WebsiteType              = Models.Website.WebsiteTypes.OrderingPage;
+                locationMailModel.Content.lstLocations[i].OrderingWeb.strURL                   = locationList.lstLocations[i].OrderingWeb.strURL;
 
-                email.Content.lstLocations[i].OrderingWeb = new Models.Website();
-                email.Content.lstLocations[i].OrderingWeb.intWebsiteTypeID = 2;
-                email.Content.lstLocations[i].OrderingWeb.strURL = col["lstLocations[" + i + "].OrderingWeb.strURL"];
+                locationMailModel.Content.lstLocations[i].KettleWeb                            = new Models.Website();
+                locationMailModel.Content.lstLocations[i].KettleWeb.intWebsiteTypeID           = (short)Models.Website.WebsiteTypes.DonationPage;
+                locationMailModel.Content.lstLocations[i].KettleWeb.WebsiteType                = Models.Website.WebsiteTypes.DonationPage;
+                locationMailModel.Content.lstLocations[i].KettleWeb.strURL                     = locationList.lstLocations[i].KettleWeb.strURL;
 
-                email.Content.lstLocations[i].KettleWeb = new Models.Website();
-                email.Content.lstLocations[i].KettleWeb.intWebsiteTypeID = 3;
-                email.Content.lstLocations[i].KettleWeb.strURL = col["lstLocations[" + i + "].KettleWeb.strURL"];
-                */
+                locationMailModel.Content.lstLocations[i].Facebook      = locationList.lstLocations[i].Facebook;
+                locationMailModel.Content.lstLocations[i].Twitter       = locationList.lstLocations[i].Twitter;
+                locationMailModel.Content.lstLocations[i].Snapchat      = locationList.lstLocations[i].Snapchat;
+                locationMailModel.Content.lstLocations[i].TikTok        = locationList.lstLocations[i].TikTok;
+                locationMailModel.Content.lstLocations[i].Instagram     = locationList.lstLocations[i].Instagram;
+                locationMailModel.Content.lstLocations[i].Yelp          = locationList.lstLocations[i].Yelp;
+               
 
                 string BizPhone = '(' + locationMailModel.Content.lstLocations[i].BusinessPhone.AreaCode + ") " + locationMailModel.Content.lstLocations[i].BusinessPhone.Prefix + '-' + locationMailModel.Content.lstLocations[i].BusinessPhone.Suffix;
 
@@ -179,7 +165,8 @@ namespace GCRBA {
                     //Server.MapPath("~\\Views\\Shared\\LocEmailTemplate.html")
                     body = reader.ReadToEnd();
                 }
-
+                
+                body = body.Replace("{CompanyName}", locationMailModel.Content.lstLocations[i].CompanyName);
                 body = body.Replace("{LocationName}", locationMailModel.Content.lstLocations[i].LocationName);
                 body = body.Replace("{Address}", locationMailModel.Content.lstLocations[i].StreetAddress);
                 body = body.Replace("{City}", locationMailModel.Content.lstLocations[i].City);
@@ -191,10 +178,84 @@ namespace GCRBA {
                 body = body.Replace("{BizYear}", locationMailModel.Content.lstLocations[i].BizYear);
                 body = body.Replace("{BizBio}", locationMailModel.Content.lstLocations[i].Bio);
 
+                body = body.Replace("{SundayStart}", locationMailModel.Content.lstLocations[i].Sunday.strOpenTime);
+                body = body.Replace("{SundayEnd}", locationMailModel.Content.lstLocations[i].Sunday.strClosedTime);
+                body = body.Replace("{MondayStart}", locationMailModel.Content.lstLocations[i].Monday.strOpenTime);
+                body = body.Replace("{MondayEnd}", locationMailModel.Content.lstLocations[i].Monday.strClosedTime);
+                body = body.Replace("{TuesdayStart}", locationMailModel.Content.lstLocations[i].Tuesday.strOpenTime);
+                body = body.Replace("{TuesdayEnd}", locationMailModel.Content.lstLocations[i].Tuesday.strClosedTime);
+                body = body.Replace("{WednesdayStart}", locationMailModel.Content.lstLocations[i].Wednesday.strOpenTime);
+                body = body.Replace("{WednesdayEnd}", locationMailModel.Content.lstLocations[i].Wednesday.strClosedTime);
+                body = body.Replace("{ThursdayStart}", locationMailModel.Content.lstLocations[i].Thursday.strOpenTime);
+                body = body.Replace("{ThursdayEnd}", locationMailModel.Content.lstLocations[i].Thursday.strClosedTime);
+                body = body.Replace("{FridayStart}", locationMailModel.Content.lstLocations[i].Friday.strOpenTime);
+                body = body.Replace("{FridayEnd}", locationMailModel.Content.lstLocations[i].Friday.strClosedTime);
+                body = body.Replace("{SaturdayStart}", locationMailModel.Content.lstLocations[i].Saturday.strOpenTime);
+                body = body.Replace("{SaturdayEnd}", locationMailModel.Content.lstLocations[i].Saturday.strClosedTime);
+
+                body = body.Replace("{DonutStatus}", locationMailModel.Content.lstLocations[i].Donuts.blnAvailable.ToString());
+                body = body.Replace("{BagelStatus}", locationMailModel.Content.lstLocations[i].Bagels.blnAvailable.ToString());
+                body = body.Replace("{MuffinStatus}", locationMailModel.Content.lstLocations[i].Muffins.blnAvailable.ToString());
+                body = body.Replace("{IceCreamStatus}", locationMailModel.Content.lstLocations[i].IceCream.blnAvailable.ToString());
+                body = body.Replace("{FineCandiesStatus}", locationMailModel.Content.lstLocations[i].FineCandies.blnAvailable.ToString());
+                body = body.Replace("{WeddingCakeStatus}", locationMailModel.Content.lstLocations[i].WeddingCakes.blnAvailable.ToString());
+                body = body.Replace("{BreadStatus}", locationMailModel.Content.lstLocations[i].Breads.blnAvailable.ToString());
+                body = body.Replace("{DecoratedCakeStatus}", locationMailModel.Content.lstLocations[i].DecoratedCakes.blnAvailable.ToString());
+                body = body.Replace("{CupcakeStatus}", locationMailModel.Content.lstLocations[i].Cupcakes.blnAvailable.ToString());
+                body = body.Replace("{CookieStatus}", locationMailModel.Content.lstLocations[i].Cookies.blnAvailable.ToString());
+                body = body.Replace("{DessertStatus}", locationMailModel.Content.lstLocations[i].Desserts.blnAvailable.ToString());
+                body = body.Replace("{FullStatus}", locationMailModel.Content.lstLocations[i].Full.blnAvailable.ToString());
+                body = body.Replace("{DeliStatus}", locationMailModel.Content.lstLocations[i].Deli.blnAvailable.ToString());
+                body = body.Replace("{OtherStatus}", locationMailModel.Content.lstLocations[i].Other.blnAvailable.ToString());
+                body = body.Replace("{WholesaleStatus}", locationMailModel.Content.lstLocations[i].Wholesale.blnAvailable.ToString());
+                body = body.Replace("{DeliveryStatus}", locationMailModel.Content.lstLocations[i].Delivery.blnAvailable.ToString());
+                body = body.Replace("{ShippingStatus}", locationMailModel.Content.lstLocations[i].Shipping.blnAvailable.ToString());
+                body = body.Replace("{OnlineStatus}", locationMailModel.Content.lstLocations[i].Online.blnAvailable.ToString());
+
                 body = body.Replace("{Username}", locationMailModel.UserName);
                 body = body.Replace("{Title}", locationMailModel.Title);
                 body = body.Replace("{Url}", locationMailModel.Url);
                 body = body.Replace("{Description}", locationMailModel.Description);
+                body = body.Replace("{UserFullName}", locationMailModel.UserFullName);
+                body = body.Replace("{UserPhone}", locationMailModel.UserTelephone);
+                body = body.Replace("{UserEmail}", locationMailModel.UserEmail);
+
+
+
+                body = body.Replace("{LocationContactType}", locationMailModel.Content.lstLocations[i].LocationContact.ContactType.ToString());
+                body = body.Replace("{LocationContactName}", locationMailModel.Content.lstLocations[i].LocationContact.strFullName);
+                body = body.Replace("{LocationContactEmail}", locationMailModel.Content.lstLocations[i].LocationContact.strContactEmail);
+                body = body.Replace("{LocationContactPhone}", locationMailModel.Content.lstLocations[i].LocationContact.strFullPhone);
+
+                body = body.Replace("{CustServiceContactType}", locationMailModel.Content.lstLocations[i].CustService.ContactType.ToString());
+                body = body.Replace("{CustServiceContactName}", locationMailModel.Content.lstLocations[i].CustService.strFullName);
+                body = body.Replace("{CustServiceContactEmail}", locationMailModel.Content.lstLocations[i].CustService.strContactEmail);
+                body = body.Replace("{CustServiceContactPhone}", locationMailModel.Content.lstLocations[i].CustService.strFullPhone);
+
+                body = body.Replace("{WebAdminContactType}", locationMailModel.Content.lstLocations[i].WebAdmin.ContactType.ToString());
+                body = body.Replace("{WebAdminContactName}", locationMailModel.Content.lstLocations[i].WebAdmin.strFullName);
+                body = body.Replace("{WebAdminContactEmail}", locationMailModel.Content.lstLocations[i].WebAdmin.strContactEmail);
+                body = body.Replace("{WebAdminContactPhone}", locationMailModel.Content.lstLocations[i].WebAdmin.strFullPhone);
+
+                body = body.Replace("{FacebookURL}", locationMailModel.Content.lstLocations[i].Facebook.strSocialMediaLink);
+                body = body.Replace("{FacebookAvailable}", locationMailModel.Content.lstLocations[i].Facebook.blnAvailable.ToString());
+                body = body.Replace("{InstagramURL}", locationMailModel.Content.lstLocations[i].Instagram.strSocialMediaLink);
+                body = body.Replace("{InstagramAvailable}", locationMailModel.Content.lstLocations[i].Instagram.blnAvailable.ToString());
+                body = body.Replace("{TwitterURL}", locationMailModel.Content.lstLocations[i].Twitter.strSocialMediaLink);
+                body = body.Replace("{TwitterAvailable}", locationMailModel.Content.lstLocations[i].Twitter.blnAvailable.ToString());
+                body = body.Replace("{TikTokURL}", locationMailModel.Content.lstLocations[i].TikTok.strSocialMediaLink);
+                body = body.Replace("{TikTokAvailable}", locationMailModel.Content.lstLocations[i].TikTok.blnAvailable.ToString());
+                body = body.Replace("{YelpURL}", locationMailModel.Content.lstLocations[i].Yelp.strSocialMediaLink);
+                body = body.Replace("{YelpAvailable}", locationMailModel.Content.lstLocations[i].Yelp.blnAvailable.ToString());
+                body = body.Replace("{SnapchatURL}", locationMailModel.Content.lstLocations[i].Snapchat.strSocialMediaLink);
+                body = body.Replace("{SnapchatAvailable}", locationMailModel.Content.lstLocations[i].Snapchat.blnAvailable.ToString());
+
+                body = body.Replace("{MainWebType}", locationMailModel.Content.lstLocations[i].MainWeb.WebsiteType.ToString());
+                body = body.Replace("{MainWebURL}", locationMailModel.Content.lstLocations[i].MainWeb.strURL);
+                body = body.Replace("{OrderingWebType}", locationMailModel.Content.lstLocations[i].OrderingWeb.WebsiteType.ToString());
+                body = body.Replace("{OrderingWebURL}", locationMailModel.Content.lstLocations[i].OrderingWeb.strURL);
+                body = body.Replace("{KettleWebType}", locationMailModel.Content.lstLocations[i].KettleWeb.WebsiteType.ToString());
+                body = body.Replace("{KettleWebURL}", locationMailModel.Content.lstLocations[i].KettleWeb.strURL);
 
                 using (MailMessage mailMessage = new MailMessage()) {
                     mailMessage.From = new MailAddress(locationMailModel.UserName);
