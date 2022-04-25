@@ -206,10 +206,6 @@ namespace GCRBA.Controllers
                 user.PaymentType = col["PaymentType"];
 
 
-                /* The email procedure for new member should go somewhere here....*/
-
-
-
                 //permissions
                 //user.isMember = 1;
                 user.isAdmin = 0;
@@ -239,19 +235,19 @@ namespace GCRBA.Controllers
     
                         // create database object 
                         Database db = new Database();
-
+                        ProfileViewModel vm = new Profile();
                         // if user is authenticated then update member table
                         if (user.UID > 0)
                         {
                             // update member table
-                            db.InsertUserToMember(user);
-
+                            //db.InsertUserToMember(user);
+                            // ProfileViewModel vm = new ProfileViewModel();
                             // update user info
-
+                            db.UpdateUser(user);
                             // send Grace email and send to admin controller
 
 
-                        }
+                       }
                         else
                         {
 
