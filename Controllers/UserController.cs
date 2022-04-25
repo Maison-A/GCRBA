@@ -255,7 +255,7 @@ namespace GCRBA.Controllers
                             
                         // create database object 
                         Database db = new Database();
-                        // ProfileViewModel vm = new Profile();
+                        
                         // if user is authenticated then update member table
                         if (user.UID > 0)
                         {
