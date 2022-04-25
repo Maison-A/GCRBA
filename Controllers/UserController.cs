@@ -260,6 +260,9 @@ namespace GCRBA.Controllers
                         // if user is authenticated then update member table
                         if (user.UID > 0)
                         {
+                            // update user data
+                            //db.UpdateUser(user);
+
                             // update member table
                             db.InsertUserToMember(user);
 
