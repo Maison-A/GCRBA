@@ -263,9 +263,6 @@ namespace GCRBA.Controllers
                             // update user data
                             db.UpdateUser_NotVM(user);
 
-                            // update member table
-                            db.InsertUserToMember(user);
-
                             // send request to member table to be reviewed by admin
                             db.InsertMemberRequest(user);
 
