@@ -262,7 +262,7 @@ namespace GCRBA.Controllers
                         {
                         
                             // update user data
-                            //db.UpdateUser(vm);
+                            db.UpdateUser_NotVM(user);
 
                             // update member table
                             db.InsertUserToMember(user);
