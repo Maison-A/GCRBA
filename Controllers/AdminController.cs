@@ -57,25 +57,6 @@ namespace GCRBA.Controllers
             return items;
         }
 
-        public List<SelectListItem> GetAllMemberRequest(List<Models.MembershipRequests> lstMemberRequests) {
-            List<SelectListItem> items = new List<SelectListItem>();
-            foreach (Models.MembershipRequests req in lstMemberRequests) {
-
-                items.Add(new SelectListItem { Text = req.strLastName.ToString() + ", " + req.strFirstName.ToString() + " | " + req.strPhone + " | " + req.strEmail, Value = req.intUserID.ToString() });
-            }
-            return items;
-            /*
-            }
-                if (col["btnSubmit"].ToString() == "viewRequests")
-                {
-                    return RedirectToAction("Requests", "AdminPortal");
-                }
-
-                return View();
-            }
-            */
-        }
-
         public ActionResult LocationRequests()
 		{
             User u = new User();
@@ -90,19 +71,6 @@ namespace GCRBA.Controllers
             };
 
             return View(adminRequestList);
-        }
-
-        public ActionResult MembershipRequests() {
-            User u = new User();
-            Models.Database db = new Models.Database();
-            List<Models.MembershipRequests> memberRequests = new List<MembershipRequests>();
-            memberRequests = db.GetMembershipRequests();
-            Models.MembershipRequestList memberRequestList = new Models.MembershipRequestList() {
-                SelectedMemberRequests = new[] { 1 },
-                MemberRequests = GetAllMemberRequest(memberRequests)
-            };
-
-            return View(memberRequestList);
         }
 
         [HttpPost]

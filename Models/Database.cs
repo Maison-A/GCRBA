@@ -3242,52 +3242,6 @@ namespace GCRBA.Models
 			return LocationList.ActionTypes.InsertSuccessful;
 		}
 
-		public List<Models.MembershipRequests> GetMembershipRequests() {
-			try {
-				DataSet ds = new DataSet();
-				SqlConnection cn = new SqlConnection();
-
-				// try to connect to database -- throw error if unsuccessful
-				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
-
-				// specify which stored procedure we are using 
-				SqlDataAdapter da = new SqlDataAdapter("SELECT_MEMBER_REQUESTS", cn);
-
-				// set command type as stored procedure
-				da.SelectCommand.CommandType = CommandType.StoredProcedure;
-
-				List<Models.MembershipRequests> lstMemberRequests = new List<Models.MembershipRequests>();
-
-				try { da.Fill(ds); }
-				catch (Exception ex) { throw new Exception(ex.Message); }
-				finally { CloseDBConnection(ref cn); }
-
-				if (ds.Tables[0].Rows.Count != 0) {
-					// loop through results and add to list 
-					foreach (DataRow dr in ds.Tables[0].Rows) {
-						// create new Company object
-						MembershipRequests memberRequest = new MembershipRequests();
-
-						// add values to CompanyID and Name properties 
-						memberRequest.intMemberID = (short)(dr["intMemberID"]);
-						memberRequest.intUserID = (short)dr["intUserID"];
-						memberRequest.intMembershipLevelID = (short)dr["intMemberLevelID"];
-						memberRequest.intPaymentTypeID = (short)dr["intPaymentTypeID"];
-						memberRequest.intPaymentStatusID = (short)dr["intPaymentStatusID"];
-						memberRequest.intApprovalStatusID = (short)dr["intApprovalStatusID"];
-						memberRequest.strFirstName = (string)dr["strFirstName"];
-						memberRequest.strLastName = (string)dr["strLastName"];
-						memberRequest.strEmail = (string)dr["strEmail"];
-						memberRequest.strPhone = (string)dr["strPhone"];
-
-						// add Company object (c) to Company list (companies) 
-						lstMemberRequests.Add(memberRequest);
-					}
-				}
-				// return list of companies 
-				return lstMemberRequests;
-			}
-			catch (Exception ex) { throw new Exception(ex.Message); }
-		}
+		
 	}
 }
