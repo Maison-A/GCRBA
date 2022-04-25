@@ -115,7 +115,7 @@ namespace GCRBA.Views.Bakery {
                 loc.lngLocationID = Convert.ToInt64(col["lngLocationID"]);
                 Models.Database db = new Models.Database();
                 loc.ActionType = Models.NewLocation.ActionTypes.NoType;
-                loc.ActionType = db.DeleteLocation(loc.lngLocationID);
+                loc.ActionType = db.DeleteLocation(loc.lngLocationID, loc.lngCompanyID);
                 return RedirectToAction("Index", "Bakery");
             }
             return View();
@@ -322,7 +322,7 @@ namespace GCRBA.Views.Bakery {
                         loc.LocationContact.contactPhone.Prefix = col["lstLocations[" + index + "].LocationContact.contactPhone.Prefix"];
                         loc.LocationContact.contactPhone.Suffix = col["lstLocations[" + index + "].LocationContact.contactPhone.Suffix"];
                         loc.LocationContact.strContactEmail = col["lstLocations[" + index + "].LocationContact.strContactEmail"];
-                        loc.LocationContact.intContactTypeID = 1;
+                        loc.LocationContact.intContactTypeID = (short)Models.ContactPerson.ContactTypes.LocationContact;
 
                         //Web Admin contact information
                         loc.WebAdmin = new Models.ContactPerson();
@@ -333,7 +333,7 @@ namespace GCRBA.Views.Bakery {
                         loc.WebAdmin.contactPhone.Prefix = col["lstLocations[" + index + "].WebAdmin.contactPhone.Prefix"];
                         loc.WebAdmin.contactPhone.Suffix = col["lstLocations[" + index + "].WebAdmin.contactPhone.Suffix"];
                         loc.WebAdmin.strContactEmail = col["lstLocations[" + index + "].WebAdmin.strContactEmail"];
-                        loc.WebAdmin.intContactTypeID = 2;
+                        loc.WebAdmin.intContactTypeID = (short)Models.ContactPerson.ContactTypes.WebAdmin;
 
                         //Customer Service Contact Information
                         loc.CustService = new Models.ContactPerson();
@@ -344,7 +344,7 @@ namespace GCRBA.Views.Bakery {
                         loc.CustService.contactPhone.Prefix = col["lstLocations[" + index + "].CustService.contactPhone.Prefix"];
                         loc.CustService.contactPhone.Suffix = col["lstLocations[" + index + "].CustService.contactPhone.Suffix"];
                         loc.CustService.strContactEmail = col["lstLocations[" + index + "].CustService.strContactEmail"];
-                        loc.CustService.intContactTypeID = 3;
+                        loc.CustService.intContactTypeID = (short)Models.ContactPerson.ContactTypes.CustomerService;
 
                         //Web Portal Information
                         loc.MainWeb = new Models.Website();
@@ -469,8 +469,6 @@ namespace GCRBA.Views.Bakery {
                     };
                         arrSocialMediaInfo[indexPopulated] = socialmedia;
 
-                       
-
                         var Websites = new List<Models.Website>() {
                         loc.MainWeb, loc.OrderingWeb, loc.KettleWeb
                     };
@@ -494,33 +492,15 @@ namespace GCRBA.Views.Bakery {
                     switch (at) {
                         case Models.LocationList.ActionTypes.InsertSuccessful:
                             
-                            try {
-                                ExportToCsv.StartExport(locList, arrLocInfo, arrBizInfo, arrCategoryInfo, arrLocHours, arrContactInfo, arrSocialMediaInfo, arrWebsites);
-                            }
-							catch {
-                                return RedirectToAction("Index", "Troubleshoot");
-							}
-                            /*
-                            using (firstProcess = new Process()) {
-                                firstProcess.StartInfo.FileName = "C:\\Users\\winsl\\AppData\\Local\\ESRI\\conda\\envs\\myenv-py3v2\\python.exe";
-                                firstProcess.StartInfo.CreateNoWindow = true;
-                                firstProcess.StartInfo.Arguments = "C:\\Users\\winsl\\OneDrive\\Desktop\\Capstone\\MVC\\Python\\Scripts\\geocode_arcgis_online.py";
-                                firstProcess.Start();
-                                firstProcess.WaitForExit();
-                            }
-                            */
-                            try {
-                                return RedirectToAction("Index", "SendMailer", "location");
-                            }
-                            catch {
-                                return RedirectToAction("EmailIssue", "Troubleshoot");
-                            }
+                            ExportToCsv.StartExport(locList, arrLocInfo, arrBizInfo, arrCategoryInfo, arrLocHours, arrContactInfo, arrSocialMediaInfo, arrWebsites);
+                            SendLocationEmail.SendEmail(locList);
+                            return RedirectToAction("Index", "Bakery");
+							
 
                         case Models.LocationList.ActionTypes.DeleteSuccessful:
                             return RedirectToAction("Index");
                         default:
-                            Models.Database db = new Models.Database();
-                            
+                            Models.Database db = new Models.Database();                           
 
                             Models.NewLocation loc = new Models.NewLocation();
 

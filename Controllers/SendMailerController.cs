@@ -12,15 +12,15 @@ namespace GCRBA.Controllers
 {
     public class SendMailerController : Controller
     {
-        public ActionResult Index(Models.LocationList passedLocationList) {
+        public ActionResult SendLocationEmail(Models.LocationList passedLocationList) {
             Models.LocationList locList = (Models.LocationList)TempData["location"];
-            Models.MailModel mailModel = new Models.MailModel();
-            mailModel.Content = locList;
-            return View(mailModel);
+            Models.LocationMailModel locMailModel = new Models.LocationMailModel();
+            locMailModel.Content = locList;
+            return View(locMailModel);
         }
 
         [HttpPost]
-        public ActionResult SendEmail(Models.MailModel email, FormCollection col) {
+        public ActionResult SendLocationEmail(Models.LocationMailModel email, FormCollection col) {
             int i = 0;
             do {
                 if(col["Content.lstLocations[" + i + "].LocationName"] != null) { 

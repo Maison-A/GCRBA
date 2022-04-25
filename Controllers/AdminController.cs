@@ -57,13 +57,32 @@ namespace GCRBA.Controllers
             return items;
         }
 
+        public List<SelectListItem> GetAllMemberRequest(List<Models.MembershipRequests> lstMemberRequests) {
+            List<SelectListItem> items = new List<SelectListItem>();
+            foreach (Models.MembershipRequests req in lstMemberRequests) {
+
+                items.Add(new SelectListItem { Text = req.strLastName.ToString() + ", " + req.strFirstName.ToString() + " | " + req.strPhone + " | " + req.strEmail, Value = req.intUserID.ToString() });
+            }
+            return items;
+            /*
+            }
+                if (col["btnSubmit"].ToString() == "viewRequests")
+                {
+                    return RedirectToAction("Requests", "AdminPortal");
+                }
+
+                return View();
+            }
+            */
+        }
+
         public ActionResult LocationRequests()
 		{
             User u = new User();
 
             Models.Database db = new Models.Database();
             List<Models.AdminRequest> adminRequests = new List<AdminRequest>();
-            adminRequests = db.GetAdminRequests();
+            adminRequests = db.GetLocationRequests();
             Models.AdminRequestList adminRequestList = new Models.AdminRequestList()
             {
                 SelectedAdminRequests = new[] { 1 },
@@ -73,12 +92,25 @@ namespace GCRBA.Controllers
             return View(adminRequestList);
         }
 
+        public ActionResult MembershipRequests() {
+            User u = new User();
+            Models.Database db = new Models.Database();
+            List<Models.MembershipRequests> memberRequests = new List<MembershipRequests>();
+            memberRequests = db.GetMembershipRequests();
+            Models.MembershipRequestList memberRequestList = new Models.MembershipRequestList() {
+                SelectedMemberRequests = new[] { 1 },
+                MemberRequests = GetAllMemberRequest(memberRequests)
+            };
+
+            return View(memberRequestList);
+        }
+
         [HttpPost]
         public ActionResult LocationRequests(FormCollection col, AdminRequestList request)
         {
             Models.Database db = new Models.Database();
             Models.AdminRequestList adminRequestList = new Models.AdminRequestList();
-            adminRequestList.lstAdminRequest = db.GetAdminRequests();
+            adminRequestList.lstAdminRequest = db.GetLocationRequests();
             request.AdminRequests = GetAllAdminRequest(adminRequestList.lstAdminRequest);
             if (col["btnSubmit"].ToString() == "approve" && request.SelectedAdminRequests != null)
             {
@@ -87,7 +119,7 @@ namespace GCRBA.Controllers
                 {
                     Request.Selected = true;
                     Models.AdminRequest adminReq = new Models.AdminRequest();
-                    adminReq = db.GetSingleAdminRequest(Convert.ToInt16(Request.Value));
+                    adminReq = db.GetSingleLocationRequest(Convert.ToInt16(Request.Value));
                     Models.LocationList locList = new Models.LocationList();
                     locList.lstLocations[0] = db.GetTempLocation(Convert.ToInt16(Request.Value));
 
@@ -134,7 +166,7 @@ namespace GCRBA.Controllers
                     locList.StoreNewLocation(arrCategoryInfo, arrLocHours, arrSocialMediaInfo, arrWebsites, arrContactInfo, adminReq);
 
                     Models.AdminRequestList updatedRequestList = new Models.AdminRequestList();
-                    updatedRequestList.lstAdminRequest = db.GetAdminRequests();
+                    updatedRequestList.lstAdminRequest = db.GetLocationRequests();
                     request.AdminRequests = GetAllAdminRequest(updatedRequestList.lstAdminRequest);
                 }
                 return View(request);
@@ -147,7 +179,7 @@ namespace GCRBA.Controllers
                 {
                     Request.Selected = true;
                     Models.AdminRequest adminReq = new Models.AdminRequest();
-                    adminReq = db.GetSingleAdminRequest(Convert.ToInt16(Request.Value));
+                    adminReq = db.GetSingleLocationRequest(Convert.ToInt16(Request.Value));
                     Models.LocationList locList = new Models.LocationList();
                     locList.lstLocations[0] = db.GetTempLocation(Convert.ToInt16(Request.Value));
 
@@ -155,7 +187,7 @@ namespace GCRBA.Controllers
                     db.DeleteAdminRequest(adminReq.intAdminRequest);
 
                     Models.AdminRequestList updatedRequestList = new Models.AdminRequestList();
-                    updatedRequestList.lstAdminRequest = db.GetAdminRequests();
+                    updatedRequestList.lstAdminRequest = db.GetLocationRequests();
                     request.AdminRequests = GetAllAdminRequest(updatedRequestList.lstAdminRequest);
                 }
                 return View(request);
@@ -1280,7 +1312,7 @@ namespace GCRBA.Controllers
             Database db = new Database();
 
             // get action type from attemp to delete location from db 
-            vm.NewLocation.ActionType = db.DeleteLocation(vm.Location.LocationID);
+            vm.NewLocation.ActionType = db.DeleteLocation(vm.Location.LocationID, vm.Location.CompanyID);
 
             return vm.NewLocation.ActionType;
         }

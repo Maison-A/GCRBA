@@ -23,6 +23,9 @@ namespace GCRBA.Models
         public string Username { get; set; }
         public string Password { get; set; }
         public string PaymentType = string.Empty;
+        public short intPaymentType = 0;
+        public short intMembershipType = 0;
+        public short intMemberID = 0;
         public ActionTypes ActionType { get; set; } = ActionTypes.NoType;
 
         // member type control

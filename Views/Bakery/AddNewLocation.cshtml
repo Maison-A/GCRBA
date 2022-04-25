@@ -108,7 +108,7 @@
 	if (u.IsAuthenticated) {
 
 		<div class="some-spacing">
-			<button class="button-action" id="btnEnterLocation" name="btnSubmit" value="SubmitLocation">Submit Location(s)</button>
+			<input class="button-action" type="submit" data-confirm="Are you sure you want to submit form?" />
 			<button class="button-cancel1" id="addAdditionalLocation1" type="button" name="btnSubmit" value="AddLocation">Add Location(s)</button>
 			<!--<button class="button-action" id="btnExtraLocation" name="btnSubmit" value="ExtraLocation">Add Another Location</button>-->
 		</div>
@@ -659,12 +659,26 @@
 		</div>
 		<br />
 		<div class="some-spacing">
-			<button class="button-action" id="btnEnterLocation" name="btnSubmit" value="SubmitLocation">Submit Location(s)</button>
+			<input class="button-action" type="submit" name="btnSubmit" value="SubmitLocation" data-confirm="Are you sure you want to submit form?" />
+			<!--<button class="button-action" id="btnEnterLocation" name="btnSubmit" value="SubmitLocation"  onclick = Submit()>Submit Location(s)</button>-->
 			<button class="button-cancel" id="addAdditionalLocation" type="button" name="btnSubmit" value="AddLocation">Add Location(s)</button>
 			<!--<button class="button-action" id="btnExtraLocation" name="btnSubmit" value="ExtraLocation">Add Another Location</button>-->
 		</div>
 	}
 }
+<script type="text/javascript">
+	jQuery(document).ready(function () {
+		jQuery('[data-confirm]').click(function (e) {
+			if (!confirm(jQuery(this).attr("data-confirm"))) {
+				e.preventDefault();
+			}
+			else {
+				alert(`Thank you! 
+Our team will be sent notice to review your request!`)
+			}
+		});
+	});
+</script>
 
 <script>
 	var hidden = '@Html.Hidden("lstLocations.Index", "{id}")';

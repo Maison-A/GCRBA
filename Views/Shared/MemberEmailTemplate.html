@@ -1,0 +1,103 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Add New Member Request</title>
+    <style>
+        td {
+            vertical-align: top;
+        }
+
+        .center {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .tab {
+            display: inline-block;
+            margin-left: 40px;
+        }
+    </style>
+</head>
+<body>
+    <!--<img src="htps://www.aspsnippets.com/images/Blue/Logo.png" /><br />-->
+    <br />
+    <div style="border-top: 3px solid #22BCE5">
+        &nbsp;
+    </div>
+    <span style="font-family: Arial; font-size: 10pt;">
+        Hello,
+
+        There is a new member request, see details:
+    </span>
+    <br />
+    <table style="width: 600px; border: 1px solid black; text-align: left; vertical-align:top" class="center">
+        <tr>
+            <th>
+                User Information
+            </th>
+        </tr>
+        <tr>
+            <td>
+                User Full Name:
+            </td>
+            <td>
+                {UserFullName}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Address:
+            </td>
+            <td>
+                {Address} <br />
+                {City} {State}, {Zip}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                User Full Phone:
+            </td>
+            <td>
+                {Phone}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                User Email:
+            </td>
+            <td>
+                {UserEmail}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Membership Type:
+            </td>
+            <td>
+                {MemberShipType}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Payment Type:
+            </td>
+            <td>
+                {PaymentType}
+            </td>
+        </tr>
+    </table>
+    <br />
+    <span style="font-family: Arial; font-size: 10pt">
+
+
+        <br />
+        <a style="color: #22BCE5" href="{Url}"><button>Return to Admin Portal</button></a><br />
+        {Description}
+        <br />
+        <br />
+        Thanks,<br />
+        GCRBA Web App
+    </span>
+</body>
+</html>
