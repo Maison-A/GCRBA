@@ -9,9 +9,13 @@
 	if (!Model.IsAuthenticated)
 	{
 		<p>Please log in to view this page.</p>
-	}
-	else
+	} else
 	{
-		<button name="btnSubmit" value="editProfile">Edit Profile</button>
+		if (Model.Notifications.Count > 0)
+		{
+			<button name="btnSubmt" value="viewNotifications" class="button-action">You have new notification(s) <i class="fa-solid fa-circle-exclamation fa-xl"></i></button>
+		}
+
+		<button name="btnSubmit" value="editProfile" class="button-action">Edit Profile</button>
 	}
 }

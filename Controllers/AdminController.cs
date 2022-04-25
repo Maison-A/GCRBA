@@ -25,8 +25,9 @@ namespace GCRBA.Controllers
         }
 
         [HttpPost]
-        public ActionResult Index(FormCollection col) {
-            
+        public ActionResult Index(FormCollection col) 
+        {
+
             if (col["btnSubmit"].ToString() == "viewLocationRequests")
 			{
                 return RedirectToAction("LocationRequests", "AdminPortal");
@@ -54,16 +55,6 @@ namespace GCRBA.Controllers
                 items.Add(new SelectListItem { Text = req.strRequestedChange, Value = req.intAdminRequest.ToString() });
             }
             return items;
-            /*
-            }
-                if (col["btnSubmit"].ToString() == "viewRequests")
-                {
-                    return RedirectToAction("Requests", "AdminPortal");
-                }
-
-                return View();
-            }
-            */
         }
 
         public ActionResult LocationRequests()
@@ -72,7 +63,7 @@ namespace GCRBA.Controllers
 
             Models.Database db = new Models.Database();
             List<Models.AdminRequest> adminRequests = new List<AdminRequest>();
-            adminRequests = db.GetAdminRequests();
+            adminRequests = db.GetLocationRequests();
             Models.AdminRequestList adminRequestList = new Models.AdminRequestList()
             {
                 SelectedAdminRequests = new[] { 1 },
@@ -87,7 +78,7 @@ namespace GCRBA.Controllers
         {
             Models.Database db = new Models.Database();
             Models.AdminRequestList adminRequestList = new Models.AdminRequestList();
-            adminRequestList.lstAdminRequest = db.GetAdminRequests();
+            adminRequestList.lstAdminRequest = db.GetLocationRequests();
             request.AdminRequests = GetAllAdminRequest(adminRequestList.lstAdminRequest);
             if (col["btnSubmit"].ToString() == "approve" && request.SelectedAdminRequests != null)
             {
@@ -96,7 +87,7 @@ namespace GCRBA.Controllers
                 {
                     Request.Selected = true;
                     Models.AdminRequest adminReq = new Models.AdminRequest();
-                    adminReq = db.GetSingleAdminRequest(Convert.ToInt16(Request.Value));
+                    adminReq = db.GetSingleLocationRequest(Convert.ToInt16(Request.Value));
                     Models.LocationList locList = new Models.LocationList();
                     locList.lstLocations[0] = db.GetTempLocation(Convert.ToInt16(Request.Value));
 
@@ -143,7 +134,7 @@ namespace GCRBA.Controllers
                     locList.StoreNewLocation(arrCategoryInfo, arrLocHours, arrSocialMediaInfo, arrWebsites, arrContactInfo, adminReq);
 
                     Models.AdminRequestList updatedRequestList = new Models.AdminRequestList();
-                    updatedRequestList.lstAdminRequest = db.GetAdminRequests();
+                    updatedRequestList.lstAdminRequest = db.GetLocationRequests();
                     request.AdminRequests = GetAllAdminRequest(updatedRequestList.lstAdminRequest);
                 }
                 return View(request);
@@ -156,7 +147,7 @@ namespace GCRBA.Controllers
                 {
                     Request.Selected = true;
                     Models.AdminRequest adminReq = new Models.AdminRequest();
-                    adminReq = db.GetSingleAdminRequest(Convert.ToInt16(Request.Value));
+                    adminReq = db.GetSingleLocationRequest(Convert.ToInt16(Request.Value));
                     Models.LocationList locList = new Models.LocationList();
                     locList.lstLocations[0] = db.GetTempLocation(Convert.ToInt16(Request.Value));
 
@@ -164,13 +155,169 @@ namespace GCRBA.Controllers
                     db.DeleteAdminRequest(adminReq.intAdminRequest);
 
                     Models.AdminRequestList updatedRequestList = new Models.AdminRequestList();
-                    updatedRequestList.lstAdminRequest = db.GetAdminRequests();
+                    updatedRequestList.lstAdminRequest = db.GetLocationRequests();
                     request.AdminRequests = GetAllAdminRequest(updatedRequestList.lstAdminRequest);
                 }
                 return View(request);
             }
             return View();
         }
+
+        public ActionResult MembershipRequests()
+		{
+            AdminVM vm = new AdminVM();
+
+            vm.User = new User();
+
+            vm.User = vm.User.GetUserSession();
+
+            vm.MemberRequest = new MemberRequest();
+
+            vm.MemberRequests = new List<MemberRequest>();
+
+            // get membership requests 
+            vm.MemberRequests = GetMembershipRequests(vm);
+
+            return View(vm);
+		}
+
+        [HttpPost]
+        public ActionResult MembershipRequests(FormCollection col)
+		{
+            AdminVM vm = new AdminVM();
+
+            vm.User = new User();
+
+            vm.User = vm.User.GetUserSession();
+
+            vm.MemberRequests = new List<MemberRequest>();
+
+            // get membership requests 
+            vm.MemberRequests = GetMembershipRequests(vm);
+            
+            // create MemberRequest object 
+            // then get current session 
+            // if none, null 
+            vm.MemberRequest = new MemberRequest();
+            vm.MemberRequest = vm.MemberRequest.GetMemberRequestSession();
+
+            if (col["btnSubmit"].ToString() == "viewRequest")
+			{
+                vm.MemberRequest.MemberID = Convert.ToInt16(col["requests"]);
+
+                // get member info from db 
+                vm.MemberRequest = GetMemberInfo(vm);
+
+                // save MemberID in CurrentRequest session 
+                vm.MemberRequest.SaveMemberRequestSession();
+
+                return View(vm);
+			}
+
+            if (col["btnSubmit"].ToString() == "approve")
+			{
+                // update in db 
+                vm.MemberRequest.ActionType = UpdateMemberStatus(vm);
+
+                // send user notification 
+                // 1 is PK in tblNotification for membership approval message 
+                // 2 is the PK in tblNotificationStatus for unread message 
+                SendUserNotification(vm.MemberRequest, 1, 2);
+
+                // remove MemberRequestSession 
+                vm.MemberRequest.RemoveMemberRequestSession();
+
+                // get membership requests 
+                vm.MemberRequests = GetMembershipRequests(vm);
+
+                // reset MemberID to 0
+                vm.MemberRequest.MemberID = 0;
+
+                return View(vm);
+			}
+
+            if (col["btnSubmit"].ToString() == "deny")
+			{
+                // delete record in db 
+                vm.MemberRequest.ActionType = DeleteMemberRequest(vm.MemberRequest);
+
+                // send user notificaiton
+                // 2 in first param is PK in tblNotification for membership denial message
+                // 2 in second param is PK in tblNotificationStatus for unread message 
+                SendUserNotification(vm.MemberRequest, 2, 2);
+
+                // remove member request session 
+                vm.MemberRequest.RemoveMemberRequestSession();
+
+                // get membership requests 
+                vm.MemberRequests = GetMembershipRequests(vm);
+
+                // reset MemberID to 0
+                vm.MemberRequest.MemberID = 0;
+
+                return View(vm);
+			}
+
+            return View(vm);
+		}
+
+        private void SendUserNotification(MemberRequest m, int intNotificationID, int intNotificationStatusID)
+		{
+            try
+			{
+                // create database object
+                Database db = new Database();
+
+                // send user notification 
+                db.SendUserNotification(m, intNotificationID, intNotificationStatusID);
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+        private MemberRequest.ActionTypes DeleteMemberRequest(MemberRequest m)
+		{
+            try
+			{
+                // create database object
+                Database db = new Database();
+
+                // delete record from db 
+                m.ActionType = db.DeleteMemberRequest(m);
+
+                return m.ActionType;
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+        private MemberRequest.ActionTypes UpdateMemberStatus(AdminVM vm)
+		{
+            try
+			{
+                // create database object
+                Database db = new Database();
+
+                // update in db 
+                vm.MemberRequest.ActionType = db.UpdateMemberStatus(vm.MemberRequest);
+
+                return vm.MemberRequest.ActionType;
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+        private MemberRequest GetMemberInfo(AdminVM vm)
+		{
+            try
+			{
+                // create database object
+                Database db = new Database();
+
+                // get info from database
+                vm.MemberRequest = db.GetMemberInfo(vm);
+
+                return vm.MemberRequest;
+			}
+            catch(Exception ex) { throw new Exception(ex.Message); }
+		}
 
         public ActionResult EditMainBanner()
         {
@@ -1162,7 +1309,7 @@ namespace GCRBA.Controllers
             Database db = new Database();
 
             // get action type from attemp to delete location from db 
-            vm.NewLocation.ActionType = db.DeleteLocation(vm.Location.LocationID);
+            vm.NewLocation.ActionType = db.DeleteLocation(vm.Location.LocationID, vm.Location.CompanyID);
 
             return vm.NewLocation.ActionType;
         }
@@ -1203,6 +1350,20 @@ namespace GCRBA.Controllers
         // -------------------------------------------------------------------------------------------------
         // RETRIEVING DATA FROM DATABASE 
         // -------------------------------------------------------------------------------------------------
+
+        private List<MemberRequest> GetMembershipRequests(AdminVM vm)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // get list from db 
+                vm.MemberRequests = db.GetMembershipRequests();
+
+                return vm.MemberRequests;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
 
         private string GetState(int intStateID)
         {
