@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.IO;
+using GCRBA.ViewModels;
 using GCRBA.Models;
 
 namespace GCRBA.Controllers
@@ -173,8 +174,7 @@ namespace GCRBA.Controllers
 
                 // get current user session
                 Models.User user = new Models.User();
-                user = user.GetUserSession();
-
+                user = user.GetUserSession();                
 
                 // contact info
                 user.FirstName = col["FirstName"];
@@ -256,12 +256,13 @@ namespace GCRBA.Controllers
     
                         // create database object 
                         Database db = new Database();
-                        //ProfileViewModel vm = new Profile();
+                        // ProfileViewModel vm = new Profile();
                         // if user is authenticated then update member table
                         if (user.UID > 0)
                         {
+                        
                             // update user data
-                            //db.UpdateUser(user);
+                            //db.UpdateUser(vm);
 
                             // update member table
                             db.InsertUserToMember(user);
@@ -272,10 +273,9 @@ namespace GCRBA.Controllers
                             // send Grace email and send to admin controller
                             SendMemberEmail.SendEmail(user);
 
-                       }
+                        }
                         else
                         {
-
                             // save action type based on what Save() returns 
                             at = user.Save();
 
