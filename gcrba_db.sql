@@ -1,7 +1,6 @@
 -- DROP TABLES
 IF OBJECT_ID('tblSpecialLocation')			IS NOT NULL DROP TABLE tblSpecialLocation 
 IF OBJECT_ID('tblPaymentStatus')			IS NOT NULL DROP TABLE tblPaymentStatus 
-IF OBJECT_ID('tblMembershipRequest')		IS NOT NULL DROP TABLE tblMembershipRequest 
 IF OBJECT_ID('tblCompanyAward')				IS NOT NULL DROP TABLE tblCompanyAward
 IF OBJECT_ID('tblLocationHours')			IS NOT NULL DROP TABLE tblLocationHours
 IF OBJECT_ID('tblTempLocationHours')		IS NOT NULL DROP TABLE tblTempLocationHours   
@@ -107,12 +106,11 @@ IF OBJECT_ID ('SELECT_SINGLE_ADMINREQUEST')					IS NOT NULL DROP PROCEDURE SELEC
 IF OBJECT_ID ('INSERT_COMPANYMEMBER_RELATIONSHIP')			IS NOT NULL DROP PROCEDURE INSERT_COMPANYMEMBER_RELATIONSHIP
 IF OBJECT_ID ('DELETE_TEMP_LOCATION')						IS NOT NULL DROP PROCEDURE DELETE_TEMP_LOCATION
 IF OBJECT_ID ('DELETE_ADMIN_REQUEST')						IS NOT NULL DROP PROCEDURE DELETE_ADMIN_REQUEST
-IF OBJECT_ID ('GET_MEMBERSHIP_REQUESTS')					IS NOT NULL DROP PROCEDURE GET_MEMBERSHIP_REQUESTS
 IF OBJECT_ID ('INSERT_CONTACTLOCATION')						IS NOT NULL DROP PROCEDURE INSERT_CONTACTLOCATION
 IF OBJECT_ID('INSERT_TEMP_CONTACTLOCATION_RELATIONSHIP')	IS NOT NULL DROP PROCEDURE INSERT_TEMP_CONTACTLOCATION_RELATIONSHIP
 IF OBJECT_ID('INSERT_MEMBER_REQUEST')						IS NOT NULL DROP PROCEDURE INSERT_MEMBER_REQUEST
 IF OBJECT_ID('SELECT_MEMBER_REQUESTS')						IS NOT NULL DROP PROCEDURE SELECT_MEMBER_REQUESTS
-IF OBJECT_ID('UPDATE_MEMBER_REQUESTS')						IS NOT NULL DROP PROCEDURE UPDATE_MEMBER_REQUESTS
+IF OBJECT_ID('UPDATE_MEMBER_STATUS')						IS NOT NULL DROP PROCEDURE UPDATE_MEMBER_STATUS
 IF OBJECT_ID ('GET_MEMBERSHIP_REQUESTS')				IS NOT NULL DROP PROCEDURE GET_MEMBERSHIP_REQUESTS
 IF OBJECT_ID ('GET_MEMBER_INFO')				IS NOT NULL DROP PROCEDURE GET_MEMBER_INFO
 
@@ -498,13 +496,6 @@ CREATE TABLE tblAdminRequest
 	CONSTRAINT tblAdminRequest_PK PRIMARY KEY (intAdminRequestID)
 )
 
-CREATE TABLE tblMembershipRequest 
-(
-	intMembershipRequestID	SMALLINT IDENTITY(1,1) NOT NULL, 
-	intMemberID				SMALLINT				NOT NULL, 
-	CONSTRAINT tblMembershipRequest_PK PRIMARY KEY (intMembershipRequestID)
-)
-
 CREATE TABLE tblApprovalStatus
 (
 	intApprovalStatusID		SMALLINT IDENTITY(1,1)	NOT NULL,
@@ -674,9 +665,6 @@ FOREIGN KEY (intAdminRequestID) REFERENCES tblAdminRequest (intAdminRequestID)
 ALTER TABLE tblTempContactPerson ADD CONSTRAINT tblTempContactPerson_tblTempContactPersonType_FK
 FOREIGN KEY (intContactPersonTypeID) REFERENCES tblTempContactPersonType (intContactPersonTypeID)
 
-ALTER TABLE tblMembershipRequest ADD CONSTRAINT tblMembershipRequest_tblMember_FK
-FOREIGN KEY (intMemberID) REFERENCES tblMember (intMemberID)
-
 ALTER TABLE tblMember ADD CONSTRAINT tblMember_tblApprovalStatus_FK
 FOREIGN KEY (intApprovalStatusID) REFERENCES tblApprovalStatus (intApprovalStatusID)
 
@@ -840,7 +828,6 @@ BEGIN
 	WHERE	m.intMemberID = @intMemberID
 END
 GO
-
 
 CREATE PROCEDURE [db_owner].[UPDATE_USER]
 @intUserID SMALLINT, 
@@ -1704,23 +1691,6 @@ BEGIN
 END
 GO
 
-CREATE PROCEDURE [db_owner].[GET_MEMBERSHIP_REQUESTS]
-AS
-BEGIN
-	SET NOCOUNT ON;
-
-	SELECT	u.strFirstName, u.strLastName, u.strEmail, u.strPhone, m.intMemberID, ml.strMemberLevel, pt.strPaymentType
-	FROM	tblUser as u FULL OUTER JOIN tblMember as m
-			ON u.intUserID = m.intUserID
-			FULL OUTER JOIN tblMemberLevel as ml
-			ON ml.intMemberLevelID = m.intMemberLevelID
-			FULL OUTER JOIN tblPaymentType as pt
-			ON pt.intPaymentTypeID = m.intPaymentTypeID
-			FULL OUTER JOIN tblPaymentStatus as ps
-			ON ps.intPaymentStatusID = m.intPaymentStatusID
-	WHERE	m.intApprovalStatusID = 1
-END
-GO
 
 CREATE PROCEDURE [dbo].[INSERT_TEMP_WEBSITE]
 @intWebsiteID AS BIGINT OUTPUT
@@ -2186,25 +2156,18 @@ BEGIN
 END
 GO
 
-CREATE PROCEDURE [dbo].[UPDATE_MEMBER_REQUESTS]
-@intUserID AS SMALLINT
+CREATE PROCEDURE [db_owner].[UPDATE_MEMBER_STATUS]
+@intMemberID SMALLINT
 AS
-BEGIN
+BEGIN 
 	SET NOCOUNT ON;
-	IF @intUserID IS NOT NULL
-		BEGIN
-			UPDATE db_owner.tblMember
-			SET intPaymentStatusID = 2 
-			WHERE intUserID = @intUserID
-		END
-		BEGIN
-			UPDATE db_owner.tblMember
-			SET intApprovalStatusID = 2
-			WHERE intUserID = @intUserID
-		END
-		RETURN 1
+
+	UPDATE	tblMember 
+	SET		intApprovalStatusID = 2
+	WHERE	intMemberID = @intMemberID
+
+	RETURN 1
 END
-RETURN -1 --IF UPDATE FAILED
 GO
 
 -- -----------------------------------------------------------------------------------------
