@@ -25,8 +25,9 @@ namespace GCRBA.Controllers
         }
 
         [HttpPost]
-        public ActionResult Index(FormCollection col) {
-            
+        public ActionResult Index(FormCollection col) 
+        {
+
             if (col["btnSubmit"].ToString() == "viewLocationRequests")
 			{
                 return RedirectToAction("LocationRequests", "AdminPortal");
@@ -54,16 +55,6 @@ namespace GCRBA.Controllers
                 items.Add(new SelectListItem { Text = req.strRequestedChange, Value = req.intAdminRequest.ToString() });
             }
             return items;
-            /*
-            }
-                if (col["btnSubmit"].ToString() == "viewRequests")
-                {
-                    return RedirectToAction("Requests", "AdminPortal");
-                }
-
-                return View();
-            }
-            */
         }
 
         public ActionResult LocationRequests()
@@ -171,6 +162,133 @@ namespace GCRBA.Controllers
             }
             return View();
         }
+
+        public ActionResult MembershipRequests()
+		{
+            AdminVM vm = new AdminVM();
+
+            vm.User = new User();
+
+            vm.User = vm.User.GetUserSession();
+
+            vm.MemberRequest = new MemberRequest();
+
+            vm.MemberRequests = new List<MemberRequest>();
+
+            // get membership requests 
+            vm.MemberRequests = GetMembershipRequests(vm);
+
+            return View(vm);
+		}
+
+        [HttpPost]
+        public ActionResult MembershipRequests(FormCollection col)
+		{
+            AdminVM vm = new AdminVM();
+
+            vm.User = new User();
+
+            vm.User = vm.User.GetUserSession();
+
+            vm.MemberRequests = new List<MemberRequest>();
+
+            // get membership requests 
+            vm.MemberRequests = GetMembershipRequests(vm);
+            
+            // create MemberRequest object 
+            // then get current session 
+            // if none, null 
+            vm.MemberRequest = new MemberRequest();
+            vm.MemberRequest = vm.MemberRequest.GetMemberRequestSession();
+
+            if (col["btnSubmit"].ToString() == "viewRequest")
+			{
+                vm.MemberRequest.MemberID = Convert.ToInt16(col["requests"]);
+
+                // save MemberID in CurrentRequest session 
+                vm.MemberRequest.SaveMemberRequestSession();
+
+                // get member info from db 
+                vm.MemberRequest = GetMemberInfo(vm);
+
+                return View(vm);
+			}
+
+            if (col["btnSubmit"].ToString() == "approve")
+			{
+                // update in db 
+                vm.MemberRequest.ActionType = UpdateMemberStatus(vm);
+
+                // remove MemberRequestSession 
+                vm.MemberRequest.RemoveMemberRequestSession();
+
+                // get membership requests 
+                vm.MemberRequests = GetMembershipRequests(vm);
+
+                return View(vm);
+			}
+
+            if (col["btnSubmit"].ToString() == "deny")
+			{
+                // delete record in db 
+                vm.MemberRequest.ActionType = DeleteMemberRequest(vm.MemberRequest);
+
+                // remove member request session 
+                vm.MemberRequest.RemoveMemberRequestSession();
+
+                // get membership requests 
+                vm.MemberRequests = GetMembershipRequests(vm);
+
+                return View(vm);
+			}
+
+            return View(vm);
+		}
+
+        private MemberRequest.ActionTypes DeleteMemberRequest(MemberRequest m)
+		{
+            try
+			{
+                // create database object
+                Database db = new Database();
+
+                // delete record from db 
+                m.ActionType = db.DeleteMemberRequest(m);
+
+                return m.ActionType;
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+        private MemberRequest.ActionTypes UpdateMemberStatus(AdminVM vm)
+		{
+            try
+			{
+                // create database object
+                Database db = new Database();
+
+                // update in db 
+                vm.MemberRequest.ActionType = db.UpdateMemberStatus(vm.MemberRequest);
+
+                return vm.MemberRequest.ActionType;
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+        private MemberRequest GetMemberInfo(AdminVM vm)
+		{
+            try
+			{
+                // create database object
+                Database db = new Database();
+
+                // get info from database
+                vm.MemberRequest = db.GetMemberInfo(vm);
+
+                return vm.MemberRequest;
+			}
+            catch(Exception ex) { throw new Exception(ex.Message); }
+		}
 
         public ActionResult EditMainBanner()
         {
@@ -1203,6 +1321,20 @@ namespace GCRBA.Controllers
         // -------------------------------------------------------------------------------------------------
         // RETRIEVING DATA FROM DATABASE 
         // -------------------------------------------------------------------------------------------------
+
+        private List<MemberRequest> GetMembershipRequests(AdminVM vm)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // get list from db 
+                vm.MemberRequests = db.GetMembershipRequests();
+
+                return vm.MemberRequests;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
 
         private string GetState(int intStateID)
         {

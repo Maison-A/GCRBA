@@ -224,6 +224,7 @@
     <Compile Include="Models\LocationList.cs" />
     <Compile Include="Models\MainBanner.cs" />
     <Compile Include="Models\MailModel.cs" />
+    <Compile Include="Models\MemberRequest.cs" />
     <Compile Include="Models\NewLocation.cs" />
     <Compile Include="Models\PhoneNumber.cs" />
     <Compile Include="Models\Request.cs" />
@@ -326,6 +327,8 @@
     <Content Include="Views\AdminPortal\LocationRequests.cshtml" />
     <Content Include="Views\Shared\PleaseLogin.cshtml" />
     <Content Include="Views\AdminPortal\MembershipRequests.cshtml" />
+    <Content Include="Views\Shared\DeleteSuccessful.cshtml" />
+    <Content Include="Views\Shared\RequestDenied.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

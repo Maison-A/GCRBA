@@ -1225,6 +1225,108 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+		public List<MemberRequest> GetMembershipRequests()
+		{
+			try
+			{
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to database -- throw error if unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// specify which stored procedure we are using 
+				SqlDataAdapter da = new SqlDataAdapter("GET_MEMBERSHIP_REQUESTS", cn);
+
+				// create new instance of Company list 
+				List<MemberRequest> requests = new List<MemberRequest>();
+
+				// set command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				try { da.Fill(ds); } catch (Exception ex) { throw new Exception(ex.Message); } 
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0)
+				{
+					// loop through results and add to list 
+					foreach (DataRow dr in ds.Tables[0].Rows)
+					{
+						// create new MemberRequest object
+						MemberRequest request = new MemberRequest();
+
+						// add values 
+						request.FirstName = (string)dr["strFirstName"];
+						request.LastName = (string)dr["strLastName"];
+						request.MemberID = Convert.ToInt16(dr["intMemberID"]);
+
+						// add to list of membership requests 
+						requests.Add(request);
+					}
+				}
+				return requests;
+
+			} catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public MemberRequest GetMemberInfo(AdminVM vm)
+		{
+			try
+			{
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+
+				// create MemberRequest object
+				MemberRequest m = new MemberRequest();
+
+				// try to connect to db 
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+
+				// specift stored procedure to use
+				SqlDataAdapter da = new SqlDataAdapter("GET_MEMBER_INFO", cn);
+
+				SetParameter(ref da, "@intMemberID", vm.MemberRequest.MemberID, SqlDbType.SmallInt);
+
+				// set command type as stored procedure 
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				try { da.Fill(ds); } catch (Exception ex) { throw new Exception(ex.Message); } 
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0)
+				{
+					DataRow dr = ds.Tables[0].Rows[0];
+					m.FirstName = (string)dr["strFirstName"];
+					m.LastName = (string)dr["strLastName"];
+
+					if (dr["strEmail"].ToString() == SqlString.Null)
+					{
+						m.Email = "";
+					}
+					else
+					{
+						m.Email = (string)dr["strEmail"];
+					}
+
+					if (dr["strPhone"].ToString() == SqlString.Null)
+					{
+						m.Phone = "";
+					}
+					else
+					{
+						m.Phone = (string)dr["strPhone"];
+					}
+
+					m.MemberID = Convert.ToInt16(dr["intMemberID"]);
+					m.MemberLevel = (string)dr["strMemberLevel"];
+					m.PaymentType = (string)dr["strPaymentType"];
+					m.PaymentStatus = (string)dr["strStatus"];
+
+				}
+				return m;
+			} catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
 		public bool CheckMemberStatus(long lngLocationID = 0) {
 			try {
 				DataSet ds = new DataSet();
@@ -1289,6 +1391,34 @@ namespace GCRBA.Models
 				}
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public MemberRequest.ActionTypes DeleteMemberRequest(MemberRequest m)
+		{
+			try
+			{
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("DELETE_MEMBER_REQUEST", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intMemberID", m.MemberID, SqlDbType.SmallInt);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				switch (intReturnValue)
+				{
+					case 1:
+						return MemberRequest.ActionTypes.DeleteSuccessful;
+					default:
+						return MemberRequest.ActionTypes.Unknown;
+
+				}
+			} catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
 		public SaleSpecial.ActionTypes DeleteSpecialLocation(AdminVM vm)
@@ -1466,6 +1596,35 @@ namespace GCRBA.Models
 					default:
 						return User.ActionTypes.Unknown;
 				}
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public MemberRequest.ActionTypes UpdateMemberStatus(MemberRequest m)
+		{
+			try
+			{
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("UPDATE_MEMBER_STATUS", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intMemberID", m.MemberID, SqlDbType.SmallInt);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1)
+				{
+					m.ActionType = MemberRequest.ActionTypes.InsertSuccessful;
+					return m.ActionType;
+				}
+
+				m.ActionType = MemberRequest.ActionTypes.Unknown;
+				return m.ActionType;
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}

@@ -23,6 +23,7 @@ namespace GCRBA.ViewModels
         public SaleSpecial Special { get; set; }
         public List<SaleSpecial> Specials { get; set; }
         public Button Button { get; set; }
-        public Request Request { get; set; }
+        public MemberRequest MemberRequest { get; set; }
+        public List<MemberRequest> MemberRequests { get; set; }
     }
 }
