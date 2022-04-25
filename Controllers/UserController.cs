@@ -252,8 +252,7 @@ namespace GCRBA.Controllers
                     {
                         // initialize action type
                         Models.User.ActionTypes at = Models.User.ActionTypes.NoType;
-                        
-    
+                            
                         // create database object 
                         Database db = new Database();
                         // ProfileViewModel vm = new Profile();
@@ -289,15 +288,12 @@ namespace GCRBA.Controllers
                                     SendMemberEmail.SendEmail(user);
                                     return RedirectToAction("Index", "Home");
                                     
-
                                 default:
                                     return View(user);
-                            }
-                        
+                            }                        
                         }
                     }
                 }
- 
             }
             catch (Exception)
             {
