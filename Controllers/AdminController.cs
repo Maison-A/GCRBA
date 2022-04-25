@@ -205,11 +205,11 @@ namespace GCRBA.Controllers
 			{
                 vm.MemberRequest.MemberID = Convert.ToInt16(col["requests"]);
 
-                // save MemberID in CurrentRequest session 
-                vm.MemberRequest.SaveMemberRequestSession();
-
                 // get member info from db 
                 vm.MemberRequest = GetMemberInfo(vm);
+
+                // save MemberID in CurrentRequest session 
+                vm.MemberRequest.SaveMemberRequestSession();
 
                 return View(vm);
 			}
@@ -219,11 +219,19 @@ namespace GCRBA.Controllers
                 // update in db 
                 vm.MemberRequest.ActionType = UpdateMemberStatus(vm);
 
+                // send user notification 
+                // 1 is PK in tblNotification for membership approval message 
+                // 2 is the PK in tblNotificationStatus for unread message 
+                SendUserNotification(vm.MemberRequest, 1, 2);
+
                 // remove MemberRequestSession 
                 vm.MemberRequest.RemoveMemberRequestSession();
 
                 // get membership requests 
                 vm.MemberRequests = GetMembershipRequests(vm);
+
+                // reset MemberID to 0
+                vm.MemberRequest.MemberID = 0;
 
                 return View(vm);
 			}
@@ -233,16 +241,37 @@ namespace GCRBA.Controllers
                 // delete record in db 
                 vm.MemberRequest.ActionType = DeleteMemberRequest(vm.MemberRequest);
 
+                // send user notificaiton
+                // 2 in first param is PK in tblNotification for membership denial message
+                // 2 in second param is PK in tblNotificationStatus for unread message 
+                SendUserNotification(vm.MemberRequest, 2, 2);
+
                 // remove member request session 
                 vm.MemberRequest.RemoveMemberRequestSession();
 
                 // get membership requests 
                 vm.MemberRequests = GetMembershipRequests(vm);
 
+                // reset MemberID to 0
+                vm.MemberRequest.MemberID = 0;
+
                 return View(vm);
 			}
 
             return View(vm);
+		}
+
+        private void SendUserNotification(MemberRequest m, int intNotificationID, int intNotificationStatusID)
+		{
+            try
+			{
+                // create database object
+                Database db = new Database();
+
+                // send user notification 
+                db.SendUserNotification(m, intNotificationID, intNotificationStatusID);
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
         private MemberRequest.ActionTypes DeleteMemberRequest(MemberRequest m)

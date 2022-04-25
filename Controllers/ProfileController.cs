@@ -200,8 +200,27 @@ namespace GCRBA.Controllers
             // get current user session
             u = u.GetUserSession();
 
+            // get notification(s)
+            u.Notifications = new List<Notification>();
+            u.Notifications = GetUserNotifications(u);
+
             return View(u);
         }
+
+        public List<Notification> GetUserNotifications(User u)
+		{
+            try
+			{
+                // create database object
+                Database db = new Database();
+
+                // get user notifications 
+                u.Notifications = db.GetUserNotifications(u);
+
+                return u.Notifications;
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
 
         [HttpPost]
         public ActionResult NonMember(FormCollection col)
@@ -212,25 +231,104 @@ namespace GCRBA.Controllers
             // get current user session
             u = u.GetUserSession();
 
+            // get notification(s)
+            u.Notifications = new List<Notification>();
+            u.Notifications = GetUserNotifications(u);
+
             if (col["btnSubmit"].ToString() == "editProfile")
 			{
                 return RedirectToAction("EditProfile", "Profile");
 			}
+
+            if (col["btnSubmit"].ToString() == "viewNotifications")
+			{
+                return RedirectToAction("Notifications", "Profile");
+			}
+
             return View(u);
         }
 
+        public ActionResult UserNotifications()
+		{
+            // create user object
+            // then get current user status
+            User u = new User();
+            u = u.GetUserSession();
+
+            // get notification(s)
+            u.Notifications = new List<Notification>();
+            u.Notifications = GetUserNotifications(u);
+
+            return View(u);
+        }
+
+        [HttpPost]
+        public ActionResult UserNotifications(FormCollection col)
+		{
+            // create user object
+            // then get current user status
+            User u = new User();
+            u = u.GetUserSession();
+
+            // get notification(s)
+            u.Notifications = new List<Notification>();
+            u.Notifications = GetUserNotifications(u);
+
+            if (col["btnSubmit"].ToString() == "delete")
+			{
+                // get list of messages selected 
+                // then delete from db and return view 
+			}
+
+            if (col["btnSubmit"].ToString() == "markAsRead")
+			{
+                // get list of messages selected 
+                // then update status as read in db and return view 
+			}
+
+            return View(u);
+        }
+
+        private void DeleteUserNotification(User u)
+		{
+            try
+			{
+                // create database object
+                Database db = new Database();
+
+                // delete record from db 
+                db.DeleteNotification(u);
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
         public ActionResult Member() {
             // create user object 
-            User user = new User();
+            User u = new User();
 
             // get current user session 
-            user = user.GetUserSession();
+            u = u.GetUserSession();
 
-            return View(user);
+            // get notification(s)
+            u.Notifications = new List<Notification>();
+            u.Notifications = GetUserNotifications(u);
+
+            return View(u);
         }
 
         [HttpPost]
         public ActionResult Member(FormCollection col) {
+
+            // create user object 
+            User u = new User();
+
+            // get current user session 
+            u = u.GetUserSession();
+
+            if (col["btnSubmit"].ToString() == "viewNotifications")
+			{
+                return RedirectToAction("UserNotifications", "Profile");
+			}
             
             if (col["btnSubmit"].ToString() == "editProfile")
 			{
@@ -247,7 +345,7 @@ namespace GCRBA.Controllers
                 return RedirectToAction("EditLandingPage", "Profile");
 			}
 
-            return View();
+            return View(u);
         }
         
         public ActionResult EditProfile()

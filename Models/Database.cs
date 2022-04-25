@@ -451,44 +451,38 @@ namespace GCRBA.Models
 							newUser.UID = Convert.ToInt16(dr["intUserID"]);
 							newUser.FirstName = (string)dr["strFirstName"];
 							newUser.LastName = (string)dr["strLastName"];
-							newUser.Address = (string)dr["strAddress"];
-							newUser.City = (string)dr["strCity"];
-							newUser.intState = Convert.ToInt16(dr["intStateID"]);
-							newUser.State = (string)dr["strState"];
-							newUser.Zip = (string)dr["strZip"];
-							newUser.Phone = (string)dr["strPhone"];
 							newUser.Email = (string)dr["strEmail"];
 
 							// db allows address, city, state, zip, and phone to be null in user table 
 							// so must check if null here before adding to User object 
 							// if not null, add to User, else skip these columns 
-							if (dr["strAddress"].ToString() != SqlString.Null)
-                            {
+
+							if (!DBNull.Value.Equals(dr["strAddress"]))
+							{
 								newUser.Address = (string)dr["strAddress"];
-                            }
-
-							if (dr["strCity"].ToString() != SqlString.Null)
-							{
-								newUser.Address = (string)dr["strCity"];
 							}
 
-							if (dr["strState"].ToString() != SqlString.Null)
+							if (!DBNull.Value.Equals(dr["strCity"]))
 							{
-								newUser.Address = (string)dr["strState"];
+								newUser.City = (string)dr["strCity"];
 							}
 
-							if (dr["strZip"].ToString() != SqlString.Null)
+							if (!DBNull.Value.Equals(dr["strState"]))
 							{
-								newUser.Address = (string)dr["strZip"];
+								newUser.intState = Convert.ToInt16(dr["intStateID"]);
+								newUser.State = (string)dr["strState"];
 							}
 
-							if (dr["strPhone"].ToString() != SqlString.Null)
+							if (!DBNull.Value.Equals(dr["strZip"]))
 							{
-								newUser.Address = (string)dr["strPhone"];
+								newUser.Zip = (string)dr["strZip"];
 							}
 
-							
-							newUser.Email = (string)dr["strEmail"];
+							if (!DBNull.Value.Equals(dr["strPhone"]))
+							{
+								newUser.Phone = (string)dr["strPhone"];
+							}
+
 							newUser.Username = user.Username;
 							newUser.Password = user.Password;
 							newUser.isAdmin = Convert.ToInt16(dr["isAdmin"]);
@@ -1297,6 +1291,7 @@ namespace GCRBA.Models
 				if (ds.Tables[0].Rows.Count != 0)
 				{
 					DataRow dr = ds.Tables[0].Rows[0];
+					m.UserID = Convert.ToInt16(dr["intUserID"]);
 					m.FirstName = (string)dr["strFirstName"];
 					m.LastName = (string)dr["strLastName"];
 
@@ -1326,6 +1321,51 @@ namespace GCRBA.Models
 				}
 				return m;
 			} catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public List<Notification> GetUserNotifications(User u)
+		{
+			try
+			{
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to database -- throw error if unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// specify which stored procedure we are using 
+				SqlDataAdapter da = new SqlDataAdapter("GET_USER_NOTIFICATIONS", cn);
+
+				SetParameter(ref da, "@intUserID", u.UID, SqlDbType.SmallInt);
+
+				// create new instance of Company list 
+				List<Notification> messages = new List<Notification>();
+
+				// set command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				try { da.Fill(ds); } catch (Exception ex) { throw new Exception(ex.Message); } 
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0)
+				{
+					// loop through results and add to list 
+					foreach (DataRow dr in ds.Tables[0].Rows)
+					{
+						// create new Notification object 
+						Notification message = new Notification();
+
+						// add values 
+						message.NotificationID = Convert.ToInt16(dr["intUserNotificationID"]);
+						message.Message = (string)dr["strNotification"];
+
+						// add to list 
+						messages.Add(message);
+					}
+				}
+				return messages;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
 		public bool CheckMemberStatus(long lngLocationID = 0) {
@@ -1363,6 +1403,23 @@ namespace GCRBA.Models
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		
+		}
+
+		public void DeleteNotification(User u)
+		{
+			try
+			{
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("DELETE_USER_NOTIFICATIONS", cn);
+
+				SetParameter(ref cm, "@intUserNotificationID", u.Notification.NotificationID, SqlDbType.SmallInt);
+
+				cm.ExecuteReader();
+
+				CloseDBConnection(ref cn);
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
 		public Company.ActionTypes DeleteCompany(AdminVM vm)
@@ -1664,6 +1721,25 @@ namespace GCRBA.Models
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 
+		}
+
+		public void SendUserNotification(MemberRequest m, int intNotificationID, int intNotificationStatusID)
+		{
+			try
+			{
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("INSERT_USER_NOTIFICATION", cn);
+
+				SetParameter(ref cm, "@intUserID", m.UserID, SqlDbType.SmallInt);
+				SetParameter(ref cm, "@intNotificationID", intNotificationID, SqlDbType.SmallInt);
+				SetParameter(ref cm, "@intNotificationStatusID", intNotificationStatusID, SqlDbType.SmallInt);
+
+				cm.ExecuteReader();
+
+				CloseDBConnection(ref cn);
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
 		public SaleSpecial InsertSpecial(AdminVM vm) {

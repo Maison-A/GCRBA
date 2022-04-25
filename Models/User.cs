@@ -19,7 +19,6 @@ namespace GCRBA.Models
         public string Phone { get; set; }
         public Models.PhoneNumber userPhone;
         public string Email { get; set; }
-
         public string Username { get; set; }
         public string Password { get; set; }
         public string PaymentType = string.Empty;
@@ -27,6 +26,8 @@ namespace GCRBA.Models
         public short intMembershipType = 0;
         public short intMemberID = 0;
         public ActionTypes ActionType { get; set; } = ActionTypes.NoType;
+        public Notification Notification { get; set; }
+        public List<Notification> Notifications { get; set; }
 
         // member type control
         public int isAdmin { get; set; }

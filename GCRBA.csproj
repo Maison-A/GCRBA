@@ -228,6 +228,7 @@
     <Compile Include="Models\MemberMailModel.cs" />
     <Compile Include="Models\MemberRequest.cs" />
     <Compile Include="Models\NewLocation.cs" />
+    <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\PhoneNumber.cs" />
     <Compile Include="Models\Request.cs" />
     <Compile Include="Models\SaleSpecial.cs" />
@@ -334,6 +335,7 @@
     <Content Include="Views\SendMailer\SendLocationEmail.cshtml" />
     <Content Include="Views\Shared\DeleteSuccessful.cshtml" />
     <Content Include="Views\Shared\RequestDenied.cshtml" />
+    <Content Include="Views\Profile\UserNotifications.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
