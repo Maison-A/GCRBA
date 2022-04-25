@@ -180,6 +180,10 @@ namespace GCRBA.Controllers
                 user.FirstName = col["FirstName"];
                 user.LastName = col["LastName"];
                 user.Address = col["Address"];
+                user.userPhone = new Models.PhoneNumber();
+                user.userPhone.AreaCode = col["userPhone.AreaCode"];
+                user.userPhone.Prefix = col["userPhone.Prefix"];
+                user.userPhone.Suffix = col["userPhone.Suffix"];
                 user.Phone = col["userPhone.AreaCode"] + col["userPhone.Prefix"] + col["userPhone.Suffix"];
                 user.City = col["City"];
                 user.intState = Convert.ToInt16(col["intState"]);
@@ -198,18 +202,34 @@ namespace GCRBA.Controllers
                     user.Password = col["Password"];
                 }
 
-
                 // membership type
                 if (col["MemberShipType"] != null) {
-                    if (col["MemberShipType"].ToString() == "Associate") user.intMembershipType = 1;
-                    else if (col["MemberShipType"].ToString() == "Business") user.intMembershipType = 2;
-                    else if (col["MemberShipType"].ToString() == "Allied") user.intMembershipType = 3;
+                    if (col["MemberShipType"].ToString() == "Associate") {
+                        user.intMembershipType = 1;
+                        user.MemberShipType = "Associate";
+                    }
+                    else if (col["MemberShipType"].ToString() == "Business") {
+                        user.intMembershipType = 2;
+                        user.MemberShipType = "Business";
+                    }
+                    else if (col["MemberShipType"].ToString() == "Allied") {
+                        user.intMembershipType = 3;
+                        user.MemberShipType = "Allied";
+                    }
 				}
 
                 if (col["PaymentType"] != null) {
-                    if(col["PaymentType"].ToString() == "Zelle") user.intPaymentType = 1;
-                    else if(col["PaymentType"].ToString() == "Check") user.intPaymentType = 2;
+                    if (col["PaymentType"].ToString() == "Zelle") {
+                        user.intPaymentType = 1;
+                        user.PaymentType = "Zelle";
+                    }
+
+                    else if (col["PaymentType"].ToString() == "Check") {
+                        user.intPaymentType = 2;
+                        user.PaymentType = "Check";
+                    }
                 }
+
                 //permissions
                 //user.isMember = 1;
                 user.isAdmin = 0;
@@ -247,7 +267,7 @@ namespace GCRBA.Controllers
                             db.InsertMemberRequest(user);
 
                             // send Grace email and send to admin controller
-
+                            SendMemberEmail.SendEmail(user);
 
                         }
                         else
@@ -262,9 +282,8 @@ namespace GCRBA.Controllers
                                 case Models.User.ActionTypes.InsertSuccessful:
 
                                     user.SaveUserSession();
-
                                     db.InsertMemberRequest(user);
-
+                                    SendMemberEmail.SendEmail(user);
                                     return RedirectToAction("Index", "Home");
                                     
 

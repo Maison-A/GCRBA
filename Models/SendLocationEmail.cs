@@ -18,8 +18,6 @@ namespace GCRBA {
             do {
                 GCRBA.Models.User user = new Models.User();
                 user = user.GetUserSession();
-
-
                 GCRBA.Models.LocationMailModel locationMailModel = new Models.LocationMailModel();
 
                 locationMailModel.UserEmail = user.Email;
@@ -28,21 +26,21 @@ namespace GCRBA {
 
                 locationMailModel.Content = new Models.LocationList();
                 locationMailModel.Content.lstLocations[i] = new Models.NewLocation();
-                locationMailModel.Content.lstLocations[i].CompanyName = locationList.lstLocations[i].CompanyName;
-                locationMailModel.Content.lstLocations[i].LocationName = locationList.lstLocations[i].LocationName;
-                locationMailModel.Content.lstLocations[i].StreetAddress = locationList.lstLocations[i].StreetAddress;
-                locationMailModel.Content.lstLocations[i].City = locationList.lstLocations[i].City;
-                locationMailModel.Content.lstLocations[i].State = locationList.lstLocations[i].State;
-                locationMailModel.Content.lstLocations[i].Zip = locationList.lstLocations[i].Zip;
+                locationMailModel.Content.lstLocations[i].CompanyName =     locationList.lstLocations[i].CompanyName;
+                locationMailModel.Content.lstLocations[i].LocationName =    locationList.lstLocations[i].LocationName;
+                locationMailModel.Content.lstLocations[i].StreetAddress =   locationList.lstLocations[i].StreetAddress;
+                locationMailModel.Content.lstLocations[i].City =            locationList.lstLocations[i].City;
+                locationMailModel.Content.lstLocations[i].State =           locationList.lstLocations[i].State;
+                locationMailModel.Content.lstLocations[i].Zip =             locationList.lstLocations[i].Zip;
 
                 //Extra Business Information
-                locationMailModel.Content.lstLocations[i].BizYear = locationList.lstLocations[i].BizYear;
-                locationMailModel.Content.lstLocations[i].Bio = locationList.lstLocations[i].Bio;
-                locationMailModel.Content.lstLocations[i].BusinessPhone = locationList.lstLocations[i].BusinessPhone;
-                locationMailModel.Content.lstLocations[i].BusinessPhone.AreaCode = locationList.lstLocations[i].BusinessPhone.AreaCode;
-                locationMailModel.Content.lstLocations[i].BusinessPhone.Prefix = locationList.lstLocations[i].BusinessPhone.Prefix;
-                locationMailModel.Content.lstLocations[i].BusinessPhone.Suffix = locationList.lstLocations[i].BusinessPhone.Suffix;
-                locationMailModel.Content.lstLocations[i].BusinessEmail = locationList.lstLocations[i].BusinessEmail;
+                locationMailModel.Content.lstLocations[i].BizYear =                 locationList.lstLocations[i].BizYear;
+                locationMailModel.Content.lstLocations[i].Bio =                     locationList.lstLocations[i].Bio;
+                locationMailModel.Content.lstLocations[i].BusinessPhone =           locationList.lstLocations[i].BusinessPhone;
+                locationMailModel.Content.lstLocations[i].BusinessPhone.AreaCode =  locationList.lstLocations[i].BusinessPhone.AreaCode;
+                locationMailModel.Content.lstLocations[i].BusinessPhone.Prefix =    locationList.lstLocations[i].BusinessPhone.Prefix;
+                locationMailModel.Content.lstLocations[i].BusinessPhone.Suffix =    locationList.lstLocations[i].BusinessPhone.Suffix;
+                locationMailModel.Content.lstLocations[i].BusinessEmail =           locationList.lstLocations[i].BusinessEmail;
 
                 locationMailModel.Content.lstLocations[i].Sunday =          locationList.lstLocations[i].Sunday;
                 locationMailModel.Content.lstLocations[i].Monday =          locationList.lstLocations[i].Monday;
@@ -219,8 +217,6 @@ namespace GCRBA {
                 body = body.Replace("{UserFullName}", locationMailModel.UserFullName);
                 body = body.Replace("{UserPhone}", locationMailModel.UserTelephone);
                 body = body.Replace("{UserEmail}", locationMailModel.UserEmail);
-
-
 
                 body = body.Replace("{LocationContactType}", locationMailModel.Content.lstLocations[i].LocationContact.ContactType.ToString());
                 body = body.Replace("{LocationContactName}", locationMailModel.Content.lstLocations[i].LocationContact.strFullName);

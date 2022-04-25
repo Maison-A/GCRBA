@@ -469,8 +469,6 @@ namespace GCRBA.Views.Bakery {
                     };
                         arrSocialMediaInfo[indexPopulated] = socialmedia;
 
-                       
-
                         var Websites = new List<Models.Website>() {
                         loc.MainWeb, loc.OrderingWeb, loc.KettleWeb
                     };
@@ -502,8 +500,7 @@ namespace GCRBA.Views.Bakery {
                         case Models.LocationList.ActionTypes.DeleteSuccessful:
                             return RedirectToAction("Index");
                         default:
-                            Models.Database db = new Models.Database();
-                            
+                            Models.Database db = new Models.Database();                           
 
                             Models.NewLocation loc = new Models.NewLocation();
 
