@@ -1,4 +1,6 @@
 -- DROP TABLES
+IF OBJECT_ID('tblUserNotification')			IS NOT NULL DROP TABLE tblUserNotification 
+IF OBJECT_ID('tblNotification')			IS NOT NULL DROP TABLE tblNotification 
 IF OBJECT_ID('tblSpecialLocation')			IS NOT NULL DROP TABLE tblSpecialLocation 
 IF OBJECT_ID('tblPaymentStatus')			IS NOT NULL DROP TABLE tblPaymentStatus 
 IF OBJECT_ID('tblCompanyAward')				IS NOT NULL DROP TABLE tblCompanyAward
@@ -42,6 +44,7 @@ IF OBJECT_ID('tblAboutGCRBA')				IS NOT NULL DROP TABLE tblAboutGCRBA
 IF OBJECT_ID('tblUser')						IS NOT NULL DROP TABLE tblUser 
 IF OBJECT_ID('tblState')					IS NOT NULL DROP TABLE tblState 
 IF OBJECT_ID('tblTempState')				IS NOT NULL DROP TABLE tblTempState 
+IF OBJECT_ID('tblNotificationStatus')				IS NOT NULL DROP TABLE tblNotificationStatus 
 
 --DROP STORED PROCEDURES
 IF OBJECT_ID('LOGIN')										IS NOT NULL DROP PROCEDURE LOGIN 
@@ -113,7 +116,10 @@ IF OBJECT_ID('SELECT_MEMBER_REQUESTS')						IS NOT NULL DROP PROCEDURE SELECT_ME
 IF OBJECT_ID('UPDATE_MEMBER_STATUS')						IS NOT NULL DROP PROCEDURE UPDATE_MEMBER_STATUS
 IF OBJECT_ID ('GET_MEMBERSHIP_REQUESTS')				IS NOT NULL DROP PROCEDURE GET_MEMBERSHIP_REQUESTS
 IF OBJECT_ID ('GET_MEMBER_INFO')				IS NOT NULL DROP PROCEDURE GET_MEMBER_INFO
-
+IF OBJECT_ID ('DELETE_MEMBER_REQUEST')				IS NOT NULL DROP PROCEDURE DELETE_MEMBER_REQUEST
+IF OBJECT_ID ('INSERT_USER_NOTIFICATION')				IS NOT NULL DROP PROCEDURE INSERT_USER_NOTIFICATION
+IF OBJECT_ID ('GET_USER_NOTIFICATIONS')				IS NOT NULL DROP PROCEDURE GET_USER_NOTIFICATIONS
+IF OBJECT_ID ('DELETE_USER_NOTIFICATIONS')				IS NOT NULL DROP PROCEDURE DELETE_USER_NOTIFICATIONS
 
 CREATE TABLE tblTempCompany   
 (
@@ -503,6 +509,29 @@ CREATE TABLE tblApprovalStatus
 	CONSTRAINT tblApprovalStatus_PK PRIMARY KEY (intApprovalStatusID)
 )
 
+CREATE TABLE tblNotification
+(
+	intNotificationID		SMALLINT IDENTITY(1,1)	NOT NULL, 
+	strNotification			NVARCHAR(500)			NOT NULL,
+	CONSTRAINT tblNotification_PK PRIMARY KEY (intNotificationID)
+)
+
+CREATE TABLE tblNotificationStatus
+(
+	intNotificationStatusID	SMALLINT IDENTITY(1,1)	NOT NULL, 
+	strNotificationStatus	NVARCHAR(50)			NOT NULL, 
+	CONSTRAINT tblNotificationStatus_PK PRIMARY KEY (intNotificationStatusID)
+)
+
+CREATE TABLE tblUserNotification
+(
+	intUserNotificationID	SMALLINT IDENTITY(1,1)	NOT NULL, 
+	intUserID				SMALLINT				NOT NULL, 
+	intNotificationID		SMALLINT				NOT NULL, 
+	intNotificationStatusID SMALLINT				NOT NULL, 
+	CONSTRAINT tblUserNotification_PK PRIMARY KEY (intUserNotificationID)
+)
+
 -------------------------------------------------------------------------------------------------------------------------------
 -- FOREIGN KEYS 
 -------------------------------------------------------------------------------------------------------------------------------
@@ -674,6 +703,14 @@ FOREIGN KEY (intContactPersonID) REFERENCES tblContactPerson (intContactPersonID
 ALTER TABLE tblContactLocation ADD CONSTRAINT tblContactLocation_tblTempLocation_FK
 FOREIGN KEY (intLocationID) REFERENCES tblLocation (intLocationID)
 
+ALTER TABLE tblUserNotification ADD CONSTRAINT tblUserNotification_tblUser_FK
+FOREIGN KEY (intUserID) REFERENCES tblUser (intUserID)
+
+ALTER TABLE tblUserNotification ADD CONSTRAINT tblUserNotification_tblNotification_FK
+FOREIGN KEY (intNotificationID) REFERENCES tblNotification (intNotificationID)
+
+ALTER TABLE tblUserNotification ADD CONSTRAINT tblUserNotification_tblNotificationStatus_FK
+FOREIGN KEY (intNotificationStatusID) REFERENCES tblNotificationStatus (intNotificationStatusID)
 -- -----------------------------------------------------------------------------------------
 -- STORED PROCEDURES 
 -- -----------------------------------------------------------------------------------------
@@ -816,7 +853,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	
-	SELECT	u.strFirstName, u.strLastName, u.strEmail, u.strPhone, m.intMemberID, ml.strMemberLevel, pt.strPaymentType, ps.strStatus
+	SELECT	u.intUserID, u.strFirstName, u.strLastName, u.strEmail, u.strPhone, m.intMemberID, ml.strMemberLevel, pt.strPaymentType, ps.strStatus
 	FROM	tblUser as u FULL OUTER JOIN tblMember as m
 			ON u.intUserID = m.intUserID
 			FULL OUTER JOIN tblMemberLevel as ml
@@ -1536,6 +1573,17 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [db_owner].[DELETE_MEMBER_REQUEST]
+@intMemberID SMALLINT
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON 
+BEGIN
+	DELETE FROM tblMember WHERE intMemberID = @intMemberID 
+	RETURN @@rowcount 
+END
+GO
+
 CREATE PROCEDURE [db_owner].[DELETE_SPECIALLOCATION]
 @intSpecialID SMALLINT, 
 @intLocationID BIGINT
@@ -2111,6 +2159,49 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [db_owner].[DELETE_USER_NOTIFICATIONS]
+@intUserNotificationID SMALLINT 
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DELETE FROM tblUserNotification WHERE intUserNotificationID = @intUserNotificationID
+	RETURN 1
+END
+GO
+
+CREATE PROCEDURE [db_owner].[GET_USER_NOTIFICATIONS]
+@intUserID	SMALLINT 
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT	un.intUserNotificationID, n.strNotification
+	FROM	tblUserNotification as un JOIN tblNotification as n 
+			ON	n.intNotificationID = un.intNotificationID
+	WHERE	intUserID = @intUserID
+END
+GO
+
+CREATE PROCEDURE [db_owner].[INSERT_USER_NOTIFICATION]
+@intUserID SMALLINT,
+@intNotificationID SMALLINT,
+@intNotificationStatusID SMALLINT
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON 
+BEGIN
+	INSERT INTO [db_owner].[tblUserNotification]
+				([intUserID]
+				,[intNotificationID]
+				,[intNotificationStatusID])
+			VALUES
+				(@intUserID
+				,@intNotificationID
+				,@intNotificationStatusID)
+END
+GO
+
 CREATE PROCEDURE [dbo].[INSERT_MEMBER_REQUEST]
 @intMemberID AS SMALLINT OUTPUT
 ,@intUserID AS SMALLINT
@@ -2173,6 +2264,14 @@ GO
 -- -----------------------------------------------------------------------------------------
 -- ADD TEST DATA
 -- -----------------------------------------------------------------------------------------
+
+INSERT INTO tblNotification (strNotification)
+VALUES		('Your request for membership has been approved'),
+			('Your request for membership has been denied')
+
+INSERT INTO tblNotificationStatus (strNotificationStatus)
+VALUES		('Read'),
+			('Unread')
 
 INSERT INTO tblApprovalStatus (strApprovalStatus)
 VALUES						('Not Approved')
@@ -2349,7 +2448,8 @@ VALUES	('Katie', 'Schmidt', '6036 Flyer Drive', 'Cincinnati', 3, '45248', '51331
 		('Random', 'User', '1234 Main St', 'Lawrenceburg', 1, '41010', '5135555555', 'random_user@gmail.com', 'test3', 'test3', 0),
 		('Shane', 'Winslow', '26 Glenway', 'Ft. Thomas', 1, '5555555555', 'winzlizle@gmail.com', 'winslows1@gmail.com', 'winslows1', 'password', 0),
 		('Grace', 'Gottenbusch', '123 Elm St', 'Covington', 2, '41212', '5135555555', 'grace@gmail.com', 'grace', 'grace', 1),
-		('Bob', 'Smith', NULL, NULL, NULL, NULL, '5135555121', 'bob@gmail.com', 'bob', 'bob', 0)
+		('Bob', 'Smith', NULL, NULL, NULL, NULL, '5135555121', 'bob@gmail.com', 'bob', 'bob', 0),
+		('Jane', 'Dough', '12345 Elm St','Cincinnati', 3, '45050', '5555555555', 'janedough@gmail.com', 'jane', 'jane', 0)
 
 -- ADD USER TO MEMBER TABLE 
 INSERT INTO  tblMember (intUserID, intMemberLevelID, intPaymentTypeID, intApprovalStatusID, intPaymentStatusID)
@@ -2357,6 +2457,7 @@ VALUES	 (1, 1, 2, 2, 1)
 		,(3, 2, 1, 2, 1)
 		,(4, 2, 1, 2, 1)
 		,(5, 1, 1, 1, 2)
+		,(6, 2, 2, 1, 2)
 
 -- ADD CONNECTION BETWEEN COMPANY AND MEMBER
 INSERT INTO tblCompanyMember (intCompanyID, intMemberID)
@@ -2495,3 +2596,4 @@ VALUES									(1, 1)
 
 INSERT INTO tblTempCompanySocialMedia (intCompanyID, strSocialMediaLink, intSocialMediaID)
 VALUES					(1, 'https://www.facebook.com', 1)
+
