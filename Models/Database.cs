@@ -1358,6 +1358,8 @@ namespace GCRBA.Models
 						// add values 
 						message.NotificationID = Convert.ToInt16(dr["intUserNotificationID"]);
 						message.Message = (string)dr["strNotification"];
+						message.NotificationStatusID = Convert.ToInt16(dr["intNotificationStatusID"]);
+						message.NotificationStatus = (string)dr["strNotificationStatus"];
 
 						// add to list 
 						messages.Add(message);
@@ -1404,20 +1406,32 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		
 		}
-		
-		public void DeleteNotification(User u)
+
+		public User.ActionTypes DeleteNotification(User u)
 		{
 			try
 			{
 				SqlConnection cn = null;
 				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
 				SqlCommand cm = new SqlCommand("DELETE_USER_NOTIFICATIONS", cn);
+				int intReturnValue = -1;
 
 				SetParameter(ref cm, "@intUserNotificationID", u.Notification.NotificationID, SqlDbType.SmallInt);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
 
 				cm.ExecuteReader();
 
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
 				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1)
+				{
+					return User.ActionTypes.DeleteSuccessful;
+				} 
+				else
+				{
+					return User.ActionTypes.Unknown;
+				}
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
@@ -1773,6 +1787,37 @@ namespace GCRBA.Models
 
 				m.ActionType = MemberRequest.ActionTypes.Unknown;
 				return m.ActionType;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public User.ActionTypes UpdateNotificationStatus(User u)
+		{
+			try
+			{
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("MARK_NOTIFICATION_AS_READ", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intUserNotificationID", u.Notification.NotificationID, SqlDbType.SmallInt);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1)
+				{
+					u.ActionType = User.ActionTypes.UpdateSuccessful;
+				}
+				else
+				{
+					u.ActionType = User.ActionTypes.Unknown;
+				}
+
+				return u.ActionType;
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}

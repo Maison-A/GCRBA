@@ -6,19 +6,33 @@
 @if (Model.isMember == 0)
 {
 	@Html.Partial("MemberOnly");
+
 } else
 {
-	<h2 class="mt-4 mb-5">Hello,  @Model.FirstName. Thank you for being a member of the GCRBA.</h2>
-
-	using (Html.BeginForm(null, null, null, FormMethod.Post, new { @class = "mx-auto w-50" }))
+	using (Html.BeginForm(null, null, null, FormMethod.Post, new { @class = "mx-auto" }))
 	{
-		if (Model.Notifications.Count > 0)
+		@*if (Model.Notifications.Count > 0)
+			{
+				<button name="btnSubmit" value="viewNotifications" class="button-action mb-3">You have new notification(s) <i class="fa-solid fa-circle-exclamation fa-xl"></i></button>
+			}*@
+		if (Model.Notification.UnreadNotifications == true)
 		{
-			<button name="btnSubmit" value="viewNotifications" class="button-action mb-3">You have new notification(s) <i class="fa-solid fa-circle-exclamation fa-xl"></i></button>
+			<div class="w-100 text-start mt-4">
+				<button id="notification" name="btnSubmit" value="viewNotifications" class="btn btn-link">New Notification(s) <i class="fa-solid fa-circle-exclamation"></i></button>
+			</div>
+		} else
+		{
+			<div class="w-100 text-start mt-4">
+				<button id="notificationNoUnread" name="btnSubmit" value="viewNotifications" class="btn btn-link">Notifications</button>
+			</div>
 		}
-		<button class="w-100 mb-2" name="btnSubmit" value="editProfile">Edit Profile</button>
-		<button class="w-100 mb-2" name="btnSubmit" value="editCompanyInfo">Edit Company</button>
-		<button class="w-100 mb-2" name="btnSubmit" value="editLandingPage">Edit Landing Page</button>
+
+		<h2 class="mt-4 mb-5">Hello,  @Model.FirstName. Thank you for being a member of the GCRBA.</h2>
+
+
+		<button class="w-75 mb-2 button-action" name="btnSubmit" value="editProfile">Edit Profile</button><br />
+		<button class="w-75 mb-2 button-action" name="btnSubmit" value="editCompanyInfo">Edit Company</button><br />
+		<button class="w-75 mb-2 button-action" name="btnSubmit" value="editLandingPage">Edit Landing Page</button><br />
 	}
 
 }

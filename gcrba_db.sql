@@ -120,6 +120,7 @@ IF OBJECT_ID ('DELETE_MEMBER_REQUEST')				IS NOT NULL DROP PROCEDURE DELETE_MEMB
 IF OBJECT_ID ('INSERT_USER_NOTIFICATION')				IS NOT NULL DROP PROCEDURE INSERT_USER_NOTIFICATION
 IF OBJECT_ID ('GET_USER_NOTIFICATIONS')				IS NOT NULL DROP PROCEDURE GET_USER_NOTIFICATIONS
 IF OBJECT_ID ('DELETE_USER_NOTIFICATIONS')				IS NOT NULL DROP PROCEDURE DELETE_USER_NOTIFICATIONS
+IF OBJECT_ID ('MARK_NOTIFICATION_AS_READ')				IS NOT NULL DROP PROCEDURE MARK_NOTIFICATION_AS_READ
 
 CREATE TABLE tblTempCompany   
 (
@@ -2176,9 +2177,11 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT	un.intUserNotificationID, n.strNotification
+	SELECT	un.intUserNotificationID, n.strNotification, ns.intNotificationStatusID, ns.strNotificationStatus
 	FROM	tblUserNotification as un JOIN tblNotification as n 
 			ON	n.intNotificationID = un.intNotificationID
+			JOIN tblNotificationStatus as ns 
+			ON ns.intNotificationStatusID = un.intNotificationStatusID
 	WHERE	intUserID = @intUserID
 END
 GO
@@ -2256,6 +2259,20 @@ BEGIN
 	UPDATE	tblMember 
 	SET		intApprovalStatusID = 2
 	WHERE	intMemberID = @intMemberID
+
+	RETURN 1
+END
+GO
+
+CREATE PROCEDURE [db_owner].[MARK_NOTIFICATION_AS_READ]
+@intUserNotificationID SMALLINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	UPDATE	tblUserNotification
+	SET		intNotificationStatusID = 1
+	WHERE	intUserNotificationID = @intUserNotificationID 
 
 	RETURN 1
 END
@@ -2597,3 +2614,6 @@ VALUES									(1, 1)
 INSERT INTO tblTempCompanySocialMedia (intCompanyID, strSocialMediaLink, intSocialMediaID)
 VALUES					(1, 'https://www.facebook.com', 1)
 
+INSERT INTO tblUserNotification (intUserID, intNotificationID, intNotificationStatusID)
+VALUES		(6, 1, 2),
+			(6, 1, 2)

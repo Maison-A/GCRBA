@@ -7,20 +7,35 @@
 @if (!Model.IsAuthenticated)
 {
 	@Html.Partial("PleaseLogin");
+
 } else
 {
+
+	if (Model.ActionType == GCRBA.Models.User.ActionTypes.Unknown)
+	{
+		<p>An error occurred when processing your request. Please try again.</p>
+	}
+
 	using (Html.BeginForm(FormMethod.Post))
 	{
-		foreach (var message in Model.Notifications)
-		{
-			<div>
-				<input type="checkbox" name="notification" value="@message.NotificationID" />
-				<label for="notification" class="form-label">@message.Message</label>
-			</div>
-		}
-		
-		<button name="btnSubmit" value="delete">Delete Selected</button>
-		<button name="btnSubmit" value="markAsRead">Mark as Read</button>
+		<div class="mx-auto">
 
+			@foreach (var message in Model.Notifications)
+			{
+			<div class="mx-auto w-50 mt-4 mb-4 text-start border-bottom">
+				<input class="form-check-input" type="checkbox" name="notification" value="@message.NotificationID" />
+				@if (message.NotificationStatusID == 2)
+				{
+					<label for="notification" class="form-check-label text-danger">@message.Message</label>
+				} else
+				{
+					<label for="notification" class="form-check-label text-black">@message.Message</label>
+				}
+			</div>
+			}
+
+			<button name="btnSubmit" value="delete">Delete Selected</button>
+			<button name="btnSubmit" value="markAsRead">Mark as Read</button>
+		</div>
 	}
 }
