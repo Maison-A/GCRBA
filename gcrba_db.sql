@@ -1,6 +1,4 @@
 -- DROP TABLES
-IF OBJECT_ID('tblAdminNotification')			IS NOT NULL DROP TABLE tblAdminNotification 
-IF OBJECT_ID('tblChangeType')			IS NOT NULL DROP TABLE tblChangeType 
 IF OBJECT_ID('tblUserNotification')			IS NOT NULL DROP TABLE tblUserNotification 
 IF OBJECT_ID('tblNotification')			IS NOT NULL DROP TABLE tblNotification 
 IF OBJECT_ID('tblSpecialLocation')			IS NOT NULL DROP TABLE tblSpecialLocation 
@@ -20,6 +18,7 @@ IF OBJECT_ID('tblEvent')					IS NOT NULL DROP TABLE tblEvent
 IF OBJECT_ID('tblContactLocation')			IS NOT NULL DROP TABLE tblContactLocation
 IF OBJECT_ID('tblContactPerson')			IS NOT NULL DROP TABLE tblContactPerson
 IF OBJECT_ID('tblTempContactPerson')		IS NOT NULL DROP TABLE tblTempContactPerson
+IF OBJECT_ID('tblLocationImages') 			IS NOT NULL DROP TABLE tblLocationImages
 IF OBJECT_ID('tblLocation')					IS NOT NULL DROP TABLE tblLocation 
 IF OBJECT_ID('tblTempLocation')				IS NOT NULL DROP TABLE tblTempLocation 
 IF OBJECT_ID('tblAdminRequest')				IS NOT NULL DROP TABLE tblAdminRequest  
@@ -43,10 +42,14 @@ IF OBJECT_ID('tblDay')						IS NOT NULL DROP TABLE tblDay
 IF OBJECT_ID('tblTempDay')					IS NOT NULL DROP TABLE tblTempDay
 IF OBJECT_ID('tblMainBanner')				IS NOT NULL DROP TABLE tblMainBanner
 IF OBJECT_ID('tblAboutGCRBA')				IS NOT NULL DROP TABLE tblAboutGCRBA
+IF OBJECT_ID('tblAdminNotification')		IS NOT NULL DROP TABLE tblAdminNotification
+IF OBJECT_ID('tblChangeType')				IS NOT NULL DROP TABLE tblChangeType
+IF OBJECT_ID('tblNewVersion')				IS NOT NULL DROP TABLE tblNewVersion
+IF OBJECT_ID('tblPreviousVersion')			IS NOT NULL DROP TABLE tblPreviousVersion
 IF OBJECT_ID('tblUser')						IS NOT NULL DROP TABLE tblUser 
 IF OBJECT_ID('tblState')					IS NOT NULL DROP TABLE tblState 
 IF OBJECT_ID('tblTempState')				IS NOT NULL DROP TABLE tblTempState 
-IF OBJECT_ID('tblNotificationStatus')				IS NOT NULL DROP TABLE tblNotificationStatus 
+IF OBJECT_ID('tblNotificationStatus')		IS NOT NULL DROP TABLE tblNotificationStatus 
 
 --DROP STORED PROCEDURES
 IF OBJECT_ID('LOGIN')										IS NOT NULL DROP PROCEDURE LOGIN 
@@ -116,16 +119,18 @@ IF OBJECT_ID('INSERT_TEMP_CONTACTLOCATION_RELATIONSHIP')	IS NOT NULL DROP PROCED
 IF OBJECT_ID('INSERT_MEMBER_REQUEST')						IS NOT NULL DROP PROCEDURE INSERT_MEMBER_REQUEST
 IF OBJECT_ID('SELECT_MEMBER_REQUESTS')						IS NOT NULL DROP PROCEDURE SELECT_MEMBER_REQUESTS
 IF OBJECT_ID('UPDATE_MEMBER_STATUS')						IS NOT NULL DROP PROCEDURE UPDATE_MEMBER_STATUS
-IF OBJECT_ID ('GET_MEMBERSHIP_REQUESTS')				IS NOT NULL DROP PROCEDURE GET_MEMBERSHIP_REQUESTS
-IF OBJECT_ID ('GET_MEMBER_INFO')				IS NOT NULL DROP PROCEDURE GET_MEMBER_INFO
-IF OBJECT_ID ('DELETE_MEMBER_REQUEST')				IS NOT NULL DROP PROCEDURE DELETE_MEMBER_REQUEST
-IF OBJECT_ID ('INSERT_USER_NOTIFICATION')				IS NOT NULL DROP PROCEDURE INSERT_USER_NOTIFICATION
-IF OBJECT_ID ('GET_USER_NOTIFICATIONS')				IS NOT NULL DROP PROCEDURE GET_USER_NOTIFICATIONS
-IF OBJECT_ID ('DELETE_USER_NOTIFICATIONS')				IS NOT NULL DROP PROCEDURE DELETE_USER_NOTIFICATIONS
-IF OBJECT_ID ('MARK_NOTIFICATION_AS_READ')				IS NOT NULL DROP PROCEDURE MARK_NOTIFICATION_AS_READ
-IF OBJECT_ID ('GET_COMPANY_BY_MEMBER')				IS NOT NULL DROP PROCEDURE GET_COMPANY_BY_MEMBER
-IF OBJECT_ID ('UPDATE_COMPANY_INFO')				IS NOT NULL DROP PROCEDURE UPDATE_COMPANY_INFO
-
+IF OBJECT_ID ('GET_MEMBERSHIP_REQUESTS')					IS NOT NULL DROP PROCEDURE GET_MEMBERSHIP_REQUESTS
+IF OBJECT_ID ('GET_MEMBER_INFO')							IS NOT NULL DROP PROCEDURE GET_MEMBER_INFO
+IF OBJECT_ID ('DELETE_MEMBER_REQUEST')						IS NOT NULL DROP PROCEDURE DELETE_MEMBER_REQUEST
+IF OBJECT_ID ('INSERT_USER_NOTIFICATION')					IS NOT NULL DROP PROCEDURE INSERT_USER_NOTIFICATION
+IF OBJECT_ID ('GET_USER_NOTIFICATIONS')						IS NOT NULL DROP PROCEDURE GET_USER_NOTIFICATIONS
+IF OBJECT_ID ('DELETE_USER_NOTIFICATIONS')					IS NOT NULL DROP PROCEDURE DELETE_USER_NOTIFICATIONS
+IF OBJECT_ID ('MARK_NOTIFICATION_AS_READ')					IS NOT NULL DROP PROCEDURE MARK_NOTIFICATION_AS_READ
+IF OBJECT_ID ('SELECT_LOCATION_IMAGES')						IS NOT NULL DROP PROCEDURE SELECT_LOCATION_IMAGES
+IF OBJECT_ID ('INSERT_LOCATION_IMAGES')						IS NOT NULL DROP PROCEDURE INSERT_LOCATION_IMAGES
+IF OBJECT_ID ('SELECT_MEMBER_COMPANIES')					IS NOT NULL DROP PROCEDURE SELECT_MEMBER_COMPANIES
+IF OBJECT_ID ('GET_COMPANY_BY_MEMBER')						IS NOT NULL DROP PROCEDURE GET_COMPANY_BY_MEMBER
+IF OBJECT_ID ('UPDATE_COMPANY_INFO')						IS NOT NULL DROP PROCEDURE UPDATE_COMPANY_INFO
 
 CREATE TABLE tblTempCompany   
 (
@@ -134,6 +139,35 @@ CREATE TABLE tblTempCompany
 	strAbout			NVARCHAR(2000)				NOT NULL, 
 	strBizYear			NVARCHAR(10),
 	CONSTRAINT tblTempCompany_PK PRIMARY KEY (intCompanyID)
+)
+
+CREATE TABLE tblChangeType
+(
+	intChangeTypeID			SMALLINT IDENTITY(1,1)	NOT NULL, 
+	strChangeType			NVARCHAR(50)			NOT NULL, 
+	CONSTRAINT tblChangeType_PK PRIMARY KEY (intChangeTypeID)
+)
+
+CREATE TABLE tblAdminNotification
+(
+	intAdminNotificationID	SMALLINT IDENTITY(1,1)	NOT NULL, 
+	intUserID				SMALLINT		NOT NULL, 
+	intChangeTypeID			SMALLINT		NOT NULL, 
+	strPreviousVersion		NVARCHAR(2000)	NOT NULL, 
+	strNewVersion			NVARCHAR(2000)	NOT NULL,	
+	intNotificationStatusID	SMALLINT		NOT NULL,
+	CONSTRAINT tblAdminNotification_PK PRIMARY KEY (intAdminNotificationID)
+)
+
+CREATE TABLE tblLocationImages
+(
+	intLocationImageID	BIGINT IDENTITY(1,1) NOT NULL,
+	intLocationID		BIGINT NOT NULL,
+	Image				VARBINARY(MAX) NOT NULL,
+	FileName			NVARCHAR(1000) NOT NULL,
+	intImageSize		BIGINT NOT NULL,
+	dtDateAdded			DATETIME,
+	CONSTRAINT tblLocationImages_PK PRIMARY KEY (intLocationImageID)
 )
 
 CREATE TABLE tblTempLocationHours   
@@ -538,26 +572,9 @@ CREATE TABLE tblUserNotification
 	CONSTRAINT tblUserNotification_PK PRIMARY KEY (intUserNotificationID)
 )
 
-CREATE TABLE tblChangeType
-(
-	intChangeTypeID			SMALLINT IDENTITY(1,1)	NOT NULL, 
-	strChangeType			NVARCHAR(50)			NOT NULL, 
-	CONSTRAINT tblChangeType_PK PRIMARY KEY (intChangeTypeID)
-)
-
-CREATE TABLE tblAdminNotification
-(
-	intAdminNotificationID	SMALLINT IDENTITY(1,1)	NOT NULL, 
-	intUserID				SMALLINT		NOT NULL, 
-	intChangeTypeID			SMALLINT		NOT NULL, 
-	strPreviousVersion		NVARCHAR(2000)	NOT NULL, 
-	strNewVersion			NVARCHAR(2000)	NOT NULL,	
-	intNotificationStatusID	SMALLINT		NOT NULL,
-	CONSTRAINT tblAdminNotification_PK PRIMARY KEY (intAdminNotificationID)
-)
-----------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------
 -- FOREIGN KEYS 
-----------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------
 
 -- CHILD					PARENT					COLUMN(s)
 -- -----					-----					------
@@ -735,12 +752,14 @@ FOREIGN KEY (intNotificationID) REFERENCES tblNotification (intNotificationID)
 ALTER TABLE tblUserNotification ADD CONSTRAINT tblUserNotification_tblNotificationStatus_FK
 FOREIGN KEY (intNotificationStatusID) REFERENCES tblNotificationStatus (intNotificationStatusID)
 
+ALTER TABLE tblLocationImages ADD CONSTRAINT tblLocationImages_tblLocation_FK
+FOREIGN KEY (intLocationID) REFERENCES tblLocation (intLocationID)
+
 ALTER TABLE tblAdminNotification ADD CONSTRAINT tblAdminNotification_intUserID_FK
 FOREIGN KEY (intUserID) REFERENCES tblUser (intUserID)
 
 ALTER TABLE tblAdminNotification ADD CONSTRAINT tblAdminNotification_intChangeTypeID_FK
 FOREIGN KEY (intChangeTypeID) REFERENCES tblChangeType (intChangeTypeID)
-
 -- -----------------------------------------------------------------------------------------
 -- STORED PROCEDURES 
 -- -----------------------------------------------------------------------------------------
@@ -748,6 +767,58 @@ FOREIGN KEY (intChangeTypeID) REFERENCES tblChangeType (intChangeTypeID)
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [db_owner].[SELECT_LOCATION_IMAGES]
+@intLocationID AS BIGINT = NULL
+,@intLocationImageID AS BIGINT = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+	IF @intLocationID IS NOT NULL
+	BEGIN
+		SELECT * FROM tblLocationImages
+		WHERE [intLocationID] = @intLocationID
+		ORDER BY dtDateAdded DESC
+	END
+	ELSE
+	BEGIN
+		SELECT * FROM tblLocationImages
+		WHERE intLocationImageID = @intLocationImageID
+	END
+END
+GO
+
+CREATE PROCEDURE [db_owner].[SELECT_MEMBER_COMPANIES]
+AS
+BEGIN
+	SELECT DISTINCT *
+	FROM db_owner.tblCompanyMember
+END
+GO
+
+CREATE PROCEDURE [db_owner].[INSERT_LOCATION_IMAGES]
+@intLocationImageID BIGINT = NULL OUTPUT
+,@intLocationID BIGINT 
+,@IMAGE VARBINARY(MAX)
+,@file_name NVARCHAR(1000)
+,@image_size BIGINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	INSERT INTO [db_owner].[tblLocationImages]
+					([intLocationID]
+					,[Image]
+					,[FileName]
+					,[intImageSize])
+				VALUES
+					(@intLocationID
+					,@IMAGE
+					,@file_name
+					,@image_size)
+			SELECT @intLocationImageID=@@IDENTITY
+			RETURN 1
+END
 GO
 
 CREATE PROCEDURE [dbo].[DELETE_ADMIN_REQUEST]
@@ -2347,7 +2418,6 @@ BEGIN
 		WHERE	intCompanyID = @intCompanyID 
 END
 GO
-
 -- -----------------------------------------------------------------------------------------
 -- ADD TEST DATA
 -- -----------------------------------------------------------------------------------------
@@ -2687,3 +2757,7 @@ VALUES									(1, 1)
 
 INSERT INTO tblTempCompanySocialMedia (intCompanyID, strSocialMediaLink, intSocialMediaID)
 VALUES					(1, 'https://www.facebook.com', 1)
+
+INSERT INTO tblUserNotification (intUserID, intNotificationID, intNotificationStatusID)
+VALUES		(6, 1, 2),
+			(6, 1, 2)
