@@ -204,23 +204,14 @@ namespace GCRBA.Controllers
             u.Notifications = new List<Notification>();
             u.Notifications = GetUserNotifications(u);
 
+            // create user notification object
+            u.Notification = new Notification();
+
+            // check if any of the messages are unread 
+            u.Notification.UnreadNotifications = GetIfUnread(u);
+
             return View(u);
         }
-
-        public List<Notification> GetUserNotifications(User u)
-		{
-            try
-			{
-                // create database object
-                Database db = new Database();
-
-                // get user notifications 
-                u.Notifications = db.GetUserNotifications(u);
-
-                return u.Notifications;
-			}
-            catch (Exception ex) { throw new Exception(ex.Message); }
-		}
 
         [HttpPost]
         public ActionResult NonMember(FormCollection col)
@@ -235,6 +226,9 @@ namespace GCRBA.Controllers
             u.Notifications = new List<Notification>();
             u.Notifications = GetUserNotifications(u);
 
+            // create user notification object 
+            u.Notification = new Notification();
+
             if (col["btnSubmit"].ToString() == "editProfile")
 			{
                 return RedirectToAction("EditProfile", "Profile");
@@ -242,7 +236,7 @@ namespace GCRBA.Controllers
 
             if (col["btnSubmit"].ToString() == "viewNotifications")
 			{
-                return RedirectToAction("Notifications", "Profile");
+                return RedirectToAction("UserNotifications", "Profile");
 			}
 
             return View(u);
@@ -259,6 +253,8 @@ namespace GCRBA.Controllers
             u.Notifications = new List<Notification>();
             u.Notifications = GetUserNotifications(u);
 
+            u.Notification = new Notification();
+
             return View(u);
         }
 
@@ -274,32 +270,88 @@ namespace GCRBA.Controllers
             u.Notifications = new List<Notification>();
             u.Notifications = GetUserNotifications(u);
 
+            string notificationIDs;
+
             if (col["btnSubmit"].ToString() == "delete")
 			{
                 // get list of messages selected 
                 // then delete from db and return view 
+                notificationIDs = col["notification"];
+                u.ActionType = DeleteNotifications(u, notificationIDs);
+
+                // get updated list of user notifications 
+                u.Notifications = GetUserNotifications(u);
+
+                return View(u);
 			}
 
             if (col["btnSubmit"].ToString() == "markAsRead")
 			{
                 // get list of messages selected 
                 // then update status as read in db and return view 
+                notificationIDs = col["notification"];
+                u.ActionType = UpdateNotificationStatus(u, notificationIDs);
+
+                // get updated list of user notifications 
+                u.Notifications = GetUserNotifications(u);
+
+                return View(u);
 			}
 
             return View(u);
         }
 
-        private void DeleteUserNotification(User u)
+        private User.ActionTypes UpdateNotificationStatus(User u, string notificationIDs)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // create array by splitting string at each comma 
+                string[] Notifications = notificationIDs.Split(',');
+
+                // create user notification object 
+                u.Notification = new Notification();
+
+                // loop through array and update in db 
+                foreach (string item in Notifications)
+				{
+                    u.Notification.NotificationID = int.Parse(item);
+                    u.ActionType = db.UpdateNotificationStatus(u);
+				}
+
+                return u.ActionType;
+
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private User.ActionTypes DeleteNotifications(User u, string notificationIDs)
 		{
             try
 			{
                 // create database object
                 Database db = new Database();
 
-                // delete record from db 
-                db.DeleteNotification(u);
+                // create array by splitting string at each comma 
+                string[] Notifications = notificationIDs.Split(',');
+
+                // create user notification object 
+                u.Notification = new Notification();
+
+                // loop through array and delete from db 
+                foreach (string item in Notifications)
+				{
+                    u.Notification.NotificationID = int.Parse(item);
+                    u.ActionType = db.DeleteNotification(u);
+				}
+				
+                return u.ActionType;
 			}
-            catch (Exception ex) { throw new Exception(ex.Message); }
+            catch (Exception ex) 
+            {
+                throw new Exception(ex.Message); 
+            }
 		}
 
         public ActionResult Member() {
@@ -313,6 +365,12 @@ namespace GCRBA.Controllers
             u.Notifications = new List<Notification>();
             u.Notifications = GetUserNotifications(u);
 
+            // create user notification object
+            u.Notification = new Notification();
+
+            // check if any messages are unread
+            u.Notification.UnreadNotifications = GetIfUnread(u);
+
             return View(u);
         }
 
@@ -324,6 +382,9 @@ namespace GCRBA.Controllers
 
             // get current user session 
             u = u.GetUserSession();
+
+            // create user notification object
+            u.Notification = new Notification();
 
             if (col["btnSubmit"].ToString() == "viewNotifications")
 			{
@@ -441,40 +502,6 @@ namespace GCRBA.Controllers
 
 		}
 
-        private Company GetCompany(ProfileViewModel vm)
-		{
-            try
-			{
-                // create database object 
-                Database db = new Database();
-
-                // create new vm company object
-                vm.Company = new Company();
-
-                // get company based on memberID 
-                vm.Company = db.GetCompanyByMember(vm);
-
-                return vm.Company;
-			}
-            catch (Exception ex) { throw new Exception(ex.Message); }
-		}
-
-        private User.ActionTypes UpdateUser(ProfileViewModel vm)
-		{
-            try
-			{
-                // create database object 
-                Database db = new Database();
-
-                // submit to db 
-                vm.User.ActionType = db.UpdateUser(vm);
-
-                // return actiontype
-                return vm.User.ActionType;
-			}
-            catch (Exception ex) { throw new Exception(ex.Message); }
-		}
-
         public ActionResult Logout()
         {
             // create user object
@@ -489,14 +516,58 @@ namespace GCRBA.Controllers
 
 
         // -------------------------------------------------------------------------------------------------
-        // ADDING DATA TO DATABASE   
+        // ADDING/DELETING FROM DATABASE   
         // -------------------------------------------------------------------------------------------------
 
+        private User.ActionTypes UpdateUser(ProfileViewModel vm)
+        {
+            try
+            {
+                // create database object 
+                Database db = new Database();
+
+                // submit to db 
+                vm.User.ActionType = db.UpdateUser(vm);
+
+                // return actiontype
+                return vm.User.ActionType;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private void DeleteUserNotification(User u)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // delete record from db 
+                db.DeleteNotification(u);
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
 
 
         // -------------------------------------------------------------------------------------------------
         // RETRIEVING DATA FROM DATABASE   
         // -------------------------------------------------------------------------------------------------
+
+        private Company GetCompany(ProfileViewModel vm)
+        {
+            try
+            {
+                // create database object 
+                Database db = new Database();
+
+                // create new vm company object
+                vm.Company = new Company();
+
+                // get company based on memberID 
+                vm.Company = db.GetCompanyByMember(vm);
+
+                return vm.Company;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
         private ProfileViewModel GetStates(ProfileViewModel vm)
         {
             try
@@ -529,6 +600,43 @@ namespace GCRBA.Controllers
             vm.User = vm.User.GetUserSession();
 
             return vm;
+        }
+
+        private bool GetIfUnread(User u)
+        {
+            try
+            {
+                int count = 0;
+
+                for (int i = 0; i < u.Notifications.Count; i++)
+                {
+                    if (u.Notifications[i].NotificationStatusID == 2)
+                    {
+                        count += 1;
+                    }
+                }
+
+                if (count > 0)
+                {
+                    u.Notification.UnreadNotifications = true;
+                }
+
+                return u.Notification.UnreadNotifications;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        public List<Notification> GetUserNotifications(User u)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // get user notifications 
+                u.Notifications = db.GetUserNotifications(u);
+
+                return u.Notifications;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
 

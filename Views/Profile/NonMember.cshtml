@@ -11,9 +11,16 @@
 		<p>Please log in to view this page.</p>
 	} else
 	{
-		if (Model.Notifications.Count > 0)
+		if (Model.Notification.UnreadNotifications == true)
 		{
-			<button name="btnSubmt" value="viewNotifications" class="button-action">You have new notification(s) <i class="fa-solid fa-circle-exclamation fa-xl"></i></button>
+			<div class="w-100 text-start mt-4">
+				<button id="notification" name="btnSubmit" value="viewNotifications" class="btn btn-link">New Notification(s) <i class="fa-solid fa-circle-exclamation"></i></button>
+			</div>
+		} else
+		{
+			<div class="w-100 text-start mt-4">
+				<button id="notificationNoUnread" name="btnSubmit" value="viewNotifications" class="btn btn-link">Notifications</button>
+			</div>
 		}
 
 		<button name="btnSubmit" value="editProfile" class="button-action">Edit Profile</button>
