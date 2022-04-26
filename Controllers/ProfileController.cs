@@ -301,59 +301,6 @@ namespace GCRBA.Controllers
             return View(u);
         }
 
-        private User.ActionTypes UpdateNotificationStatus(User u, string notificationIDs)
-        {
-            try
-            {
-                // create database object
-                Database db = new Database();
-
-                // create array by splitting string at each comma 
-                string[] Notifications = notificationIDs.Split(',');
-
-                // create user notification object 
-                u.Notification = new Notification();
-
-                // loop through array and update in db 
-                foreach (string item in Notifications)
-				{
-                    u.Notification.NotificationID = int.Parse(item);
-                    u.ActionType = db.UpdateNotificationStatus(u);
-				}
-
-                return u.ActionType;
-
-            } catch (Exception ex) { throw new Exception(ex.Message); }
-        }
-
-        private User.ActionTypes DeleteNotifications(User u, string notificationIDs)
-		{
-            try
-			{
-                // create database object
-                Database db = new Database();
-
-                // create array by splitting string at each comma 
-                string[] Notifications = notificationIDs.Split(',');
-
-                // create user notification object 
-                u.Notification = new Notification();
-
-                // loop through array and delete from db 
-                foreach (string item in Notifications)
-				{
-                    u.Notification.NotificationID = int.Parse(item);
-                    u.ActionType = db.DeleteNotification(u);
-				}
-				
-                return u.ActionType;
-			}
-            catch (Exception ex) 
-            {
-                throw new Exception(ex.Message); 
-            }
-		}
-
         public ActionResult Member() {
             // create user object 
             User u = new User();
@@ -501,6 +448,21 @@ namespace GCRBA.Controllers
 
 		}
 
+        [HttpPost]
+        public ActionResult EditCompanyInfo(FormCollection col)
+		{
+            ProfileViewModel vm = InitProfileViewModel();
+
+            vm.Company = GetCompany(vm);
+
+            if (col["btnSubmit"].ToString() == "editLocationInfo")
+			{
+                return RedirectToAction("AddNewLocation", "Bakery");
+			}
+
+            return View(vm);
+		}
+
         public ActionResult Logout()
         {
             // create user object
@@ -636,6 +598,58 @@ namespace GCRBA.Controllers
 
                 return u.Notifications;
             } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private User.ActionTypes UpdateNotificationStatus(User u, string notificationIDs)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // create array by splitting string at each comma 
+                string[] Notifications = notificationIDs.Split(',');
+
+                // create user notification object 
+                u.Notification = new Notification();
+
+                // loop through array and update in db 
+                foreach (string item in Notifications)
+                {
+                    u.Notification.NotificationID = int.Parse(item);
+                    u.ActionType = db.UpdateNotificationStatus(u);
+                }
+
+                return u.ActionType;
+
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private User.ActionTypes DeleteNotifications(User u, string notificationIDs)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // create array by splitting string at each comma 
+                string[] Notifications = notificationIDs.Split(',');
+
+                // create user notification object 
+                u.Notification = new Notification();
+
+                // loop through array and delete from db 
+                foreach (string item in Notifications)
+                {
+                    u.Notification.NotificationID = int.Parse(item);
+                    u.ActionType = db.DeleteNotification(u);
+                }
+
+                return u.ActionType;
+            } catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
 
