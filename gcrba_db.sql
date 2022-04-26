@@ -1,4 +1,6 @@
 -- DROP TABLES
+IF OBJECT_ID('tblAdminNotification')			IS NOT NULL DROP TABLE tblAdminNotification 
+IF OBJECT_ID('tblChangeType')			IS NOT NULL DROP TABLE tblChangeType 
 IF OBJECT_ID('tblUserNotification')			IS NOT NULL DROP TABLE tblUserNotification 
 IF OBJECT_ID('tblNotification')			IS NOT NULL DROP TABLE tblNotification 
 IF OBJECT_ID('tblSpecialLocation')			IS NOT NULL DROP TABLE tblSpecialLocation 
@@ -121,6 +123,9 @@ IF OBJECT_ID ('INSERT_USER_NOTIFICATION')				IS NOT NULL DROP PROCEDURE INSERT_U
 IF OBJECT_ID ('GET_USER_NOTIFICATIONS')				IS NOT NULL DROP PROCEDURE GET_USER_NOTIFICATIONS
 IF OBJECT_ID ('DELETE_USER_NOTIFICATIONS')				IS NOT NULL DROP PROCEDURE DELETE_USER_NOTIFICATIONS
 IF OBJECT_ID ('MARK_NOTIFICATION_AS_READ')				IS NOT NULL DROP PROCEDURE MARK_NOTIFICATION_AS_READ
+IF OBJECT_ID ('GET_COMPANY_BY_MEMBER')				IS NOT NULL DROP PROCEDURE GET_COMPANY_BY_MEMBER
+IF OBJECT_ID ('UPDATE_COMPANY_INFO')				IS NOT NULL DROP PROCEDURE UPDATE_COMPANY_INFO
+
 
 CREATE TABLE tblTempCompany   
 (
@@ -533,9 +538,26 @@ CREATE TABLE tblUserNotification
 	CONSTRAINT tblUserNotification_PK PRIMARY KEY (intUserNotificationID)
 )
 
--------------------------------------------------------------------------------------------------------------------------------
+CREATE TABLE tblChangeType
+(
+	intChangeTypeID			SMALLINT IDENTITY(1,1)	NOT NULL, 
+	strChangeType			NVARCHAR(50)			NOT NULL, 
+	CONSTRAINT tblChangeType_PK PRIMARY KEY (intChangeTypeID)
+)
+
+CREATE TABLE tblAdminNotification
+(
+	intAdminNotificationID	SMALLINT IDENTITY(1,1)	NOT NULL, 
+	intUserID				SMALLINT		NOT NULL, 
+	intChangeTypeID			SMALLINT		NOT NULL, 
+	strPreviousVersion		NVARCHAR(2000)	NOT NULL, 
+	strNewVersion			NVARCHAR(2000)	NOT NULL,	
+	intNotificationStatusID	SMALLINT		NOT NULL,
+	CONSTRAINT tblAdminNotification_PK PRIMARY KEY (intAdminNotificationID)
+)
+----------------------------------------------------------------------------------------------------------------------
 -- FOREIGN KEYS 
--------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------
 
 -- CHILD					PARENT					COLUMN(s)
 -- -----					-----					------
@@ -712,6 +734,13 @@ FOREIGN KEY (intNotificationID) REFERENCES tblNotification (intNotificationID)
 
 ALTER TABLE tblUserNotification ADD CONSTRAINT tblUserNotification_tblNotificationStatus_FK
 FOREIGN KEY (intNotificationStatusID) REFERENCES tblNotificationStatus (intNotificationStatusID)
+
+ALTER TABLE tblAdminNotification ADD CONSTRAINT tblAdminNotification_intUserID_FK
+FOREIGN KEY (intUserID) REFERENCES tblUser (intUserID)
+
+ALTER TABLE tblAdminNotification ADD CONSTRAINT tblAdminNotification_intChangeTypeID_FK
+FOREIGN KEY (intChangeTypeID) REFERENCES tblChangeType (intChangeTypeID)
+
 -- -----------------------------------------------------------------------------------------
 -- STORED PROCEDURES 
 -- -----------------------------------------------------------------------------------------
@@ -935,7 +964,7 @@ BEGIN
 
 	SELECT		intMemberID 
 	FROM		tblMember
-	WHERE		intUserID = @intUserID
+	WHERE		intUserID = @intUserID and intApprovalStatusID = 2
 END
 GO
 
@@ -2278,9 +2307,54 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [db_owner].[GET_COMPANY_BY_MEMBER]
+@intMemberID SMALLINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT	c.intCompanyID, c.strCompanyName, c.strAbout, c.strBizYear
+	FROM	tblCompany as c JOIN tblCompanyMember as cm
+			ON c.intCompanyID = cm.intCompanyID
+			JOIN tblMember as m 
+			ON m.intMemberID = cm.intMemberID
+	WHERE	cm.intMemberID = @intMemberID 
+END
+GO
+
+CREATE PROCEDURE [db_owner].[UPDATE_COMPANY_INFO]
+@intCompanyID BIGINT,
+@strCompanyName NVARCHAR(50),
+@strAbout NVARCHAR(2000),
+@strBizYear NVARCHAR(4)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	IF @strCompanyName IS NOT NULL
+		UPDATE	tblCompany
+		SET		strCompanyName = @strCompanyName
+		WHERE	intCompanyID = @intCompanyID 
+
+	IF @strAbout IS NOT NULL
+		UPDATE	tblCompany
+		SET		strAbout = @strAbout 
+		WHERE	intCompanyID = @intCompanyID 
+
+	IF @strBizYear IS NOT NULL
+		UPDATE	tblCompany
+		SET		strBizYear = @strBizYear 
+		WHERE	intCompanyID = @intCompanyID 
+END
+GO
+
 -- -----------------------------------------------------------------------------------------
 -- ADD TEST DATA
 -- -----------------------------------------------------------------------------------------
+INSERT INTO tblChangeType (strChangeType)
+VALUES		('strCompanyName'),
+			('strAbout'),
+			('strBizYear')
 
 INSERT INTO tblNotification (strNotification)
 VALUES		('Your request for membership has been approved'),
@@ -2613,7 +2687,3 @@ VALUES									(1, 1)
 
 INSERT INTO tblTempCompanySocialMedia (intCompanyID, strSocialMediaLink, intSocialMediaID)
 VALUES					(1, 'https://www.facebook.com', 1)
-
-INSERT INTO tblUserNotification (intUserID, intNotificationID, intNotificationStatusID)
-VALUES		(6, 1, 2),
-			(6, 1, 2)
