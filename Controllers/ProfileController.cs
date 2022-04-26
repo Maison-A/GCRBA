@@ -436,7 +436,6 @@ namespace GCRBA.Controllers
                 // declare variable to temporarily hold password while we validate it 
                 string tempPassword = col["User.Password"];
 
-
                 // if new password is different than current password, check if new password was 
                 // re-entered in second input 
                 if (tempPassword != vm.User.Password)

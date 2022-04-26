@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.IO;
+using GCRBA.ViewModels;
 using GCRBA.Models;
 
 namespace GCRBA.Controllers
@@ -173,8 +174,7 @@ namespace GCRBA.Controllers
 
                 // get current user session
                 Models.User user = new Models.User();
-                user = user.GetUserSession();
-
+                user = user.GetUserSession();                
 
                 // contact info
                 user.FirstName = col["FirstName"];
@@ -252,16 +252,16 @@ namespace GCRBA.Controllers
                     {
                         // initialize action type
                         Models.User.ActionTypes at = Models.User.ActionTypes.NoType;
-                        
-    
+                            
                         // create database object 
                         Database db = new Database();
-
+                        
                         // if user is authenticated then update member table
                         if (user.UID > 0)
                         {
-                            // update member table
-                            db.InsertUserToMember(user);
+                        
+                            // update user data
+                            db.UpdateUser_NotVM(user);
 
                             // send request to member table to be reviewed by admin
                             db.InsertMemberRequest(user);
@@ -272,7 +272,6 @@ namespace GCRBA.Controllers
                         }
                         else
                         {
-
                             // save action type based on what Save() returns 
                             at = user.Save();
 
@@ -286,15 +285,12 @@ namespace GCRBA.Controllers
                                     SendMemberEmail.SendEmail(user);
                                     return RedirectToAction("Index", "Home");
                                     
-
                                 default:
                                     return View(user);
-                            }
-                        
+                            }                        
                         }
                     }
                 }
- 
             }
             catch (Exception)
             {

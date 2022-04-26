@@ -1672,6 +1672,41 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+		public User.ActionTypes UpdateUser_NotVM(Models.User user) {
+			try {
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("UPDATE_USER", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intUserID", user.UID, SqlDbType.SmallInt);
+				SetParameter(ref cm, "@strFirstName", user.FirstName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strLastName", user.LastName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strAddress", user.Address, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strCity", user.City, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@intStateID", user.intState, SqlDbType.BigInt);
+				SetParameter(ref cm, "@strZip", user.Zip, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strPhone", user.Phone, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strEmail", user.Email, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strPassword", user.Password, SqlDbType.NVarChar);
+
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				switch (intReturnValue) {
+					case 1: //new updated
+						return User.ActionTypes.UpdateSuccessful;
+					default:
+						return User.ActionTypes.Unknown;
+				}
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
 		public MemberRequest.ActionTypes UpdateMemberStatus(MemberRequest m)
 		{
 			try
