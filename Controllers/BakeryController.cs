@@ -58,6 +58,16 @@ namespace GCRBA.Views.Bakery {
 
                 Models.Database db = new Models.Database();
                 results.lstLocations = db.GetLocations(lstSearchBySpecialty);
+                results.lstCompanyMembers = db.GetCompanyMembers();
+
+                foreach(Models.CompanyMember compMem in results.lstCompanyMembers) {
+                    foreach(Models.NewLocation loc in results.lstLocations) {
+                        if(loc.lngCompanyID == compMem.lngCompanyID) {
+                            loc.isMember = true;
+						}
+					}
+				}
+
                 return View(results);
 			}
 
@@ -90,6 +100,9 @@ namespace GCRBA.Views.Bakery {
             results.landingSocialMedia = db.GetLandingSocialMedia(Id);
             results.landingWebsite = db.GetLandingWebsite(Id);
             results.landingDays = db.GetLandingHours(Id);
+            results.landingImages = db.GetLocationImages(Id);
+
+            results.lstCompanyMembers = db.GetCompanyMembers();
 
             results.MainURL = results.landingWebsite.Where(r => r.intWebsiteTypeID.Equals(1)).Select(name => name.strURL).FirstOrDefault();
             results.OrderingURL = results.landingWebsite.Where(r => r.intWebsiteTypeID.Equals(2)).Select(name => name.strURL).FirstOrDefault();

@@ -164,8 +164,12 @@
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\Photos\BakedGoods.jpg" />
+    <Content Include="Content\Photos\Breads-25op.png" />
+    <Content Include="Content\Photos\Breads-50op.png" />
+    <Content Include="Content\Photos\Breads-75op.png" />
     <Content Include="Content\Photos\Breads.jpeg" />
     <Content Include="Content\Photos\GCRBAlogo.jpg" />
+    <Content Include="Content\Photos\GCRBANews.jpg" />
     <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
     <Content Include="Python\Scripts\.idea\.gitignore" />
@@ -212,6 +216,7 @@
     <Compile Include="Models\Awards.cs" />
     <Compile Include="Models\BakedGoods.cs" />
     <Compile Include="Models\Button.cs" />
+    <Compile Include="Models\CompanyMember.cs" />
     <Compile Include="Models\ExportToCsv.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -221,6 +226,7 @@
     <Compile Include="Models\ContactPerson.cs" />
     <Compile Include="Models\Database.cs" />
     <Compile Include="Models\Days.cs" />
+    <Compile Include="Models\Image.cs" />
     <Compile Include="Models\Location.cs" />
     <Compile Include="Models\LocationList.cs" />
     <Compile Include="Models\MainBanner.cs" />

@@ -135,7 +135,7 @@ namespace GCRBA.Models
 				int intReturnValue = -1;
 
 				SetParameter(ref cm, "@lngLocationID", lngLocationID, SqlDbType.BigInt);
-				SetParameter(ref cm, "@lngLocationID", lngCompanyID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@lngCompanyID", lngCompanyID, SqlDbType.BigInt);
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
 
 				cm.ExecuteReader();
@@ -1404,7 +1404,7 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		
 		}
-
+		
 		public void DeleteNotification(User u)
 		{
 			try
@@ -1421,7 +1421,7 @@ namespace GCRBA.Models
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
-
+		
 		public Company.ActionTypes DeleteCompany(AdminVM vm)
 		{
 			try
@@ -1477,6 +1477,61 @@ namespace GCRBA.Models
 
 				}
 			} catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public List<Image> GetLocationImages(long intLocationID = 0, long intLocationImageID = 0) {
+			try {
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlDataAdapter da = new SqlDataAdapter("SELECT_LOCATION_IMAGES", cn);
+				List<Image> imgs = new List<Image>();
+
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				if (intLocationID > 0) SetParameter(ref da, "@intLocationID", intLocationID, SqlDbType.BigInt);
+				if (intLocationImageID > 0) SetParameter(ref da, "@intLocationImageID", intLocationImageID, SqlDbType.BigInt);
+
+				try {
+					da.Fill(ds);
+				}
+				catch (Exception ex2) {
+					//SysLog.UpdateLogFile(this.ToString(), MethodBase.GetCurrentMethod().Name.ToString(), ex2.Message);
+				}
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0) {
+					foreach (DataRow dr in ds.Tables[0].Rows) {
+						Image i = new Image();
+						i.ImageID = (long)dr["intLocationImageID"];
+						i.ImageData = (byte[])dr["Image"];
+						i.FileName = (string)dr["FileName"];
+						i.Size = (long)dr["intImageSize"];
+						imgs.Add(i);
+					}
+				}
+				return imgs;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public long InsertLocationImage(Models.NewLocation loc) {
+			try {
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("INSERT_LOCATION_IMAGES", cn);
+
+				SetParameter(ref cm, "@intLocationImageID", null, SqlDbType.BigInt, Direction: ParameterDirection.Output);
+				SetParameter(ref cm, "@intLocationID", loc.lngLocationID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@image", loc.LocationImage.ImageData, SqlDbType.VarBinary);
+				SetParameter(ref cm, "@file_name", loc.LocationImage.FileName, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@image_size", loc.LocationImage.Size, SqlDbType.BigInt);
+
+				cm.ExecuteReader();
+				CloseDBConnection(ref cn);
+				return (long)cm.Parameters["@intLocationImageID"].Value;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
 		public SaleSpecial.ActionTypes DeleteSpecialLocation(AdminVM vm)
@@ -2308,6 +2363,38 @@ namespace GCRBA.Models
 					}
 				}
 				return loc;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public List<Models.CompanyMember> GetCompanyMembers() {
+			try {
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlDataAdapter da = new SqlDataAdapter("SELECT_MEMBER_COMPANIES", cn);
+				List<Models.CompanyMember> lstCompanyMember = new List<Models.CompanyMember>();
+
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				try {
+					da.Fill(ds);
+				}
+				catch (Exception ex2) {
+					throw new Exception(ex2.Message);
+				}
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0) {
+					foreach (DataRow dr in ds.Tables[0].Rows) {
+						CompanyMember companyMember = new CompanyMember();
+						companyMember.lngCompanyID = (long)dr["intCompanyID"];
+						companyMember.lngMemberID = (short)dr["intMemberID"];
+						companyMember.lngCompanyMemberID = (short)dr["intCompanyMemberID"];
+						lstCompanyMember.Add(companyMember);
+					}
+				}
+				return lstCompanyMember;
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
