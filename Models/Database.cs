@@ -1220,6 +1220,49 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+		public List<Website> GetWebsiteTypes()
+		{
+			try
+			{
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to database -- throw error if unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// specify which stored procedure we are using 
+				SqlDataAdapter da = new SqlDataAdapter("GET_WEBSITE_TYPES", cn);
+
+				// create new instance of Company list 
+				List<Website> types = new List<Website>();
+
+				// set command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				try { da.Fill(ds); } catch (Exception ex) { throw new Exception(ex.Message); } 
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0)
+				{
+					// loop through results and add to list 
+					foreach (DataRow dr in ds.Tables[0].Rows)
+					{
+						// create new Company object
+						Website w = new Website();
+
+						// add values to CompanyID and Name properties 
+						w.intWebsiteTypeID = Convert.ToInt16(dr["intWebsiteTypeID"]);
+						w.strWebsiteType = (string)dr["strWebsiteType"];
+
+						// add Company object (c) to Company list (companies) 
+						types.Add(w);
+					}
+				}
+				// return list of companies 
+				return types;
+			} catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
 		public List<MemberRequest> GetMembershipRequests()
 		{
 			try
@@ -1463,6 +1506,34 @@ namespace GCRBA.Models
 				}
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public Website.ActionTypes DeleteWebsite(Website w)
+		{
+			try
+			{
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("DELETE_WEBSITE", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intWebsiteID", w.intWebsiteID, SqlDbType.BigInt);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				switch (intReturnValue)
+				{
+					case 1:
+						return Website.ActionTypes.DeleteSuccessful;
+					default:
+						return Website.ActionTypes.Unknown;
+
+				}
+			} catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
 		public MemberRequest.ActionTypes DeleteMemberRequest(MemberRequest m)
@@ -1791,6 +1862,65 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+		public Website.ActionTypes UpdateWebsite(Website w)
+		{
+			try
+			{
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("UPDATE_WEBSITE", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intWebsiteID", w.intWebsiteID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@strURL", w.strURL, SqlDbType.NVarChar);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1)
+				{
+					return Website.ActionTypes.UpdateSuccessful;
+				}
+				else
+				{
+					return Website.ActionTypes.Unknown;
+				}
+
+			} catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public Website.ActionTypes InsertNewWebsite(Website w, Company c)
+		{
+			try
+			{
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("INSERT_NEW_WEBSITE", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intCompanyID", c.CompanyID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@strURL", w.strURL, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@intWebsiteTypeID", w.intWebsiteTypeID, SqlDbType.BigInt);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1)
+				{
+					return Website.ActionTypes.UpdateSuccessful;
+				} else
+				{
+					return Website.ActionTypes.Unknown;
+				}
+
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
 		public void UpdateCompanyInfo(Company c)
 		{
 			try
@@ -1878,6 +2008,53 @@ namespace GCRBA.Models
 
 		}
 
+		public List<Website> GetCompanyWebsites(Company c)
+		{
+			try
+			{
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to database -- throw error if unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// specify which stored procedure we are using 
+				SqlDataAdapter da = new SqlDataAdapter("GET_COMPANY_WEBSITES", cn);
+
+				SetParameter(ref da, "@intCompanyID", c.CompanyID, SqlDbType.BigInt);
+
+				// create list object that will hold list of websites 
+				List<Website> websites = new List<Website>();
+
+				// set command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				try { da.Fill(ds); }
+				catch (Exception ex) { throw new Exception(ex.Message); }
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0)
+				{
+					foreach (DataRow dr in ds.Tables[0].Rows)
+					{
+						// create new website object for each website
+						Website w = new Website();
+
+						// add data to object
+						w.intWebsiteID = Convert.ToInt16(dr["intWebsiteID"]);
+						w.intWebsiteTypeID = Convert.ToInt16(dr["intWebsiteTypeID"]);
+						w.strWebsiteType = (string)dr["strWebsiteType"];
+						w.strURL = (string)dr["strURL"];
+
+						// add object to list of websites 
+						websites.Add(w);
+					}
+				}
+				return websites;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
 		public void SendUserNotification(MemberRequest m, int intNotificationID, int intNotificationStatusID)
 		{
 			try
@@ -1928,11 +2105,21 @@ namespace GCRBA.Models
 
 		public void InsertAdminNotificationCompanyEdit(User u, int editedColumnID, string previousVersion, string newVersion)
 		{
+			InsertAdminNotification("INSERT_ADMIN_NOTIFICATION_COMPANY_EDIT", u, editedColumnID, previousVersion, newVersion);
+		}
+
+		public void InsertAdminNotificationWebsiteEdit(User u, int editedColumnID, string previousVersion, string newVersion)
+		{
+			InsertAdminNotification("INSERT_ADMIN_NOTIFICATION_WEBSITE_EDIT", u, editedColumnID, previousVersion, newVersion);
+		}
+
+		public void InsertAdminNotification(string sproc, User u, int editedColumnID, string previousVersion, string newVersion)
+		{
 			try
 			{
 				SqlConnection cn = null;
 				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
-				SqlCommand cm = new SqlCommand("INSERT_ADMIN_NOTIFICATION_COMPANY_EDIT", cn);
+				SqlCommand cm = new SqlCommand(sproc, cn);
 
 				SetParameter(ref cm, "@intUserID", u.UID, SqlDbType.SmallInt);
 				SetParameter(ref cm, "@intEditedColumnID", editedColumnID, SqlDbType.SmallInt);

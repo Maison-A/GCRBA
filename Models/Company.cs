@@ -10,8 +10,8 @@ namespace GCRBA.Models
     {
         public int CompanyID { get; set; }
         public string Name { get; set; }
-        public string About = string.Empty;
-        public string Year = string.Empty;
+        public string About { get; set; }
+        public string Year { get; set; }
         public ActionTypes ActionType = ActionTypes.NoType;
 
         public Company GetCompanySession()

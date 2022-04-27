@@ -8,9 +8,9 @@
 <h2>You are editing: @Model.Company.Name</h2>
 
 @if (Model.Company.ActionType == GCRBA.Models.Company.ActionTypes.UpdateSuccessful)
-			{
-				<p>Company info successfully updated.</p>
-			}
+{
+	<p>Company info successfully updated.</p>
+}
 
 @using (Html.BeginForm(FormMethod.Post))
 {
@@ -25,6 +25,10 @@
 	<div>
 		@Html.LabelFor(Model => Model.Company.Year, new { @class = "form-label" })
 		@Html.TextBoxFor(Model => Model.Company.Year, new { @class = "form-control" })
+	</div>
+	<div>
+		<button name="btnSubmit" value="editWebsites">Edit Website(s)</button>
+		<button name="btnSubmit" value="editSocialMedia">Edit Social Media</button>
 	</div>
 	<div>
 		<button name="btnSubmit" value="submit">Submit Changes</button>

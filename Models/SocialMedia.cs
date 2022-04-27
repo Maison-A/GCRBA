@@ -10,6 +10,7 @@ namespace GCRBA.Models {
 		public long intCompanyID = 0;
 		public string strSocialMediaLink = string.Empty;
 		public string strPlatform = string.Empty;
+		public int intPlatformID = 0;
 		public bool blnAvailable = false;
 	}
 }
