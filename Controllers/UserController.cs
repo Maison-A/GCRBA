@@ -12,7 +12,6 @@ namespace GCRBA.Controllers
     public class UserController : Controller
     {
 
-
         public ActionResult Index()
         {
             Models.User u = new Models.User();
@@ -255,19 +254,28 @@ namespace GCRBA.Controllers
                             
                         // create database object 
                         Database db = new Database();
-                        
+
                         // if user is authenticated then update member table
                         if (user.UID > 0)
                         {
-                        
+
                             // update user data
-                            db.UpdateUser_NotVM(user);
+                            at = db.UpdateUser_NotVM(user);
 
-                            // send request to member table to be reviewed by admin
-                            db.InsertMemberRequest(user);
+                            switch (at)
+                            {
+                                case Models.User.ActionTypes.UpdateSuccessful:
+                                
+                                    // send request to member table to be reviewed by admin
+                                    db.InsertMemberRequest(user);
 
-                            // send Grace email and send to admin controller
-                            SendMemberEmail.SendEmail(user);
+                                    // send Grace email and send to admin controller
+                                    SendMemberEmail.SendEmail(user);
+
+                                    return RedirectToAction("Index", "Home");
+                                default:
+                                    return View(user);
+                            }
 
                         }
                         else
@@ -299,8 +307,6 @@ namespace GCRBA.Controllers
             }
             return View();
         }
-
-
 
     }
 }

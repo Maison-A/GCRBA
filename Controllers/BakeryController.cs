@@ -106,7 +106,7 @@ namespace GCRBA.Views.Bakery {
 
             results.MainURL = results.landingWebsite.Where(r => r.intWebsiteTypeID.Equals(1)).Select(name => name.strURL).FirstOrDefault();
             results.OrderingURL = results.landingWebsite.Where(r => r.intWebsiteTypeID.Equals(2)).Select(name => name.strURL).FirstOrDefault();
-            results.OrderingURL = results.landingWebsite.Where(r => r.intWebsiteTypeID.Equals(0)).Select(name => name.strURL).FirstOrDefault();
+            results.KettleURL = results.landingWebsite.Where(r => r.intWebsiteTypeID.Equals(3)).Select(name => name.strURL).FirstOrDefault();
 
             results.FacebookURL = results.landingSocialMedia.Where(s => s.intSocialMediaID.Equals(1)).Select(name => name.strSocialMediaLink).FirstOrDefault();
             results.InstagramURL = results.landingSocialMedia.Where(s => s.intSocialMediaID.Equals(2)).Select(name => name.strSocialMediaLink).FirstOrDefault();

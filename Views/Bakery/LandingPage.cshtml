@@ -300,21 +300,21 @@
 							@Html.LabelFor(model => model.landingWebsite, "Websites")
 						</th>
 					</tr>
-					@if (Model.MainURL != string.Empty) {
+					@if (!string.IsNullOrEmpty(Model.MainURL)) {
 						<tr>
 							<td>
 								<a href=@Model.MainURL>Visit Main Page</a>
 							</td>
 						</tr>
 					}
-					@if (Model.OrderingURL != string.Empty) {
+					@if (!string.IsNullOrEmpty(Model.OrderingURL)) {
 						<tr>
 							<td>
 								<a href=@Model.OrderingURL>Order From Us!</a>
 							</td>
 						</tr>
 					}
-					@if (Model.KettleURL != string.Empty) {
+					@if (!string.IsNullOrEmpty(Model.KettleURL)) {
 						<tr>
 							<td>
 								<a href=@Model.KettleURL>Donate!</a>
@@ -417,120 +417,202 @@
 				</table>
 			</div>
 		</div>
-		<div class="row">
+        int photoCount = 0;
+        foreach(GCRBA.Models.Image itemImage in Model.landingImages){
+            photoCount++;
+        }
+        int photoIndex = 0;
+        GCRBA.Models.Image[] arrImages = new GCRBA.Models.Image[photoCount + 3];
+        foreach(GCRBA.Models.Image img in Model.landingImages) {
+            arrImages[photoIndex] = img;
+            photoIndex += 1;
+        }
+        int imageCount = arrImages.Length;
+        int imageCounter = 0;
+        int rowCount = 0;
+		int rowItemLimit = 4;
+
+        <div class="row">
 			<div class="member-column-wide-x3">
 				<table id="table-scroll">
-					<tr>
-						<th id="text-center">
+                    <tr>
+                        <th id="text-center">
 							@Html.Label("Photos")
 						</th>
 					</tr>
-					<tr>
-					@foreach(GCRBA.Models.Image i in Model.landingImages) {
-						<td>
-							<div id="image-@i.ImageID" class="user-image-container">
-								<img class="user-profile-thumbnail" src="@string.Concat("data:Image/", i.FileExtension, ";base64,", i.BytesBase64)" />
-							</div>
-						</td>
-					}
-					</tr>
-				</table>
-			</div>
-		</div>
+					@if (photoCount != 0)
+                    {
+                        do
+                        {
+                            rowCount = 0;
+						<tr>
+						@do
+                        {
+                            if (arrImages[imageCounter] != null)
+                            {
+								<td>
+									<div id="image-@arrImages[imageCounter].ImageID" class="user-image-container">
+									    <img class="user-profile-thumbnail" src="@string.Concat("data:Image/", arrImages[imageCounter].FileExtension, ";base64,", arrImages[imageCounter].BytesBase64)" />
+									</div>
+								</td>
+                            }
+                            imageCounter += 1;
+                            rowCount++;
+                        } while (rowCount < rowItemLimit);
+
+						</tr>
+                        } while (imageCounter < photoCount);
+                    }
+                </table>
+            </div>
+        </div>
 	}
-	else {
-		<div class="member-column">
-			<table id="table-scroll">
-				<tr>
-					<th style="text-align:center" colspan="2">
-						@Html.LabelFor(model => model.landingDays, "Hours of Operation")
-					</th>
-				</tr>
-				@foreach (GCRBA.Models.Days catItem in Model.landingDays) {
-					<tr>
-						<td>
-							@Html.DisplayFor(model => model.landingDays[indexDays].strDay)
-						</td>
-						@if (Model.landingDays[indexDays].strOpenTime != "Closed") {
-						<td class="td-expand">
-							@Html.DisplayFor(model => model.landingDays[indexDays].strOpenTime) - @Html.DisplayFor(model => model.landingDays[indexDays].strClosedTime)
-						</td>
+
+    else {
+
+        <div class="member-column">
+
+            <table id="table-scroll">
+
+                <tr>
+
+                    <th style="text-align:center" colspan="2">
+                        @Html.LabelFor(model => model.landingDays, "Hours of Operation")
+                    </th>
+
+                </tr>
+                @foreach (GCRBA.Models.Days catItem in Model.landingDays) {
+
+                    <tr>
+
+                        <td>
+                            @Html.DisplayFor(model => model.landingDays[indexDays].strDay)
+                        </td>
+                        @if (Model.landingDays[indexDays].strOpenTime != "Closed") {
+
+                        <td class="td-expand">
+                            @Html.DisplayFor(model => model.landingDays[indexDays].strOpenTime) - @Html.DisplayFor(model => model.landingDays[indexDays].strClosedTime)
+                        </td>
 						}
-						else {
-						<td>
-							@Html.DisplayFor(model => model.landingDays[indexDays].strOpenTime)
-						</td>
-						}
-					</tr>
-					indexDays += 1;
+
+                        else {
+
+                        <td>
+                            @Html.DisplayFor(model => model.landingDays[indexDays].strOpenTime)
+                        </td>
+
+                        }
+
+                    </tr>
+                    indexDays += 1;
 				}
-			</table>
-		</div>
-		<div class="member-column">
-			<table>
-				<tr>
-					<th style="text-align:center" colspan="2">
-						@Html.Label("Shop Info")
-					</th>
-				</tr>
-				<tr>
-					<td>
-						@Html.LabelFor(model => model.landingLocation.LocationName, "Bakery Name:")
-					</td>
-					<td>
-						@Html.DisplayFor(models => models.landingLocation.LocationName)
-					</td>
-				</tr>
-				<tr>
-					<td>
-						@Html.LabelFor(models => models.landingLocation.StreetAddress, "Street Address:")
-					</td>
-					<td>
-						@Html.DisplayFor(models => models.landingLocation.StreetAddress)
-						@Html.DisplayFor(models => models.landingLocation.City) @Html.DisplayFor(models => models.landingLocation.State), @Html.DisplayFor(models => models.landingLocation.Zip)
-					</td>
-				</tr>
-				<tr>
-					<td>
-						@Html.LabelFor(models => models.landingLocation.BusinessPhone, "Shop Phone:")
-					</td>
-					<td>
-						@Html.DisplayFor(models => models.landingLocation.BusinessPhone)
-					</td>
-				</tr>
-				<tr>
-					<td>
-						@Html.LabelFor(models => models.landingLocation.BusinessEmail, "Shop Email:")
-					</td>
-					<td>
-						<a href="mailto:@Model.landingLocation.BusinessEmail">@Html.DisplayFor(models => models.landingLocation.BusinessEmail)</a>
-					</td>
-				</tr>
-			</table>
-		</div>
-		<div class="member-column">
-			<table id="table-scroll">
-				<tr>
-					<th style="text-align:center">
-						@Html.LabelFor(model => model.landingCategories, "Categories")
-					</th>
-				</tr>
-				@foreach (GCRBA.Models.CategoryItem catItem in Model.landingCategories) {
-					<tr>
-						<td id="td-expand">
-							@Html.DisplayFor(model => model.landingCategories[indexCategory].ItemDesc)
-						</td>
-					</tr>
-					indexCategory += 1;
-				}
-			</table>
-		</div>
-		<br />
+
+            </table>
+
+        </div>
+
+        <div class="member-column">
+
+            <table>
+
+                <tr>
+
+                    <th style="text-align:center" colspan="2">
+                        @Html.Label("Shop Info")
+                    </th>
+
+                </tr>
+
+                <tr>
+
+                    <td>
+                        @Html.LabelFor(model => model.landingLocation.LocationName, "Bakery Name:")
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(models => models.landingLocation.LocationName)
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td>
+                        @Html.LabelFor(models => models.landingLocation.StreetAddress, "Street Address:")
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(models => models.landingLocation.StreetAddress)
+
+                        @Html.DisplayFor(models => models.landingLocation.City) @Html.DisplayFor(models => models.landingLocation.State), @Html.DisplayFor(models => models.landingLocation.Zip)
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td>
+                        @Html.LabelFor(models => models.landingLocation.BusinessPhone, "Shop Phone:")
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(models => models.landingLocation.BusinessPhone)
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td>
+                        @Html.LabelFor(models => models.landingLocation.BusinessEmail, "Shop Email:")
+                    </td>
+
+                    <td>
+
+                        <a href="mailto:@Model.landingLocation.BusinessEmail">@Html.DisplayFor(models => models.landingLocation.BusinessEmail)</a>
+
+                    </td>
+
+                </tr>
+
+            </table>
+
+        </div>
+
+        <div class="member-column">
+
+            <table id="table-scroll">
+
+                <tr>
+
+                    <th style="text-align:center">
+                        @Html.LabelFor(model => model.landingCategories, "Categories")
+                    </th>
+
+                </tr>
+                @foreach (GCRBA.Models.CategoryItem catItem in Model.landingCategories) {
+
+                    <tr>
+
+                        <td id="td-expand">
+                            @Html.DisplayFor(model => model.landingCategories[indexCategory].ItemDesc)
+                        </td>
+
+                    </tr>
+                    indexCategory += 1;
+}
+
+            </table>
+
+        </div>
+
+        <br />
 	}
 
 
 	if (user.myLocation == true) {
-		<button class="button-alert" name="btnSubmit" value="deleteLocation">Delete Location</button>
+
+        <button class="button-alert" name="btnSubmit" value="deleteLocation">Delete Location</button>
 	}
 
 }
