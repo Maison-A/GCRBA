@@ -5,8 +5,6 @@
     ViewBag.Title = "Edit Landing Page";
 }
 
-<h2>@ViewBag.Title</h2>
-
 @using (Html.BeginForm(FormMethod.Post))
 {
     GCRBA.Models.User user = new GCRBA.Models.User();
@@ -17,8 +15,9 @@
     {
         @Html.Partial("MemberOnly");
     }
-    else
+    else if (Model != null)
     {
+        <h2>@ViewBag.Title</h2>
         <br />
         <table>
             <tr>
@@ -34,7 +33,12 @@
             </tr>
         </table>
 
-       
+    }
+    else
+    {
+        <div id="site-banner">
+            No Landing Page Option was Selected.
+        </div>
     }
 }
 
