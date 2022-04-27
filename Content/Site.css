@@ -201,6 +201,16 @@ button i {
 	color: white;
 }
 
+button-cancel1 {
+	background-color: #E4E4E4;
+	color: black;
+}
+
+.button-cancel1:hover {
+	background-color: #555;
+	color: white;
+}
+
 .button-alert {
 	background-color: #FF0000;
 	color: white;

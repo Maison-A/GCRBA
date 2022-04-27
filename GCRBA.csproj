@@ -306,7 +306,6 @@
     <Content Include="Views\AdminPortal\Index.cshtml" />
     <Content Include="Views\Profile\AdminLogin.cshtml" />
     <Content Include="Views\SendMailer\Index.cshtml" />
-    <Content Include="CSV_Folder\Bakery.csv" />
     <Content Include="Views\AdminPortal\EditMainBanner.cshtml" />
     <Content Include="Views\Troubleshoot\Index.cshtml" />
     <Content Include="Views\Troubleshoot\EmailIssue.cshtml" />
@@ -357,6 +356,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="CSV_Folder\" />
     <Folder Include="Views\Default\" />
     <Folder Include="Views\IndexViewModel\" />
   </ItemGroup>
