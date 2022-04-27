@@ -55,6 +55,7 @@ namespace GCRBA.Models {
 			body = body.Replace("{MemberShipType}", memberMailModel.Content.MemberShipType);
 			body = body.Replace("{PaymentType}", memberMailModel.Content.PaymentType);
 			body = body.Replace("{Phone}", memberMailModel.Content.Phone);
+			body = body.Replace("{Description}", memberMailModel.Description);
 
 			using (MailMessage mailMessage = new MailMessage()) {
 				mailMessage.From = new MailAddress(memberMailModel.UserName);
