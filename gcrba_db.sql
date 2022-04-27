@@ -43,7 +43,8 @@ IF OBJECT_ID('tblTempDay')					IS NOT NULL DROP TABLE tblTempDay
 IF OBJECT_ID('tblMainBanner')				IS NOT NULL DROP TABLE tblMainBanner
 IF OBJECT_ID('tblAboutGCRBA')				IS NOT NULL DROP TABLE tblAboutGCRBA
 IF OBJECT_ID('tblAdminNotification')		IS NOT NULL DROP TABLE tblAdminNotification
-IF OBJECT_ID('tblChangeType')				IS NOT NULL DROP TABLE tblChangeType
+IF OBJECT_ID('tblEditedColumn')				IS NOT NULL DROP TABLE tblEditedColumn
+IF OBJECT_ID('tblEditedTable')				IS NOT NULL DROP TABLE tblEditedTable
 IF OBJECT_ID('tblNewVersion')				IS NOT NULL DROP TABLE tblNewVersion
 IF OBJECT_ID('tblPreviousVersion')			IS NOT NULL DROP TABLE tblPreviousVersion
 IF OBJECT_ID('tblUser')						IS NOT NULL DROP TABLE tblUser 
@@ -131,6 +132,7 @@ IF OBJECT_ID ('INSERT_LOCATION_IMAGES')						IS NOT NULL DROP PROCEDURE INSERT_L
 IF OBJECT_ID ('SELECT_MEMBER_COMPANIES')					IS NOT NULL DROP PROCEDURE SELECT_MEMBER_COMPANIES
 IF OBJECT_ID ('GET_COMPANY_BY_MEMBER')						IS NOT NULL DROP PROCEDURE GET_COMPANY_BY_MEMBER
 IF OBJECT_ID ('UPDATE_COMPANY_INFO')						IS NOT NULL DROP PROCEDURE UPDATE_COMPANY_INFO
+IF OBJECT_ID ('INSERT_ADMIN_NOTIFICATION_COMPANY_EDIT')		IS NOT NULL DROP PROCEDURE INSERT_ADMIN_NOTIFICATION_COMPANY_EDIT
 
 CREATE TABLE tblTempCompany   
 (
@@ -141,18 +143,26 @@ CREATE TABLE tblTempCompany
 	CONSTRAINT tblTempCompany_PK PRIMARY KEY (intCompanyID)
 )
 
-CREATE TABLE tblChangeType
+CREATE TABLE tblEditedColumn
 (
-	intChangeTypeID			SMALLINT IDENTITY(1,1)	NOT NULL, 
-	strChangeType			NVARCHAR(50)			NOT NULL, 
-	CONSTRAINT tblChangeType_PK PRIMARY KEY (intChangeTypeID)
+	intEditedColumnID		SMALLINT IDENTITY(1,1)	NOT NULL, 
+	strColumnName			NVARCHAR(50)			NOT NULL, 
+	CONSTRAINT tblEditedColumn_PK PRIMARY KEY (intEditedColumnID)
+)
+
+CREATE TABLE tblEditedTable
+(
+	intEditedTableID		SMALLINT IDENTITY(1,1)	NOT NULL, 
+	strTableName			NVARCHAR(50)			NOT NULL, 
+	CONSTRAINT tblEditedTable_PK PRIMARY KEY (intEditedTableID)
 )
 
 CREATE TABLE tblAdminNotification
 (
 	intAdminNotificationID	SMALLINT IDENTITY(1,1)	NOT NULL, 
 	intUserID				SMALLINT		NOT NULL, 
-	intChangeTypeID			SMALLINT		NOT NULL, 
+	intEditedColumnID		SMALLINT		NOT NULL, 
+	intEditedTableID		SMALLINT		NOT NULL, 
 	strPreviousVersion		NVARCHAR(2000)	NOT NULL, 
 	strNewVersion			NVARCHAR(2000)	NOT NULL,	
 	intNotificationStatusID	SMALLINT		NOT NULL,
@@ -755,11 +765,17 @@ FOREIGN KEY (intNotificationStatusID) REFERENCES tblNotificationStatus (intNotif
 ALTER TABLE tblLocationImages ADD CONSTRAINT tblLocationImages_tblLocation_FK
 FOREIGN KEY (intLocationID) REFERENCES tblLocation (intLocationID)
 
-ALTER TABLE tblAdminNotification ADD CONSTRAINT tblAdminNotification_intUserID_FK
+ALTER TABLE tblAdminNotification ADD CONSTRAINT tblAdminNotification_tblUser_FK
 FOREIGN KEY (intUserID) REFERENCES tblUser (intUserID)
 
-ALTER TABLE tblAdminNotification ADD CONSTRAINT tblAdminNotification_intChangeTypeID_FK
-FOREIGN KEY (intChangeTypeID) REFERENCES tblChangeType (intChangeTypeID)
+ALTER TABLE tblAdminNotification ADD CONSTRAINT tblAdminNotification_tblEditedColumn_FK
+FOREIGN KEY (intEditedColumnID) REFERENCES tblEditedColumn (intEditedColumnID)
+
+ALTER TABLE tblAdminNotification ADD CONSTRAINT tblAdminNotification_tblEditedTable_FK
+FOREIGN KEY (intEditedTableID) REFERENCES tblEditedTable (intEditedTableID)
+
+ALTER TABLE tblAdminNotification ADD CONSTRAINT tblAdminNotification_tblNotificationStatus_FK
+FOREIGN KEY (intNotificationStatusID) REFERENCES tblNotificationStatus (intNotificationStatusID)
 -- -----------------------------------------------------------------------------------------
 -- STORED PROCEDURES 
 -- -----------------------------------------------------------------------------------------
@@ -2395,9 +2411,9 @@ GO
 
 CREATE PROCEDURE [db_owner].[UPDATE_COMPANY_INFO]
 @intCompanyID BIGINT,
-@strCompanyName NVARCHAR(50),
-@strAbout NVARCHAR(2000),
-@strBizYear NVARCHAR(4)
+@strCompanyName NVARCHAR(50) = NULL,
+@strAbout NVARCHAR(2000) = NULL,
+@strBizYear NVARCHAR(4) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -2416,15 +2432,48 @@ BEGIN
 		UPDATE	tblCompany
 		SET		strBizYear = @strBizYear 
 		WHERE	intCompanyID = @intCompanyID 
+
+	RETURN 1
 END
 GO
+
+CREATE PROCEDURE [db_owner].[INSERT_ADMIN_NOTIFICATION_COMPANY_EDIT]
+@intUserID SMALLINT,
+@intEditedColumnID SMALLINT,
+@strPreviousVersion NVARCHAR(2000),
+@strNewVersion NVARCHAR(2000)
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+	INSERT INTO [db_owner].[tblAdminNotification]
+				([intUserID]
+				,[intEditedColumnID]
+				,[intEditedTableID]
+				,[strPreviousVersion]
+				,[strNewVersion]
+				,[intNotificationStatusID])
+			VALUES
+				(@intUserID
+				,@intEditedColumnID
+				,1
+				,@strPreviousVersion
+				,@strNewVersion
+				, 2)
+			RETURN 1
+END
+GO
+
 -- -----------------------------------------------------------------------------------------
 -- ADD TEST DATA
 -- -----------------------------------------------------------------------------------------
-INSERT INTO tblChangeType (strChangeType)
+INSERT INTO tblEditedColumn (strColumnName)
 VALUES		('strCompanyName'),
 			('strAbout'),
 			('strBizYear')
+
+INSERT INTO tblEditedTable (strTableName)
+VALUES		('tblCompany')
 
 INSERT INTO tblNotification (strNotification)
 VALUES		('Your request for membership has been approved'),
@@ -2492,9 +2541,9 @@ VALUES	('Monday'),
 
 -- COMPANY INFORMATION FOR THE BONBONERIE
 INSERT INTO tblCompany (strCompanyName, strAbout, strBizYear)
-VALUES	('The Bonbonerie', 'At BonBonerie, our rule is that everything we make must be two things: beautiful and delicious. That means using quality ingredients like sweet cream butter, cane sugar, fresh lemon juice and zest, Belgian chocolate, and real vanilla from Madagascar. We create everything by hand in the BonBonerie kitchens, including all our doughs, icings, syrups, batters, and fillings.<br /><br />Each of our original recipes have been reworked and refined over years to create pastry that is unique, perfected, and delicious.<br /><br />Our extremely talented staff of bakers and decorators can customize almost anything for your special event. From astonishing cake centerpieces to hand-cut cookies, everything is crafted with the utmost care by true artists in their field.<br /><br />We are proud to be your award-winning choice for all pastries Beautiful and Delicious since 1983.', '1963'),
-	('Wyoming Pastry Shop', 'Welcome to Wyoming Pastry Shop<br /><br />Our bakery has been serving the Village of Wyoming and surrounding areas since 1934. Phillip and Kimberly Reschke are the fifth owners of this hometown bakery. Phillip is a second generation Master Baker, working with his father, a Master Baker from Germany, he has learned all aspects of the bakery and pastry trade and takes pride in all of the products he crafts. Kimberly has been decorating cakes for 30 years, spending time in Cincinnati and Las Vegas perfecting her skills and creativity in a variety of pastry and cake design. We strive for complete customer satisfaction. We want you to think of us whenever you have a craving for something sweet, a special cake or cookie, or one of our many products we offer. We are a small business and will keep it small so we can control our quality to provide the best product to you.', '1972'),
-	('Servatii Pastry Shop', 'Who We Are and What We Do<br /><br />Wilhelm Gottenbusch, a German immigrant, came to the United States after traveling around the world on an international freighter. In 1963, Wilhelm opened his first bakery on Observatory Avenue in Hyde Park. In a one man shop, with a bakery in the back, he made a name for himself by focusing on one thing - quality. Focusong on the quality of his products, Wilhelm and his sons have expanded and grown over the last 50 years. Wilhelm brought the traditions of his father and grandfather over from Muenster, Germany. His grandfather, George, started out driving a horse drawn wagon door to door selling his fresh baked goods. Wilhelm''s father, George, attended Germany''s most recognizable baking school and received his "Konditor Meister" status - Master Pastry Chef. His father opened Cafe Servatii, on Servatii Platz, in the hear of Muenster, Germany. Wilhelm followed in his father''s footsteps by earning his "Master Baker" status and starting his own business in Cincinnati, Ohio.<br /><br />Wilhelm''s sons Gary and Greg have both apprenticed in Germany earning their journeyman status - Greg in pastry and Gary in baking. Gary continued in his father and grandfather''s footsteps by earning his Master Baker certification in 2001. In turn, the Gottenbusch''s have acquired some of the most talented bakers, decorators and pastry chefs in America. All together they work to uphold the values set forth by Wilhelm Gottenbusch 50 years ago.<br /><br />Today Gary runs a pretzel company from Germany called Pretzel Baron and Greg Gottenbusch runs the day to day business of Servatii. Mr. Gottenbusch still comes in and does his quality checks and keeps everyone in line. Paul, Gary''s son, is now the head night baker learning the family business.<br /><br />The future is bright and we appreciate all of our customers who have made Servatii their tradition.', '1963')
+VALUES	('The Bonbonerie', 'At BonBonerie, our rule is that everything we make must be two things: beautiful and delicious. That means using quality ingredients like sweet cream butter, cane sugar, fresh lemon juice and zest, Belgian chocolate, and real vanilla from Madagascar. We create everything by hand in the BonBonerie kitchens, including all our doughs, icings, syrups, batters, and fillings.  Each of our original recipes have been reworked and refined over years to create pastry that is unique, perfected, and delicious.  Our extremely talented staff of bakers and decorators can customize almost anything for your special event. From astonishing cake centerpieces to hand-cut cookies, everything is crafted with the utmost care by true artists in their field.  We are proud to be your award-winning choice for all pastries Beautiful and Delicious since 1983.', '1963'),
+	('Wyoming Pastry Shop', 'Welcome to Wyoming Pastry Shop  Our bakery has been serving the Village of Wyoming and surrounding areas since 1934. Phillip and Kimberly Reschke are the fifth owners of this hometown bakery. Phillip is a second generation Master Baker, working with his father, a Master Baker from Germany, he has learned all aspects of the bakery and pastry trade and takes pride in all of the products he crafts. Kimberly has been decorating cakes for 30 years, spending time in Cincinnati and Las Vegas perfecting her skills and creativity in a variety of pastry and cake design. We strive for complete customer satisfaction. We want you to think of us whenever you have a craving for something sweet, a special cake or cookie, or one of our many products we offer. We are a small business and will keep it small so we can control our quality to provide the best product to you.', '1972'),
+	('Servatii Pastry Shop', 'Who We Are and What We Do  Wilhelm Gottenbusch, a German immigrant, came to the United States after traveling around the world on an international freighter. In 1963, Wilhelm opened his first bakery on Observatory Avenue in Hyde Park. In a one man shop, with a bakery in the back, he made a name for himself by focusing on one thing - quality. Focusong on the quality of his products, Wilhelm and his sons have expanded and grown over the last 50 years. Wilhelm brought the traditions of his father and grandfather over from Muenster, Germany. His grandfather, George, started out driving a horse drawn wagon door to door selling his fresh baked goods. Wilhelm''s father, George, attended Germany''s most recognizable baking school and received his "Konditor Meister" status - Master Pastry Chef. His father opened Cafe Servatii, on Servatii Platz, in the hear of Muenster, Germany. Wilhelm followed in his father''s footsteps by earning his "Master Baker" status and starting his own business in Cincinnati, Ohio.  Wilhelm''s sons Gary and Greg have both apprenticed in Germany earning their journeyman status - Greg in pastry and Gary in baking. Gary continued in his father and grandfather''s footsteps by earning his Master Baker certification in 2001. In turn, the Gottenbusch''s have acquired some of the most talented bakers, decorators and pastry chefs in America. All together they work to uphold the values set forth by Wilhelm Gottenbusch 50 years ago.  Today Gary runs a pretzel company from Germany called Pretzel Baron and Greg Gottenbusch runs the day to day business of Servatii. Mr. Gottenbusch still comes in and does his quality checks and keeps everyone in line. Paul, Gary''s son, is now the head night baker learning the family business.  The future is bright and we appreciate all of our customers who have made Servatii their tradition.', '1963')
 
 INSERT INTO tblCompanyAward (intCompanyID, strFrom, strAward)
 VALUES	(1, 'Best of City Search', 'Best of City'),
@@ -2758,6 +2807,7 @@ VALUES									(1, 1)
 INSERT INTO tblTempCompanySocialMedia (intCompanyID, strSocialMediaLink, intSocialMediaID)
 VALUES					(1, 'https://www.facebook.com', 1)
 
+-- delete after testing
 INSERT INTO tblUserNotification (intUserID, intNotificationID, intNotificationStatusID)
 VALUES		(6, 1, 2),
-			(6, 1, 2)
+			(6, 1, 2) 
