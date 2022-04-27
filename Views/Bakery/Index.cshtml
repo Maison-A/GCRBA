@@ -25,7 +25,7 @@
 	}
 
 	#results {
-		width: 590px;
+		width: 700px;
 	}
 
 	table {
@@ -261,14 +261,29 @@
 					<th>Search Results:</th>
 				</tr>
 				@if (Model.lstLocations != null) {
-					foreach (GCRBA.Models.NewLocation item in Model.lstLocations) {
-						<tr>
-							<td><u></u>
-								<div>
-									<button class="button-cancel" id="results" name="btnSubmit" value=@item.lngLocationID><u>@item.LocationName | @item.StreetAddress, @item.City @item.State | @item.selectedGood</u></button>
-								</div>
-							</td>
-						</tr>
+					foreach (GCRBA.Models.NewLocation member in Model.lstLocations) {
+						if (member.isMember == true) {
+							<tr>
+								<td>
+									<u></u>
+									<div>
+										<button class="button-cancel" id="results" name="btnSubmit" value=@member.lngLocationID><strong><u>@member.LocationName | @member.StreetAddress, @member.City @member.State | @member.selectedGood</u></strong></button>
+									</div>
+								</td>
+							</tr>
+						}
+					}
+					foreach(GCRBA.Models.NewLocation notMember in Model.lstLocations) {
+						if (notMember.isMember == false) {
+							<tr>
+								<td>
+									<u></u>
+									<div>
+										<button class="button-cancel" id="results" name="btnSubmit" value=@notMember.lngLocationID><u>@notMember.LocationName | @notMember.StreetAddress, @notMember.City @notMember.State | @notMember.selectedGood</u></button>
+									</div>
+								</td>
+							</tr>
+						}
 					}
 				}
 			</table>

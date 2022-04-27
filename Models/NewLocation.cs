@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.IO;
 
 namespace GCRBA.Models {
 	public class NewLocation {
@@ -9,6 +10,8 @@ namespace GCRBA.Models {
 		public long lngCompanyID = 0;
 		public List<Models.Company> lstCompanies { get; set; }
 		public bool memberStatus { get; set; }
+
+		public Models.User User = new Models.User();
 
 		//Address Information
 		public string CompanyName = string.Empty;
@@ -47,8 +50,9 @@ namespace GCRBA.Models {
 		public CategoryItem Shipping = new CategoryItem();
 		public CategoryItem Online = new CategoryItem();
 
-		public Models.BakedGoods bakedGoods = new Models.BakedGoods();
+		public bool isMember = false;
 
+		public Models.BakedGoods bakedGoods = new Models.BakedGoods();
 		public string selectedGood = string.Empty;
 
 		//Bakery Days/Times Hours of Operation
@@ -83,6 +87,10 @@ namespace GCRBA.Models {
 		public SocialMedia TikTok;
 		public SocialMedia Yelp;
 
+		//Images
+		public List<Image> Images;
+		public Image LocationImage;
+
 		public enum ActionTypes {
 			NoType = 0,
 			InsertSuccessful = 1,
@@ -94,6 +102,48 @@ namespace GCRBA.Models {
 			Unknown = 7
 		}
 
+		public sbyte AddLocationImage(HttpPostedFileBase f, Models.NewLocation loc) {
+			try {
+				this.LocationImage = new Image();
+				this.LocationImage.FileName = Path.GetFileName(f.FileName);
 
+				if(this.LocationImage.IsImageFile()) {
+					this.LocationImage.Size = f.ContentLength;
+					Stream stream = f.InputStream;
+					BinaryReader binaryReader = new BinaryReader(stream);
+					this.LocationImage.ImageData = binaryReader.ReadBytes((int)stream.Length);
+					this.UpdateLocationImage(loc);
+				}
+				return 0;
+			}
+			catch(Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public sbyte UpdateLocationImage(Models.NewLocation loc) {
+			try {
+				Models.Database db = new Database();
+				long NewUID;
+				if (this.LocationImage.ImageID == 0) {
+					loc.LocationImage = this.LocationImage;
+					NewUID = db.InsertLocationImage(loc);
+					if (NewUID > 0) LocationImage.ImageID = NewUID;
+				}
+				else {
+					//db.UpdateUserImage(this);
+				}
+				return 0;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public NewLocation GetLocation(long ID) {
+			try {
+				Models.Database db = new Models.Database();
+				Models.NewLocation loc = new Models.NewLocation();
+				loc = db.GetLandingLocation(ID);
+				return loc;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
 	}
 }

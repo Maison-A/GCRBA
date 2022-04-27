@@ -18,6 +18,8 @@ namespace GCRBA.Models
 		public List<Models.Website> landingWebsite;
 		public List<Models.Days> landingDays;
 
+		public List<Models.CompanyMember> lstCompanyMembers;
+
 		public string MainURL = string.Empty;
 		public string OrderingURL = string.Empty;
 		public string KettleURL = string.Empty;
@@ -51,5 +53,8 @@ namespace GCRBA.Models
 		public CategoryItem Delivery = new CategoryItem();
 		public CategoryItem Shipping = new CategoryItem();
 		public CategoryItem Online = new CategoryItem();
+
+		public List<Image> landingImages;
+		public Image LocationImage;
 	}
 }

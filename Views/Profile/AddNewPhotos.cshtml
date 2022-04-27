@@ -1,0 +1,148 @@
+﻿@model GCRBA.Models.NewLocation
+@{
+    ViewBag.Title = "Modify Photos";
+}
+
+<style>
+    .user-image-container img {
+        height: 100px;
+        position: inherit;
+    }
+
+    img {
+        vertical-align: initial;
+        box-sizing: initial;
+        text-align: initial;
+    }
+
+    body {
+        margin: 0 0 1em 0;
+        padding: 0;
+        font-size: 1em;
+        font-family: "Proxima Nova Extra Condensed",proxima-nova-extra-condensed,Helvetica,sans-serif;
+        font-weight: initial;
+        line-height: initial;
+        -webkit-text-size-adjust: initial;
+    }
+
+    *, *::before, *::after {
+        box-sizing: initial;
+    }
+</style>
+
+@using (Html.BeginForm(FormMethod.Post))
+{
+    GCRBA.Models.User user = new GCRBA.Models.User();
+    user = user.GetUserSession();
+
+
+    if (user.isMember != 1)
+    {
+        @Html.Partial("MemberOnly");
+    }
+    else
+    {
+        <div id="site-header" class="some-spacing">
+            <h2>@ViewBag.Title</h2>
+        </div>
+
+        <div id="image-drop-container" style="align-content:center; align-self:center">
+            <div id="drop-message" style="">Drop your files here.</div>
+            <div id="upload-message"></div>
+        </div>
+
+        if (Model.Images == null || Model.Images.Count == 0)
+        {
+            <p>Drop your files in the box above.</p>
+        }
+        else
+        {
+            if (Model.Images.Count > 0)
+            {
+                <h4>Your Photos</h4>
+                foreach (GCRBA.Models.Image i in Model.Images)
+                {
+                    <div id="image-@i.ImageID" class="user-image-container">
+                        <img class="user-profile-thumbnail" src="@string.Concat("data:Image/",
+						i.FileExtension, ";base64,",
+						i.BytesBase64)" align="left" />
+                        <div class="image-delete-button" title="Delete this image">
+                            <a href="javascript:void(0)" onclick="deleteImageAjax('profile', @Model.lngLocationID, @i.ImageID);">
+                                <i class="fal fa-trash-alt"></i>
+                            </a>
+                        </div>
+
+                    </div>
+                }
+            }
+        }
+        @Html.HiddenFor(model => model.lngLocationID, new { @name="hiddenLocID"})
+    }
+}
+
+@section Scripts {
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="~/Scripts/jquery.filedrop.js"></script>
+    <script type="text/javascript">
+		$(function () {
+			var fileCount = 0, maximumFileCount = 10, maximumFileSize = 5;
+			$("#image-drop-container").filedrop({
+				url: '@Url.Action("Index")',
+				allowedfiletypes: ["image/jpeg", "image/png", "image/gif"],
+				allowedfileextensions: [".JPG", ".jpg", ".JPEG", ".jpeg", ".png", ".PNG", ".gif", ".GIF"],
+				paramname: "files",
+				maxfiles: maximumFileCount,
+				maxfilesize: maximumFileSize,
+				dragOver: function () {
+					$("#image-drop-container").addClass("active-drop");
+				},
+				dragLeave: function () {
+					$("#image-drop-container").removeClass("active-drop");
+				},
+				drop: function () {
+					$("#image-drop-container").removeClass("active-drop");
+				},
+				afterAll: function (e) {
+					$("#image-drop-container").html(fileCount.toString().concat(" file(s) uploaded."));
+					window.location.href = '@Url.Action("Index")';
+					fileCount = 0;
+				},
+				uploadFinished: function (i, file, response, time) {
+					fileCount++;
+					if (fileCount == 1)
+						$("#upload-message").html(fileCount.toString().concat(" file uploaded."));
+					else
+						$("#upload-message").html(fileCount.toString().concat(" files uploaded."));
+				},
+				error: function (err, file) {
+					switch (err) {
+						case 'BrowserNotSupported':
+							alert('This browser does not support HTML5 drag and drop.')
+							break;
+						case 'TooManyFiles':
+							// user uploaded more than 'maxfiles'
+							alert("Maximum number of files to add at one time is ".concat(maxFileCount).concat("."));
+							break;
+						case 'FileTooLarge':
+							// program encountered a file whose size is greater than 'maxfilesize'
+							// FileTooLarge also has access to the file which was too large
+							// use file.name to reference the filename of the culprit file
+							alert("File Too Large");
+							break;
+						case 'FileTypeNotAllowed':
+							// The file type is not in the specified list 'allowedfiletypes'
+							alert("File Type Not Allowed!!!");
+							break;
+						case 'FileExtensionNotAllowed':
+							// The file extension is not in the specified list 'allowedfileextensions'
+							alert('File Extension Not Allowed');
+							break;
+						default:
+							break;
+					}
+				},
+
+			})
+		})
+    </script>
+}

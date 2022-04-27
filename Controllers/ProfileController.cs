@@ -330,6 +330,9 @@ namespace GCRBA.Controllers
             // get current user session 
             u = u.GetUserSession();
 
+            Models.Database db = new Models.Database();
+            u.lstMemberLocations = db.GetMemberLocations(u);
+
             // create user notification object
             u.Notification = new Notification();
 
@@ -354,8 +357,57 @@ namespace GCRBA.Controllers
 			}
 
             return View(u);
+        } 
+
+        public ActionResult EditLandingPage()
+        {
+            User u = new User();
+            u = u.GetUserSession();
+            Models.Database db = new Models.Database();
+            List<Models.NewLocation> landingLocations = new List<NewLocation>();
+            landingLocations = db.GetMemberLocations(u);
+            Models.LandingLocationList landingLocList = new Models.LandingLocationList()
+            {
+                SelectedLandingLocationRequests = new[] { 1 },
+                LandingLocations = GetAllLandingLocations(landingLocations)
+            };
+            return View(landingLocList);
         }
-        
+
+        public List<SelectListItem> GetAllLandingLocations(List<Models.NewLocation> landingLocations)
+        {
+            List<SelectListItem> items = new List<SelectListItem>();
+            foreach (Models.NewLocation loc in landingLocations)
+            {
+
+                items.Add(new SelectListItem { Text = loc.LocationName, Value = loc.lngLocationID.ToString() });
+            }
+            return items;
+        }
+
+        [HttpPost]
+        public ActionResult EditLandingPage(FormCollection col, LandingLocationList loc)
+        {
+            Models.Database db = new Models.Database();
+            Models.LandingLocationList landingLocationList = new Models.LandingLocationList();
+            Models.User u = new Models.User();
+            u = u.GetUserSession();
+
+            landingLocationList.lstLandingLocations = db.GetMemberLocations(u);
+            loc.LandingLocations = GetAllLandingLocations(landingLocationList.lstLandingLocations);
+            if (col["btnSubmit"].ToString() == "AddNewPhotos" && loc.SelectedLandingLocationRequests != null)
+            {
+                List<SelectListItem> selectedItems = loc.LandingLocations.Where(p => loc.SelectedLandingLocationRequests.Contains(int.Parse(p.Value))).ToList();
+                foreach (var Request in selectedItems)
+                {
+                    Request.Selected = true;
+                    Models.NewLocation landingLocation = new Models.NewLocation();
+                    return RedirectToAction("Index", "Photo", new { @id = Convert.ToInt64(Request.Value) });
+                }
+            }
+            return View();
+        }
+
         public ActionResult EditProfile()
 		{
             // initialize MemberVM

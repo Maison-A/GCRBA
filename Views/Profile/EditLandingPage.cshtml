@@ -1,7 +1,40 @@
 ﻿
+@model GCRBA.Models.LandingLocationList
+
 @{
-    ViewBag.Title = "EditLandingPage";
+    ViewBag.Title = "Edit Landing Page";
 }
 
-<h2>EditLandingPage</h2>
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm(FormMethod.Post))
+{
+    GCRBA.Models.User user = new GCRBA.Models.User();
+    user = user.GetUserSession();
+
+
+    if (user.isMember != 1)
+    {
+        @Html.Partial("MemberOnly");
+    }
+    else
+    {
+        <br />
+        <table>
+            <tr>
+                <td>
+                    <div class="container w-75">
+                        <h2>@ViewBag.Title</h2>
+                        @Html.ListBoxFor(model => model.SelectedLandingLocationRequests, Model.LandingLocations, new { style = "width: 600px" }) <br /><br />
+                        <button class="button-action" name="btnSubmit" value="AddNewPhotos">Modify Photos</button>
+                        <br />
+                        <br />
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+       
+    }
+}
 
