@@ -1612,6 +1612,7 @@ BEGIN
 
 		DELETE FROM db_owner.tblTempCategoryLocation WHERE intLocationID = @lngLocationID
 		DELETE FROM db_owner.tblTempLocationHours WHERE intLocationID = @lngLocationID
+		DELETE FROM db_owner.tblLocationImages WHERE intLocationID = @lngLocationID
 		DELETE FROM db_owner.tblTempCompanySocialMedia WHERE intCompanyID = @lngCompanyID
 		DELETE FROM db_owner.tblTempWebsite WHERE intCompanyID = @lngCompanyID
 		DELETE from db_owner.tblTempContactLocation Where intLocationID = @lngLocationID
@@ -2676,10 +2677,10 @@ VALUES		(3, 'https://give.salvationarmy.org/team/353650', 3),
 			(3, 'https://www.servatii.com/online-orders', 2),
 			(2, 'http://www.wyomingpastryshop.com/', 1),
 			(1, 'https://www.bonbonerie.com/', 1),
-			(1, 'https://cincyfavorites.com/shop/bonbonerie-bakery/', 2)
+			(1, 'https://www.cincyfavorites.com/shop/bonbonerie-bakery/', 2)
 
 INSERT INTO tblCompanySocialMedia (strSocialMediaLink, intCompanyID, intSocialMediaID)
-VALUES		('https://twitter.com/servatiipastry', 3, 5),
+VALUES		('https://www.twitter.com/servatiipastry', 3, 5),
 			('https://facebook.com/servatii', 3, 1),
 			('https://www.instagram.com/servatiipastry/?hl=en', 3, 2),
 			('https://mobile.twitter.com/wyomingpastry', 2, 5),
