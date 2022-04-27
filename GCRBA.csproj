@@ -348,6 +348,7 @@
     <Content Include="Views\Photo\Index.cshtml" />
     <Content Include="Views\Profile\AddCompany.cshtml" />
     <Content Include="Views\Profile\EditExistingCompany.cshtml" />
+    <Content Include="Views\Profile\EditWebsites.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

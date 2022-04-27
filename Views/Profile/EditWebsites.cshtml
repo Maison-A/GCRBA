@@ -1,0 +1,59 @@
+﻿@using GCRBA.ViewModels
+@model ProfileViewModel
+
+@{
+	ViewBag.Title = "Edit Company Website(s)";
+}
+
+@if (Model.Website.ActionType == GCRBA.Models.Website.ActionTypes.UpdateSuccessful)
+			{
+				<p>Website successfully updated.</p>
+			}
+
+@if (Model.Website.ActionType == GCRBA.Models.Website.ActionTypes.InsertSuccessful)
+			{
+				<p>You successfully added a new website.</p>
+			}
+
+@using (Html.BeginForm(FormMethod.Post))
+{
+	<div class="row justify-content-center">
+		<button name="btnSubmit" value="editExistingWebsites" class="w-25 m-2 button-action">Edit Existing Website(s)</button>
+		<button name="btnSubmit" value="addNewWebsites" class="w-25 m-2 button-action">Add New Website(s)</button>
+	</div>
+
+	if (Model.Button.CurrentButton == "edit")
+	{
+		if (Model.Websites.Count > 0)
+		{
+			// show form input for editing current websites
+			foreach (var item in Model.Websites)
+			{
+				<div class="d-inline-flex m-3 row">
+					<label for="@item.intWebsiteID" class="form-label">@item.strWebsiteType</label>
+					<input type="text" name="@item.strWebsiteType" class="form-control mb-3" value="@item.strURL" />
+					<button name="btnSubmit" value="@item.intWebsiteID" class="btn btn-danger">Delete</button>
+				</div>
+			}
+		} 
+		else
+		{
+			<p>There are currently no websites associated with your company. Click the button above to add a new website.</p>
+		}
+
+	} else if (Model.Button.CurrentButton == "add")
+	{
+		<label for="websiteTypes" class="form-label">Website Type</label>
+		<select name="websiteTypes" class="form-control">
+			@foreach (var item in Model.Websites)
+			{
+				<option value="@item.intWebsiteTypeID">@item.strWebsiteType</option>
+			}
+		</select>
+		<input type="text" name="newWebsite" class="form-control" />
+	}
+	<div class="row">
+		<button name="btnSubmit" type="submit" value="submit" class="button-action">Submit</button>
+		<button name="btnSubmit" value="cancel" class="button-action">Cancel</button>
+	</div>
+}

@@ -558,7 +558,7 @@ namespace GCRBA.Controllers
                     editedColumn = 1;
 
                     // send notification to admin about change 
-                    SendEditNotificationToAdmin(vm.User, editedColumn, previousVersion, vm.Company.Name);
+                    SendCompanyEditNotification(vm.User, editedColumn, previousVersion, vm.Company.Name);
                 }
                 else
 				{
@@ -576,7 +576,7 @@ namespace GCRBA.Controllers
                     editedColumn = 2;
 
                     // send notification to admin about change
-                    SendEditNotificationToAdmin(vm.User, editedColumn, previousVersion, vm.Company.About);
+                    SendCompanyEditNotification(vm.User, editedColumn, previousVersion, vm.Company.About);
                 }
                 else
 				{
@@ -594,7 +594,7 @@ namespace GCRBA.Controllers
                     editedColumn = 3;
 
                     // send notification to admin about change
-                    SendEditNotificationToAdmin(vm.User, editedColumn, previousVersion, vm.Company.Year);
+                    SendCompanyEditNotification(vm.User, editedColumn, previousVersion, vm.Company.Year);
 
                 }
                 else
@@ -622,6 +622,294 @@ namespace GCRBA.Controllers
             return View(vm);
 		}
 
+        public ActionResult EditWebsites()
+		{
+            ProfileViewModel vm = InitProfileViewModel();
+            vm.Websites = new List<Website>();
+            vm.Website = new Website();
+            vm.Button = new Button();
+            vm.Company = new Company();
+
+            return View(vm);
+		}
+
+        private void SaveButtonSession(string buttonValue)
+        {
+            try
+            {
+                // create button object 
+                Button button = new Button();
+
+                // get value of button pressed 
+                button.CurrentButton = buttonValue;
+
+                // save button session 
+                button.SaveButtonSession();
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        [HttpPost]
+        public ActionResult EditWebsites(FormCollection col)
+		{
+            ProfileViewModel vm = InitProfileViewModel();
+            vm.Company = new Company();
+            vm.Company = GetCompany(vm);
+
+            int editedColumn = 0;
+
+            // create website list object then get list of websites 
+            vm.Websites = new List<Website>();
+
+            vm.Website = new Website();
+
+            // get current session of company websites associated with member
+            // if none, will be null
+            vm.Websites = vm.Website.GetWebsitesSession();
+
+            // create button object so we can track which button has been clicked
+            vm.Button = new Button();
+
+            // get current button session -- if none, will return null button object
+            vm.Button = vm.Button.GetButtonSession();
+
+            if (col["btnSubmit"].ToString() == "editExistingWebsites")
+			{
+                // remove current button session so we can set it as this one 
+                vm.Button.RemoveButtonSession();
+
+                // set button to "edit" so we know what form input to show 
+                vm.Button.CurrentButton = "edit";
+
+                // save new button session 
+                vm.Button.SaveButtonSession();
+
+                // remove current session of websites if not null
+                vm.Website.RemoveWebsitesSession();
+                
+                // get current list of websites associated with member 
+                vm.Websites = GetCompanyWebsites(vm);
+
+                // save websites list in session 
+                vm.Website.SaveWebsitesSession(vm.Websites);
+
+                return View(vm);
+            }
+
+            if (col["btnSubmit"].ToString() == "addNewWebsites")
+			{
+                // remove current button session so we can set it as this one 
+                vm.Button.RemoveButtonSession();
+
+                vm.Button.CurrentButton = "add";
+
+                // set button to "add" so we know what form input to show 
+                vm.Button.SaveButtonSession();
+
+                // save new button session 
+                vm.Button.SaveButtonSession();
+
+                // remove current session of websites if not null
+                vm.Website.RemoveWebsitesSession();
+
+                // get current list of website types
+                vm.Websites = GetWebsiteTypes(vm);
+
+                // save websites list in session 
+                vm.Website.SaveWebsitesSession(vm.Websites);
+
+                return View(vm);
+			}
+
+            // see if user clicked delete button for existing company website 
+            int test = 0;
+            string input = col["btnSubmit"].ToString();
+            bool result = int.TryParse(input, out test);
+
+            // each delete button is the intWebsiteID for the corresponding website
+            // if one is clicked, result will be true 
+            // if true, delete record from db 
+            if (result == true)
+			{
+                // get ID
+                vm.Website.intWebsiteID = int.Parse(input);
+
+                // delete from db 
+                vm.Website.ActionType = DeleteWebsite(vm.Website);
+
+                return View(vm);
+			}
+
+            if (col["btnSubmit"].ToString() == "submit")
+			{
+                string previousVersion = "";
+
+              if (vm.Button.CurrentButton == "edit")
+				{
+                    // iterate through list of websites 
+                    foreach (var item in vm.Websites)
+                    {
+                        // is current item's website type is equal to Main?
+                        if (item.strWebsiteType == "Main")
+                        {
+                            // match 
+                            // are the URLs the same?
+                            if (col["Main"].ToString() != item.strURL)
+                            {
+                                if (col["Main"].ToString() != "")
+								{
+                                    // get previous version to send in admin notification 
+                                    previousVersion = item.strURL;
+
+                                    // no, update object URL
+                                    item.strURL = col["Main"].ToString();
+
+                                    // update new URL in datbase
+                                    vm.Website.ActionType = UpdateWebsite(item);
+
+                                    editedColumn = 5;
+                                    // notify admin of change 
+                                    SendWebsiteEditNotification(vm.User, editedColumn, previousVersion, item.strURL);
+                                }
+                            }
+                        }
+
+                        // is current item's website type is equal to Main?
+                        if (item.strWebsiteType == "Kettle")
+                        {
+                            // match 
+                            // are the URLs the same?
+                            if (col["Kettle"].ToString() != item.strURL)
+                            {
+                               if (col["Kettle"].ToString() != "")
+								{
+                                    // get previous version to send in notification to admin 
+                                    previousVersion = item.strURL;
+
+                                    // no, update object URL
+                                    item.strURL = col["Kettle"].ToString();
+
+                                    // update new URL in datbase
+                                    vm.Website.ActionType = UpdateWebsite(item);
+
+                                    editedColumn = 5;
+
+                                    // notify admin of change 
+                                    SendWebsiteEditNotification(vm.User, editedColumn, previousVersion, item.strURL);
+                                    
+                                }
+                            }
+                        }
+
+                        // is current item's website type is equal to Main?
+                        if (item.strWebsiteType == "Ordering")
+                        {
+                            // match 
+                            // are the URLs the same?
+                            if (col["Ordering"].ToString() != item.strURL)
+                            {             
+                               if (col["Ordering"].ToString() != "")
+								{
+                                    // get previous version to send in notification to admin 
+                                    previousVersion = item.strURL;
+
+                                    // no, update object URL
+                                    item.strURL = col["Ordering"].ToString();
+
+                                    // update new URL in datbase
+                                    vm.Website.ActionType = UpdateWebsite(item);
+
+                                    editedColumn = 5;
+
+                                    // notify admin of changes
+                                    SendWebsiteEditNotification(vm.User, editedColumn, previousVersion, item.strURL);
+                                }
+                            }
+                        }
+                    }
+                    return View(vm);
+                }
+
+                if (vm.Button.CurrentButton == "add")
+                {
+                    if (Convert.ToInt16(col["websiteTypes"]) > 0)
+                    {
+                        if (col["newWebsite"].ToString() != "")
+						{
+                            // get input for new url
+                            vm.Website.strURL = col["newWebsite"];
+                            vm.Website.intWebsiteTypeID = Convert.ToInt16(col["websiteTypes"]);
+                            vm.Website.ActionType = AddWebsite(vm);
+
+                            editedColumn = 5;
+
+                            // notify admin of change
+                            SendWebsiteEditNotification(vm.User, editedColumn, "N/A", vm.Website.strURL);
+                            return View(vm);
+                        }
+                    }
+                }
+            }
+
+
+            return View(vm);
+        }
+
+        private Website.ActionTypes AddWebsite(ProfileViewModel vm)
+		{
+            try
+			{
+                Database db = new Database();
+
+                vm.Website.ActionType = db.InsertNewWebsite(vm.Website, vm.Company);
+
+                return vm.Website.ActionType;
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+        private Website.ActionTypes UpdateWebsite(Website w)
+		{
+            try
+			{
+                Database db = new Database();
+
+                w.ActionType = db.UpdateWebsite(w);
+
+                return w.ActionType;
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+        private List<Website> GetWebsiteTypes(ProfileViewModel vm)
+		{
+            try
+			{
+                // create database object
+                Database db = new Database();
+
+                // get list of website types 
+                vm.Websites = db.GetWebsiteTypes();
+
+                return vm.Websites;
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+        private Website.ActionTypes DeleteWebsite(Website w)
+		{
+            try
+			{
+                // create database object
+                Database db = new Database();
+
+                // delete website from database
+                w.ActionType = db.DeleteWebsite(w);
+
+                return w.ActionType;
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
 		public ActionResult Logout()
         {
             // create user object
@@ -639,14 +927,23 @@ namespace GCRBA.Controllers
         // ADDING/DELETING FROM DATABASE   
         // -------------------------------------------------------------------------------------------------
 
-        private void SendEditNotificationToAdmin(User u, int editedColumnID, string previousVersion, string newVersion)
+        private void SendWebsiteEditNotification(User u, int editedColumnID, string previousVersion, string newVersion)
+		{
+            try
+			{
+                Database db = new Database();
+
+                db.InsertAdminNotificationWebsiteEdit(u, editedColumnID, previousVersion, newVersion);
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+        private void SendCompanyEditNotification(User u, int editedColumnID, string previousVersion, string newVersion)
         {
             try
             {
-                // create database object
                 Database db = new Database();
 
-                // send to admin 
                 db.InsertAdminNotificationCompanyEdit(u, editedColumnID, previousVersion, newVersion);
             } catch (Exception ex) { throw new Exception(ex.Message); }
         }
@@ -694,6 +991,20 @@ namespace GCRBA.Controllers
         // -------------------------------------------------------------------------------------------------
         // RETRIEVING DATA FROM DATABASE   
         // -------------------------------------------------------------------------------------------------
+
+        private List<Website> GetCompanyWebsites(ProfileViewModel vm)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // get list of websites from db 
+                vm.Websites = db.GetCompanyWebsites(vm.Company);
+
+                return vm.Websites;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
 
         private Company GetCompany(ProfileViewModel vm)
         {
