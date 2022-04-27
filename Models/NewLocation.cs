@@ -123,7 +123,8 @@ namespace GCRBA.Models {
 			try {
 				Models.Database db = new Database();
 				long NewUID;
-				if (loc.LocationImage.ImageID == 0) {
+				if (this.LocationImage.ImageID == 0) {
+					loc.LocationImage = this.LocationImage;
 					NewUID = db.InsertLocationImage(loc);
 					if (NewUID > 0) LocationImage.ImageID = NewUID;
 				}

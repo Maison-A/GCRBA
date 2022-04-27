@@ -228,6 +228,7 @@
     <Compile Include="Models\Database.cs" />
     <Compile Include="Models\Days.cs" />
     <Compile Include="Models\Image.cs" />
+    <Compile Include="Models\LandingLocationList.cs" />
     <Compile Include="Models\Location.cs" />
     <Compile Include="Models\LocationList.cs" />
     <Compile Include="Models\MainBanner.cs" />

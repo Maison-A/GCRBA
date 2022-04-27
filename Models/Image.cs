@@ -5,7 +5,7 @@ using System.Web;
 
 namespace GCRBA.Models {
 	public class Image {
-		public long ImageID { get; set; }
+		public long ImageID = 0;
 		public byte[] ImageData;
 		public string FileName = string.Empty;
 		public DateTime CreateDate;

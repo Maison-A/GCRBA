@@ -1,4 +1,6 @@
 ﻿
+@model GCRBA.Models.LandingLocationList
+
 @{
     ViewBag.Title = "Edit Landing Page";
 }
@@ -17,7 +19,22 @@
     }
     else
     {
-        <button class="button-action" name="btnSubmit" value="AddNewPhotos">Modify Photos</button>
+        <br />
+        <table>
+            <tr>
+                <td>
+                    <div class="container w-75">
+                        <h2>@ViewBag.Title</h2>
+                        @Html.ListBoxFor(model => model.SelectedLandingLocationRequests, Model.LandingLocations, new { style = "width: 600px" }) <br /><br />
+                        <button class="button-action" name="btnSubmit" value="AddNewPhotos">Modify Photos</button>
+                        <br />
+                        <br />
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+       
     }
 }
 

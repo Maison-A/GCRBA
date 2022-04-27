@@ -20,26 +20,23 @@ namespace GCRBA.Controllers
             {
                 Models.Database db = new Models.Database();
                 long lngLocationID = Convert.ToInt64(RouteData.Values["id"]);
-                loc = db.GetLandingLocation(1);
-                loc.Images = db.GetLocationImages(1);
+                loc = db.GetLandingLocation(lngLocationID);
+                TempData["landing"] = new Models.NewLocation();
+                TempData["landing"] = loc;
+
+                loc.Images = db.GetLocationImages(lngLocationID);
             }
             return View(loc);
         }
 
         [HttpPost]
-        public ActionResult Index(IEnumerable<HttpPostedFileBase> files, FormCollection col)
+        public ActionResult Index(IEnumerable<HttpPostedFileBase> files, Models.NewLocation loc)
         {
-            if (col["hiddenLocID"] != null)
-            {
-                long lngLocTest = Convert.ToInt64(col["hiddenLocID"]);
-            }
-            long lngLocationID = 1;
-            //Models.NewLocation loc = new Models.NewLocation();
+            Models.NewLocation loc3 = new Models.NewLocation();
+            loc3 = (Models.NewLocation)TempData["landing"];
             foreach (var file in files)
             {
-                Models.NewLocation loc = new Models.NewLocation();
-                loc.lngLocationID = lngLocationID;
-                loc.AddLocationImage(file, loc);
+                loc.AddLocationImage(file, loc3);
             }
             return Json("file(s) uploaded successfully");
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace GCRBA.Models
 {
@@ -35,6 +36,8 @@ namespace GCRBA.Models
         public string MemberShipType = string.Empty;
 
         public List<NewLocation> lstMemberLocations = new List<NewLocation>();
+        
+
         public bool myLocation { get; set; }
 
 
