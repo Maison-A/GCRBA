@@ -12,7 +12,6 @@ namespace GCRBA.Controllers
     public class UserController : Controller
     {
 
-
         public ActionResult Index()
         {
             Models.User u = new Models.User();
@@ -299,8 +298,6 @@ namespace GCRBA.Controllers
             }
             return View();
         }
-
-
 
     }
 }
