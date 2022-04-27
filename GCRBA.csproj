@@ -208,6 +208,7 @@
     <Compile Include="Controllers\EducationController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MemberController.cs" />
+    <Compile Include="Controllers\PhotoController.cs" />
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\SendMailerController.cs" />
     <Compile Include="Controllers\VendorController.cs" />
@@ -342,6 +343,8 @@
     <Content Include="Views\Shared\DeleteSuccessful.cshtml" />
     <Content Include="Views\Shared\RequestDenied.cshtml" />
     <Content Include="Views\Profile\UserNotifications.cshtml" />
+    <Content Include="Views\Profile\AddNewPhotos.cshtml" />
+    <Content Include="Views\Photo\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

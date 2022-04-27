@@ -17,10 +17,10 @@ function deleteImageAjax(deleteType, uid, id) {
 		};
 
 		var strURL;
-		if (deleteType == "profile")
-			strURL = "../Profile/DeleteImage";
+		if (deleteType == "location")
+			strURL = "../Photo/DeleteImage";
 		else //event
-			strURL = "../../Profile/DeleteEventImage";
+			strURL = "../../Photo/DeleteEventImage";
 
 		$.ajax({
 			type: "POST",

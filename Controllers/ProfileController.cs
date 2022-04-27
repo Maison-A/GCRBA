@@ -355,7 +355,24 @@ namespace GCRBA.Controllers
 
             return View(u);
         }
+
         
+
+        public ActionResult EditLandingPage()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult EditLandingPage(FormCollection col)
+        {
+            if(col["btnSubmit"].ToString() == "AddNewPhotos")
+            {
+                return RedirectToAction("Index", "Photo");
+            }
+            return View();
+        }
+
         public ActionResult EditProfile()
 		{
             // initialize MemberVM
