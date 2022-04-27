@@ -336,6 +336,8 @@
     <Content Include="Views\Shared\DeleteSuccessful.cshtml" />
     <Content Include="Views\Shared\RequestDenied.cshtml" />
     <Content Include="Views\Profile\UserNotifications.cshtml" />
+    <Content Include="Views\Profile\AddCompany.cshtml" />
+    <Content Include="Views\Profile\EditExistingCompany.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

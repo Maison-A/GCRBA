@@ -1,0 +1,33 @@
+﻿@using GCRBA.ViewModels
+@model ProfileViewModel
+
+@{
+	ViewBag.Title = "Edit General Company Information";
+}
+
+<h2>You are editing: @Model.Company.Name</h2>
+
+@if (Model.Company.ActionType == GCRBA.Models.Company.ActionTypes.UpdateSuccessful)
+			{
+				<p>Company info successfully updated.</p>
+			}
+
+@using (Html.BeginForm(FormMethod.Post))
+{
+	<div>
+		@Html.LabelFor(Model => Model.Company.Name, new { @class = "form-label" })
+		@Html.TextBoxFor(Model => Model.Company.Name, new { @autofocus = "autofocus", @class = "form-control" })
+	</div>
+	<div>
+		@Html.LabelFor(Model => Model.Company.About, new { @class = "form-label" })
+		@Html.TextAreaFor(Model => Model.Company.About, new { @class = "form-control" })
+	</div>
+	<div>
+		@Html.LabelFor(Model => Model.Company.Year, new { @class = "form-label" })
+		@Html.TextBoxFor(Model => Model.Company.Year, new { @class = "form-control" })
+	</div>
+	<div>
+		<button name="btnSubmit" value="submit">Submit Changes</button>
+		<button name="btnSubmit" value="cancel">Cancel</button>
+	</div>
+}

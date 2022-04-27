@@ -441,9 +441,6 @@ namespace GCRBA.Controllers
             // get current company session
             vm.Company = GetCompany(vm);
 
-            // save company session 
-            vm.Company.SaveCompanySession();
-
             return View(vm);
 
 		}
@@ -453,17 +450,127 @@ namespace GCRBA.Controllers
 		{
             ProfileViewModel vm = InitProfileViewModel();
 
+            // get current company session
             vm.Company = GetCompany(vm);
 
-            if (col["btnSubmit"].ToString() == "editLocationInfo")
+            if (col["btnSubmit"].ToString() == "addLocation")
 			{
                 return RedirectToAction("AddNewLocation", "Bakery");
+			}
+
+            if (col["btnSubmit"].ToString() == "editCompany")
+			{
+                return RedirectToAction("EditExistingCompany", "Profile");
 			}
 
             return View(vm);
 		}
 
-        public ActionResult Logout()
+        public ActionResult EditExistingCompany()
+		{
+            ProfileViewModel vm = InitProfileViewModel();
+
+            // create company object
+            vm.Company = new Company();
+
+            // get company associated with member 
+            vm.Company = GetCompany(vm);
+
+            return View(vm);
+
+		}
+
+		[HttpPost]
+		public ActionResult EditExistingCompany(FormCollection col)
+		{
+			ProfileViewModel vm = InitProfileViewModel();
+
+            // create company object 
+            vm.Company = new Company();
+
+            // get company associated with user 
+            vm.Company = GetCompany(vm);
+
+            int editedColumn = 0;
+
+			if (col["btnSubmit"].ToString() == "submit")
+			{
+                if (col["Company.Name"] != vm.Company.Name)
+                {
+                    // get previous value so we can show admin before and after edit 
+                    string previousVersion = vm.Company.Name;
+
+                    vm.Company.Name = col["Company.Name"];
+
+                    // 1 is PK for changeType of "strCompanyName" in tblChangeType
+                    editedColumn = 1;
+
+                    // send notification to admin about change 
+                    SendEditNotificationToAdmin(vm.User, editedColumn, previousVersion, vm.Company.Name);
+                }
+                else
+				{
+                    vm.Company.Name = null;
+				}
+
+                if (col["Company.About"] != vm.Company.About)
+				{
+                    // get previous value so we can show admin before and after edit 
+                    string previousVersion = vm.Company.About;
+
+                    vm.Company.About = col["Company.About"];
+
+                    // 2 is PK for changeType of "strAbout" in tblChangeType
+                    editedColumn = 2;
+
+                    // send notification to admin about change
+                    SendEditNotificationToAdmin(vm.User, editedColumn, previousVersion, vm.Company.About);
+                }
+                else
+				{
+                    vm.Company.About = null;
+                }
+
+                if (col["Company.Year"] != vm.Company.Year)
+				{
+                    // get previous value so we can show admin before and after edit 
+                    string previousVersion = vm.Company.Year;
+
+                    vm.Company.Year = col["Company.Year"];
+
+                    // 3 is PK for changeType of "strBizYear" in tblChangeType
+                    editedColumn = 3;
+
+                    // send notification to admin about change
+                    SendEditNotificationToAdmin(vm.User, editedColumn, previousVersion, vm.Company.Year);
+
+                }
+                else
+				{
+                    vm.Company.Year = null;
+				}
+
+                // update company info in database 
+                UpdateCompanyInfo(vm.Company);
+
+                // get updated company info 
+                vm.Company = GetCompany(vm);
+
+                // set actiontype to updatesuccessful
+                vm.Company.ActionType = Company.ActionTypes.UpdateSuccessful;
+
+                return View(vm);
+			}
+
+            if (col["btnSubmit"].ToString() == "cancel")
+			{
+                return RedirectToAction("EditCompanyInfo", "Profile");
+			}
+
+            return View(vm);
+		}
+
+		public ActionResult Logout()
         {
             // create user object
             User u = new User();
@@ -479,6 +586,30 @@ namespace GCRBA.Controllers
         // -------------------------------------------------------------------------------------------------
         // ADDING/DELETING FROM DATABASE   
         // -------------------------------------------------------------------------------------------------
+
+        private void SendEditNotificationToAdmin(User u, int editedColumnID, string previousVersion, string newVersion)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // send to admin 
+                db.InsertAdminNotificationCompanyEdit(u, editedColumnID, previousVersion, newVersion);
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private void UpdateCompanyInfo(Company c)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // send update to db 
+                db.UpdateCompanyInfo(c);
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
 
         private User.ActionTypes UpdateUser(ProfileViewModel vm)
         {

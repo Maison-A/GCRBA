@@ -1736,6 +1736,26 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+		public void UpdateCompanyInfo(Company c)
+		{
+			try
+			{
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("UPDATE_COMPANY_INFO", cn);
+
+				SetParameter(ref cm, "@intCompanyID", c.CompanyID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@strCompanyName", c.Name, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strAbout", c.About, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strBizYear", c.Year, SqlDbType.NVarChar);
+
+				cm.ExecuteReader();
+
+				CloseDBConnection(ref cn);
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
 		public User.ActionTypes UpdateNotificationStatus(User u)
 		{
 			try
@@ -1847,6 +1867,26 @@ namespace GCRBA.Models
 					return vm.Special;
 				}
 				return vm.Special;
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public void InsertAdminNotificationCompanyEdit(User u, int editedColumnID, string previousVersion, string newVersion)
+		{
+			try
+			{
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("INSERT_ADMIN_NOTIFICATION_COMPANY_EDIT", cn);
+
+				SetParameter(ref cm, "@intUserID", u.UID, SqlDbType.SmallInt);
+				SetParameter(ref cm, "@intEditedColumnID", editedColumnID, SqlDbType.SmallInt);
+				SetParameter(ref cm, "@strPreviousVersion", previousVersion, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strNewVersion", newVersion, SqlDbType.NVarChar);
+
+				cm.ExecuteReader();
+
+				CloseDBConnection(ref cn);
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
