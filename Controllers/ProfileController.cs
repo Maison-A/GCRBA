@@ -15,7 +15,6 @@ namespace GCRBA.Controllers
         // ACTIONRESULT METHODS  
         // -------------------------------------------------------------------------------------------------
 
-
         public ActionResult Index()
         {
             Models.User user = new Models.User();
