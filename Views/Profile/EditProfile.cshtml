@@ -5,27 +5,27 @@
 	ViewBag.Title = "Edit Profile";
 }
 
-<h2>@ViewBag.Title</h2>
-
-@if (Model.User.ActionType == GCRBA.Models.User.ActionTypes.RequiredFieldMissing)
-{
-	<p>Passwords must match. Please try again.</p>
-}
-
-@if (Model.User.ActionType == GCRBA.Models.User.ActionTypes.UpdateSuccessful)
-{
-	@Html.Partial("UpdateSuccessful");
-}
-
-@if (Model.User.ActionType == GCRBA.Models.User.ActionTypes.Unknown)
-{
-	<p>There was an error in updating your profile information. Please try again.</p>
-}
-
 @if (!Model.User.IsAuthenticated)
 {
 	@Html.Partial("PleaseLogin");
 } else
 {
+	<h2>@ViewBag.Title</h2>
+
+	if (Model.User.ActionType == GCRBA.Models.User.ActionTypes.RequiredFieldMissing)
+	{
+		<p><b>Passwords must match. Please try again.</b></p>
+	}
+
+	if (Model.User.ActionType == GCRBA.Models.User.ActionTypes.UpdateSuccessful)
+	{
+		@Html.Partial("UpdateSuccessful");
+	}
+
+	if (Model.User.ActionType == GCRBA.Models.User.ActionTypes.Unknown)
+	{
+		<p>There was an error in updating your profile information. Please try again.</p>
+	}
+
 	@Html.Partial("UserProfileInput");
 }

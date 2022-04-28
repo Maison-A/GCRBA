@@ -13,15 +13,15 @@
 } else
 {
 	if (Model.Location.ActionType == GCRBA.Models.Location.ActionTypes.UpdateSuccessful)
-				{
-					<p>Location successfully updated.</p>
-				}
+	{
+		<p><b>Location successfully updated.</b></p>
+	}
 
 	if (Model.Locations.Count > 0)
 	{
-		using (Html.BeginForm(FormMethod.Post))
+		using (Html.BeginForm(null, null, null, FormMethod.Post, new { @class = "w-100 mx-auto" }))
 		{
-			<div id="locations">
+			<div id="locations" class="d-inline-flex m-3 row">
 				<label for="locations" class="form-label">Choose Location:</label>
 				<select name="locations" class="form-control" required>
 					@foreach (var item in Model.Locations)
@@ -30,50 +30,60 @@
 					}
 				</select>
 			</div>
-			<button name="btnSubmit" value="editLocation">Edit Location</button>
+			<div class="row">
+				<div class="col">
+					<button name="btnSubmit" value="editLocation" class="button-action">Edit Location</button>
+				</div>
+			</div>
 
 			if (Model.Location.LocationID > 0)
 			{
-				<div>
-					@Html.LabelFor(m => m.Location.Address, "Address", new { @class = "form-label" })
-					@Html.TextBoxFor(m => m.Location.Address, new { @class = "form-control" })
-				</div>
-				<div>
-					@Html.LabelFor(m => m.Location.City, "City", new { @class = "form-label" })
-					@Html.TextBoxFor(m => m.Location.City, new { @class = "form-control" })
-				</div>
-				<div>
-					<label for="states" class="form-label">State</label>
-					<select name="states" class="form-control">
-						@foreach (var state in Model.States)
-						{
-							if (Model.Location.intState > 0)
+				<div class="d-inline-flex m-3 w-50 row">
+					<div>
+						@Html.LabelFor(m => m.Location.Address, "Address", new { @class = "form-label" })
+						@Html.TextBoxFor(m => m.Location.Address, new { @class = "form-control" })
+					</div>
+					<div>
+						@Html.LabelFor(m => m.Location.City, "City", new { @class = "form-label" })
+						@Html.TextBoxFor(m => m.Location.City, new { @class = "form-control" })
+					</div>
+					<div>
+						<label for="states" class="form-label">State</label>
+						<select name="states" class="form-control">
+							@foreach (var state in Model.States)
 							{
-								if (state.intStateID == Model.Location.intState)
+								if (Model.Location.intState > 0)
 								{
-									<option value="@state.intStateID" selected>@state.strState</option>
-								} else
-								{
-									<option value="@state.intStateID">@state.strState</option>
+									if (state.intStateID == Model.Location.intState)
+									{
+										<option value="@state.intStateID" selected>@state.strState</option>
+									} else
+									{
+										<option value="@state.intStateID">@state.strState</option>
+									}
 								}
 							}
-						}
-					</select>
-				</div>
-				<div>
-					@Html.LabelFor(m => m.Location.Zip, "Zip Code", new { @class = "form-label" })
-					@Html.TextBoxFor(m => m.Location.Zip, new { @class = "form-control" })
-				</div>
-				<div>
-					@Html.LabelFor(m => m.Location.Phone, "Phone Number", new { @class = "form-label" })
-					@Html.TextBoxFor(m => m.Location.Phone, new { @class = "form-control" })
-				</div>
-				<div>
-					@Html.LabelFor(m => m.Location.Email, new { @class = "form-label" })
-					@Html.TextBoxFor(m => m.Location.Email, new { @class = "form-control", @type = "email" })
-				</div>
+						</select>
+					</div>
+					<div>
+						@Html.LabelFor(m => m.Location.Zip, "Zip Code", new { @class = "form-label" })
+						@Html.TextBoxFor(m => m.Location.Zip, new { @class = "form-control" })
+					</div>
+					<div>
+						@Html.LabelFor(m => m.Location.Phone, "Phone Number", new { @class = "form-label" })
+						@Html.TextBoxFor(m => m.Location.Phone, new { @class = "form-control" })
+					</div>
+					<div>
+						@Html.LabelFor(m => m.Location.Email, new { @class = "form-label" })
+						@Html.TextBoxFor(m => m.Location.Email, new { @class = "form-control", @type = "email" })
+					</div>
 
-				<button name="btnSubmit" value="submit">Submit Changes</button>
+					<div class="row">
+						<div class="col">
+							<button name="btnSubmit" value="submit" class="button-action mt-2">Submit Changes</button>
+						</div>
+					</div>
+				</div>
 			}
 		}
 	} else

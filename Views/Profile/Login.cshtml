@@ -19,18 +19,18 @@
 
             @if (Model.ActionType == GCRBA.Models.User.ActionTypes.RequiredFieldMissing)
             {
-                <div class="login-error">
-                    <i class="fad fa-exclamation-triangle fa-2x"></i>
-                    All fields are required.
-                </div>
+		<div class="login-error">
+			<i class="fa-solid fa-triangle-exclamation fa-xl"></i>
+			All fields are required.
+		</div>
             }
 
             @if (Model.ActionType == GCRBA.Models.User.ActionTypes.LoginFailed)
             {
-                <div class="login-error">
-                    <i class="fad fa-exclamation-triangle fa-2x"></i>
-                    Invalid username and/or password.
-                </div>
+		<div class="login-error">
+			<i class="fa-solid fa-triangle-exclamation fa-xl"></i>
+			Invalid username and/or password.
+		</div>
             }
 
             <div class="mt-5 mb-4">
@@ -42,8 +42,8 @@
                 @Html.TextBoxFor(model => model.Password, new { type = "password", @class = "form-control" })
             </div>
             <div class="mb-3">
-                <button id="btnLogin" name="btnSubmit" value="login" class="btn btn-primary">Login</button>
-                <button id="btnSignUp" name="btnSubmit" value="signup" class="btn btn-primary">Become a User!</button>
+                <button id="btnLogin" name="btnSubmit" value="login" class="button-action">Login</button>
+                <button id="btnSignUp" name="btnSubmit" value="signup" class="button-action">Become a User!</button>
             </div>
 
         </div>
