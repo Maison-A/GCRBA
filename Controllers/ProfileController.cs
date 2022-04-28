@@ -273,28 +273,34 @@ namespace GCRBA.Controllers
 
             if (col["btnSubmit"].ToString() == "delete")
 			{
-                // get list of messages selected 
-                // then delete from db and return view 
-                notificationIDs = col["notification"];
-                u.ActionType = DeleteNotifications(u, notificationIDs);
+                if (col["notification"] != null)
+				{
+                    // get list of messages selected 
+                    // then delete from db and return view 
+                    notificationIDs = col["notification"];
+                    u.ActionType = DeleteNotifications(u, notificationIDs);
 
-                // get updated list of user notifications 
-                u.Notifications = GetUserNotifications(u);
+                    // get updated list of user notifications 
+                    u.Notifications = GetUserNotifications(u);
 
-                return View(u);
+                    return View(u);
+                }
 			}
 
             if (col["btnSubmit"].ToString() == "markAsRead")
 			{
-                // get list of messages selected 
-                // then update status as read in db and return view 
-                notificationIDs = col["notification"];
-                u.ActionType = UpdateNotificationStatus(u, notificationIDs);
+                if (col["notification"] != null)
+				{
+                    // get list of messages selected 
+                    // then update status as read in db and return view 
+                    notificationIDs = col["notification"];
+                    u.ActionType = UpdateNotificationStatus(u, notificationIDs);
 
-                // get updated list of user notifications 
-                u.Notifications = GetUserNotifications(u);
+                    // get updated list of user notifications 
+                    u.Notifications = GetUserNotifications(u);
 
-                return View(u);
+                    return View(u);
+                }
 			}
 
             return View(u);
