@@ -2,9 +2,14 @@
 @{
     ViewBag.Title = "GCRBA Member Form";
 }
-
-<h2>@ViewBag.Title</h2>
-
+<style>
+    td{
+        text-align: center;
+    }
+</style>
+<div id="site-banner" class="some-spacing">
+    <h2>@ViewBag.Title</h2>
+</div>
 @using (Html.BeginForm(FormMethod.Post))
 {
     if (Model.ActionType == GCRBA.Models.User.ActionTypes.RequiredFieldMissing)
@@ -33,30 +38,35 @@
         </div>
     }
 
-<div class="section">
+<div>
 
     @if (Model.isMember == 0 && Model.UID > 0)
     {
         <p>Hello @Model.Username, you are logged in as a non-member.</p>
-        <p>
+        <div>
             Please fill out this form to submit your application to become a member of the
             Greater Cincinnati Retail Bakers Association!
-        </p>
+        </div>
     }
 
     else if (Model.isMember == 1 && Model.UID > 0)
     {
-        <h2>Hello @Model.Username, you are already a member of the GCRBA!</h2>
+        <div id="site-banner" class="some-spacing">
+            <h2>Hello @Model.Username, you are already a member of the GCRBA!</h2>
+        </div>
     }
 
     else if (Model.UID == 0)
     {
-        <p>
+       <div id="site-banner" class="some-spacing">
             Please fill out this form to submit your application to become a member of the
             Greater Cincinnati Retail Bakers Association!
-        </p>
+       </div>
     }
 
+    <table class="some-spacing">
+        <tr>
+            <td>
     <div>
         <!-- Member First Name -->
         <div>
@@ -178,6 +188,9 @@
             @Html.RadioButtonFor(model => model.PaymentType, "Check", new { value = 2})@Html.Label("Check")
         </div>
     </div>
+    </td>
+    </tr>
+    </table>
 
 
 

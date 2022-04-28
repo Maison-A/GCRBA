@@ -494,7 +494,7 @@ namespace GCRBA.Views.Bakery {
 				}
                 
 
-                if (col["btnSubmit"].ToString() == "SubmitLocation") {
+                if (col["btnSubmit"].ToString() == "Submit Location") {
                     
                     //Store temp information to be sent to the email sender
                     TempData["location"] = new List<Models.NewLocation>();
