@@ -1,0 +1,58 @@
+﻿@using GCRBA.ViewModels
+@model ProfileViewModel
+
+@{
+	ViewBag.Title = "Edit Company Social Media";
+}
+
+@if (Model.SocialMedia.ActionType == GCRBA.Models.SocialMedia.ActionTypes.UpdateSuccessful)
+{
+	<p>Social media successfully updated.</p>
+}
+
+@if (Model.SocialMedia.ActionType == GCRBA.Models.SocialMedia.ActionTypes.InsertSuccessful)
+{
+	<p>You successfully added new social media.</p>
+}
+
+@using (Html.BeginForm(FormMethod.Post))
+{
+	<div class="row justify-content-center">
+		<button name="btnSubmit" value="editExistingSocialMedia" class="w-25 m-2 button-action">Edit Existing Social Media</button>
+		<button name="btnSubmit" value="addNewSocialMedia" class="w-25 m-2 button-action">Add New Social Media</button>
+	</div>
+
+	if (Model.Button.CurrentButton == "edit")
+	{
+		if (Model.SocialMediaList.Count > 0)
+		{
+			// show form input for editing current websites
+			foreach (var item in Model.SocialMediaList)
+			{
+				<div class="d-inline-flex m-3 row">
+					<label for="@item.strPlatform" class="form-label">@item.strPlatform</label>
+					<input type="text" name="@item.strPlatform" class="form-control mb-3" value="@item.strSocialMediaLink" />
+					<button name="btnSubmit" value="@item.intCompanySocialMediaID" class="btn btn-danger">Delete</button>
+				</div>
+			}
+		} else
+		{
+			<p>There are currently no social media links associated with your company. Click the button above to add a new social media link.</p>
+		}
+
+	} else if (Model.Button.CurrentButton == "add")
+	{
+		<label for="platforms" class="form-label">Social Media Platforms</label>
+		<select name="platforms" class="form-control">
+			@foreach (var item in Model.SocialMediaList)
+			{
+				<option value="@item.intSocialMediaID">@item.strPlatform</option>
+			}
+		</select>
+		<input type="text" name="newSocialMedia" class="form-control" />
+	}
+	<div class="row">
+		<button name="btnSubmit" type="submit" value="submit" class="button-action">Submit</button>
+		<button name="btnSubmit" value="cancel" class="button-action">Cancel</button>
+	</div>
+}

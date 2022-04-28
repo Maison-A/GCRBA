@@ -30,7 +30,7 @@
 			foreach (var item in Model.Websites)
 			{
 				<div class="d-inline-flex m-3 row">
-					<label for="@item.intWebsiteID" class="form-label">@item.strWebsiteType</label>
+					<label for="@item.strWebsiteType" class="form-label">@item.strWebsiteType</label>
 					<input type="text" name="@item.strWebsiteType" class="form-control mb-3" value="@item.strURL" />
 					<button name="btnSubmit" value="@item.intWebsiteID" class="btn btn-danger">Delete</button>
 				</div>

@@ -149,6 +149,28 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+		public Location.ActionTypes MemberDeleteLocation(Location l)
+		{
+			try
+			{
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("DELETELOCATION", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intLocationID", l.LocationID, SqlDbType.BigInt);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1) return Location.ActionTypes.DeleteSuccessful;
+				return Location.ActionTypes.Unknown;
+			} catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
 		public NewLocation.ActionTypes DeleteTempLocation(long lngLocationID, long lngCompanyID) {
 			try {
 				SqlConnection cn = null;
@@ -911,7 +933,7 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public List<Location> GetLocations(AdminVM vm)
+		public List<Location> GetLocations(Company c)
 		{
 			try
 			{
@@ -924,7 +946,7 @@ namespace GCRBA.Models
 				// specify which stored procedure we are using 
 				SqlDataAdapter da = new SqlDataAdapter("GET_LOCATIONS", cn);
 
-				SetParameter(ref da, "@intCompanyID", vm.Company.CompanyID, SqlDbType.BigInt);
+				SetParameter(ref da, "@intCompanyID", c.CompanyID, SqlDbType.BigInt);
 
 				// create new list object with type string  
 				List<Location> locations = new List<Location>();
@@ -948,6 +970,7 @@ namespace GCRBA.Models
 						l.LocationID = Convert.ToInt16(dr["intLocationID"]);
 						l.Address = (string)dr["strAddress"];
 						l.City = (string)dr["strCity"];
+						l.intState = Convert.ToInt16(dr["intStateID"]);
 						l.State = (string)dr["strState"];
 						l.Zip = (string)dr["strZip"];
 						l.Phone = (string)dr["strPhone"];
@@ -960,6 +983,48 @@ namespace GCRBA.Models
 				return locations;
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public Location GetLocation(Location l)
+		{
+			try
+			{
+				// create new instance of SqlConnection object 
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to DB 
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// create instance of SqlDataAdapter object 
+				SqlDataAdapter da = new SqlDataAdapter("SELECT_LOCATION", cn);
+
+				// create instance of DataSet
+				DataSet ds;
+
+				// specify command type as stored procedure 
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				SetParameter(ref da, "@intLocationID", l.LocationID, SqlDbType.BigInt);
+
+				try
+				{
+					ds = new DataSet();
+					da.Fill(ds);
+					if (ds.Tables[0].Rows.Count > 0)
+					{
+						DataRow dr = ds.Tables[0].Rows[0];
+						l.Address = (string)dr["strAddress"];
+						l.City = (string)dr["strCity"];
+						l.intState = Convert.ToInt16(dr["intStateID"]);
+						l.Zip = (string)dr["strZip"];
+						l.Phone = (string)dr["strPhone"];
+						l.Email = (string)dr["strEmail"];
+					}
+					return l;
+				} 
+				catch (Exception ex) { throw new Exception(ex.Message); } 
+				finally { CloseDBConnection(ref cn); }
+			} catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
 		public List<CategoryItem> GetNotCategories(AdminVM vm)
@@ -1256,6 +1321,49 @@ namespace GCRBA.Models
 
 						// add Company object (c) to Company list (companies) 
 						types.Add(w);
+					}
+				}
+				// return list of companies 
+				return types;
+			} catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public List<SocialMedia> GetSocialMediaTypes()
+		{
+			try
+			{
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to database -- throw error if unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// specify which stored procedure we are using 
+				SqlDataAdapter da = new SqlDataAdapter("GET_SOCIALMEDIA_TYPES", cn);
+
+				// create new instance of Company list 
+				List<SocialMedia> types = new List<SocialMedia>();
+
+				// set command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				try { da.Fill(ds); } catch (Exception ex) { throw new Exception(ex.Message); } 
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0)
+				{
+					// loop through results and add to list 
+					foreach (DataRow dr in ds.Tables[0].Rows)
+					{
+						// create new Company object
+						SocialMedia s = new SocialMedia();
+
+						// add values to CompanyID and Name properties 
+						s.intSocialMediaID = Convert.ToInt16(dr["intSocialMediaID"]);
+						s.strPlatform = (string)dr["strPlatform"];
+
+						// add Company object (c) to Company list (companies) 
+						types.Add(s);
 					}
 				}
 				// return list of companies 
@@ -1891,6 +1999,34 @@ namespace GCRBA.Models
 			} catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+		public SocialMedia.ActionTypes UpdateSocialMedia(SocialMedia s)
+		{
+			try
+			{
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("UPDATE_SOCIALMEDIA", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intCompanySocialMediaID", s.intCompanySocialMediaID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@strSocialMediaLink", s.strSocialMediaLink, SqlDbType.NVarChar);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1)
+				{
+					return SocialMedia.ActionTypes.UpdateSuccessful;
+				} else
+				{
+					return SocialMedia.ActionTypes.Unknown;
+				}
+
+			} catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
 		public Website.ActionTypes InsertNewWebsite(Website w, Company c)
 		{
 			try
@@ -1921,6 +2057,35 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+		public SocialMedia.ActionTypes InsertNewSocialMedia(SocialMedia s, Company c)
+		{
+			try
+			{
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("INSERT_NEW_SOCIALMEDIA", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@strSocialMediaLink", s.strSocialMediaLink, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@intCompanyID", c.CompanyID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@intSocialMediaID", s.intSocialMediaID, SqlDbType.BigInt);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1)
+				{
+					return SocialMedia.ActionTypes.UpdateSuccessful;
+				} else
+				{
+					return SocialMedia.ActionTypes.Unknown;
+				}
+
+			} catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
 		public void UpdateCompanyInfo(Company c)
 		{
 			try
@@ -1939,6 +2104,40 @@ namespace GCRBA.Models
 				CloseDBConnection(ref cn);
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public Location.ActionTypes UpdateLocationInfo(Location l)
+		{
+			try
+			{
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("UPDATE_LOCATION", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intLocationID", l.LocationID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@strAddress", l.Address, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strCity", l.City, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@intStateID", l.intState, SqlDbType.BigInt);
+				SetParameter(ref cm, "@strZip", l.Zip, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strPhone", l.Phone, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@strEmail", l.Email, SqlDbType.NVarChar);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1)
+				{
+					return Location.ActionTypes.UpdateSuccessful;
+				}
+				else
+				{
+					return Location.ActionTypes.Unknown;
+				}
+
+			} catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
 		public User.ActionTypes UpdateNotificationStatus(User u)
@@ -2055,6 +2254,51 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+		public List<SocialMedia> GetCompanySocialMedia(Company c)
+		{
+			try
+			{
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to database -- throw error if unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// specify which stored procedure we are using 
+				SqlDataAdapter da = new SqlDataAdapter("GET_COMPANY_SOCIALMEDIA", cn);
+
+				SetParameter(ref da, "@intCompanyID", c.CompanyID, SqlDbType.BigInt);
+
+				// create list object that will hold list of websites 
+				List<SocialMedia> links = new List<SocialMedia>();
+
+				// set command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				try { da.Fill(ds); } catch (Exception ex) { throw new Exception(ex.Message); } 
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0)
+				{
+					foreach (DataRow dr in ds.Tables[0].Rows)
+					{
+						// create new website object for each website
+						SocialMedia s = new SocialMedia();
+
+						// add data to object
+						s.intSocialMediaID = Convert.ToInt16(dr["intSocialMediaID"]);
+						s.strPlatform = (string)dr["strPlatform"];
+						s.intCompanySocialMediaID = Convert.ToInt16(dr["intCompanySocialMediaID"]);
+						s.strSocialMediaLink = (string)dr["strSocialMediaLink"];
+
+						// add object to list of websites 
+						links.Add(s);
+					}
+				}
+				return links;
+			} catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
 		public void SendUserNotification(MemberRequest m, int intNotificationID, int intNotificationStatusID)
 		{
 			try
@@ -2103,26 +2347,17 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public void InsertAdminNotificationCompanyEdit(User u, int editedColumnID, string previousVersion, string newVersion)
-		{
-			InsertAdminNotification("INSERT_ADMIN_NOTIFICATION_COMPANY_EDIT", u, editedColumnID, previousVersion, newVersion);
-		}
-
-		public void InsertAdminNotificationWebsiteEdit(User u, int editedColumnID, string previousVersion, string newVersion)
-		{
-			InsertAdminNotification("INSERT_ADMIN_NOTIFICATION_WEBSITE_EDIT", u, editedColumnID, previousVersion, newVersion);
-		}
-
-		public void InsertAdminNotification(string sproc, User u, int editedColumnID, string previousVersion, string newVersion)
+		public void InsertAdminNotification(User u, int editedColumnID, int editedTableID, string previousVersion, string newVersion)
 		{
 			try
 			{
 				SqlConnection cn = null;
 				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
-				SqlCommand cm = new SqlCommand(sproc, cn);
+				SqlCommand cm = new SqlCommand("INSERT_ADMIN_NOTIFICATION_EDIT", cn);
 
 				SetParameter(ref cm, "@intUserID", u.UID, SqlDbType.SmallInt);
 				SetParameter(ref cm, "@intEditedColumnID", editedColumnID, SqlDbType.SmallInt);
+				SetParameter(ref cm, "@intEditedTableID", editedTableID, SqlDbType.SmallInt);
 				SetParameter(ref cm, "@strPreviousVersion", previousVersion, SqlDbType.NVarChar);
 				SetParameter(ref cm, "@strNewVersion", newVersion, SqlDbType.NVarChar);
 

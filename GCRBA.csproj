@@ -348,6 +348,9 @@
     <Content Include="Views\Profile\AddCompany.cshtml" />
     <Content Include="Views\Profile\EditExistingCompany.cshtml" />
     <Content Include="Views\Profile\EditWebsites.cshtml" />
+    <Content Include="Views\Profile\EditSocialMedia.cshtml" />
+    <Content Include="Views\Profile\EditExistingLocation.cshtml" />
+    <Content Include="Views\Profile\DeleteLocation.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

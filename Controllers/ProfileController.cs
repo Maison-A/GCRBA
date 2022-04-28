@@ -515,6 +515,16 @@ namespace GCRBA.Controllers
                 return RedirectToAction("EditExistingCompany", "Profile");
 			}
 
+            if (col["btnSubmit"].ToString() == "editLocation")
+			{
+                return RedirectToAction("EditExistingLocation", "Profile");
+			}
+
+            if (col["btnSubmit"].ToString() == "deleteLocation")
+			{
+                return RedirectToAction("DeleteLocation", "Profile");
+			}
+
             return View(vm);
 		}
 
@@ -554,11 +564,8 @@ namespace GCRBA.Controllers
 
                     vm.Company.Name = col["Company.Name"];
 
-                    // 1 is PK for changeType of "strCompanyName" in tblChangeType
-                    editedColumn = 1;
-
                     // send notification to admin about change 
-                    SendCompanyEditNotification(vm.User, editedColumn, previousVersion, vm.Company.Name);
+                    SendEditNotification(vm.User, 1, 1, previousVersion, vm.Company.Name);
                 }
                 else
 				{
@@ -572,11 +579,8 @@ namespace GCRBA.Controllers
 
                     vm.Company.About = col["Company.About"];
 
-                    // 2 is PK for changeType of "strAbout" in tblChangeType
-                    editedColumn = 2;
-
                     // send notification to admin about change
-                    SendCompanyEditNotification(vm.User, editedColumn, previousVersion, vm.Company.About);
+                    SendEditNotification(vm.User, 2, 1, previousVersion, vm.Company.About);
                 }
                 else
 				{
@@ -590,11 +594,8 @@ namespace GCRBA.Controllers
 
                     vm.Company.Year = col["Company.Year"];
 
-                    // 3 is PK for changeType of "strBizYear" in tblChangeType
-                    editedColumn = 3;
-
                     // send notification to admin about change
-                    SendCompanyEditNotification(vm.User, editedColumn, previousVersion, vm.Company.Year);
+                    SendEditNotification(vm.User, 3, 1, previousVersion, vm.Company.Year);
 
                 }
                 else
@@ -766,9 +767,8 @@ namespace GCRBA.Controllers
                                     // update new URL in datbase
                                     vm.Website.ActionType = UpdateWebsite(item);
 
-                                    editedColumn = 5;
                                     // notify admin of change 
-                                    SendWebsiteEditNotification(vm.User, editedColumn, previousVersion, item.strURL);
+                                    SendEditNotification(vm.User, 5, 2, previousVersion, item.strURL);
                                 }
                             }
                         }
@@ -791,10 +791,8 @@ namespace GCRBA.Controllers
                                     // update new URL in datbase
                                     vm.Website.ActionType = UpdateWebsite(item);
 
-                                    editedColumn = 5;
-
                                     // notify admin of change 
-                                    SendWebsiteEditNotification(vm.User, editedColumn, previousVersion, item.strURL);
+                                    SendEditNotification(vm.User, 5, 2, previousVersion, item.strURL);
                                     
                                 }
                             }
@@ -818,10 +816,8 @@ namespace GCRBA.Controllers
                                     // update new URL in datbase
                                     vm.Website.ActionType = UpdateWebsite(item);
 
-                                    editedColumn = 5;
-
                                     // notify admin of changes
-                                    SendWebsiteEditNotification(vm.User, editedColumn, previousVersion, item.strURL);
+                                    SendEditNotification(vm.User, 5, 2, previousVersion, item.strURL);
                                 }
                             }
                         }
@@ -840,10 +836,8 @@ namespace GCRBA.Controllers
                             vm.Website.intWebsiteTypeID = Convert.ToInt16(col["websiteTypes"]);
                             vm.Website.ActionType = AddWebsite(vm);
 
-                            editedColumn = 5;
-
                             // notify admin of change
-                            SendWebsiteEditNotification(vm.User, editedColumn, "N/A", vm.Website.strURL);
+                            SendEditNotification(vm.User, 5, 2, "N/A", vm.Website.strURL);
                             return View(vm);
                         }
                     }
@@ -854,58 +848,524 @@ namespace GCRBA.Controllers
             return View(vm);
         }
 
-        private Website.ActionTypes AddWebsite(ProfileViewModel vm)
+        public ActionResult EditSocialMedia()
+		{
+            ProfileViewModel vm = InitProfileViewModel();
+            vm.SocialMediaList = new List<SocialMedia>();
+            vm.SocialMedia = new SocialMedia();
+            vm.Button = new Button();
+            vm.Company = new Company();
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        public ActionResult EditSocialMedia(FormCollection col)
+		{
+            ProfileViewModel vm = InitProfileViewModel();
+            vm.Company = new Company();
+            vm.Company = GetCompany(vm);
+
+            int editedColumn = 0;
+
+            // create list to hold social media links
+            vm.SocialMediaList = new List<SocialMedia>();
+
+            vm.SocialMedia = new SocialMedia();
+
+            // get current session of company social media links -- if none, will return null object
+            vm.SocialMediaList = vm.SocialMedia.GetSocialMediaListSession();
+
+            // create button object so we can track which button has been pressed most recently 
+            vm.Button = new Button();
+
+            // get current button session
+            vm.Button = vm.Button.GetButtonSession();
+
+            if (col["btnSubmit"].ToString() == "editExistingSocialMedia")
+			{
+                // remove current button session so we can set it as this one 
+                vm.Button.RemoveButtonSession();
+
+                // set button to edit so we know what form input to show 
+                vm.Button.CurrentButton = "edit";
+
+                // save new button session
+                vm.Button.SaveButtonSession();
+
+                // remove current list of social media 
+                vm.SocialMedia.RemoveSocialMediaListSession();
+
+                // get current list of social media
+                vm.SocialMediaList = GetCompanySocialMedia(vm);
+
+                // save list of social media 
+                vm.SocialMedia.SaveSocialMediaListSession(vm.SocialMediaList);
+
+                return View(vm);
+			}
+
+            if (col["btnSubmit"].ToString() == "addNewSocialMedia")
+			{
+                vm.Button.RemoveButtonSession();
+
+                vm.Button.CurrentButton = "add";
+
+                // save new button session 
+                vm.Button.SaveButtonSession();
+
+                // remove current session of websites if not null
+                vm.SocialMedia.RemoveSocialMediaListSession();
+
+                // get current list of website types
+                vm.SocialMediaList = GetSocialMediaTypes(vm);
+
+                // save websites list in session 
+                vm.SocialMedia.SaveSocialMediaListSession(vm.SocialMediaList);
+
+                return View(vm);
+            }
+
+            // DEAL WITH DELETING SOCIAL MEDIA HERE
+            //----------------------------------------- 
+
+            if (col["btnSubmit"].ToString() == "submit")
+			{
+                string previousVersion = "";
+
+                if (vm.Button.CurrentButton == "edit")
+				{
+                    // iterate through list of social media 
+                    foreach (var item in vm.SocialMediaList)
+					{
+                        // is current item's social media type equal to Facebook
+                        if (item.strPlatform == "Facebook")
+						{
+                            // yes, the types match
+                            // are the links the same?
+                            if (col["Facebook"].ToString() != item.strSocialMediaLink)
+							{
+                                // no, is input empty?
+                                if (col["Facebook"].ToString() != "")
+								{
+                                    // no, get previous version so we can send before and after to admin 
+                                    previousVersion = item.strSocialMediaLink;
+
+                                    // update object to new link from input 
+                                    item.strSocialMediaLink = col["Facebook"].ToString();
+
+                                    // update new link in db 
+                                    vm.SocialMedia.ActionType = UpdateSocialMedia(item);
+
+                                    // 7 is PK for strSocialMediaLink in tblCompanySocialMedia 
+                                    editedColumn = 7;
+
+                                    // notify admin of changes
+                                    SendEditNotification(vm.User, 7, 3, previousVersion, item.strSocialMediaLink);
+								}
+							}
+						}
+
+                        if (item.strPlatform == "Instagram")
+                        {
+                            // yes, the types match
+                            // are the links the same?
+                            if (col["Instagram"].ToString() != item.strSocialMediaLink)
+                            {
+                                // no, is input empty?
+                                if (col["Instagram"].ToString() != "")
+                                {
+                                    // no, get previous version so we can send before and after to admin 
+                                    previousVersion = item.strSocialMediaLink;
+
+                                    // update object to new link from input 
+                                    item.strSocialMediaLink = col["Instagram"].ToString();
+
+                                    // update new link in db 
+                                    vm.SocialMedia.ActionType = UpdateSocialMedia(item);
+
+                                    // notify admin of changes
+                                    SendEditNotification(vm.User, 7, 3, previousVersion, item.strSocialMediaLink);
+                                }
+                            }
+                        }
+
+                        if (item.strPlatform == "Snapchat")
+                        {
+                            // yes, the types match
+                            // are the links the same?
+                            if (col["Snapchat"].ToString() != item.strSocialMediaLink)
+                            {
+                                // no, is input empty?
+                                if (col["Snapchat"].ToString() != "")
+                                {
+                                    // no, get previous version so we can send before and after to admin 
+                                    previousVersion = item.strSocialMediaLink;
+
+                                    // update object to new link from input 
+                                    item.strSocialMediaLink = col["Snapchat"].ToString();
+
+                                    // update new link in db 
+                                    vm.SocialMedia.ActionType = UpdateSocialMedia(item);
+
+                                    // notify admin of changes
+                                    SendEditNotification(vm.User, 7, 3, previousVersion, item.strSocialMediaLink);
+                                }
+                            }
+                        }
+
+                        if (item.strPlatform == "TikTok")
+                        {
+                            // yes, the types match
+                            // are the links the same?
+                            if (col["TikTok"].ToString() != item.strSocialMediaLink)
+                            {
+                                // no, is input empty?
+                                if (col["TikTok"].ToString() != "")
+                                {
+                                    // no, get previous version so we can send before and after to admin 
+                                    previousVersion = item.strSocialMediaLink;
+
+                                    // update object to new link from input 
+                                    item.strSocialMediaLink = col["TikTok"].ToString();
+
+                                    // update new link in db 
+                                    vm.SocialMedia.ActionType = UpdateSocialMedia(item);
+
+                                    // notify admin of changes
+                                    SendEditNotification(vm.User, 7, 3, previousVersion, item.strSocialMediaLink);
+                                }
+                            }
+                        }
+
+                        if (item.strPlatform == "Twitter")
+                        {
+                            // yes, the types match
+                            // are the links the same?
+                            if (col["Twitter"].ToString() != item.strSocialMediaLink)
+                            {
+                                // no, is input empty?
+                                if (col["Twitter"].ToString() != "")
+                                {
+                                    // no, get previous version so we can send before and after to admin 
+                                    previousVersion = item.strSocialMediaLink;
+
+                                    // update object to new link from input 
+                                    item.strSocialMediaLink = col["Twitter"].ToString();
+
+                                    // update new link in db 
+                                    vm.SocialMedia.ActionType = UpdateSocialMedia(item);
+
+                                    // notify admin of changes
+                                    SendEditNotification(vm.User, 7, 3, previousVersion, item.strSocialMediaLink);
+                                }
+                            }
+                        }
+
+                        if (item.strPlatform == "Yelp")
+                        {
+                            // yes, the types match
+                            // are the links the same?
+                            if (col["Yelp"].ToString() != item.strSocialMediaLink)
+                            {
+                                // no, is input empty?
+                                if (col["Yelp"].ToString() != "")
+                                {
+                                    // no, get previous version so we can send before and after to admin 
+                                    previousVersion = item.strSocialMediaLink;
+
+                                    // update object to new link from input 
+                                    item.strSocialMediaLink = col["Yelp"].ToString();
+
+                                    // notify admin of changes
+                                    SendEditNotification(vm.User, 7, 3, previousVersion, item.strSocialMediaLink);
+                                }
+                            }
+                        }
+                    }
+                    return View(vm);
+				}
+
+                if (vm.Button.CurrentButton == "add")
+				{
+                    if (Convert.ToInt16(col["platforms"]) > 0)
+					{
+                        if (col["newSocialMedia"].ToString() != "")
+						{
+                            // get input for new link
+                            vm.SocialMedia.strSocialMediaLink = col["newSocialMedia"];
+                            vm.SocialMedia.intSocialMediaID = Convert.ToInt16(col["platforms"]);
+                            vm.SocialMedia.ActionType = AddSocialMedia(vm);
+
+                            // notify admin of change 
+                            SendEditNotification(vm.User, 7, 3, "N/A", vm.SocialMedia.strSocialMediaLink);
+                            return View(vm);
+						}
+					}
+ 				}
+			}
+            return View(vm);
+		}
+
+        public ActionResult EditExistingLocation()
+		{
+            ProfileViewModel vm = InitProfileViewModel();
+
+            vm.Company = new Company();
+
+            vm.Company = GetCompany(vm);
+
+            vm.Location = new Location();
+
+            vm.Locations = new List<Location>();
+
+            vm.Locations = GetLocations(vm);
+
+            vm.States = new List<State>();
+
+            vm = GetStates(vm);
+
+            return View(vm);
+		}
+
+        [HttpPost]
+        public ActionResult EditExistingLocation(FormCollection col)
+		{
+            ProfileViewModel vm = InitProfileViewModel();
+
+            vm.Company = new Company();
+
+            vm.Company = GetCompany(vm);
+
+            vm.Location = new Location();
+
+            // get current location session
+            vm.Location = vm.Location.GetLocationSession();
+
+            vm.Locations = new List<Location>();
+
+            // get list of locations 
+            vm.Locations = GetLocations(vm);
+
+            vm.States = new List<State>();
+
+            vm = GetStates(vm);
+
+            int editedColumn = 0;
+
+            if (col["btnSubmit"].ToString() == "editLocation")
+			{
+                // get selected locationID
+                vm.Location.LocationID = Convert.ToInt16(col["locations"]);
+
+                // loop through list of locations to get data of location with selected locationID
+                for (var i = 0; i < vm.Locations.Count; i++)
+				{
+                    // do the select ID and current ID in list match?
+                    if (vm.Locations[i].LocationID == vm.Location.LocationID)
+					{
+                        // remove location session if previously one 
+                        vm.Location.RemoveLocationSession();
+
+                        // yes, so add Location info to Location object 
+                        vm.Location = vm.Locations[i];
+
+                        // save location session 
+                        vm.Location.SaveLocationSession();
+					}
+				}
+
+                return View(vm);
+			}
+
+            if (col["btnSubmit"].ToString() == "submit")
+			{
+                string previousVersion = "";
+                int intPreviousStateID = 0;
+
+                if (col["Location.Address"].ToString() != vm.Location.Address)
+				{
+                    // get previous version to send in notification of change 
+                    previousVersion = vm.Location.Address;
+
+                    // get new input
+                    vm.Location.Address = col["Location.Address"].ToString();
+
+                    // send update to db 
+                    SendEditNotification(vm.User, 8, 4, previousVersion, vm.Location.Address);
+
+				} else
+				{
+                    vm.Location.Address = null;
+				}
+
+                if (col["Location.City"].ToString() != vm.Location.City)
+                {
+                    // get previous version  
+                    previousVersion = vm.Location.City;
+
+                    vm.Location.City = col["Location.City"].ToString();
+
+                    SendEditNotification(vm.User, 9, 4, previousVersion, vm.Location.City);
+
+                } else
+                {
+                    vm.Location.City = null;
+                }
+
+                if (Convert.ToInt16(col["states"]) != vm.Location.intState)
+                {
+                    intPreviousStateID = vm.Location.intState;
+
+                    vm.Location.intState = Convert.ToInt16(col["states"]);
+
+                    SendEditNotification(vm.User, 10, 4, intPreviousStateID.ToString(), vm.Location.intState.ToString());
+                } else
+                {
+                    vm.Location.intState = 0;
+                }
+
+                if (col["Location.Zip"].ToString() != vm.Location.Zip)
+                {
+                    previousVersion = vm.Location.Zip;
+
+                    vm.Location.Zip = col["Location.Zip"].ToString();
+
+                    SendEditNotification(vm.User, 11, 4, previousVersion, vm.Location.Zip);
+                } else
+                {
+                    vm.Location.Zip = null;
+                }
+
+                if (col["Location.Phone"].ToString() != vm.Location.Phone)
+                {
+                    previousVersion = vm.Location.Phone;
+
+                    vm.Location.Phone = col["Location.Phone"].ToString();
+
+                    SendEditNotification(vm.User, 12, 4, previousVersion, vm.Location.Phone);
+                } else
+                {
+                    vm.Location.Phone = null;
+                }
+
+                if (col["Location.Email"].ToString() != vm.Location.Email)
+                {
+                    previousVersion = vm.Location.Email;
+
+                    vm.Location.Email = col["Location.Email"].ToString();
+
+                    SendEditNotification(vm.User, 13, 4, previousVersion, vm.Location.Email);
+                } else
+                {
+                    vm.Location.Email = null;
+                }
+
+                // submit change(s) to database
+                vm.Location.ActionType = UpdateLocation(vm.Location);
+
+                // update our info 
+                vm.Location = GetUpdatedLocationInfo(vm.Location);
+
+                return View(vm);
+
+            }
+
+            return View(vm);
+		}
+
+        public ActionResult DeleteLocation()
+		{
+            ProfileViewModel vm = InitProfileViewModel();
+
+            vm.Company = new Company();
+
+            vm.Company = GetCompany(vm);
+
+            vm.Locations = new List<Location>();
+
+            // get list of locations 
+            vm.Locations = GetLocations(vm);
+
+            vm.Location = new Location();
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        public ActionResult DeleteLocation(FormCollection col)
+		{
+            ProfileViewModel vm = InitProfileViewModel();
+
+            vm.Company = new Company();
+
+            vm.Company = GetCompany(vm);
+
+            vm.Locations = new List<Location>();
+
+            vm.Location = new Location();
+
+            // get list of locations 
+            vm.Locations = GetLocations(vm);
+
+            if (col["btnSubmit"].ToString() == "delete")
+			{
+                // get selected LocationID
+                vm.Location.LocationID = Convert.ToInt16(col["locations"]);
+
+                // get location info based on locationID
+                vm.Location = GetUpdatedLocationInfo(vm.Location);
+
+                vm.Location.ActionType = DeleteLocation(vm);
+
+                string previousVersion = vm.Location.Address + " " + vm.Location.City + ", intStateID = "  + vm.Location.intState + " " + vm.Location.Zip;
+
+                // notify admin of change
+                SendEditNotification(vm.User, 8, 4, previousVersion, "DELETED LOCATION");
+
+                // get updated listed of locations 
+                vm.Locations = GetLocations(vm);
+
+                return View(vm);
+			}
+            return View(vm);
+        }
+
+        private Location.ActionTypes DeleteLocation(ProfileViewModel vm)
 		{
             try
 			{
                 Database db = new Database();
 
-                vm.Website.ActionType = db.InsertNewWebsite(vm.Website, vm.Company);
+                vm.Location.ActionType = db.MemberDeleteLocation(vm.Location);
 
-                return vm.Website.ActionType;
+                return vm.Location.ActionType;
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+        private List<Location> GetLocations(ProfileViewModel vm)
+		{
+            try
+			{
+                Database db = new Database();
+
+                vm.Locations = db.GetLocations(vm.Company);
+
+                return vm.Locations;
 			}
             catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-        private Website.ActionTypes UpdateWebsite(Website w)
+        private Location GetUpdatedLocationInfo(Location l)
 		{
             try
 			{
                 Database db = new Database();
 
-                w.ActionType = db.UpdateWebsite(w);
+                l = db.GetLocation(l);
 
-                return w.ActionType;
-			}
-            catch (Exception ex) { throw new Exception(ex.Message); }
-		}
-
-        private List<Website> GetWebsiteTypes(ProfileViewModel vm)
-		{
-            try
-			{
-                // create database object
-                Database db = new Database();
-
-                // get list of website types 
-                vm.Websites = db.GetWebsiteTypes();
-
-                return vm.Websites;
-			}
-            catch (Exception ex) { throw new Exception(ex.Message); }
-		}
-
-        private Website.ActionTypes DeleteWebsite(Website w)
-		{
-            try
-			{
-                // create database object
-                Database db = new Database();
-
-                // delete website from database
-                w.ActionType = db.DeleteWebsite(w);
-
-                return w.ActionType;
+                return l;
 			}
             catch (Exception ex) { throw new Exception(ex.Message); }
 		}
@@ -927,24 +1387,104 @@ namespace GCRBA.Controllers
         // ADDING/DELETING FROM DATABASE   
         // -------------------------------------------------------------------------------------------------
 
-        private void SendWebsiteEditNotification(User u, int editedColumnID, string previousVersion, string newVersion)
-		{
-            try
-			{
-                Database db = new Database();
-
-                db.InsertAdminNotificationWebsiteEdit(u, editedColumnID, previousVersion, newVersion);
-			}
-            catch (Exception ex) { throw new Exception(ex.Message); }
-		}
-
-        private void SendCompanyEditNotification(User u, int editedColumnID, string previousVersion, string newVersion)
+        private Website.ActionTypes AddWebsite(ProfileViewModel vm)
         {
             try
             {
                 Database db = new Database();
 
-                db.InsertAdminNotificationCompanyEdit(u, editedColumnID, previousVersion, newVersion);
+                vm.Website.ActionType = db.InsertNewWebsite(vm.Website, vm.Company);
+
+                return vm.Website.ActionType;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private SocialMedia.ActionTypes AddSocialMedia(ProfileViewModel vm)
+        {
+            try
+            {
+                Database db = new Database();
+
+                vm.SocialMedia.ActionType = db.InsertNewSocialMedia(vm.SocialMedia, vm.Company);
+
+                return vm.SocialMedia.ActionType;
+
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private Website.ActionTypes UpdateWebsite(Website w)
+        {
+            try
+            {
+                Database db = new Database();
+
+                w.ActionType = db.UpdateWebsite(w);
+
+                return w.ActionType;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private SocialMedia.ActionTypes UpdateSocialMedia(SocialMedia s)
+        {
+            try
+            {
+                Database db = new Database();
+
+                s.ActionType = db.UpdateSocialMedia(s);
+
+                return s.ActionType;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private List<Website> GetWebsiteTypes(ProfileViewModel vm)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // get list of website types 
+                vm.Websites = db.GetWebsiteTypes();
+
+                return vm.Websites;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private List<SocialMedia> GetSocialMediaTypes(ProfileViewModel vm)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // get list of website types 
+                vm.SocialMediaList = db.GetSocialMediaTypes();
+
+                return vm.SocialMediaList;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private Website.ActionTypes DeleteWebsite(Website w)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // delete website from database
+                w.ActionType = db.DeleteWebsite(w);
+
+                return w.ActionType;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private void SendEditNotification(User u, int editedColumnID, int editedTableID, string previousVersion, string newVersion)
+        {
+            try
+            {
+                Database db = new Database();
+
+                db.InsertAdminNotification(u, editedColumnID, editedTableID, previousVersion, newVersion);
             } catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
@@ -957,6 +1497,22 @@ namespace GCRBA.Controllers
 
                 // send update to db 
                 db.UpdateCompanyInfo(c);
+
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private Location.ActionTypes UpdateLocation(Location l)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // send update to db 
+                l.ActionType = db.UpdateLocationInfo(l);
+
+                return l.ActionType;
+
             } catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
@@ -1003,6 +1559,21 @@ namespace GCRBA.Controllers
                 vm.Websites = db.GetCompanyWebsites(vm.Company);
 
                 return vm.Websites;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private List<SocialMedia> GetCompanySocialMedia(ProfileViewModel vm)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // get list of websites from db 
+                vm.SocialMediaList = db.GetCompanySocialMedia(vm.Company);
+
+                return vm.SocialMediaList;
+
             } catch (Exception ex) { throw new Exception(ex.Message); }
         }
 

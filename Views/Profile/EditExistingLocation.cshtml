@@ -1,0 +1,85 @@
+﻿@using GCRBA.ViewModels
+@model ProfileViewModel
+
+@{
+	ViewBag.Title = "Edit Existing Location";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (Model.User.isMember == 0)
+{
+	@Html.Partial("AdminOnly");
+} else
+{
+	if (Model.Location.ActionType == GCRBA.Models.Location.ActionTypes.UpdateSuccessful)
+				{
+					<p>Location successfully updated.</p>
+				}
+
+	if (Model.Locations.Count > 0)
+	{
+		using (Html.BeginForm(FormMethod.Post))
+		{
+			<div id="locations">
+				<label for="locations" class="form-label">Choose Location:</label>
+				<select name="locations" class="form-control" required>
+					@foreach (var item in Model.Locations)
+					{
+						<option value="@item.LocationID">@item.Address @item.City, @item.State @item.Zip</option>
+					}
+				</select>
+			</div>
+			<button name="btnSubmit" value="editLocation">Edit Location</button>
+
+			if (Model.Location.LocationID > 0)
+			{
+				<div>
+					@Html.LabelFor(m => m.Location.Address, "Address", new { @class = "form-label" })
+					@Html.TextBoxFor(m => m.Location.Address, new { @class = "form-control" })
+				</div>
+				<div>
+					@Html.LabelFor(m => m.Location.City, "City", new { @class = "form-label" })
+					@Html.TextBoxFor(m => m.Location.City, new { @class = "form-control" })
+				</div>
+				<div>
+					<label for="states" class="form-label">State</label>
+					<select name="states" class="form-control">
+						@foreach (var state in Model.States)
+						{
+							if (Model.Location.intState > 0)
+							{
+								if (state.intStateID == Model.Location.intState)
+								{
+									<option value="@state.intStateID" selected>@state.strState</option>
+								} else
+								{
+									<option value="@state.intStateID">@state.strState</option>
+								}
+							}
+						}
+					</select>
+				</div>
+				<div>
+					@Html.LabelFor(m => m.Location.Zip, "Zip Code", new { @class = "form-label" })
+					@Html.TextBoxFor(m => m.Location.Zip, new { @class = "form-control" })
+				</div>
+				<div>
+					@Html.LabelFor(m => m.Location.Phone, "Phone Number", new { @class = "form-label" })
+					@Html.TextBoxFor(m => m.Location.Phone, new { @class = "form-control" })
+				</div>
+				<div>
+					@Html.LabelFor(m => m.Location.Email, new { @class = "form-label" })
+					@Html.TextBoxFor(m => m.Location.Email, new { @class = "form-control", @type = "email" })
+				</div>
+
+				<button name="btnSubmit" value="submit">Submit Changes</button>
+			}
+		}
+	} else
+	{
+		@Html.Partial("NoLocations");
+	}
+}
+
+

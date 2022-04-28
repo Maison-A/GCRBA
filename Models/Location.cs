@@ -11,10 +11,12 @@ namespace GCRBA.Models
         public int CompanyID { get; set; }
         public string Address { get; set; }
         public string City { get; set; }
+        public int intState { get; set; }
         public string State { get; set; }
         public string Zip { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
+        public List<State> States { get; set; }
         public Location.ActionTypes ActionType = ActionTypes.NoType;
 
         // obtain current session status

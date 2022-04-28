@@ -1,0 +1,36 @@
+﻿@using GCRBA.ViewModels
+@model ProfileViewModel
+
+@if (Model.User.isMember == 0)
+{
+	@Html.Partial("MemberOnly");
+} else
+{
+	if (Model.Location.ActionType == GCRBA.Models.Location.ActionTypes.DeleteSuccessful)
+	{
+		<p>Location successfully removed.</p>
+	}
+
+<div class="container card bg-light w-50 p-4">
+	@using (Html.BeginForm(FormMethod.Post))
+	{
+		if (Model.Locations.Count > 0)
+		{
+			<label for="locations" class="form-label">Select Location:</label>
+			<select name="locations" class="form-control">
+				@foreach (var item in Model.Locations)
+				{
+					<option value="@item.LocationID">@item.Address @item.City, @item.State @item.Zip</option>
+				}
+			</select>
+
+			<button name="btnSubmit" value="delete">Delete Location</button>
+			<button name="btnSubmit" value="cancel" formnovalidate>Cancel</button>
+		}
+		else
+		{
+			<p>There are currently no locations associated with this company.</p>
+		}
+	}
+</div>
+}

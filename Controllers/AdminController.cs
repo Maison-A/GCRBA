@@ -1131,7 +1131,7 @@ namespace GCRBA.Controllers
             vm.Company = db.GetCompanyInfo(vm);
 
             // get locations list
-            vm.Locations = db.GetLocations(vm);
+            vm.Locations = db.GetLocations(vm.Company);
 
             return View(vm);
         }
@@ -1450,7 +1450,7 @@ namespace GCRBA.Controllers
                 Database db = new Database();
 
                 // get list of locations from db 
-                vm.Locations = db.GetLocations(vm);
+                vm.Locations = db.GetLocations(vm.Company);
 
                 return vm;
             }
