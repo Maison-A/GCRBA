@@ -295,7 +295,7 @@ namespace GCRBA.Controllers
                                 
                                 case Models.User.ActionTypes.DuplicateEmail:
 
-                                  //  return RedirectToAction("");
+                                    return View(user);
 
                                 default:
                                     return View(user);
