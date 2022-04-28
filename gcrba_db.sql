@@ -1695,6 +1695,10 @@ SET NOCOUNT ON
 SET XACT_ABORT ON
 BEGIN
 	
+	DECLARE @intContactPersonID AS TINYINT 
+	
+	SELECT @intContactPersonID = intContactPersonID FROM tblContactPerson WHERE intCompanyID = @intCompanyID
+
 	DELETE FROM tblCompanyMember WHERE intCompanyID = @intCompanyID 
 	DELETE FROM tblCategoryLocation WHERE intLocationID IN (SELECT intLocationID FROM tblLocation WHERE intCompanyID = @intCompanyID)
 	DELETE FROM tblLocationHours WHERE intLocationID IN (SELECT intLocationID FROM  tblLocation WHERE intCompanyID = @intCompanyID)
@@ -1703,6 +1707,7 @@ BEGIN
 	DELETE FROM tblLocation WHERE intCompanyID = @intCompanyID
 	DELETE FROM tblCompanyAward WHERE intCompanyID = @intCompanyID
 	DELETE FROM tblCompanySocialMedia WHERE intCompanyID = @intCompanyID
+	DELETE FROM tblContactLocation WHERE intContactPersonID = @intContactPersonID
 	DELETE FROM tblContactPerson WHERE intCompanyID = @intCompanyID
 	DELETE FROM tblWebsite WHERE intCompanyID = @intCompanyID
 	DELETE FROM tblCompany WHERE intCompanyID = @intCompanyID
