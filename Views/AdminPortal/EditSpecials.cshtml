@@ -21,7 +21,7 @@
 		}
 
 		if (Model.Special.ActionType == GCRBA.Models.SaleSpecial.ActionTypes.DeleteSuccessful)
-		{					
+		{
 			@Html.Partial("ChangeSuccessful");
 		}
 
@@ -48,7 +48,14 @@
 
 				if (Model.Button.CurrentButton == "delete")
 				{
-					@Html.Partial("DeleteSpecial");
+					if (Model.Specials.Count > 0)
+					{
+						@Html.Partial("DeleteSpecial");
+
+					} else
+					{
+						<p>There are currently no specials.</p>
+					}
 				}
 
 				<button name="btnSubmit" value="submit">Submit</button>

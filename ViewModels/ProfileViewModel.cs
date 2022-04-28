@@ -22,5 +22,7 @@ namespace GCRBA.ViewModels
 		public List<Location> Locations { get; set; }
 		public CategoryItem Category { get; set; }
 		public List<CategoryItem> Categories { get; set; }
+		public SaleSpecial Special { get; set; }
+		public List<SaleSpecial> Specials { get; set; }
 	}
 }

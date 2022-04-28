@@ -1,0 +1,105 @@
+﻿@using GCRBA.ViewModels
+@model ProfileViewModel
+
+@{
+	ViewBag.Title = "Add/Delete Specials";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (Model.User.isMember == 0)
+{
+	@Html.Partial("AdminOnly");
+} else
+{
+	using (Html.BeginForm(FormMethod.Post))
+	{
+
+		if (Model.Special.ActionType == GCRBA.Models.SaleSpecial.ActionTypes.InsertSuccessful)
+		{
+			@Html.Partial("ChangeSuccessful");
+		}
+
+		if (Model.Special.ActionType == GCRBA.Models.SaleSpecial.ActionTypes.DeleteSuccessful)
+		{
+			@Html.Partial("ChangeSuccessful");
+		}
+
+		if (Model.Location.ActionType == GCRBA.Models.Location.ActionTypes.RequiredFieldMissing)
+		{
+			<p>You must select a location before proceeding.</p>
+		}
+
+		if (Model.Locations.Count > 0)
+		{
+
+			<div id="locations">
+				<label for="locations" class="form-label">Choose Location:</label>
+				<select name="locations" class="form-control" required>
+					@foreach (var item in Model.Locations)
+					{
+						<option value="@item.LocationID">@item.Address @item.City, @item.State @item.Zip</option>
+					}
+				</select>
+			</div>
+
+			// show buttons to select what use wants to do - add or delete special
+			<button name="btnSubmit" value="addSpecial" id="btnAddSpecial" formnovalidate>Add Special</button>
+			<button name="btnSubmit" value="deleteSpecial" id="btnDeleteSpecial" formnovalidate>Delete Special</button>
+
+			if (Model.Location.LocationID > 0)
+			{
+				if (Model.Button.CurrentButton == "add")
+				{
+					<div id="addSpecial">
+						<div>
+							@Html.LabelFor(Model => Model.Special.strDescription, new { @class = "form-label" })
+							@Html.TextAreaFor(Model => Model.Special.strDescription, new { @class = "form-control", @required = "required" })
+						</div>
+						<div>
+							@Html.LabelFor(Model => Model.Special.monPrice, new { @class = "form-label" })
+							@Html.TextBoxFor(Model => Model.Special.monPrice, new { @class = "form-control" })
+						</div>
+						<div>
+							@Html.LabelFor(Model => Model.Special.dtmStart, new { @class = "form-label" })
+							@Html.TextBoxFor(Model => Model.Special.dtmStart, new { @class = "form-control", @type = "date", @required = "required" })
+						</div>
+						<div>
+							@Html.LabelFor(Model => Model.Special.dtmEnd, new { @class = "form-label" })
+							@Html.TextBoxFor(Model => Model.Special.dtmEnd, new { @class = "form-control", @type = "date", @required = "required" })
+						</div>
+					</div>
+				}
+
+				if (Model.Button.CurrentButton == "delete")
+				{
+					if (Model.Specials.Count > 0)
+					{
+						<div>
+							<label for="specials" class="form-label">Select a Special:</label>
+							<select name="specials" class="form-control">
+								@foreach (var item in Model.Specials)
+								{
+									<option value="@item.SpecialID">@item.strDescription</option>
+								}
+							</select>
+						</div>
+
+					} else
+					{
+						<p>There are currently no specials.</p>
+					}
+				}
+
+				<button name="btnSubmit" value="submit">Submit</button>
+				<button name="btnSubmit" value="cancel">Cancel</button>
+			}
+
+		} else
+		{
+			@Html.Partial("NoLocations");
+			<button name="btnSubmit" value="addLocation">Add Location</button>
+		}
+	}
+}
+

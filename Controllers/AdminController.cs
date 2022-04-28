@@ -1078,7 +1078,11 @@ namespace GCRBA.Controllers
 
                     // get input
                     vm.Special.strDescription = col["Special.strDescription"];
-                    vm.Special.monPrice = Convert.ToDecimal(col["Special.monPrice"]);
+
+                    if (col["Special.monPrice"] == null || col["Special.monPrice"] == "")
+					{
+                        vm.Special.monPrice = 0;
+					}
                     vm.Special.dtmStart = Convert.ToDateTime(col["Special.dtmStart"]);
                     vm.Special.dtmEnd = Convert.ToDateTime(col["Special.dtmEnd"]);
 
@@ -1322,7 +1326,7 @@ namespace GCRBA.Controllers
                 Database db = new Database();
 
                 // delete from table 
-                vm.Special.ActionType = db.DeleteSpecialLocation(vm);
+                vm.Special.ActionType = db.DeleteSpecialLocation(vm.Special, vm.Location);
 
                 return vm.Special.ActionType;
             }
@@ -1337,10 +1341,10 @@ namespace GCRBA.Controllers
                 Database db = new Database();
 
                 // add new special to tblSpecial first 
-                vm.Special = db.InsertSpecial(vm);
+                vm.Special = db.InsertSpecial(vm.Special);
 
                 // then add special and location to tblSpecialLocation 
-                vm.Special.ActionType = db.InsertSpecialLocation(vm);
+                vm.Special.ActionType = db.InsertSpecialLocation(vm.Special, vm.Location);
 
                 return vm.Special.ActionType;
             }

@@ -1727,7 +1727,7 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public SaleSpecial.ActionTypes DeleteSpecialLocation(AdminVM vm)
+		public SaleSpecial.ActionTypes DeleteSpecialLocation(SaleSpecial s, Location l)
 		{
 			try
 			{
@@ -1736,8 +1736,8 @@ namespace GCRBA.Models
 				SqlCommand cm = new SqlCommand("DELETE_SPECIALLOCATION", cn);
 				int intReturnValue = -1;
 
-				SetParameter(ref cm, "@intSpecialID", vm.Special.SpecialID, SqlDbType.SmallInt);
-				SetParameter(ref cm, "@intLocationID", vm.Location.LocationID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@intSpecialID", s.SpecialID, SqlDbType.SmallInt);
+				SetParameter(ref cm, "@intLocationID", l.LocationID, SqlDbType.BigInt);
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
 
 				cm.ExecuteReader();
@@ -2318,7 +2318,7 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public SaleSpecial InsertSpecial(AdminVM vm) {
+		public SaleSpecial InsertSpecial(SaleSpecial s) {
 			try 
 			{
 				SqlConnection cn = null;
@@ -2327,10 +2327,10 @@ namespace GCRBA.Models
 				int intReturnValue = -1;
 
 				SetParameter(ref cm, "@intSpecialID", null, SqlDbType.SmallInt, Direction: ParameterDirection.Output);
-				SetParameter(ref cm, "@strDescription", vm.Special.strDescription, SqlDbType.NVarChar);
-				SetParameter(ref cm, "@monPrice", vm.Special.monPrice, SqlDbType.Money);
-				SetParameter(ref cm, "@dtmStart", vm.Special.dtmStart, SqlDbType.Date);
-				SetParameter(ref cm, "@dtmEnd", vm.Special.dtmEnd, SqlDbType.Date);
+				SetParameter(ref cm, "@strDescription", s.strDescription, SqlDbType.NVarChar);
+				SetParameter(ref cm, "@monPrice", s.monPrice, SqlDbType.Money);
+				SetParameter(ref cm, "@dtmStart", s.dtmStart, SqlDbType.Date);
+				SetParameter(ref cm, "@dtmEnd", s.dtmEnd, SqlDbType.Date);
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
 
 				cm.ExecuteReader();
@@ -2339,10 +2339,10 @@ namespace GCRBA.Models
 				CloseDBConnection(ref cn);
 
 				if (intReturnValue == 1) {
-					vm.Special.SpecialID = Convert.ToInt16(cm.Parameters["@intSpecialID"].Value);
-					return vm.Special;
+					s.SpecialID = Convert.ToInt16(cm.Parameters["@intSpecialID"].Value);
+					return s;
 				}
-				return vm.Special;
+				return s;
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
@@ -2368,7 +2368,7 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public SaleSpecial.ActionTypes InsertSpecialLocation(AdminVM vm) 
+		public SaleSpecial.ActionTypes InsertSpecialLocation(SaleSpecial s, Location l) 
 		{
 			try 
 			{
@@ -2378,8 +2378,8 @@ namespace GCRBA.Models
 				int intReturnValue = -1;
 
 				SetParameter(ref cm, "@intSpecialLocationID", null, SqlDbType.BigInt, Direction: ParameterDirection.Output);
-				SetParameter(ref cm, "@intSpecialID", vm.Special.SpecialID, SqlDbType.SmallInt);
-				SetParameter(ref cm, "@intLocationID", vm.Location.LocationID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@intSpecialID", s.SpecialID, SqlDbType.SmallInt);
+				SetParameter(ref cm, "@intLocationID", l.LocationID, SqlDbType.BigInt);
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
 
 				cm.ExecuteReader();
