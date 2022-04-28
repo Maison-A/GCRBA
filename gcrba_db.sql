@@ -132,10 +132,22 @@ IF OBJECT_ID ('INSERT_LOCATION_IMAGES')						IS NOT NULL DROP PROCEDURE INSERT_L
 IF OBJECT_ID ('SELECT_MEMBER_COMPANIES')					IS NOT NULL DROP PROCEDURE SELECT_MEMBER_COMPANIES
 IF OBJECT_ID ('GET_COMPANY_BY_MEMBER')						IS NOT NULL DROP PROCEDURE GET_COMPANY_BY_MEMBER
 IF OBJECT_ID ('UPDATE_COMPANY_INFO')						IS NOT NULL DROP PROCEDURE UPDATE_COMPANY_INFO
-IF OBJECT_ID ('INSERT_ADMIN_NOTIFICATION_COMPANY_EDIT')		IS NOT NULL DROP PROCEDURE INSERT_ADMIN_NOTIFICATION_COMPANY_EDIT
+IF OBJECT_ID ('INSERT_ADMIN_NOTIFICATION_EDIT')		IS NOT NULL DROP PROCEDURE INSERT_ADMIN_NOTIFICATION_EDIT
+IF OBJECT_ID ('INSERT_ADMIN_NOTIFICATION_WEBSITE_EDIT')		IS NOT NULL DROP PROCEDURE INSERT_ADMIN_NOTIFICATION_WEBSITE_EDIT
+IF OBJECT_ID ('INSERT_ADMIN_NOTIFICATION_SOCIALMEDIA_EDIT')		IS NOT NULL DROP PROCEDURE INSERT_ADMIN_NOTIFICATION_SOCIALMEDIA_EDIT
+IF OBJECT_ID ('INSERT_ADMIN_NOTIFICATION_LOCATION_EDIT')	IS NOT NULL DROP PROCEDURE INSERT_ADMIN_NOTIFICATION_LOCATION_EDIT
 IF OBJECT_ID ('GET_COMPANY_WEBSITES')						IS NOT NULL DROP PROCEDURE GET_COMPANY_WEBSITES
 IF OBJECT_ID ('DELETE_WEBSITE')								IS NOT NULL DROP PROCEDURE DELETE_WEBSITE
 IF OBJECT_ID ('GET_WEBSITE_TYPES')								IS NOT NULL DROP PROCEDURE GET_WEBSITE_TYPES
+IF OBJECT_ID ('UPDATE_WEBSITE')								IS NOT NULL DROP PROCEDURE UPDATE_WEBSITE
+IF OBJECT_ID ('INSERT_NEW_WEBSITE')								IS NOT NULL DROP PROCEDURE INSERT_NEW_WEBSITE
+IF OBJECT_ID ('GET_COMPANY_SOCIALMEDIA')								IS NOT NULL DROP PROCEDURE GET_COMPANY_SOCIALMEDIA
+IF OBJECT_ID ('GET_SOCIALMEDIA_TYPES')								IS NOT NULL DROP PROCEDURE GET_SOCIALMEDIA_TYPES
+IF OBJECT_ID ('UPDATE_SOCIALMEDIA')								IS NOT NULL DROP PROCEDURE UPDATE_SOCIALMEDIA
+IF OBJECT_ID ('INSERT_NEW_SOCIALMEDIA')								IS NOT NULL DROP PROCEDURE INSERT_NEW_SOCIALMEDIA
+IF OBJECT_ID ('UPDATE_LOCATION')								IS NOT NULL DROP PROCEDURE UPDATE_LOCATION
+IF OBJECT_ID ('DELETELOCATION')								IS NOT NULL DROP PROCEDURE DELETELOCATION
+IF OBJECT_ID ('GET_ADMIN_NOTIFICATIONS')								IS NOT NULL DROP PROCEDURE GET_ADMIN_NOTIFICATIONS
 
 CREATE TABLE tblTempCompany   
 (
@@ -309,10 +321,7 @@ CREATE TABLE tblAboutGCRBA
 	CONSTRAINT tblAboutGCRBA_PK PRIMARY KEY (intAboutGCRBAID)
 )
 
--- all users listed here
 -- if admin, isAdmin = 1, else isAdmin = 0
--- phone number is optional, so is allowed null value 
--- brackets around table name to make explicit b/c user is reserved keyword
 CREATE TABLE tblUser
 (
 	intUserID		SMALLINT IDENTITY(1,1)	NOT NULL, 
@@ -457,18 +466,6 @@ CREATE TABLE tblCategoryLocation
 	intLocationID			BIGINT			NOT NULL,
 	CONSTRAINT tblCategoryLocation_PK PRIMARY KEY (intCategoryLocationID)
 )
-
---CREATE TABLE tblAdminRequest
---(
---	intAdminRequestID		SMALLINT IDENTITY(1,1)	NOT NULL,
---	intUserID				SMALLINT			NOT NULL,
---	intTypeID				SMALLINT			NOT NULL,
---	intEditedTableID		SMALLINT			NOT NULL, 
---	intEditedColumnID		SMALLINT, 
---	intLocationInTable		SMALLINT, 
---	strRequestedChange      NVARCHAR(2000), 
---	CONSTRAINT tblAdminRequest_PK PRIMARY KEY (intAdminRequestID)
---)
 
 CREATE TABLE tblEvent
 (
@@ -1159,7 +1156,7 @@ GO
 CREATE PROCEDURE [db_owner].[INSERT_SPECIAL]
 @intSpecialID SMALLINT OUTPUT, 
 @strDescription NVARCHAR(100), 
-@monPrice MONEY, 
+@monPrice MONEY = NULL, 
 @dtmStart DATE, 
 @dtmEnd DATE
 AS 
@@ -1482,7 +1479,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT l.intLocationID, l.strAddress, l.strCity, s.strState, l.strZip, l.strPhone, l.strEmail
+	SELECT l.intLocationID, l.strAddress, l.strCity, l.intStateID, s.strState, l.strZip, l.strPhone, l.strEmail
 	FROM tblLocation AS l JOIN tblState AS s ON s.intStateID = l.intStateID
 	WHERE l.intCompanyID = @intCompanyID
 END
@@ -1612,7 +1609,6 @@ BEGIN
 
 		DELETE FROM db_owner.tblTempCategoryLocation WHERE intLocationID = @lngLocationID
 		DELETE FROM db_owner.tblTempLocationHours WHERE intLocationID = @lngLocationID
-		DELETE FROM db_owner.tblLocationImages WHERE intLocationID = @lngLocationID
 		DELETE FROM db_owner.tblTempCompanySocialMedia WHERE intCompanyID = @lngCompanyID
 		DELETE FROM db_owner.tblTempWebsite WHERE intCompanyID = @lngCompanyID
 		DELETE from db_owner.tblTempContactLocation Where intLocationID = @lngLocationID
@@ -1621,6 +1617,24 @@ BEGIN
 		DELETE FROM db_owner.tblTempCompany WHERE intCompanyID = @lngCompanyID
 
 	RETURN @@ROWCOUNT
+END
+GO
+
+CREATE PROCEDURE [dbo].[DELETELOCATION]
+@intLocationID AS BIGINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+		DELETE FROM db_owner.tblCategoryLocation WHERE intLocationID = @intLocationID
+		DELETE FROM db_owner.tblLocationHours WHERE intLocationID = @intLocationID
+		DELETE from db_owner.tblContactLocation Where intLocationID = @intLocationID
+		DELETE from db_owner.tblLocationImages Where intLocationID = @intLocationID
+		DELETE from db_owner.tblEventLocation Where intLocationID = @intLocationID
+		DELETE from db_owner.tblSpecialLocation Where intLocationID = @intLocationID
+		DELETE FROM db_owner.tblLocation WHERE intLocationID = @intLocationID
+
+	RETURN 1
 END
 GO
 
@@ -2223,6 +2237,52 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [db_owner].[UPDATE_LOCATION]
+@intLocationID BIGINT,
+@strAddress NVARCHAR(100) = NULL,
+@strCity NVARCHAR(50)= NULL,
+@intStateID BIGINT = NULL,
+@strZip NVARCHAR(15) = NULL,
+@strPhone NVARCHAR(20) = NULL,
+@strEmail NVARCHAR(100) = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	IF @strAddress IS NOT NULL
+		UPDATE	tblLocation
+		SET		strAddress = @strAddress
+		WHERE	intLocationID = @intLocationID 
+
+	IF @strCity IS NOT NULL
+		UPDATE	tblLocation
+		SET		strCity = @strCity
+		WHERE	intLocationID = @intLocationID 
+
+	IF @intStateID != 0
+		UPDATE	tblLocation
+		SET		intStateID = @intStateID
+		WHERE	intLocationID = @intLocationID 
+
+	IF @strZip IS NOT NULL
+		UPDATE	tblLocation
+		SET		strZip = @strZip
+		WHERE	intLocationID = @intLocationID 
+
+	IF @strPhone IS NOT NULL
+		UPDATE	tblLocation
+		SET		strPhone = @strPhone
+		WHERE	intLocationID = @intLocationID 
+
+	IF @strEmail IS NOT NULL
+		UPDATE	tblLocation
+		SET		strEmail = @strEmail
+		WHERE	intLocationID = @intLocationID 
+
+	RETURN 1
+END
+GO
+
 CREATE PROCEDURE [dbo].[SELECT_LOCATIONHOURS]
 @intLocationID BIGINT = NULL
 AS 
@@ -2317,6 +2377,23 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [db_owner].[GET_ADMIN_NOTIFICATIONS]
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT	an.intAdminNotificationID, an.intUserID, u.strFirstName, u.strLastName, an.intEditedColumnID, ec.strColumnName, an.intEditedTableID, et.strTableName, an.strPreviousVersion, an.strNewVersion, an.intNotificationStatusID, n.strNotificationStatus
+	FROM	tblAdminNotification as an JOIN tblUser as u
+			ON u.intUserID = an.intUserID 
+			JOIN tblEditedColumn as ec
+			ON ec.intEditedColumnID = an.intEditedColumnID
+			JOIN tblEditedTable as et 
+			ON et.intEditedTableID = an.intEditedTableID
+			JOIN tblNotificationStatus as n
+			ON n.intNotificationStatusID = an.intNotificationStatusID
+END
+GO
+
 CREATE PROCEDURE [db_owner].[INSERT_USER_NOTIFICATION]
 @intUserID SMALLINT,
 @intNotificationID SMALLINT,
@@ -2395,6 +2472,46 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [db_owner].[INSERT_NEW_WEBSITE]
+@strURL NVARCHAR(100),
+@intWebsiteTypeID BIGINT,
+@intCompanyID BIGINT
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+	INSERT INTO [db_owner].[tblWebsite]
+				([intCompanyID]
+				,[strURL]
+				,[intWebsiteTypeID])
+			VALUES
+				(@intCompanyID
+				,@strURL
+				,@intWebsiteTypeID)
+		RETURN 1
+END
+GO
+
+CREATE PROCEDURE [db_owner].[INSERT_NEW_SOCIALMEDIA]
+@strSocialMediaLink NVARCHAR(100),
+@intSocialMediaID BIGINT,
+@intCompanyID BIGINT
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+	INSERT INTO [db_owner].[tblCompanySocialMedia]
+				([strSocialMediaLink]
+				,[intCompanyID]
+				,[intSocialMediaID])
+			VALUES
+				(@strSocialMediaLink
+				,@intCompanyID
+				,@intSocialMediaID)
+		RETURN 1
+END
+GO
+
 CREATE PROCEDURE [db_owner].[MARK_NOTIFICATION_AS_READ]
 @intUserNotificationID SMALLINT
 AS
@@ -2439,6 +2556,21 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [db_owner].[GET_COMPANY_SOCIALMEDIA]
+@intCompanyID SMALLINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT  sm.intSocialMediaID, sm.strPlatform, csm.intCompanySocialMediaID, csm.strSocialMediaLink
+	FROM	tblCompany as c JOIN tblCompanySocialMedia as csm
+			ON c.intCompanyID = csm.intCompanyID
+			JOIN tblSocialMedia as sm
+			ON sm.intSocialMediaID = csm.intSocialMediaID
+	WHERE	csm.intCompanyID = @intCompanyID 
+END 
+GO
+
 CREATE PROCEDURE [db_owner].[GET_WEBSITE_TYPES]
 AS
 BEGIN
@@ -2446,6 +2578,46 @@ BEGIN
 
 	SELECT	intWebsiteTypeID, strWebsiteType
 	FROM	tblWebsiteType 
+END
+GO
+
+CREATE PROCEDURE [db_owner].[GET_SOCIALMEDIA_TYPES]
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT	intSocialMediaID, strPlatform
+	FROM	tblSocialMedia 
+END
+GO
+
+CREATE PROCEDURE [db_owner].[UPDATE_WEBSITE]
+@intWebsiteID BIGINT,
+@strURL NVARCHAR(100)
+AS 
+BEGIN
+	SET NOCOUNT ON;
+	
+	UPDATE	tblWebsite
+	SET		strURL = @strURL
+	WHERE	intWebsiteID = @intWebsiteID 
+
+	RETURN 1
+END
+GO
+
+CREATE PROCEDURE [db_owner].[UPDATE_SOCIALMEDIA]
+@intCompanySocialMediaID BIGINT,
+@strSocialMediaLink NVARCHAR(100)
+AS 
+BEGIN
+	SET NOCOUNT ON;
+	
+	UPDATE	tblCompanySocialMedia
+	SET		strSocialMediaLink = @strSocialMediaLink
+	WHERE	intCompanySocialMediaID = @intCompanySocialMediaID 
+
+	RETURN 1
 END
 GO
 
@@ -2477,7 +2649,35 @@ BEGIN
 END
 GO
 
-CREATE PROCEDURE [db_owner].[INSERT_ADMIN_NOTIFICATION_COMPANY_EDIT]
+CREATE PROCEDURE [db_owner].[INSERT_ADMIN_NOTIFICATION_EDIT]
+@intUserID SMALLINT,
+@intEditedColumnID SMALLINT,
+@intEditedTableID SMALLINT,
+@strPreviousVersion NVARCHAR(2000),
+@strNewVersion NVARCHAR(2000)
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+	INSERT INTO [db_owner].[tblAdminNotification]
+				([intUserID]
+				,[intEditedColumnID]
+				,[intEditedTableID]
+				,[strPreviousVersion]
+				,[strNewVersion]
+				,[intNotificationStatusID])
+			VALUES
+				(@intUserID
+				,@intEditedColumnID
+				,@intEditedTableID
+				,@strPreviousVersion
+				,@strNewVersion
+				, 2)
+			RETURN 1
+END
+GO
+
+CREATE PROCEDURE [db_owner].[INSERT_ADMIN_NOTIFICATION_LOCATION_EDIT]
 @intUserID SMALLINT,
 @intEditedColumnID SMALLINT,
 @strPreviousVersion NVARCHAR(2000),
@@ -2496,7 +2696,61 @@ BEGIN
 			VALUES
 				(@intUserID
 				,@intEditedColumnID
-				,1
+				,4
+				,@strPreviousVersion
+				,@strNewVersion
+				, 2)
+			RETURN 1
+END
+GO
+
+CREATE PROCEDURE [db_owner].[INSERT_ADMIN_NOTIFICATION_WEBSITE_EDIT]
+@intUserID SMALLINT,
+@intEditedColumnID SMALLINT,
+@strPreviousVersion NVARCHAR(2000),
+@strNewVersion NVARCHAR(2000)
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+	INSERT INTO [db_owner].[tblAdminNotification]
+				([intUserID]
+				,[intEditedColumnID]
+				,[intEditedTableID]
+				,[strPreviousVersion]
+				,[strNewVersion]
+				,[intNotificationStatusID])
+			VALUES
+				(@intUserID
+				,@intEditedColumnID
+				,2
+				,@strPreviousVersion
+				,@strNewVersion
+				, 2)
+			RETURN 1
+END
+GO
+
+CREATE PROCEDURE [db_owner].[INSERT_ADMIN_NOTIFICATION_SOCIALMEDIA_EDIT]
+@intUserID SMALLINT,
+@intEditedColumnID SMALLINT,
+@strPreviousVersion NVARCHAR(2000),
+@strNewVersion NVARCHAR(2000)
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN
+	INSERT INTO [db_owner].[tblAdminNotification]
+				([intUserID]
+				,[intEditedColumnID]
+				,[intEditedTableID]
+				,[strPreviousVersion]
+				,[strNewVersion]
+				,[intNotificationStatusID])
+			VALUES
+				(@intUserID
+				,@intEditedColumnID
+				,3
 				,@strPreviousVersion
 				,@strNewVersion
 				, 2)
@@ -2510,10 +2764,31 @@ GO
 INSERT INTO tblEditedColumn (strColumnName)
 VALUES		('strCompanyName'),
 			('strAbout'),
-			('strBizYear')
+			('strBizYear'),
+			('intCompanyID'),
+			('strURL'),
+			('intWebsiteTypeID'),
+			('strSocialMediaLink'),
+			('strAddress'),
+			('strCity'),
+			('intStateID'),
+			('strZip'),
+			('strPhone'),
+			('strEmail'),
+			('intCategoryID'),
+			('intLocationID'),
+			('intSpecialID'),
+			('strSpecial')
+			
 
 INSERT INTO tblEditedTable (strTableName)
-VALUES		('tblCompany')
+VALUES		('tblCompany'),
+			('tblWebsite'),
+			('tblCompanySocialMedia'),
+			('tblLocation'),
+			('tblCategory'),
+			('tblSpecial'),
+			('tblSpecialLocation')
 
 INSERT INTO tblNotification (strNotification)
 VALUES		('Your request for membership has been approved'),
@@ -2677,10 +2952,10 @@ VALUES		(3, 'https://give.salvationarmy.org/team/353650', 3),
 			(3, 'https://www.servatii.com/online-orders', 2),
 			(2, 'http://www.wyomingpastryshop.com/', 1),
 			(1, 'https://www.bonbonerie.com/', 1),
-			(1, 'https://www.cincyfavorites.com/shop/bonbonerie-bakery/', 2)
+			(1, 'https://cincyfavorites.com/shop/bonbonerie-bakery/', 2)
 
 INSERT INTO tblCompanySocialMedia (strSocialMediaLink, intCompanyID, intSocialMediaID)
-VALUES		('https://www.twitter.com/servatiipastry', 3, 5),
+VALUES		('https://twitter.com/servatiipastry', 3, 5),
 			('https://facebook.com/servatii', 3, 1),
 			('https://www.instagram.com/servatiipastry/?hl=en', 3, 2),
 			('https://mobile.twitter.com/wyomingpastry', 2, 5),
