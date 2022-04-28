@@ -1,6 +1,10 @@
 ﻿@using GCRBA.ViewModels
 @model ProfileViewModel
 
+@{ 
+	ViewBag.Title = "Delete Location";
+}
+
 @if (Model.User.isMember == 0)
 {
 	@Html.Partial("MemberOnly");
@@ -11,7 +15,9 @@
 		<p>Location successfully removed.</p>
 	}
 
-<div class="container card bg-light w-50 p-4">
+<h2 class="mt-2">@ViewBag.Title</h2>
+
+<div class="container w-50 p-4">
 	@using (Html.BeginForm(FormMethod.Post))
 	{
 		if (Model.Locations.Count > 0)
@@ -24,8 +30,8 @@
 				}
 			</select>
 
-			<button name="btnSubmit" value="delete">Delete Location</button>
-			<button name="btnSubmit" value="cancel" formnovalidate>Cancel</button>
+			<button name="btnSubmit" value="delete" class="mt-3">Delete Location</button>
+			<button name="btnSubmit" value="cancel" class="mt-3" formnovalidate>Cancel</button>
 		}
 		else
 		{

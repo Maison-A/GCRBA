@@ -5,33 +5,42 @@
 	ViewBag.Title = "Edit General Company Information";
 }
 
-<h2>You are editing: @Model.Company.Name</h2>
-
-@if (Model.Company.ActionType == GCRBA.Models.Company.ActionTypes.UpdateSuccessful)
+@if (Model.User.isMember == 0)
 {
-	<p>Company info successfully updated.</p>
-}
+	@Html.Partial("MemberOnly");
 
-@using (Html.BeginForm(FormMethod.Post))
+} else
 {
-	<div>
-		@Html.LabelFor(Model => Model.Company.Name, new { @class = "form-label" })
-		@Html.TextBoxFor(Model => Model.Company.Name, new { @autofocus = "autofocus", @class = "form-control" })
-	</div>
-	<div>
-		@Html.LabelFor(Model => Model.Company.About, new { @class = "form-label" })
-		@Html.TextAreaFor(Model => Model.Company.About, new { @class = "form-control" })
-	</div>
-	<div>
-		@Html.LabelFor(Model => Model.Company.Year, new { @class = "form-label" })
-		@Html.TextBoxFor(Model => Model.Company.Year, new { @class = "form-control" })
-	</div>
-	<div>
-		<button name="btnSubmit" value="editWebsites">Edit Website(s)</button>
-		<button name="btnSubmit" value="editSocialMedia">Edit Social Media</button>
-	</div>
-	<div>
-		<button name="btnSubmit" value="submit">Submit Changes</button>
-		<button name="btnSubmit" value="cancel">Cancel</button>
-	</div>
+	<h2>You are editing: @Model.Company.Name</h2>
+
+	if (Model.Company.ActionType == GCRBA.Models.Company.ActionTypes.UpdateSuccessful)
+	{
+		<p>Company info successfully updated.</p>
+	}
+
+	using (Html.BeginForm(null, null, null, FormMethod.Post, new { @class = "w-50 mx-auto" }))
+	{
+		<div class="row">
+			<div class="col">
+				@Html.LabelFor(Model => Model.Company.Name, new { @class = "form-label mt-3" })
+				@Html.TextBoxFor(Model => Model.Company.Name, new { @autofocus = "autofocus", @class = "form-control" })
+			</div>
+			<div class="col">
+				@Html.LabelFor(Model => Model.Company.Year, new { @class = "form-label mt-3" })
+				@Html.TextBoxFor(Model => Model.Company.Year, new { @class = "form-control" })
+			</div>
+		</div>
+		<div>
+			@Html.LabelFor(Model => Model.Company.About, new { @class = "form-label mt-3" })
+			@Html.TextAreaFor(Model => Model.Company.About, new { @class = "form-control" })
+		</div>
+		<div>
+			<button name="btnSubmit" value="editWebsites" class="col-md-4 mt-2">Edit Website(s)</button>
+			<button name="btnSubmit" value="editSocialMedia" class="col-md-4 mt-2">Edit Social Media</button>
+		</div>
+		<div>
+			<button name="btnSubmit" value="submit" class="col-md-4 mt-2">Submit Changes</button>
+			<button name="btnSubmit" value="cancel" class="col-md-4 mt-2">Cancel</button>
+		</div>
+	}
 }

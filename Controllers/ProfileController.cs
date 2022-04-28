@@ -535,6 +535,10 @@ namespace GCRBA.Controllers
                 return RedirectToAction("EditCategoriesByLocation", "Profile");
             }
 
+            if (col["btnSubmit"].ToString() == "editSpecials")
+			{
+                return RedirectToAction("EditSpecials", "Profile");
+			}
             return View(vm);
 		}
 
@@ -628,6 +632,16 @@ namespace GCRBA.Controllers
             if (col["btnSubmit"].ToString() == "cancel")
 			{
                 return RedirectToAction("EditCompanyInfo", "Profile");
+			}
+
+            if (col["btnSubmit"].ToString() == "editWebsites")
+			{
+                return RedirectToAction("EditWebsites", "Profile");
+			}
+
+            if (col["btnSubmit"].ToString() == "editSocialMedia")
+			{
+                return RedirectToAction("EditSocialMedia", "Profile");
 			}
 
             return View(vm);

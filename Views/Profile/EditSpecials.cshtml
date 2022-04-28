@@ -9,10 +9,10 @@
 
 @if (Model.User.isMember == 0)
 {
-	@Html.Partial("AdminOnly");
+	@Html.Partial("MemberOnly");
 } else
 {
-	using (Html.BeginForm(FormMethod.Post))
+	using (Html.BeginForm(null, null, null, FormMethod.Post, new { @class = "mx-auto w-50" }))
 	{
 
 		if (Model.Special.ActionType == GCRBA.Models.SaleSpecial.ActionTypes.InsertSuccessful)
@@ -33,7 +33,7 @@
 		if (Model.Locations.Count > 0)
 		{
 
-			<div id="locations">
+			<div id="locations" class="">
 				<label for="locations" class="form-label">Choose Location:</label>
 				<select name="locations" class="form-control" required>
 					@foreach (var item in Model.Locations)
@@ -44,14 +44,14 @@
 			</div>
 
 			// show buttons to select what use wants to do - add or delete special
-			<button name="btnSubmit" value="addSpecial" id="btnAddSpecial" formnovalidate>Add Special</button>
-			<button name="btnSubmit" value="deleteSpecial" id="btnDeleteSpecial" formnovalidate>Delete Special</button>
+			<button name="btnSubmit" value="addSpecial" class="mt-3 button-action" id="btnAddSpecial" formnovalidate>Add Special</button>
+			<button name="btnSubmit" value="deleteSpecial" class="mt-3 button-action" id="btnDeleteSpecial" formnovalidate>Delete Special</button>
 
 			if (Model.Location.LocationID > 0)
 			{
 				if (Model.Button.CurrentButton == "add")
 				{
-					<div id="addSpecial">
+					<div id="addSpecial" class="mt-2">
 						<div>
 							@Html.LabelFor(Model => Model.Special.strDescription, new { @class = "form-label" })
 							@Html.TextAreaFor(Model => Model.Special.strDescription, new { @class = "form-control", @required = "required" })
@@ -75,7 +75,7 @@
 				{
 					if (Model.Specials.Count > 0)
 					{
-						<div>
+						<div class="mt-2">
 							<label for="specials" class="form-label">Select a Special:</label>
 							<select name="specials" class="form-control">
 								@foreach (var item in Model.Specials)
@@ -91,8 +91,8 @@
 					}
 				}
 
-				<button name="btnSubmit" value="submit">Submit</button>
-				<button name="btnSubmit" value="cancel">Cancel</button>
+				<button name="btnSubmit" value="submit" class="mt-3 button-action">Submit</button>
+				<button name="btnSubmit" value="cancel" class="mt-3 button-action" formnovalidate>Cancel</button>
 			}
 
 		} else
