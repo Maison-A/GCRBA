@@ -274,6 +274,7 @@ namespace GCRBA.Controllers
 
                                     return RedirectToAction("Index", "Home");
                                 default:
+                                    user.lstStates = db.GetStates();
                                     return View(user);
                             }
 
@@ -294,10 +295,11 @@ namespace GCRBA.Controllers
                                     return RedirectToAction("Index", "Home");
                                 
                                 case Models.User.ActionTypes.DuplicateEmail:
-
+                                    user.lstStates = db.GetStates();
                                     return View(user);
 
                                 default:
+                                    user.lstStates = db.GetStates();
                                     return View(user);
                             }                        
                         }
@@ -307,6 +309,8 @@ namespace GCRBA.Controllers
             catch (Exception)
             {
                 Models.User u = new Models.User();
+                Models.Database db = new Models.Database();
+                u.lstStates = db.GetStates();
                 return View(u);
             }
             return View();
