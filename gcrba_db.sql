@@ -2457,7 +2457,7 @@ BEGIN
 					,@intMemberLevel
 					,@intPaymentType
 					,@intApprovalStatus
-					,@intPaymentStatus)
+					,2)
 			SELECT @intMemberID=@@IDENTITY
 			RETURN 1
 END
