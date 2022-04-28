@@ -148,6 +148,8 @@ IF OBJECT_ID ('INSERT_NEW_SOCIALMEDIA')								IS NOT NULL DROP PROCEDURE INSERT
 IF OBJECT_ID ('UPDATE_LOCATION')								IS NOT NULL DROP PROCEDURE UPDATE_LOCATION
 IF OBJECT_ID ('DELETELOCATION')								IS NOT NULL DROP PROCEDURE DELETELOCATION
 IF OBJECT_ID ('GET_ADMIN_NOTIFICATIONS')								IS NOT NULL DROP PROCEDURE GET_ADMIN_NOTIFICATIONS
+IF OBJECT_ID ('DELETE_ADMIN_NOTIFICATIONS')								IS NOT NULL DROP PROCEDURE DELETE_ADMIN_NOTIFICATIONS
+IF OBJECT_ID ('MARK_ADMIN_NOTIFICATION_AS_READ')								IS NOT NULL DROP PROCEDURE MARK_ADMIN_NOTIFICATION_AS_READ
 
 CREATE TABLE tblTempCompany   
 (
@@ -2362,6 +2364,17 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [db_owner].[DELETE_ADMIN_NOTIFICATIONS]
+@intAdminNotificationID SMALLINT 
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DELETE FROM tblAdminNotification WHERE intAdminNotificationID = @intAdminNotificationID
+	RETURN 1
+END
+GO
+
 CREATE PROCEDURE [db_owner].[GET_USER_NOTIFICATIONS]
 @intUserID	SMALLINT 
 AS
@@ -2525,6 +2538,21 @@ BEGIN
 	RETURN 1
 END
 GO
+
+CREATE PROCEDURE [db_owner].[MARK_ADMIN_NOTIFICATION_AS_READ]
+@intAdminNotificationID SMALLINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	UPDATE	tblAdminNotification
+	SET		intNotificationStatusID = 1
+	WHERE	intAdminNotificationID = @intAdminNotificationID 
+
+	RETURN 1
+END
+GO
+
 
 CREATE PROCEDURE [db_owner].[GET_COMPANY_BY_MEMBER]
 @intMemberID SMALLINT
@@ -2971,7 +2999,7 @@ VALUES		('https://twitter.com/servatiipastry', 3, 5),
 INSERT INTO tblUser (strFirstName, strLastName, strAddress, strCity, intStateID, strZip, strPhone, strEmail, strUsername, strPassword, isAdmin)
 VALUES	('Katie', 'Schmidt', '6036 Flyer Drive', 'Cincinnati', 3, '45248', '5133103965', 'klschmidt16178@cincinnatistate.edu', 'test2', 'test2', 0),
 		('Random', 'User', '1234 Main St', 'Lawrenceburg', 1, '41010', '5135555555', 'random_user@gmail.com', 'test3', 'test3', 0),
-		('Shane', 'Winslow', '26 Glenway', 'Ft. Thomas', 1, '5555555555', 'winzlizle@gmail.com', 'winslows1@gmail.com', 'winslows1', 'password', 0),
+		('Shane', 'Winslow', '26 Glenway', 'Ft. Thomas', 1, '45211', '5555555555', 'winslows1@gmail.com', 'winslows1', 'password', 0),
 		('Grace', 'Gottenbusch', '123 Elm St', 'Covington', 2, '41212', '5135555555', 'grace@gmail.com', 'grace', 'grace', 1),
 		('Bob', 'Smith', NULL, NULL, NULL, NULL, '5135555121', 'bob@gmail.com', 'bob', 'bob', 0),
 		('Jane', 'Dough', '12345 Elm St','Cincinnati', 3, '45050', '5555555555', 'janedough@gmail.com', 'jane', 'jane', 0)
