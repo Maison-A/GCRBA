@@ -3014,8 +3014,6 @@ INSERT INTO  tblMember (intUserID, intMemberLevelID, intPaymentTypeID, intApprov
 VALUES	 (1, 1, 2, 2, 1)
 		,(3, 2, 1, 2, 1)
 		,(4, 2, 1, 2, 1)
-		,(5, 1, 1, 1, 2)
-		,(6, 2, 2, 1, 2)
 
 -- ADD CONNECTION BETWEEN COMPANY AND MEMBER
 INSERT INTO tblCompanyMember (intCompanyID, intMemberID)
@@ -3155,7 +3153,3 @@ VALUES									(1, 1)
 INSERT INTO tblTempCompanySocialMedia (intCompanyID, strSocialMediaLink, intSocialMediaID)
 VALUES					(1, 'https://www.facebook.com', 1)
 
--- delete after testing
-INSERT INTO tblUserNotification (intUserID, intNotificationID, intNotificationStatusID)
-VALUES		(6, 1, 2),
-			(6, 1, 2) 
