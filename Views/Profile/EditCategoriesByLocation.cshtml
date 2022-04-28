@@ -1,0 +1,67 @@
+﻿@using GCRBA.ViewModels
+@model ProfileViewModel
+
+
+@{
+	ViewBag.Title = "Add/Delete Categories";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (Model.User.isMember == 0)
+{
+	@Html.Partial("MemberOnly");
+
+} else
+{
+	if (Model.Category.ActionType == GCRBA.Models.CategoryItem.ActionTypes.InsertSuccessful)
+	{
+		@Html.Partial("ChangeSuccessful");
+	}
+
+	if (Model.Category.ActionType == GCRBA.Models.CategoryItem.ActionTypes.DeleteSuccessful)
+	{
+		@Html.Partial("ChangeSuccessful");
+	}
+
+	using (Html.BeginForm(FormMethod.Post))
+	{
+		<div id="add">
+			@if (Model.Locations.Count > 0)
+			{
+				<div id="locations">
+					<label for="locations" class="form-label">Choose Location:</label>
+					<select name="locations" class="form-control" required>
+						@foreach (var item in Model.Locations)
+						{
+							<option value="@item.LocationID">@item.Address @item.City, @item.State @item.Zip</option>
+						}
+					</select>
+				</div>
+				<button name="btnSubmit" value="addCategories">Add Categories</button>
+				<button name="btnSubmit" value="deleteCategories">Delete Categories</button>
+
+				if (Model.Location.LocationID > 0)
+				{
+					<div>
+						<label for="categories" class="form-label">Select Category(s):</label>
+
+						<select name="categories" class="form-control" multiple>
+							@foreach (var item in Model.Categories)
+							{
+								<option value="@item.ItemID">@item.ItemDesc</option>
+							}
+						</select>
+					</div>
+					<button name="btnSubmit" value="submit">Submit</button>
+					<button name="btnSubmit" value="cancel">Cancel</button>
+				}
+			} else
+			{
+				@Html.Partial("NoLocations");
+				<button name="btnSubmit" value="addLocation">Add Location</button>
+			}
+		</div>
+
+	}
+}

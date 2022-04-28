@@ -1027,21 +1027,21 @@ namespace GCRBA.Models
 			} catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public List<CategoryItem> GetNotCategories(AdminVM vm)
+		public List<CategoryItem> GetNotCategories(List<CategoryItem> categories, Location l)
         {
-			vm.Categories = GetCategories(vm, "GET_NOT_CATEGORIES");
+			categories = GetCategories(l, "GET_NOT_CATEGORIES");
 
-			return vm.Categories;
+			return categories;
         }
 
-		public List<CategoryItem> GetCurrentCategories(AdminVM vm)
+		public List<CategoryItem> GetCurrentCategories(List<CategoryItem> categories, Location l)
         {
-			vm.Categories = GetCategories(vm, "GET_CURRENT_CATEGORIES");
+			categories = GetCategories(l, "GET_CURRENT_CATEGORIES");
 
-			return vm.Categories;
+			return categories;
 		}
 
-		public List<CategoryItem> GetCategories(AdminVM vm, string sproc)
+		public List<CategoryItem> GetCategories(Location l, string sproc)
         {
 			try
 			{
@@ -1054,7 +1054,7 @@ namespace GCRBA.Models
 				// specify which stored procedure we are using 
 				SqlDataAdapter da = new SqlDataAdapter(sproc, cn);
 
-				SetParameter(ref da, "@intLocationID", vm.Location.LocationID, SqlDbType.BigInt);
+				SetParameter(ref da, "@intLocationID", l.LocationID, SqlDbType.BigInt);
 
 				// create new list object with type string  
 				List<CategoryItem> categories = new List<CategoryItem>();
@@ -1756,7 +1756,7 @@ namespace GCRBA.Models
 			} catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public CategoryItem.ActionTypes DeleteCategories(AdminVM vm)
+		public CategoryItem.ActionTypes DeleteCategories(Location l, CategoryItem c)
         {
 			try
             {
@@ -1765,8 +1765,8 @@ namespace GCRBA.Models
 				SqlCommand cm = new SqlCommand("DELETE_CATEGORY_FROM_LOCATION", cn);
 				int intReturnValue = -1;
 
-				SetParameter(ref cm, "@intLocationID", vm.Location.LocationID, SqlDbType.BigInt);
-				SetParameter(ref cm, "@intCategoryID", vm.Category.ItemID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@intLocationID", l.LocationID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@intCategoryID", c.ItemID, SqlDbType.BigInt);
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
 
 				cm.ExecuteReader();
@@ -2395,7 +2395,7 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
-		public CategoryItem.ActionTypes InsertCategories(AdminVM vm)
+		public CategoryItem.ActionTypes InsertCategories(CategoryItem c, Location l)
         {
 			try
             {
@@ -2405,8 +2405,8 @@ namespace GCRBA.Models
 				int intReturnValue = -1;
 
 				SetParameter(ref cm, "@intCategoryLocationID", null, SqlDbType.BigInt, Direction: ParameterDirection.Output);
-				SetParameter(ref cm, "@intCategoryID", vm.Category.ItemID, SqlDbType.BigInt);
-				SetParameter(ref cm, "@intLocationID", vm.Location.LocationID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@intCategoryID", c.ItemID, SqlDbType.BigInt);
+				SetParameter(ref cm, "@intLocationID", l.LocationID, SqlDbType.BigInt);
 				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
 
 				cm.ExecuteReader();

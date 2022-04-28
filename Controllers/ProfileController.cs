@@ -530,6 +530,11 @@ namespace GCRBA.Controllers
                 return RedirectToAction("DeleteLocation", "Profile");
 			}
 
+            if (col["btnSubmit"].ToString() == "editCategories")
+            {
+                return RedirectToAction("EditCategoriesByLocation", "Profile");
+            }
+
             return View(vm);
 		}
 
@@ -1334,6 +1339,184 @@ namespace GCRBA.Controllers
                 return View(vm);
 			}
             return View(vm);
+        }
+
+        public ActionResult EditCategoriesByLocation()
+		{
+            ProfileViewModel vm = InitProfileViewModel();
+            vm.Company = new Company();
+            vm.Company = GetCompany(vm);
+            vm.Locations = GetLocations(vm);
+            vm.Location = new Location();
+            vm.Category = new CategoryItem();
+            vm.Categories = new List<CategoryItem>();
+
+            return View(vm);
+		}
+
+        [HttpPost]
+        public ActionResult EditCategoriesByLocation(FormCollection col)
+		{
+            ProfileViewModel vm = InitProfileViewModel();
+            vm.Company = new Company();
+            vm.Company = GetCompany(vm);
+            vm.Locations = GetLocations(vm);
+            vm.Location = new Location();
+            vm.Category = new CategoryItem();
+            vm.Categories = new List<CategoryItem>();
+            vm.Button = new Button();
+            vm.Button = vm.Button.GetButtonSession();
+
+            if (col["btnSubmit"].ToString() == "addLocation")
+            {
+                return RedirectToAction("AddNewLocation", "Bakery");
+            }
+
+            if (col["btnSubmit"].ToString() == "addCategories")
+            {
+                vm.Button.CurrentButton = "add";
+                // save button session for currently clicked button 
+                vm.Button.SaveButtonSession();
+
+                // get current LocationID
+                vm.Location.LocationID = Convert.ToInt16(col["locations"]);
+
+                // get list of categories not current applied to location
+                vm.Categories = GetNotCategories(vm);
+            }
+
+            if (col["btnSubmit"].ToString() == "deleteCategories")
+            {
+                vm.Button.CurrentButton = "delete";
+
+                // save button session for currently clicked button 
+                vm.Button.SaveButtonSession();
+
+                // get current LocationID
+                vm.Location.LocationID = Convert.ToInt16(col["locations"]);
+
+                // get list of categories currently applied to location 
+                vm.Categories = GetCurrentCategories(vm);
+            }
+
+            if (col["btnSubmit"].ToString() == "submit")
+            {
+                // create button object
+                Button button = new Button();
+
+                // get current button session
+                button = button.GetButtonSession();
+
+                vm.Location.LocationID = Convert.ToInt16(col["locations"]);
+
+                // get category(s) selected (by ID)
+                string categoryIDs = col["categories"];
+
+                // handle INSERT
+                if (button.CurrentButton == "add")
+                {
+                    // submit to db 
+                    vm.Category.ActionType = AddCategoriesToDB(vm, categoryIDs);
+                }
+                // handle DELETE 
+                else if (button.CurrentButton == "delete")
+                {
+                    // submit to db 
+                    vm.Category.ActionType = DeleteCategories(vm, categoryIDs);
+                }
+
+                // reset LocationID to 0 to reset form
+                vm.Location.LocationID = 0;
+
+                // remove current button session b/c we no longer need it 
+                button.RemoveButtonSession();
+
+                return View(vm);
+            }
+            return View(vm);
+        }
+
+        private CategoryItem.ActionTypes AddCategoriesToDB(ProfileViewModel vm, string categoryIDs)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // create array by splitting string at each comma 
+                string[] AllStrings = categoryIDs.Split(',');
+
+                // loop through array and assign CategoryID to Category object 
+                // then add object to list of category items
+                foreach (string item in AllStrings)
+                {
+                    // get categoryID 
+                    vm.Category.ItemID = int.Parse(item);
+
+                    // add to database
+                    vm.Category.ActionType = db.InsertCategories(vm.Category, vm.Location);
+
+                    // send notification of change to admin 
+                    SendEditNotification(vm.User, 15, 5, "N/A", "ADDED CATEGORY TO LOCATION");
+                }
+                return vm.Category.ActionType;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private CategoryItem.ActionTypes DeleteCategories(ProfileViewModel vm, string categoryIDs)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // create array by splitting string at each comma 
+                string[] AllStrings = categoryIDs.Split(',');
+
+                // loop through array and assign CategoryID to Category object 
+                // then add object to list of category items
+                foreach (string item in AllStrings)
+                {
+                    // get categoryID 
+                    vm.Category.ItemID = int.Parse(item);
+
+                    // add to database
+                    vm.Category.ActionType = db.DeleteCategories(vm.Location, vm.Category);
+
+                    SendEditNotification(vm.User, 15, 5, "N/A", "REMOVED CATEGORY FROM LOCATION");
+                }
+                return vm.Category.ActionType;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private List<CategoryItem> GetNotCategories(ProfileViewModel vm)
+        {
+            try
+            {
+                // create db object 
+                Database db = new Database();
+
+                // get category list 
+                vm.Categories = db.GetNotCategories(vm.Categories, vm.Location);
+
+                return vm.Categories;
+
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private List<CategoryItem> GetCurrentCategories(ProfileViewModel vm)
+        {
+            try
+            {
+                // create db object
+                Database db = new Database();
+
+                // get current category list
+                vm.Categories = db.GetCurrentCategories(vm.Categories, vm.Location);
+
+                return vm.Categories;
+
+            } catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         private Location.ActionTypes DeleteLocation(ProfileViewModel vm)

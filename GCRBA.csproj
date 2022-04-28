@@ -351,6 +351,7 @@
     <Content Include="Views\Profile\EditSocialMedia.cshtml" />
     <Content Include="Views\Profile\EditExistingLocation.cshtml" />
     <Content Include="Views\Profile\DeleteLocation.cshtml" />
+    <Content Include="Views\Profile\EditCategoriesByLocation.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

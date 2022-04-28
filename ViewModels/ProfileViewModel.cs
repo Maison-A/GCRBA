@@ -20,5 +20,7 @@ namespace GCRBA.ViewModels
 		public Button Button { get; set; }
 		public Location Location { get; set; }
 		public List<Location> Locations { get; set; }
+		public CategoryItem Category { get; set; }
+		public List<CategoryItem> Categories { get; set; }
 	}
 }

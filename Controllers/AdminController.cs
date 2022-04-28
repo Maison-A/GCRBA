@@ -1257,7 +1257,7 @@ namespace GCRBA.Controllers
                     vm.Category.ItemID = int.Parse(item);
 
                     // add to database
-                    vm.Category.ActionType = db.InsertCategories(vm);
+                    vm.Category.ActionType = db.InsertCategories(vm.Category, vm.Location);
                 }
                 return vm.Category.ActionType;
             }
@@ -1282,7 +1282,7 @@ namespace GCRBA.Controllers
                     vm.Category.ItemID = int.Parse(item);
 
                     // add to database
-                    vm.Category.ActionType = db.DeleteCategories(vm);
+                    vm.Category.ActionType = db.DeleteCategories(vm.Location, vm.Category);
                 }
                 return vm.Category.ActionType;
             }
@@ -1419,7 +1419,7 @@ namespace GCRBA.Controllers
                 Database db = new Database();
 
                 // get category list 
-                vm.Categories = db.GetNotCategories(vm);
+                vm.Categories = db.GetNotCategories(vm.Categories, vm.Location);
 
                 return vm;
             }
@@ -1434,7 +1434,7 @@ namespace GCRBA.Controllers
                 Database db = new Database();
 
                 // get current category list
-                vm.Categories = db.GetCurrentCategories(vm);
+                vm.Categories = db.GetCurrentCategories(vm.Categories, vm.Location);
 
                 return vm;
             }
