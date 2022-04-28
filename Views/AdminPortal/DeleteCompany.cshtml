@@ -18,21 +18,26 @@ else
         if (Model.Company.ActionType == GCRBA.Models.Company.ActionTypes.DeleteSuccessful) 
         {
             @Html.Partial("UpdateSuccessful");
-        }
-    }
+		}
+	}
 
-    using (Html.BeginForm(FormMethod.Post)) 
-    {
-        <label for="companies">Select a company to delete from the GCRBA website</label>
+	using (Html.BeginForm(null, null, null, FormMethod.Post, new { @class = "mx-auto w-100" }))
+	{
+<div class="d-inline-flex mt-3 row mx-auto">
+	<label for="companies">Select a company to delete from the GCRBA website</label>
 
-        <select name="companies">
-            @foreach (var item in Model.Companies) 
-            {
-                <option value="@item.CompanyID">@item.Name</option>
-            }
-        </select>
-
-        <button name="btnSubmit" value="delete">Delete Company</button>
-        <button name="btnSubmit" value="cancel">Return to Admin Portal</button>
+	<select name="companies">
+		@foreach (var item in Model.Companies)
+		{
+			<option value="@item.CompanyID">@item.Name</option>
+		}
+	</select>
+    <div class="row">
+		<div class="col">
+			<button name="btnSubmit" value="delete" class="button-action mt-3">Delete Company</button>
+			<button name="btnSubmit" value="cancel" class="button-action mt-3">Return to Admin Portal</button>
+		</div>
+    </div>
+</div>
     }
 }

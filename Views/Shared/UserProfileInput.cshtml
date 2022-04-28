@@ -25,7 +25,7 @@
 			<select name="states" class="form-control">
 				@foreach (var state in Model.States)
 				{
-					if (Model.User.intState > 0)
+					if (Model.User.intState >= 0)
 					{
 						if (state.intStateID == Model.User.intState)
 						{
