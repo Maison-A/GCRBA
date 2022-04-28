@@ -247,6 +247,7 @@
     <Compile Include="Models\SocialMedia.cs" />
     <Compile Include="Models\State.cs" />
     <Compile Include="Controllers\TroubleshootController.cs" />
+    <Compile Include="Models\TestClassForMaison.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\Website.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
