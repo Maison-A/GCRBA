@@ -1,0 +1,41 @@
+﻿@model GCRBA.Models.User
+
+@{
+	ViewBag.Title = "Notifications";
+}
+
+@if (!Model.IsAuthenticated)
+{
+	@Html.Partial("PleaseLogin");
+
+} else
+{
+
+	if (Model.ActionType == GCRBA.Models.User.ActionTypes.Unknown)
+	{
+		<p>An error occurred when processing your request. Please try again.</p>
+	}
+
+	using (Html.BeginForm(FormMethod.Post))
+	{
+		<div class="mx-auto">
+
+			@foreach (var message in Model.AdminNotifications)
+			{
+				<div class="mx-auto w-50 mt-4 mb-4 text-start border-bottom">
+					<input class="form-check-input" type="checkbox" name="notification" value="@message.NotificationID" />
+					@if (message.NotificationStatusID == 2)
+					{
+						<label for="notification" class="form-check-label text-danger">@message.Message</label>
+					} else
+					{
+						<label for="notification" class="form-check-label text-black">@message.Message</label>
+					}
+				</div>
+			}
+
+			<button name="btnSubmit" value="delete" class="button-action mt-3">Delete Selected</button>
+			<button name="btnSubmit" value="markAsRead" class="button-action mt-3">Mark as Read</button>
+		</div>
+	}
+}

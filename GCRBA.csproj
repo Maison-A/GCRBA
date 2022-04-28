@@ -212,6 +212,7 @@
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\SendMailerController.cs" />
     <Compile Include="Controllers\VendorController.cs" />
+    <Compile Include="Models\AdminNotification.cs" />
     <Compile Include="Models\AdminRequest.cs" />
     <Compile Include="Models\AdminRequestList.cs" />
     <Compile Include="Models\Awards.cs" />
@@ -353,6 +354,7 @@
     <Content Include="Views\Profile\DeleteLocation.cshtml" />
     <Content Include="Views\Profile\EditCategoriesByLocation.cshtml" />
     <Content Include="Views\Profile\EditSpecials.cshtml" />
+    <Content Include="Views\AdminPortal\AdminNotification.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

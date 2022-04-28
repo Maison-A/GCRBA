@@ -14,19 +14,46 @@ namespace GCRBA.Controllers
         // ACTIONRESULT METHODS  
         // -------------------------------------------------------------------------------------------------
         public ActionResult Index() {
-            
-            AdminVM vm = new AdminVM();
 
-            vm.User = new User();
-            vm.User = vm.User.GetUserSession();
+            User u = new User();
+            u = u.GetUserSession();
+            u.AdminNotifications = new List<AdminNotification>();
+            u.AdminNotifications = GetAdminNotifications(u);
+            u.AdminNotification = new AdminNotification();
+            u.AdminNotification.UnreadNotifications = GetIfUnread(u);
+            return View(u);
+        }
 
-            return View(vm);
-            
+        private bool GetIfUnread(User u)
+        {
+            try
+            {
+                int count = 0;
+
+                for (int i = 0; i < u.AdminNotifications.Count; i++)
+                {
+                    if (u.AdminNotifications[i].NotificationStatusID == 2)
+                    {
+                        count += 1;
+                    }
+                }
+
+                if (count > 0)
+                {
+                    u.AdminNotification.UnreadNotifications = true;
+                }
+
+                return u.AdminNotification.UnreadNotifications;
+
+            } catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         [HttpPost]
         public ActionResult Index(FormCollection col) 
         {
+            User u = new User();
+            u = u.GetUserSession();
+            u.AdminNotification = new AdminNotification();
 
             if (col["btnSubmit"].ToString() == "viewLocationRequests")
 			{
@@ -45,8 +72,128 @@ namespace GCRBA.Controllers
             if (col["btnSubmit"].ToString() == "editCompanies") {
                 return RedirectToAction("EditCompanies", "AdminPortal");
             }
-            return View();
+
+            if (col["btnSubmit"].ToString() == "viewNotifications")
+            {
+                return RedirectToAction("AdminNotification", "AdminPortal");
+            }
+
+            return View(u);
         }
+
+        public ActionResult AdminNotification()
+		{
+            User u = new User();
+            u = u.GetUserSession();
+
+            // get notifications 
+            u.AdminNotifications = new List<AdminNotification>();
+            u.AdminNotifications = GetAdminNotifications(u);
+            u.AdminNotification = new AdminNotification();
+            return View(u);
+		}
+
+        [HttpPost]
+        public ActionResult AdminNotification(FormCollection col)
+		{
+            User u = new User();
+            u = u.GetUserSession();
+
+            u.AdminNotifications = new List<AdminNotification>();
+            u.AdminNotifications = GetAdminNotifications(u);
+
+            string notificationIDs;
+
+            if (col["btnSubmit"].ToString() == "delete")
+			{
+                if (col["notification"] != null)
+				{
+                    notificationIDs = col["notification"];
+                    u.ActionType = DeleteNotifications(u, notificationIDs);
+
+                    u.AdminNotifications = GetAdminNotifications(u);
+
+                    return View(u);
+				}
+			}
+
+            if (col["btnSubmit"].ToString() == "markAsRead")
+			{
+                if (col["notification"] != null)
+				{
+                    notificationIDs = col["notification"];
+                    u.ActionType = UpdateAdminNotificationStatus(u, notificationIDs);
+                    u.AdminNotifications = GetAdminNotifications(u);
+                    return View(u);
+				}
+			}
+            return View(u);
+		}
+
+        private User.ActionTypes UpdateAdminNotificationStatus(User u, string notificationIDs)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // create array by splitting string at each comma 
+                string[] Notifications = notificationIDs.Split(',');
+
+                // create user notification object 
+                u.AdminNotification = new AdminNotification();
+
+                // loop through array and update in db 
+                foreach (string item in Notifications)
+                {
+                    u.AdminNotification.NotificationID = int.Parse(item);
+                    u.ActionType = db.UpdateAdminNotificationStatus(u);
+                }
+
+                return u.ActionType;
+
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private User.ActionTypes DeleteNotifications(User u, string notificationIDs)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // create array by splitting string at each comma 
+                string[] Notifications = notificationIDs.Split(',');
+
+                // create user notification object 
+                u.AdminNotification = new AdminNotification();
+
+                // loop through array and delete from db 
+                foreach (string item in Notifications)
+                {
+                    u.AdminNotification.NotificationID = int.Parse(item);
+                    u.ActionType = db.DeleteAdminNotifications(u);
+                }
+
+                return u.ActionType;
+            } catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public List<AdminNotification> GetAdminNotifications(User u)
+		{
+            try
+			{
+                Database db = new Database();
+
+                u.AdminNotifications = db.GetAdminNotifications();
+
+                return u.AdminNotifications;
+			}
+            catch (Exception ex) { throw new Exception(ex.Message); }
+		}
 
         public List<SelectListItem> GetAllAdminRequest(List<Models.AdminRequest> lstAdminRequest) {
             List<SelectListItem> items = new List<SelectListItem>();

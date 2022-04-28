@@ -1521,6 +1521,60 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+		public List<AdminNotification> GetAdminNotifications()
+		{
+			try
+			{
+				DataSet ds = new DataSet();
+				SqlConnection cn = new SqlConnection();
+
+				// try to connect to database -- throw error if unsuccessful
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect.");
+
+				// specify which stored procedure we are using 
+				SqlDataAdapter da = new SqlDataAdapter("GET_ADMIN_NOTIFICATIONS", cn);
+
+				// create new instance of Company list 
+				List<AdminNotification> messages = new List<AdminNotification>();
+
+				// set command type as stored procedure
+				da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+				try { da.Fill(ds); } 
+				catch (Exception ex) { throw new Exception(ex.Message); } 
+				finally { CloseDBConnection(ref cn); }
+
+				if (ds.Tables[0].Rows.Count != 0)
+				{
+					// loop through results and add to list 
+					foreach (DataRow dr in ds.Tables[0].Rows)
+					{
+						// create new Notification object 
+						AdminNotification message = new AdminNotification();
+
+						// add values 
+						message.NotificationID = Convert.ToInt16(dr["intAdminNotificationID"]);
+						message.UserID = Convert.ToInt16(dr["intUserID"]);
+						message.UserFirstName = (string)dr["strFirstName"];
+						message.UserLastName = (string)dr["strLastName"];
+						message.EditedColumnID = Convert.ToInt16(dr["intEditedColumnID"]);
+						message.EditedTableID = Convert.ToInt16(dr["intEditedTableID"]);
+						message.EditedColumn = (string)dr["strColumnName"];
+						message.EditedTable = (string)dr["strTableName"];
+						message.PreviousVersion = (string)dr["strPreviousVersion"];
+						message.NewVersion = (string)dr["strNewVersion"];
+						message.NotificationStatusID = Convert.ToInt16(dr["intNotificationStatusID"]);
+
+						message.Message = "User: " + message.UserFirstName + " " + message.UserLastName + " | Edited Column: " + message.EditedColumn + " | Edited Table: " + message.EditedTable + " | Previous Version: " + message.PreviousVersion + " | New Version: " + message.NewVersion;
+
+						// add to list 
+						messages.Add(message);
+					}
+				}
+				return messages;
+			} catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
 		public bool CheckMemberStatus(long lngLocationID = 0) {
 			try {
 				DataSet ds = new DataSet();
@@ -1586,7 +1640,34 @@ namespace GCRBA.Models
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
-		
+
+		public User.ActionTypes DeleteAdminNotifications(User u)
+		{
+			try
+			{
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("DELETE_ADMIN_NOTIFICATIONS", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intAdminNotificationID", u.AdminNotification.NotificationID, SqlDbType.SmallInt);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1)
+				{
+					return User.ActionTypes.DeleteSuccessful;
+				} else
+				{
+					return User.ActionTypes.Unknown;
+				}
+			} catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
 		public Company.ActionTypes DeleteCompany(AdminVM vm)
 		{
 			try
@@ -2169,6 +2250,35 @@ namespace GCRBA.Models
 				return u.ActionType;
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public User.ActionTypes UpdateAdminNotificationStatus(User u)
+		{
+			try
+			{
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("MARK_ADMIN_NOTIFICATION_AS_READ", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intAdminNotificationID", u.AdminNotification.NotificationID, SqlDbType.SmallInt);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.TinyInt, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1)
+				{
+					u.ActionType = User.ActionTypes.UpdateSuccessful;
+				} else
+				{
+					u.ActionType = User.ActionTypes.Unknown;
+				}
+
+				return u.ActionType;
+			} catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
 		public Company.ActionTypes InsertNewCompany(AdminVM vm)

@@ -29,6 +29,8 @@ namespace GCRBA.Models
         public ActionTypes ActionType { get; set; } = ActionTypes.NoType;
         public Notification Notification { get; set; }
         public List<Notification> Notifications { get; set; }
+        public AdminNotification AdminNotification { get; set; }
+        public List<AdminNotification> AdminNotifications { get; set; }
 
         // member type control
         public int isAdmin { get; set; }
