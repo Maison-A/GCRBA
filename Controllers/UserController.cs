@@ -292,7 +292,11 @@ namespace GCRBA.Controllers
                                     db.InsertMemberRequest(user);
                                     SendMemberEmail.SendEmail(user);
                                     return RedirectToAction("Index", "Home");
-                                    
+                                
+                                case Models.User.ActionTypes.DuplicateEmail:
+
+                                  //  return RedirectToAction("");
+
                                 default:
                                     return View(user);
                             }                        
