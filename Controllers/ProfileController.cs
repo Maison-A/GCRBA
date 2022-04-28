@@ -432,6 +432,8 @@ namespace GCRBA.Controllers
             // - create user object + get current user session 
             ProfileViewModel vm = InitProfileViewModel();
 
+            vm = GetStates(vm);
+
             if (col["btnSubmit"].ToString() == "submit")
 			{
                 // declare variable to temporarily hold password while we validate it 
