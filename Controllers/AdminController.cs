@@ -1657,6 +1657,7 @@ namespace GCRBA.Controllers
         }
 
         // AdminPortal --> Edit Existing Company --> Edit Contact(s) --> Edit Existing Contact
+        // when button is clicked for submitting the edit contact section only, this method is called
 		public ContactPerson.ActionTypes UpdateContact (string FirstName = "", string LastName = "", string Phone = "", string Email = "", int ContactID = 0)
 		{
             ContactPerson contact = new ContactPerson();

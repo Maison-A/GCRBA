@@ -19,11 +19,11 @@
 <div class="row text-left">
 	<div class="col text-left">
 		@Html.LabelFor(model => model.ContactPerson.Phone, "Contact Phone Number", new { @class = "form-label font-weight-bold mt-3" })
-		@Html.TextBoxFor(model => model.ContactPerson.Phone, new { @class = "form-control", @id = "phone-input", @pattern = phonePattern, @placeholder = "5135551234" })
+		@Html.TextBoxFor(model => model.ContactPerson.Phone, new { @class = "form-control", @id = "phone-input", @placeholder = "5135551234" })
 	</div>
 	<div class="col text-left">
 		@Html.LabelFor(model => model.ContactPerson.Email, "Contact Email", new { @class = "form-label font-weight-bold mt-3" })
-		@Html.TextBoxFor(model => model.ContactPerson.Email, new { @class = "form-control", @id = "email-input", @pattern = emailPattern, @maxlength = "50", @placeholder = "user@example.com" })
+		@Html.TextBoxFor(model => model.ContactPerson.Email, new { @class = "form-control", @id = "email-input", @maxlength = "50", @placeholder = "user@example.com" })
 	</div>
 </div>
 <div class="row mt-3">

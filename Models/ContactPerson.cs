@@ -36,6 +36,22 @@ namespace GCRBA.Models {
 		public ContactPerson.ContactTypes ContactType = ContactTypes.NoType;
 		public ContactPerson.ActionTypes ActionType = ActionTypes.NoType;
 
+		// validate phone format 
+		public bool ValidatePhoneFormat(string phone)
+		{
+			// pattern we want to match
+			string pattern = @"^\d{10}$";
+
+			return Regex.IsMatch(phone, pattern);
+		}
+
+		public bool ValidateEmailFormat(string email)
+		{
+			string pattern = @"(?!(^[.-].*|[^@]*[.-]@|.*\.{2,}.*)|^.{254}.)([a-zA-Z0-9!#$%&'*+\/=?^_`{|}~.-]+@)(?!-.*|.*-\.)([a-zA-Z0-9-]{1,63}\.)+[a-zA-Z]{2,15}";
+
+			return Regex.IsMatch(email, pattern);
+		}
+
 		// create new contact object for new contact being added to database by admin 
 		public ContactPerson CreateContact(string FirstName = "", string LastName = "", string Phone = "", string Email = "", long LocationID = 0, short TypeID = 0)
 		{
@@ -67,9 +83,13 @@ namespace GCRBA.Models {
 				if (string.IsNullOrEmpty(Phone))
 				{
 					this.Phone = null;
-				}
-				else 
+				} else
 				{
+					if (!ValidatePhoneFormat(Phone))
+					{
+						return ActionTypes.PhoneFormatIssue;
+					}
+
 					this.Phone = Phone;
 				}
 
@@ -78,9 +98,13 @@ namespace GCRBA.Models {
 				if (string.IsNullOrEmpty(Email))
 				{
 					this.Email = null;
-				}
-				else
+				} else
 				{
+					if (!ValidateEmailFormat(Email))
+					{
+						return ActionTypes.EmailFormatIssue;
+					}
+
 					this.Email = Email;
 				}
 
@@ -88,12 +112,20 @@ namespace GCRBA.Models {
 				if (!string.IsNullOrEmpty(FirstName))
 				{
 					this.FirstName = FirstName;
+				} 
+				else
+				{
+					return ActionTypes.RequiredFieldsMissing;
 				}
 
 				// if last name field is empty, we keep current last name 
 				if (!string.IsNullOrEmpty(LastName))
 				{
 					this.LastName = LastName;
+				}
+				else
+				{
+					return ActionTypes.RequiredFieldsMissing;
 				}
 
 				// combine first and last name in proper format 
@@ -126,6 +158,16 @@ namespace GCRBA.Models {
 			// are any of the required fields empty/not selected?
 			if (!string.IsNullOrEmpty(this.FirstName) && !string.IsNullOrEmpty(this.LastName) && this.Location.LocationID > 0 && this.ContactTypeID > 0)
 			{
+				// validate phone format 
+				if (this.Phone.Length > 0 && !ValidatePhoneFormat(Phone))
+				{
+					return ContactPerson.ActionTypes.PhoneFormatIssue;
+				}
+
+				if (this.Email.Length > 0 && !ValidateEmailFormat(Email))
+				{
+					return ContactPerson.ActionTypes.EmailFormatIssue;
+				}
 
 				// format name for database submission 
 				this.FullName = FormatName();
@@ -210,7 +252,8 @@ namespace GCRBA.Models {
 			Unknown = 4, 
 			RequiredFieldsMissing = 5,
 			PhoneFormatIssue = 6,
-			DuplicateName = 7
+			DuplicateName = 7,
+			EmailFormatIssue = 8
 		}
 
 		public enum ContactTypes {

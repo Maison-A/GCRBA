@@ -61,11 +61,6 @@ function postNewContact() {
 	// form input 
 	var firstName = $('#new-first-name-input').val();
 	var lastName = $('#new-last-name-input').val(); 
-
-	// validate email and phone format 
-	document.getElementById('new-email-input').reportValidity();
-	document.getElementById('new-phone-input').reportValidity();
-
 	var phone = $('#new-phone-input').val();
 	var email = $('#new-email-input').val();
 	var locationID = $('#new-contact-location-list').val();
@@ -81,6 +76,10 @@ function postNewContact() {
 
 		if (data == "PhoneFormatIssue") {
 			statusMessage = 'Phone number must be 10 digits using numeric input only. Please try again. (Example: 5135551234)';
+		}
+
+		if (data == 'EmailFormatIssue') {
+			statusMessage = 'Email is not in proper format. Please try again.';
 		}
 
 		if (data == "DuplicateName") {
@@ -114,11 +113,6 @@ function postEditedContact() {
 	var contactID = $('#edit-contacts-list').val();
 	var firstName = $('#first-name-input').val();
 	var lastName = $('#last-name-input').val();
-
-	// validate email and phone input 
-	document.getElementById('phone-input').reportValidity();
-	document.getElementById('email-input').reportValidity();
-
 	var phone = $('#phone-input').val();
 	var email = $('#email-input').val();
 
@@ -128,12 +122,20 @@ function postEditedContact() {
 			statusMessage = 'Phone number must be 10 digits using numeric input only. Please try again. (Example: 5135551234)';
 		}
 
+		if (data == 'EmailFormatIssue') {
+			statusMessage = 'Email is not in proper format. Please try again.';
+		}
+
 		if (data == "UpdateSuccessful") {
 			statusMessage = 'Contact successfully updated.';
 		}
 
 		if (data == 'Unknown') {
 			statusMessage = 'There was an error when processing your request. Please try again later.';
+		}
+
+		if (data == 'RequiredFieldsMissing') {
+			statusMessage = 'Name, location, and contact type are required for each contact. Please try again.';
 		}
 
 		if (data == 'NoType') {
