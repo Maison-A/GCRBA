@@ -1,0 +1,35 @@
+﻿@using GCRBA.ViewModels
+@model ProfileViewModel
+
+@{
+	string emailPattern = "(?!(^[.-].*|[^@]*[.-]@|.*\\.{2,}.*)|^.{254}.)([a-zA-Z0-9!#$%&'*+\\/=?^_`{|}~.-]+@)(?!-.*|.*-\\.)([a-zA-Z0-9-]{1,63}\\.)+[a-zA-Z]{2,15}";
+	string phonePattern = "@\"^\\d{10}$\"";
+}
+
+<div class="row">
+	<div class="col text-left">
+		@Html.LabelFor(model => model.ContactPerson.FirstName, "First Name", new { @class = "form-label font-weight-bold mt-3" })
+		@Html.TextBoxFor(model => model.ContactPerson.FirstName, new { @class = "form-control", @id = "first-name-input" })
+	</div>
+	<div class="col text-left">
+		@Html.LabelFor(model => model.ContactPerson.LastName, "Last Name", new { @class = "form-label font-weight-bold mt-3" })
+		@Html.TextBoxFor(model => model.ContactPerson.LastName, new { @class = "form-control", @id = "last-name-input" })
+	</div>
+</div>
+<div class="row text-left">
+	<div class="col text-left">
+		@Html.LabelFor(model => model.ContactPerson.Phone, "Contact Phone Number", new { @class = "form-label font-weight-bold mt-3" })
+		@Html.TextBoxFor(model => model.ContactPerson.Phone, new { @class = "form-control", @id = "phone-input", @pattern = phonePattern, @placeholder = "5135551234" })
+	</div>
+	<div class="col text-left">
+		@Html.LabelFor(model => model.ContactPerson.Email, "Contact Email", new { @class = "form-label font-weight-bold mt-3" })
+		@Html.TextBoxFor(model => model.ContactPerson.Email, new { @class = "form-control", @id = "email-input", @pattern = emailPattern, @maxlength = "50", @placeholder = "user@example.com" })
+	</div>
+</div>
+<div class="row mt-3">
+	<div class="col text-left">
+		<button type="button" id="edit-contact-submit" class="btn btn-warning">Submit Section</button>
+	</div>
+</div>
+
+

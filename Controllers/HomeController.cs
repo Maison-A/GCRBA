@@ -26,7 +26,7 @@ namespace GCRBA.Controllers {
                 // return view 
                 return View();
             }
-            catch (Exception ex) { throw new Exception(ex.Message); }
+            catch (Exception ex) {  throw new Exception(ex.Message); }
         }
 
         [HttpPost]
@@ -62,6 +62,7 @@ namespace GCRBA.Controllers {
             if (col["btnSubmit"].ToString() == "education") {
                 return RedirectToAction("Index", "Education");
             }
+            
             return View();
         } 
     }

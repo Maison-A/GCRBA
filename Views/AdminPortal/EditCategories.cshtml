@@ -1,50 +1,50 @@
 ﻿@using GCRBA.ViewModels
-@model AdminVM
+@model ProfileViewModel
 
 @{
-    ViewBag.Title = "Add/Delete Category";
+	ViewBag.Title = "Edit Categories";
 }
-
-<h2>ViewBag.Title</h2>
 
 @if (Model.User.isAdmin == 0)
 {
-    @Html.Partial("AdminOnly");
-}
-else
+	@Html.Partial("AdminOnly");
+} else
 {
-    if (Model.Category.ActionType == GCRBA.Models.CategoryItem.ActionTypes.InsertSuccessful)
-    {
-        @Html.Partial("ChangeSuccessful");
-    }
+	<h2>@ViewBag.Title</h2>
 
-    if (Model.Category.ActionType == GCRBA.Models.CategoryItem.ActionTypes.DeleteSuccessful)
-    {
-        @Html.Partial("ChangeSuccessful");
-    }
+	if (Model.Category.ActionType == GCRBA.Models.CategoryItem.ActionTypes.InsertSuccessful)
+	{
+		@Html.Partial("ChangeSuccessful");
+	}
 
-    using (Html.BeginForm(FormMethod.Post))
-    {
-        <div id="add">
-            @if (Model.Locations.Count > 0)
-            {
-                @Html.Partial("Locations");
-                <button name="btnSubmit" value="addCategories">Add Categories</button>
-                <button name="btnSubmit" value="deleteCategories">Delete Categories</button>
+	if (Model.Category.ActionType == GCRBA.Models.CategoryItem.ActionTypes.DeleteSuccessful)
+	{
+		@Html.Partial("ChangeSuccessful");
+	}
 
-                if (Model.Location.LocationID > 0)
-                {
-                    @Html.Partial("Categories");
-                    <button name="btnSubmit" value="submit">Submit</button>
-                    <button name="btnSubmit" value="cancel">Cancel</button>
-                }
-            }
-            else
-            {
-                @Html.Partial("NoLocations");
-                <button name="btnSubmit" value="addLocation">Add Location</button>
-            }
-        </div>
+	using (Html.BeginForm(null, null, null, FormMethod.Post, new { @class = "d-flex justify-content-center" }))
+	{
+		<div id="add" class="card w-50">
+			<div class="card-body">
+				@if (Model.Locations.Count > 0)
+				{
+					@Html.Partial("Locations");
+					<button name="btnSubmit" value="addCategories" class="btn btn-primary mt-3">Add Categories</button>
+					<button name="btnSubmit" value="deleteCategories" class="btn btn-primary mt-3">Delete Categories</button>
 
-    }
+					if (Model.Location.LocationID > 0)
+					{
+						@Html.Partial("Categories");
+						<button name="btnSubmit" value="submit" class="btn btn-primary mt-3">Submit</button>
+						<button name="btnSubmit" value="cancel" class="btn btn-primary mt-3">Cancel</button>
+					}
+				} else
+				{
+					@Html.Partial("NoLocations");
+					<button name="btnSubmit" value="addLocation">Add Location</button>
+				}
+			</div>
+		</div>
+
+	}
 }

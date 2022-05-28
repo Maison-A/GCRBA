@@ -10,13 +10,11 @@
 	}
 </style>
 
-<div id="site-banner">
+<div class="pt-5" id="site-banner">
 	<h2>@ViewBag.MainBanner</h2>
 </div>
 @using (Html.BeginForm()) {
-	<br />
-
-	<img id="img-news" src="~/Content/Photos/GCRBANews.jpg" />
+	<img id="img-news" class="rounded-lg" src="~/Content/Photos/GCRBANews.jpg" />
 	<!--
 	<div class="topcorner">
 		<button class="button-action" id="btnJoin" name="btnSubmit" value="join">Join the GCRBA!</button>

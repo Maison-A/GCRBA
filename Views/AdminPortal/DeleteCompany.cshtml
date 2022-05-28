@@ -2,42 +2,50 @@
 @model AdminVM
 
 @{
-    ViewBag.Title = "Delete Company";
+	ViewBag.Title = "Delete Company";
 }
 
 <h2>@ViewBag.Title</h2>
 
-@if (Model.User.isAdmin == 0) 
+@if (Model.User.isAdmin == 0)
 {
-    <p>This page is for admins only. If you are an admin, please log in and try again.</p>
-}
-else 
+	@Html.Partial("AdminOnly");
+} else
 {
-    if (Model.Company != null) 
-    {
-        if (Model.Company.ActionType == GCRBA.Models.Company.ActionTypes.DeleteSuccessful) 
-        {
-            @Html.Partial("UpdateSuccessful");
+	if (Model.Company != null)
+	{
+		if (Model.Company.ActionType == GCRBA.Models.Company.ActionTypes.DeleteSuccessful)
+		{
+			@Html.Partial("UpdateSuccessful");
 		}
 	}
 
-	using (Html.BeginForm(null, null, null, FormMethod.Post, new { @class = "mx-auto w-100" }))
+	if (Model.Companies.Count > 0)
 	{
-<div class="d-inline-flex mt-3 row mx-auto">
-	<label for="companies">Select a company to delete from the GCRBA website</label>
-
-	<select name="companies">
-		@foreach (var item in Model.Companies)
+		using (Html.BeginForm(null, null, null, FormMethod.Post, new { @class = "d-flex justify-content-center" }))
 		{
-			<option value="@item.CompanyID">@item.Name</option>
+			<div class="card w-75">
+				<div class="card-body">
+					<div class="row d-flex justify-content-center">
+						<label for="companies">Select which company you would like to remove:</label>
+					</div>
+					<div class="row d-flex justify-content-center">
+						<select name="companies" class="w-50">
+							@foreach (var item in Model.Companies)
+							{
+								<option value="@item.CompanyID">@item.Name</option>
+							}
+						</select>
+					</div>
+					<div class="row d-flex justify-content-center">
+						<button name="btnSubmit" value="delete" class="btn btn-primary mx-2 mt-3">Delete Company</button>
+						<button name="btnSubmit" value="cancel" class="btn btn-primary mx-2 mt-3">Return to Admin Portal</button>
+					</div>
+				</div>
+			</div>
 		}
-	</select>
-    <div class="row">
-		<div class="col">
-			<button name="btnSubmit" value="delete" class="button-action mt-3">Delete Company</button>
-			<button name="btnSubmit" value="cancel" class="button-action mt-3">Return to Admin Portal</button>
-		</div>
-    </div>
-</div>
-    }
+	} else
+	{
+		<p>There are currently no companies in the database.</p>
+	}
 }

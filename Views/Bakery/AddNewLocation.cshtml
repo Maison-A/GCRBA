@@ -460,25 +460,25 @@
 							<div>
 								<h2 class="some-spacing"><u>Location Contact</u></h2>
 								<div class="some-spacing">
-									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].LocationContact.strContactFirstName, "Contact First Name")</div>
-									<div>@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.strContactFirstName, new { @autofocus = "autofocus" })</div>
+									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].LocationContact.FirstName, "Contact First Name")</div>
+									<div>@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.FirstName, new { @autofocus = "autofocus" })</div>
 								</div>
 
 								<div class="some-spacing">
-									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].LocationContact.strContactLastName, "Contact Last Name")</div>
-									<div>@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.strContactLastName)</div>
+									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].LocationContact.FirstName, "Contact Last Name")</div>
+									<div>@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.FirstName)</div>
 								</div>
 
 								<div class="some-spacing">
 									<div id="label"><label for="ContactPhone_AreaCode">Contact Phone Number</label></div>
 									<div>
-										(@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.contactPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.contactPhone.Prefix, new { Style = "width: 50px" })-@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.contactPhone.Suffix, new { Style = "width: 50px" })
+										(@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.ContactPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.ContactPhone.Prefix, new { Style = "width: 50px" })-@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.ContactPhone.Suffix, new { Style = "width: 50px" })
 									</div>
 								</div>
 
 								<div class="some-spacing">
-									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].LocationContact.strContactEmail, "Contact Email")</div>
-									<div>@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.strContactEmail)</div>
+									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].LocationContact.Email, "Contact Email")</div>
+									<div>@Html.TextBoxFor(m => Model.lstLocations[index].LocationContact.Email)</div>
 								</div>
 							</div>
 						</td>
@@ -489,25 +489,25 @@
 							<div>
 								<h2 class="some-spacing"><u>Customer Service Contact</u></h2>
 								<div class="some-spacing">
-									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].CustService.strContactFirstName, "Customer Service First Name")</div>
-									<div>@Html.TextBoxFor(m => Model.lstLocations[index].CustService.strContactFirstName, new { @autofocus = "autofocus" })</div>
+									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].CustService.FirstName, "Customer Service First Name")</div>
+									<div>@Html.TextBoxFor(m => Model.lstLocations[index].CustService.FirstName, new { @autofocus = "autofocus" })</div>
 								</div>
 
 								<div class="some-spacing">
-									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].CustService.strContactLastName, "Customer Service Last Name")</div>
-									<div>@Html.TextBoxFor(m => Model.lstLocations[index].CustService.strContactLastName)</div>
+									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].CustService.LastName, "Customer Service Last Name")</div>
+									<div>@Html.TextBoxFor(m => Model.lstLocations[index].CustService.LastName)</div>
 								</div>
 
 								<div class="some-spacing">
 									<div id="label"><label for="ContactPhone_AreaCode">Customer Service Phone Number</label></div>
 									<div>
-										(@Html.TextBoxFor(m => Model.lstLocations[index].CustService.contactPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].CustService.contactPhone.Prefix, new { Style = "width: 50px" }) - @Html.TextBoxFor(m => Model.lstLocations[index].CustService.contactPhone.Suffix, new { Style = "width: 50px" })
+										(@Html.TextBoxFor(m => Model.lstLocations[index].CustService.ContactPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].CustService.ContactPhone.Prefix, new { Style = "width: 50px" }) - @Html.TextBoxFor(m => Model.lstLocations[index].CustService.ContactPhone.Suffix, new { Style = "width: 50px" })
 									</div>
 								</div>
 
 								<div class="some-spacing">
-									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].CustService.strContactEmail, "Customer Service Email")</div>
-									<div>@Html.TextBoxFor(m => Model.lstLocations[index].CustService.strContactEmail)</div>
+									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].CustService.Email, "Customer Service Email")</div>
+									<div>@Html.TextBoxFor(m => Model.lstLocations[index].CustService.Email)</div>
 								</div>
 							</div>
 						</td>
@@ -518,25 +518,25 @@
 							<div>
 								<h2 class="some-spacing"><u>Web Admin Contact</u></h2>
 								<div class="some-spacing">
-									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].WebAdmin.strContactFirstName, "Web Admin First Name")</div>
-									<div>@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.strContactFirstName, new { @autofocus = "autofocus" })</div>
+									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].WebAdmin.FirstName, "Web Admin First Name")</div>
+									<div>@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.FirstName, new { @autofocus = "autofocus" })</div>
 								</div>
 
 								<div class="some-spacing">
-									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].WebAdmin.strContactLastName, "Web Admin Last Name")</div>
-									<div>@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.strContactLastName)</div>
+									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].WebAdmin.LastName, "Web Admin Last Name")</div>
+									<div>@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.LastName)</div>
 								</div>
 
 								<div class="some-spacing">
 									<div id="label"><label for="ContactPhone_AreaCode">Web Admin Phone Number</label></div>
 									<div>
-										(@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.contactPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.contactPhone.Prefix, new { Style = "width: 50px" })-@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.contactPhone.Suffix, new { Style = "width: 50px" })
+										(@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.ContactPhone.AreaCode, new { Style = "width: 50px" })) @Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.ContactPhone.Prefix, new { Style = "width: 50px" })-@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.ContactPhone.Suffix, new { Style = "width: 50px" })
 									</div>
 								</div>
 
 								<div class="some-spacing">
-									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].WebAdmin.strContactEmail, "Web Admin Email")</div>
-									<div>@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.strContactEmail)</div>
+									<div id="label">@Html.LabelFor(m => Model.lstLocations[index].WebAdmin.Email, "Web Admin Email")</div>
+									<div>@Html.TextBoxFor(m => Model.lstLocations[index].WebAdmin.Email)</div>
 								</div>
 							</div>
 						</td>

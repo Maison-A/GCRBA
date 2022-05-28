@@ -1,0 +1,35 @@
+﻿@using GCRBA.ViewModels
+@model ProfileViewModel
+
+<div id="addLocationArea">
+	<div class="row">
+		<div class="col">
+			@Html.LabelFor(model => model.Location.Address, "Address", new { @class = "form-label" })
+			@Html.TextBoxFor(model => model.Location.Address, new { @class = "form-control", @required = "required" })
+		</div>
+	</div>
+	<div class="row mt-3">
+		<div class="col">
+			@Html.LabelFor(model => model.Location.City, "City", new { @class = "form-label" })
+			@Html.TextBoxFor(model => model.Location.City, new { @class = "form-control" })
+		</div>
+		<div class="col">
+			@Html.LabelFor(model => model.Location.intState, "State", new { @class = "form-label" })
+			@Html.DropDownListFor(model => model.Location.intState, new SelectList(Model.States, "intStateID", "strState"), new { @class = "form-control" })
+		</div>
+		<div class="col">
+			@Html.LabelFor(model => model.Location.Zip, "Zip Code", new { @class = "form-label" })
+			@Html.TextBoxFor(model => model.Location.Zip, new { @class = "form-control" })
+		</div>
+	</div>
+	<div class="row mt-3">
+		<div class="col">
+			@Html.LabelFor(model => model.Location.Phone, "Phone Number", new { @class = "form-label" })
+			@Html.TextBoxFor(model => model.Location.Phone, new { @class = "form-control" })
+		</div>
+		<div class="col">
+			@Html.LabelFor(model => model.Location.Email, "Customer Service Email", new { @class = "form-label" })
+			@Html.TextBoxFor(model => model.Location.Email, new { @class = "form-control" })
+		</div>
+	</div>
+</div>

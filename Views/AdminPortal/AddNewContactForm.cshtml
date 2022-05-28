@@ -1,0 +1,64 @@
+﻿
+@using GCRBA.ViewModels
+@model ProfileViewModel
+
+@section Scripts {
+	<script src="~/Scripts/gcrba.js" type="text/javascript"></script>
+}
+
+@{ 
+	string pattern = "(?!(^[.-].*|[^@]*[.-]@|.*\\.{2,}.*)|^.{254}.)([a-zA-Z0-9!#$%&'*+\\/=?^_`{|}~.-]+@)(?!-.*|.*-\\.)([a-zA-Z0-9-]{1,63}\\.)+[a-zA-Z]{2,15}";
+	string phonePattern = "@\"^\\d{10}$\"";
+}
+
+
+<div id="submission-message" class="ml-2 mb-3"></div>
+<div class="row">
+	<div class="col text-left">
+		@Html.LabelFor(model => model.ContactPerson.FirstName, "First Name", new { @class = "font-weight-bold form-label" })
+		@Html.TextBoxFor(model => model.ContactPerson.FirstName, new { @class = "form-control", @id = "new-first-name-input", @maxlength = "50" })
+	</div>
+	<div class="col text-left">
+		@Html.LabelFor(model => model.ContactPerson.LastName, "Last Name", new { @class = "font-weight-bold form-label" })
+		@Html.TextBoxFor(model => model.ContactPerson.LastName, new { @class = "form-control", @id = "new-last-name-input", @maxlength = "50" })
+	</div>
+</div>
+<div class="row mt-3">
+	<div class="col text-left">
+		@Html.LabelFor(model => model.ContactPerson.Phone, "Contact Phone Number", new { @class = "font-weight-bold form-label" })
+		@Html.TextBoxFor(model => model.ContactPerson.Phone, new { @class = "form-control", @id = "new-phone-input", @pattern = phonePattern, @placeholder = "5135551234" })
+	</div>
+	<div class="col text-left">
+		@Html.LabelFor(model => model.ContactPerson.Email, "Contact Email", new { @class = "font-weight-bold form-label" })
+		@Html.TextBoxFor(model => model.ContactPerson.Email, new { @class = "form-control", @id = "new-email-input", @type = "text", @pattern = pattern,  @maxlength = "50", @placeholder = "user@example.com" })
+	</div>
+</div>
+<div class="row mt-3" id="new-contact-location">
+	<div class="col text-left">
+		@if (Model.Locations.Count > 0)
+		{
+			<select name="new-contact-location" id="new-contact-location-list" class="form-control mt-3">
+				<option id="default-location" disabled selected>Select Location</option>
+				@foreach (var item in Model.Locations)
+				{
+					<option value="@item.LocationID">@item.Address @item.City, @item.State @item.Zip</option>
+				}
+			</select>
+		}
+	</div>
+	<div class="col text-left">
+		<select name="new-contact-type" id="new-contact-type-list" class="form-control mt-3">
+			<option id="default-type" disabled selected>Choose Contact Type for Selected Location</option>
+			@for (var i = 0; i < Model.ContactPerson.Types.Count; i++)
+			{
+				int index = i + 1;
+				<option value="@index">@Model.ContactPerson.Types[i]</option>
+			}
+		</select>
+	</div>
+</div>
+<div class="row mt-3">
+	<div class="col text-left">
+		<button type="button" id="add-new-contact-submit" value="add-new-contact-submit" class="btn btn-warning">Submit Section</button>
+	</div>
+</div>

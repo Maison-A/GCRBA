@@ -20,7 +20,7 @@
 	{
 		using (Html.BeginForm(null, null, null, FormMethod.Post, new { @class = "col-md-12" }))
 		{
-			<h2 class="mt-3">Membership Requests</h2>
+			<h2 class="mt-4">Membership Requests</h2>
 			<div class="row justify-content-center">
 				<select name="requests" class="form-control w-25 text-center mt-4 mb-4">
 					@foreach (var request in Model.MemberRequests)
@@ -29,45 +29,37 @@
 					}
 				</select>
 			</div>
-			<button name="btnSubmit" value="viewRequest" class="button-action">View Request</button>
+			<button name="btnSubmit" value="viewRequest" class="btn btn-primary">View Request</button>
 
 			if (Model.MemberRequest != null)
 			{
 				if (Model.MemberRequest.MemberID > 0)
 				{
-					<div class="row justify-content-center">
-						<table class="table w-50 mt-4">
-							<tbody>
-								<tr>
-									<th scope="row" class="text-end">Name</th>
-									<td>@Model.MemberRequest.FirstName @Model.MemberRequest.LastName</td>
-								</tr>
-								<tr>
-									<th scope="row" class="text-end">Phone Number</th>
-									<td>@Model.MemberRequest.Phone</td>
-								</tr>
-								<tr>
-									<th scope="row" class="text-end">Email</th>
-									<td>@Model.MemberRequest.Email</td>
-								</tr>
-								<tr>
-									<th scope="row" class="text-end">Member Level</th>
-									<td>@Model.MemberRequest.MemberLevel</td>
-								</tr>
-								<tr>
-									<th scope="row" class="text-end">Payment Type</th>
-									<td>@Model.MemberRequest.PaymentType</td>
-								</tr>
-								<tr>
-									<th scope="row" class="text-end">Payment Status</th>
-									<td>@Model.MemberRequest.PaymentStatus</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
+					<table class="table bg-white my-3">
+						<thead>
+							<tr>
+								<th scope="col" class="text-center">Name</th>
+								<th scope="col" class="text-center">Phone Number</th>
+								<th scope="col" class="text-center">Email</th>
+								<th scope="col" class="text-center">Member Level</th>
+								<th scope="col" class="text-center">Payment Type</th>
+								<th scope="col" class="text-center">Payment Status</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="text-center">@Model.MemberRequest.FirstName @Model.MemberRequest.LastName</td>
+								<td class="text-center">@Model.MemberRequest.Phone</td>
+								<td class="text-center">@Model.MemberRequest.Email</td>
+								<td class="text-center">@Model.MemberRequest.MemberLevel</td>
+								<td class="text-center">@Model.MemberRequest.PaymentType</td>
+								<td class="text-center">@Model.MemberRequest.PaymentStatus</td>
+							</tr>
+						</tbody>
+					</table>
 
-					<button name="btnSubmit" value="approve" class="button-action">Approve</button>
-					<button name="btnSubmit" value="deny" class="button-action">Deny</button>
+					<button name="btnSubmit" value="approve" class="btn btn-primary">Approve</button>
+					<button name="btnSubmit" value="deny" class="btn btn-primary">Deny</button>
 				}
 			}
 		}

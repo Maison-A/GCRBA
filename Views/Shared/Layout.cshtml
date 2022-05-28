@@ -9,52 +9,86 @@
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <title>@ViewBag.Title</title>
-    @Scripts.Render("~/bundles/jquery")
+	<meta name="viewport" content="width=device-width" />
+	<title>@ViewBag.Title</title>
 	<script src="https://kit.fontawesome.com/12cd627259.js" crossorigin="anonymous"></script>
-    <!-- this is the style sheet to be used -->
-    @Styles.Render("~/Content/css")
-    @Styles.Render("~/Content/bootstrap.css")
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
+	<script src="../../Scripts/jquery.unobtrusive-ajax.min.js"></script>
+	@Styles.Render("~/Content/css")
 </head>
+
 <body>
-	<div id="site-header">
-		<!--<i id="site-icon" class="fas fa-user-music"></i>-->
-		<img id="site-icon" src="~/Content/Photos/GCRBAlogo.jpg" />
-		<span class="full-content">GCRBA Bakers Website</span>
-		<span class="mobile-content">GCRBA <i class="fas fa-music"></i></span>
-	</div>
 
-	<div class="topcorner">
+	<!--navbar expands on larger screens-->
+	<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light w-100">
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
 
-		@if (!currentUser.IsAuthenticated) {
-			<a href="~/Profile/Login"><button class="button-action" id="icon-bar-login" title="Login/Become a user">Login | Join <i class="fas fa-user-circle"></i></button></a>
-			<a href="~/User/AddNewMember"><button class="button-action" id="icon-bar-join" title="Join GCRBA"> Become a Member! <i class="fas fa-user-plus"></i></button></a>
-			<a href="~/Profile/AdminLogin"><button class="button-action" id="icon-bar-admin" title="Admin Login">Admin Login <i class="fas fa-sign-in-alt"></i></button></a>
-		}
-		else {
-			if (currentUser.isMember == 1 && currentUser.isAdmin == 0) {
-				<a href="~/Profile/Member"><button class="button-action" id="icon-bar-login" title="Member Portal">Member Portal <i class="fas fa-user-circle"></i></button></a>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav mr-auto col-lg-8">
+				<li class="nav-item active mr-3">
+					<a class="nav-link" href="~/Home/Index">Home <span class="sr-only">(current)</span></a>
+				</li>
+				<li class="nav-item mr-3">
+					<a class="nav-link" href="~/Bakery/Index">Find a Bakery</a>
+				</li>
+				<li class="nav-item mr-3">
+					<a class="nav-link" href="~/User/AddNewMember">Join the GCRBA</a>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Explore
+					</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="~/Vendor/Index">Vendor</a>
+						<a class="dropdown-item" href="~/Education/Index">Education</a>
+					</div>
+				</li>
+			</ul>
+
+
+			@if (currentUser.IsAuthenticated)
+			{
+				if (currentUser.isAdmin == 1)
+				{
+					<div class="nav-item d-flex justify-content-end">
+						<a class="nav-link" href="~/AdminPortal/Index">Admin Portal</a>
+					</div>
+				}
+
+				if (currentUser.isMember == 1)
+				{
+					<div class="nav-item d-flex justify-content-end">
+						<a class="nav-link" href="~/Profile/Member">Member Portal</a>
+					</div>
+				}
+				else
+				{
+					<div class="nav-item d-flex justify-content-end">
+						<a class="nav-link" href="~/Profile/NonMember">User Portal</a>
+					</div>
+				}
+
+				<div class="nav-item d-flex justify-content-end">
+					<a class="nav-link" href="~/Profile/Logout">Logout</a>
+				</div>
+			} else
+			{
+				<div class="nav-item d-flex justify-content-end">
+					<a class="nav-link" href="~/Profile/Login">Login</a>
+				</div>
 			}
-			else if (currentUser.isMember == 0 && currentUser.isAdmin == 0) {
-				<a href="~/User/AddNewMember"><button class="button-action" id="icon-bar-join" title="Join GCRBA"> Join the GCRBA! <i class="fas fa-user-plus"></i></button></a>
-			}
-			else if (currentUser.isAdmin == 1) {
-				<a  href="~/Profile/Member"><button class="button-action" id="icon-bar-login" title="Member Portal">Member Portal <i class="fas fa-user-circle"></i></button></a>
-				<a href="@Url.Action("Index", "AdminPortal")"><button class="button-action" id="icon-bar-login" title="Member Portal">Admin Portal <i class="fas fa-user-circle"></i></button></a>
-			}
-			<a href="@Url.Action("Logout", "Profile")"><button class="button-action" id="icon-bar-admin" title="Logout">Logout <i class="fa-solid fa-right-from-bracket"></i></button></a>
-		}
+			@*<form class="form-inline w-100 d-flex justify-content-end">
+			<input class="form-control mr-3 w-50" type="search" placeholder="What are you craving?" aria-label="Search">
+			<button class="btn btn-outline-success mr-3" type="submit" name="btnSubmit" value="search">Search</button>
+		</form>*@
+		</div>
+	</nav>
 
-	</div>
-
-	<div class="icon-bar">
-		<a id="icon-bar-home" href="~/Home/Index" title="Go to Home"><i class="fa fa-home"></i></a>
-		<a id="icon-bar-bakery" href="~/Bakery/Index" title="Find a Bakery"><i class="fa-solid fa-magnifying-glass"></i></a>
-		<a id="icon-bar-vendor" href="~/Vendor/Index" title="Connect with Vendors"><i class="fa-solid fa-down-left-and-up-right-to-center"></i></a>
-		<a id="icon-bar-education" href="~/Education/Index" title="Learning Portal"><i class="fa-solid fa-user-graduate"></i></a>
-	</div>
-	<div class="container text-center">
+	<div class="container text-center pt-5">
 		<!-- all code in every cshtml page is run through this div -->
 		@RenderBody()
 	</div>

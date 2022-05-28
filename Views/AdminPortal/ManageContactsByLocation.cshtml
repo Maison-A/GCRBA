@@ -1,0 +1,25 @@
+﻿@using GCRBA.ViewModels
+@model ProfileViewModel
+
+<div class="row">
+	<div class="col text-left">
+		@if (Model.Locations.Count > 0)
+		{
+			<select name="manage-contacts-location" id="manage-contacts-location" class="form-control">
+				<option value="none" disabled selected>Choose Location</option>
+				@foreach (var item in Model.Locations)
+				{
+					<option value="@item.LocationID">@item.Address @item.City, @item.State @item.Zip</option>
+				}
+			</select>
+		}
+	</div>
+	<div class="col text-left here">
+		<select name="manage-contacts" class="form-control" id="manage-contacts" multiple></select>
+	</div>
+</div>
+<div class="row mt-3">
+	<div class="col text-left">
+		<button name="btnSubmit" value="submitManageLocations" class="btn btn-warning">Submit Section</button>
+	</div>
+</div>

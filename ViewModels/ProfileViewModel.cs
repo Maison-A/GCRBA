@@ -24,5 +24,9 @@ namespace GCRBA.ViewModels
 		public List<CategoryItem> Categories { get; set; }
 		public SaleSpecial Special { get; set; }
 		public List<SaleSpecial> Specials { get; set; }
+		public MainBanner MainBanner { get; set; }
+		public List<MainBanner> MainBannerList { get; set; }
+		public ContactPerson ContactPerson { get; set; }
+		public List<ContactPerson> Contacts { get; set; }
 	}
 }

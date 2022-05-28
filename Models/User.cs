@@ -8,7 +8,7 @@ namespace GCRBA.Models
 {
     public class User
     {
-        public int UID { get; set; }
+        public short UID { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Address { get; set; }
@@ -31,15 +31,10 @@ namespace GCRBA.Models
         public List<Notification> Notifications { get; set; }
         public AdminNotification AdminNotification { get; set; }
         public List<AdminNotification> AdminNotifications { get; set; }
-
-        // member type control
         public int isAdmin { get; set; }
         public int isMember { get; set; }
         public string MemberShipType = string.Empty;
-
         public List<NewLocation> lstMemberLocations = new List<NewLocation>();
-        
-
         public bool myLocation { get; set; }
 
 
@@ -122,12 +117,12 @@ namespace GCRBA.Models
 
         // succesful login -  return User object
         // unsuccessful login - return null 
-        public User NonAdminLogin()
+        public User Login()
         {
             try
             {
                 Database db = new Database();
-                return db.NonAdminLogin(this);
+                return db.Login(this);
             }
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
@@ -161,6 +156,16 @@ namespace GCRBA.Models
             }
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
+
+        // check if username or password are empty 
+        public User.ActionTypes ValidateLogin()
+		{
+            if (this.Username.Length == 0 || this.Password.Length == 0)
+			{
+                this.ActionType = ActionTypes.RequiredFieldMissing;
+			}
+            return this.ActionType;
+		}
 
         public enum ActionTypes
         {

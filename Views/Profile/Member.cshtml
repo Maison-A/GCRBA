@@ -11,10 +11,6 @@
 {
 	using (Html.BeginForm(null, null, null, FormMethod.Post, new { @class = "mx-auto" }))
 	{
-		@*if (Model.Notifications.Count > 0)
-			{
-				<button name="btnSubmit" value="viewNotifications" class="button-action mb-3">You have new notification(s) <i class="fa-solid fa-circle-exclamation fa-xl"></i></button>
-			}*@
 		if (Model.Notification.UnreadNotifications == true)
 		{
 			<div class="w-100 text-start mt-4">

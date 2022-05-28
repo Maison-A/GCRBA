@@ -1,12 +1,14 @@
 ﻿@using GCRBA.ViewModels
-@model AdminVM
+@model ProfileViewModel
 
-<div id="locations">
-    <label for="locations" class="form-label">Choose Location:</label>
-    <select name="locations" class="form-control" required>
-        @foreach (var item in Model.Locations)
-        {
-            <option value="@item.LocationID">@item.Address @item.City, @item.State @item.Zip</option>
-        }
-    </select>
+<div class="row mt-2">
+	<label for="locations" class="form-label">Choose Location:</label>
+</div>
+<div class="row">
+	<select name="locations" class="form-control" required>
+		@foreach (var item in Model.Locations)
+		{
+			<option value="@item.LocationID">@item.Address @item.City, @item.State @item.Zip</option>
+		}
+	</select>
 </div>

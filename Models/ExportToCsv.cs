@@ -68,14 +68,14 @@ namespace GCRBA {
                             string emptyContactName = string.Empty;
                             string emptyPhone = string.Empty;
 
-                            if (item.strContactLastName != string.Empty && item.strContactFirstName != string.Empty) contacts.Add(item.strContactLastName + ',' + item.strContactFirstName);
+                            if (item.LastName != string.Empty && item.FirstName != string.Empty) contacts.Add(item.LastName + ',' + item.FirstName);
                             else contacts.Add(emptyContactName);
 
-                            if (item.contactPhone.AreaCode != string.Empty && item.contactPhone.Prefix != string.Empty && item.contactPhone.Suffix != string.Empty) {
-                                contacts.Add('(' + item.contactPhone.AreaCode + ") " + item.contactPhone.Prefix + '-' + item.contactPhone.Suffix);
+                            if (item.ContactPhone.AreaCode != string.Empty && item.ContactPhone.Prefix != string.Empty && item.ContactPhone.Suffix != string.Empty) {
+                                contacts.Add('(' + item.ContactPhone.AreaCode + ") " + item.ContactPhone.Prefix + '-' + item.ContactPhone.Suffix);
                             }
                             else contacts.Add(emptyPhone);
-                            contacts.Add(item.strContactEmail);
+                            contacts.Add(item.Email);
                         }
                         formatContacts[i] = contacts;
 

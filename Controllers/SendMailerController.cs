@@ -131,36 +131,36 @@ namespace GCRBA.Controllers
                     //Member Only Variables
                     //Contact Person Information
                     email.Content.lstLocations[i].LocationContact = new Models.ContactPerson();
-                    email.Content.lstLocations[i].LocationContact.strContactFirstName = col["lstLocations[" + i + "].LocationContact.strContactFirstName"];
-                    email.Content.lstLocations[i].LocationContact.strContactLastName = col["lstLocations[" + i + "].LocationContact.strContactLastName"];
-                    email.Content.lstLocations[i].LocationContact.contactPhone = new Models.PhoneNumber();
-                    email.Content.lstLocations[i].LocationContact.contactPhone.AreaCode = col["lstLocations[" + i + "].LocationContact.contactPhone.AreaCode"];
-                    email.Content.lstLocations[i].LocationContact.contactPhone.Prefix = col["lstLocations[" + i + "].LocationContact.contactPhone.Prefix"];
-                    email.Content.lstLocations[i].LocationContact.contactPhone.Suffix = col["lstLocations[" + i + "].LocationContact.contactPhone.Suffix"];
-                    email.Content.lstLocations[i].LocationContact.strContactEmail = col["lstLocations[" + i + "].LocationContact.strContactEmail"];
-                    email.Content.lstLocations[i].LocationContact.intContactTypeID = 1;
+                    email.Content.lstLocations[i].LocationContact.FirstName = col["lstLocations[" + i + "].LocationContact.strContactFirstName"];
+                    email.Content.lstLocations[i].LocationContact.LastName = col["lstLocations[" + i + "].LocationContact.strContactLastName"];
+                    email.Content.lstLocations[i].LocationContact.ContactPhone = new Models.PhoneNumber();
+                    email.Content.lstLocations[i].LocationContact.ContactPhone.AreaCode = col["lstLocations[" + i + "].LocationContact.contactPhone.AreaCode"];
+                    email.Content.lstLocations[i].LocationContact.ContactPhone.Prefix = col["lstLocations[" + i + "].LocationContact.contactPhone.Prefix"];
+                    email.Content.lstLocations[i].LocationContact.ContactPhone.Suffix = col["lstLocations[" + i + "].LocationContact.contactPhone.Suffix"];
+                    email.Content.lstLocations[i].LocationContact.Email = col["lstLocations[" + i + "].LocationContact.strContactEmail"];
+                    email.Content.lstLocations[i].LocationContact.ContactTypeID = 1;
 
                     //Web Admin contact information
                     email.Content.lstLocations[i].WebAdmin = new Models.ContactPerson();
-                    email.Content.lstLocations[i].WebAdmin.strContactFirstName = col["lstLocations[" + i + "].WebAdmin.strContactFirstName"];
-                    email.Content.lstLocations[i].WebAdmin.strContactLastName = col["lstLocations[" + i + "].WebAdmin.strContactLastName"];
-                    email.Content.lstLocations[i].WebAdmin.contactPhone = new Models.PhoneNumber();
-                    email.Content.lstLocations[i].WebAdmin.contactPhone.AreaCode = col["lstLocations[" + i + "].WebAdmin.contactPhone.AreaCode"];
-                    email.Content.lstLocations[i].WebAdmin.contactPhone.Prefix = col["lstLocations[" + i + "].WebAdmin.contactPhone.Prefix"];
-                    email.Content.lstLocations[i].WebAdmin.contactPhone.Suffix = col["lstLocations[" + i + "].WebAdmin.contactPhone.Suffix"];
-                    email.Content.lstLocations[i].WebAdmin.strContactEmail = col["lstLocations[" + i + "].WebAdmin.strContactEmail"];
-                    email.Content.lstLocations[i].WebAdmin.intContactTypeID = 2;
+                    email.Content.lstLocations[i].WebAdmin.FirstName = col["lstLocations[" + i + "].WebAdmin.strContactFirstName"];
+                    email.Content.lstLocations[i].WebAdmin.LastName = col["lstLocations[" + i + "].WebAdmin.strContactLastName"];
+                    email.Content.lstLocations[i].WebAdmin.ContactPhone = new Models.PhoneNumber();
+                    email.Content.lstLocations[i].WebAdmin.ContactPhone.AreaCode = col["lstLocations[" + i + "].WebAdmin.contactPhone.AreaCode"];
+                    email.Content.lstLocations[i].WebAdmin.ContactPhone.Prefix = col["lstLocations[" + i + "].WebAdmin.contactPhone.Prefix"];
+                    email.Content.lstLocations[i].WebAdmin.ContactPhone.Suffix = col["lstLocations[" + i + "].WebAdmin.contactPhone.Suffix"];
+                    email.Content.lstLocations[i].WebAdmin.Email = col["lstLocations[" + i + "].WebAdmin.strContactEmail"];
+                    email.Content.lstLocations[i].WebAdmin.ContactTypeID = 2;
 
                     //Customer Service Contact Information
                     email.Content.lstLocations[i].CustService = new Models.ContactPerson();
-                    email.Content.lstLocations[i].CustService.strContactFirstName = col["lstLocations[" + i + "].CustService.strContactFirstName"];
-                    email.Content.lstLocations[i].CustService.strContactLastName = col["lstLocations[" + i + "].CustService.strContactLastName"];
-                    email.Content.lstLocations[i].CustService.contactPhone = new Models.PhoneNumber();
-                    email.Content.lstLocations[i].CustService.contactPhone.AreaCode = col["lstLocations[" + i + "].CustService.contactPhone.AreaCode"];
-                    email.Content.lstLocations[i].CustService.contactPhone.Prefix = col["lstLocations[" + i + "].CustService.contactPhone.Prefix"];
-                    email.Content.lstLocations[i].CustService.contactPhone.Suffix = col["lstLocations[" + i + "].CustService.contactPhone.Suffix"];
-                    email.Content.lstLocations[i].CustService.strContactEmail = col["lstLocations[" + i + "].CustService.strContactEmail"];
-                    email.Content.lstLocations[i].CustService.intContactTypeID = 3;
+                    email.Content.lstLocations[i].CustService.FirstName = col["lstLocations[" + i + "].CustService.strContactFirstName"];
+                    email.Content.lstLocations[i].CustService.LastName = col["lstLocations[" + i + "].CustService.strContactLastName"];
+                    email.Content.lstLocations[i].CustService.ContactPhone = new Models.PhoneNumber();
+                    email.Content.lstLocations[i].CustService.ContactPhone.AreaCode = col["lstLocations[" + i + "].CustService.contactPhone.AreaCode"];
+                    email.Content.lstLocations[i].CustService.ContactPhone.Prefix = col["lstLocations[" + i + "].CustService.contactPhone.Prefix"];
+                    email.Content.lstLocations[i].CustService.ContactPhone.Suffix = col["lstLocations[" + i + "].CustService.contactPhone.Suffix"];
+                    email.Content.lstLocations[i].CustService.Email = col["lstLocations[" + i + "].CustService.strContactEmail"];
+                    email.Content.lstLocations[i].CustService.ContactTypeID = 3;
 
                     //Web Portal Information
                     email.Content.lstLocations[i].MainWeb = new Models.Website();

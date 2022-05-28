@@ -13,25 +13,26 @@
 	using (Html.BeginForm(FormMethod.Post))
 	{
 
-		if (Model.AdminNotification.UnreadNotifications == true)
-		{
-			<div class="w-100 text-start mt-4">
-				<button id="notification" name="btnSubmit" value="viewNotifications" class="btn btn-link">New Notification(s) <i class="fa-solid fa-circle-exclamation"></i></button>
-			</div>
-		} else
-		{
-			<div class="w-100 text-start mt-4">
-				<button id="notificationNoUnread" name="btnSubmit" value="viewNotifications" class="btn btn-link">Notifications</button>
-			</div>
-		}
-
 		<h2>@ViewBag.Title</h2>
 
-		<div class="container w-75">
-			<button name="btnSubmit" value="viewLocationRequests">View Location Requests</button>
-			<button name="btnSubmit" value="viewMembershipRequests">View Membership Requests</button>
-			<button name="btnSubmit" value="editMainBanner">Edit Homepage Banner</button>
-			<button name="btnSubmit" value="editCompanies">Edit Companies</button>
+		<div class="w-100 d-flex justify-content-center mt-4">
+			<div class="card col-md-6">
+				<div class="card-body text-center admin-portal-main">
+					<div class="d-flex justify-content-start">
+						@if (Model.AdminNotification.UnreadNotifications == true)
+						{
+							<button name="btnSubmit" value="viewNotifications" class="text-left btn btn-link text-danger text-decoration-none w-50 mb-2 p-1"><i class="fa-solid fa-bell"></i> New Notification(s)!</button>
+						} else
+						{
+							<button name="btnSubmit" value="viewNotifications" class="text-left btn btn-link text-muted text-decoration-none w-50 mb-2 p-1"><i class="fa-solid fa-bell"></i> Notifications</button>
+						}
+					</div>
+					<button name="btnSubmit" value="viewLocationRequests" class="btn btn-warning w-100 mb-3 p-2">View Location Requests</button>
+					<button name="btnSubmit" value="viewMembershipRequests" class="btn btn-warning w-100 mb-3 p-2">View Membership Requests</button>
+					<button name="btnSubmit" value="editMainBanner" class="btn btn-warning w-100 mb-3 p-2">Edit Homepage Banner</button>
+					<button name="btnSubmit" value="editCompanies" class="btn btn-warning w-100 mb-3 p-2">Edit Companies</button>
+				</div>
+			</div>
 		</div>
 	}
 }

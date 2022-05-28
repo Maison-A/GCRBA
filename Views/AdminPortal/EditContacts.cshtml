@@ -1,0 +1,68 @@
+﻿@using GCRBA.ViewModels
+@model ProfileViewModel
+
+@section Scripts {
+	<script src="~/Scripts/gcrba.js" type="text/javascript"></script>
+}
+
+@if (Model.User.isAdmin == 0)
+{
+	@Html.Partial("AdminOnly");
+} else
+{
+	<form id="main-contact-form" class="mt-4">
+		<div class="card">
+			<div class="card-body">
+				<div class="row mt-4">
+					<div class="col text-left">
+						<button class="btn btn-link" id="add-new-contact" type="button"><i class="fa-solid fa-angles-down"></i> Add New Contact</button>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col text-left">
+						<div id="add-contact-area" class="mt-3 bg-light py-4">
+							@Html.Partial("AddNewContactForm")
+						</div>
+					</div>
+				</div>
+				<div class="row mt-4">
+					<div class="col text-left">
+						<button class="btn btn-link" id="edit-existing-contact" type="button"><i class="fa-solid fa-angles-down"></i> Edit Existing Contact</button>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col text-left">
+						<div id="edit-contact-area" class="mt-3 bg-light py-4">
+							@Html.Partial("EditExistingContact")
+						</div>
+					</div>
+				</div>
+				<div class="row mt-4">
+					<div class="col text-left">
+						<button class="btn btn-link" id="remove-contacts" type="button"><i class="fa-solid fa-angles-down"></i> Remove Contact(s)</button>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col text-left">
+						<div id="remove-contact-area" class="mt-3 bg-light py-4">
+							@Html.Partial("RemoveContacts")
+						</div>
+					</div>
+				</div>
+				<div class="row mt-4">
+					<div class="col text-left">
+						<button class="btn btn-link" id="manage-by-location" type="button"><i class="fa-solid fa-angles-down"></i> Manage Contact(s) by Location</button>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col text-left">
+						<div id="manage-contacts-by-location" class="mt-3 bg-light py-4">
+							@Html.Partial("ManageContactsByLocation")
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+}
+

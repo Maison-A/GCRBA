@@ -1,0 +1,19 @@
+﻿@using GCRBA.ViewModels
+@model ProfileViewModel
+
+<div class="row">
+	<div class="col text-left">
+		<select name="remove-contacts" class="form-control w-25" multiple>
+			<option value="none" disabled selected>Choose Contact(s)</option>
+			@foreach (var item in Model.Contacts)
+			{
+				<option value="@item.ContactPersonID">@item.FullName</option>
+			}
+		</select>
+	</div>
+</div>
+<div class="row mt-3">
+	<div class="col text-left">
+		<button name="btnSubmit" value="remove" class="btn btn-warning">Submit Section</button>
+	</div>
+</div>

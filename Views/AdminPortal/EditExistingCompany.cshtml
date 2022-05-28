@@ -1,34 +1,44 @@
 ﻿@using GCRBA.ViewModels
 @model AdminVM
 
+@section Scripts {
+	<script src="~/Scripts/gcrba.js" type="text/javascript"></script>
+}
+
 @{
-    ViewBag.Title = "Edit Existing Company";
+	ViewBag.Title = "Edit Existing Company";
 }
 
 <h2>@ViewBag.Title</h2>
 
 @if (Model.User.isAdmin == 0)
 {
-    @Html.Partial("AdminOnly");
-}
-else
-{
-    using (Html.BeginForm(null, null, null, FormMethod.Post, new { @class = "mx-auto w-50" }))
-    {
-        <label for="companies" class="form-label">Select Company to Edit:</label>
-        <select name="companies" class="form-control" required="required">
-            @foreach (var item in Model.Companies)
-            {
-                <option value="@item.CompanyID">@item.Name</option>
-            }
-        </select>
+	@Html.Partial("AdminOnly")
 
-        <button name="btnSubmit" value="addNewLocation">Add Location</button>
-        <button name="btnSubmit" value="deleteLocation">Delete Location</button>
-        <button name="btnSubmit" value="addContactPerson">Add Contact Person</button>
-        <button name="btnSubmit" value="editCategories">Edit Categories</button>
-        <button name="btnSubmit" value="editSpecials">Edit Specials</button>
-        <button name="btnSubmit" value="editGeneralInfo">Edit General Info</button>
-        <button name="btnSubmit" value="cancel" formnovalidate>Return to Admin Portal</button>
-    }
+} else
+{
+	using (Html.BeginForm(null, null, null, FormMethod.Post, new { @class = "d-flex justify-content-center" }))
+	{
+		<div class="card w-50">
+			<div class="card-body">
+				<div class="row d-flex justify-content-center">
+					<select name="companies" class="form-control mb-3 text-center" id="edit-companies-list">
+						<option value="none" disabled selected>Select Company to Edit</option>
+						@foreach (var item in Model.Companies)
+						{
+							<option value="@item.CompanyID">@item.Name</option>
+						}
+					</select>
+				</div>
+				<hr />
+				<div class="row d-flex justify-content-center">
+					<button name="btnSubmit" value="addNewLocation" class="edit-company-nav-options btn btn-warning w-100 mb-3 p-2">Edit Location(s)</button>
+					<button name="btnSubmit" value="editContacts" class="edit-company-nav-options btn btn-warning w-100 mb-3 p-2">Edit Contact Person(s)</button>
+					<button name="btnSubmit" value="editCategories" class="edit-company-nav-options btn btn-warning w-100 mb-3 p-2">Edit Categories</button>
+					<button name="btnSubmit" value="editSpecials" class=" edit-company-nav-options btn btn-warning w-100 mb-3 p-2">Edit Specials</button>
+					<button name="btnSubmit" value="editGeneralInfo" class="edit-company-nav-options btn btn-warning w-100 mb-3 p-2">Edit General Info</button>
+				</div>
+			</div>
+		</div>
+	}
 }

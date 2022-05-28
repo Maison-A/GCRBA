@@ -1,13 +1,22 @@
 ﻿@using GCRBA.ViewModels
-@model AdminVM
+@model ProfileViewModel
 
-<div>
-    <label for="categories" class="form-label">Select Category(s):</label>
+<div class="row d-flex justify-content-center mt-2">
+	@if (Model.Button.CurrentButton == "add")
+	{
+		<label for="categories" class="form-label">Select Category(s) to Add:</label>
+	}
 
-    <select name="categories" class="form-control" multiple>
-        @foreach (var item in Model.Categories)
-        {
-            <option value="@item.ItemID">@item.ItemDesc</option>
-        }
-    </select>
+	@if (Model.Button.CurrentButton == "delete")
+	{
+		<label for="categories" class="form-label">Select Category(s) to Remove:</label>
+	}
+</div>
+<div class="row d-flex justify-content-center">
+	<select name="categories" class="form-control" multiple>
+		@foreach (var item in Model.Categories)
+		{
+			<option value="@item.ItemID">@item.ItemDesc</option>
+		}
+	</select>
 </div>

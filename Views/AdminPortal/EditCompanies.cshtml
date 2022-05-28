@@ -1,37 +1,25 @@
 ﻿@using GCRBA.Models
 
 @{
-    ViewBag.Title = "Edit Companies";
+	ViewBag.Title = "Edit Companies";
 }
 
-<style>
-	td{
-		text-align: center;
-	}
-</style>
-
-@if (Model.isAdmin == 0) 
+@if (Model.isAdmin == 0)
 {
-    <p>This page is for admins only. If you are an admin, please log in and try again.</p>
-}
-else 
+	@Html.Partial("AdminOnly");
+} else
 {
-	<br />
-    <table>
-        <tr>
-			<td>
-				@using (Html.BeginForm(FormMethod.Post))
-				{
-				<div class="container">
-					<h2>@ViewBag.Title</h2>
-
-					<button name="btnSubmit" value="addCompany">Add New Company</button>
-					<button name="btnSubmit" value="deleteCompany">Delete Existing Company</button>
-					<button name="btnSubmit" value="editCompany">Edit an Existing Company</button>
+	<h2>@ViewBag.Title</h2>
+	using (Html.BeginForm(FormMethod.Post))
+	{
+		<div class="w-100 d-flex justify-content-center mt-4">
+			<div class="card col-md-6">
+				<div class="card-body text-center">
+					<button name="btnSubmit" value="addCompany" class="btn btn-warning w-100 mt-3 mb-3 p-2">Add New Company</button>
+					<button name="btnSubmit" value="deleteCompany" class="btn btn-warning w-100 mb-3 p-2">Delete Existing Company</button>
+					<button name="btnSubmit" value="editCompany" class="btn btn-warning w-100 mb-3 p-2">Edit an Existing Company</button>
 				</div>
-				}
-			</td>
-        </tr>
-    </table>
-    
+			</div>
+		</div>
+	}
 }

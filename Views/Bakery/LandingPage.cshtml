@@ -353,11 +353,11 @@
 					<tr>
 						<td>
 							@foreach (GCRBA.Models.ContactPerson item in Model.landingContacts) {
-								if (string.Empty != item.strFullName) {
+								if (string.Empty != item.FullName) {
 									<table style="border: 1px solid black; height: 170px">
 										<tr>
 											<th colspan="2">
-												@Html.Label(@item.strContactPersonType)
+												@Html.Label(@item.ContactPersonType)
 											</th>
 										</tr>
 										<tr>
@@ -365,26 +365,26 @@
 												@Html.Label("Contact Name:")
 											</td>
 											<td>
-												@item.strFullName
+												@item.FullName
 											</td>
 										</tr>
-										@if (item.strFullPhone != string.Empty) {
+										@if (item.Phone != string.Empty) {
 											<tr>
 												<td>
 													@Html.Label("Contact Phone:")
 												</td>
 												<td>
-													@item.strFullPhone
+													@item.Phone
 												</td>
 											</tr>
 										}
-										@if (item.strContactEmail != string.Empty) {
+										@if (item.Email != string.Empty) {
 											<tr>
 												<td>
 													@Html.Label("Contact Email")
 												</td>
 												<td>
-													<a href="mailto:@item.strContactEmail">@item.strContactEmail</a>
+													<a href="mailto:@item.Email">@item.Email</a>
 												</td>
 											</tr>
 										}

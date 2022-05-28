@@ -72,62 +72,62 @@ namespace GCRBA {
                 //Member Only Variables
                 //Contact Person Information
                 locationMailModel.Content.lstLocations[i].LocationContact                       = new Models.ContactPerson();
-                locationMailModel.Content.lstLocations[i].LocationContact.strContactFirstName   = locationList.lstLocations[i].LocationContact.strContactFirstName;
-                locationMailModel.Content.lstLocations[i].LocationContact.strContactLastName    = locationList.lstLocations[i].LocationContact.strContactLastName;
-                locationMailModel.Content.lstLocations[i].LocationContact.contactPhone          = new Models.PhoneNumber();
-                locationMailModel.Content.lstLocations[i].LocationContact.contactPhone.AreaCode = locationList.lstLocations[i].LocationContact.contactPhone.AreaCode;
-                locationMailModel.Content.lstLocations[i].LocationContact.contactPhone.Prefix   = locationList.lstLocations[i].LocationContact.contactPhone.Prefix;
-                locationMailModel.Content.lstLocations[i].LocationContact.contactPhone.Suffix   = locationList.lstLocations[i].LocationContact.contactPhone.Suffix;
-                locationMailModel.Content.lstLocations[i].LocationContact.strContactEmail       = locationList.lstLocations[i].LocationContact.strContactEmail;
-                locationMailModel.Content.lstLocations[i].LocationContact.intContactTypeID      = (short)Models.ContactPerson.ContactTypes.LocationContact;
+                locationMailModel.Content.lstLocations[i].LocationContact.FirstName   = locationList.lstLocations[i].LocationContact.FirstName;
+                locationMailModel.Content.lstLocations[i].LocationContact.LastName    = locationList.lstLocations[i].LocationContact.LastName;
+                locationMailModel.Content.lstLocations[i].LocationContact.ContactPhone          = new Models.PhoneNumber();
+                locationMailModel.Content.lstLocations[i].LocationContact.ContactPhone.AreaCode = locationList.lstLocations[i].LocationContact.ContactPhone.AreaCode;
+                locationMailModel.Content.lstLocations[i].LocationContact.ContactPhone.Prefix   = locationList.lstLocations[i].LocationContact.ContactPhone.Prefix;
+                locationMailModel.Content.lstLocations[i].LocationContact.ContactPhone.Suffix   = locationList.lstLocations[i].LocationContact.ContactPhone.Suffix;
+                locationMailModel.Content.lstLocations[i].LocationContact.Email       = locationList.lstLocations[i].LocationContact.Email;
+                locationMailModel.Content.lstLocations[i].LocationContact.ContactTypeID      = (short)Models.ContactPerson.ContactTypes.LocationContact;
                 locationMailModel.Content.lstLocations[i].LocationContact.ContactType           = Models.ContactPerson.ContactTypes.LocationContact;
 
-                if(!String.IsNullOrEmpty(locationList.lstLocations[i].LocationContact.strContactFirstName) && !String.IsNullOrEmpty(locationList.lstLocations[i].LocationContact.strContactLastName)) {
-                    locationMailModel.Content.lstLocations[i].LocationContact.strFullName = locationList.lstLocations[i].LocationContact.strContactLastName + ", " + locationList.lstLocations[i].LocationContact.strContactFirstName;
+                if(!String.IsNullOrEmpty(locationList.lstLocations[i].LocationContact.FirstName) && !String.IsNullOrEmpty(locationList.lstLocations[i].LocationContact.LastName)) {
+                    locationMailModel.Content.lstLocations[i].LocationContact.FullName = locationList.lstLocations[i].LocationContact.LastName + ", " + locationList.lstLocations[i].LocationContact.FirstName;
                 }
 
-                if (!String.IsNullOrEmpty(locationList.lstLocations[i].LocationContact.contactPhone.AreaCode) && !String.IsNullOrEmpty(locationList.lstLocations[i].LocationContact.contactPhone.Prefix) && !String.IsNullOrEmpty(locationList.lstLocations[i].LocationContact.contactPhone.Suffix)) {
-                    locationMailModel.Content.lstLocations[i].LocationContact.strFullPhone = '(' + locationList.lstLocations[i].LocationContact.contactPhone.AreaCode + ") " + locationList.lstLocations[i].LocationContact.contactPhone.Prefix + '-' + locationList.lstLocations[i].LocationContact.contactPhone.Suffix;    
+                if (!String.IsNullOrEmpty(locationList.lstLocations[i].LocationContact.ContactPhone.AreaCode) && !String.IsNullOrEmpty(locationList.lstLocations[i].LocationContact.ContactPhone.Prefix) && !String.IsNullOrEmpty(locationList.lstLocations[i].LocationContact.ContactPhone.Suffix)) {
+                    locationMailModel.Content.lstLocations[i].LocationContact.Phone = '(' + locationList.lstLocations[i].LocationContact.ContactPhone.AreaCode + ") " + locationList.lstLocations[i].LocationContact.ContactPhone.Prefix + '-' + locationList.lstLocations[i].LocationContact.ContactPhone.Suffix;    
                 }
 
                 //Web Admin contact information
                 locationMailModel.Content.lstLocations[i].WebAdmin                          = new Models.ContactPerson();
-                locationMailModel.Content.lstLocations[i].WebAdmin.strContactFirstName      = locationList.lstLocations[i].WebAdmin.strContactFirstName;
-                locationMailModel.Content.lstLocations[i].WebAdmin.strContactLastName       = locationList.lstLocations[i].WebAdmin.strContactLastName;
-                locationMailModel.Content.lstLocations[i].WebAdmin.contactPhone             = new Models.PhoneNumber();
-                locationMailModel.Content.lstLocations[i].WebAdmin.contactPhone.AreaCode    = locationList.lstLocations[i].WebAdmin.contactPhone.AreaCode;
-                locationMailModel.Content.lstLocations[i].WebAdmin.contactPhone.Prefix      = locationList.lstLocations[i].WebAdmin.contactPhone.Prefix;
-                locationMailModel.Content.lstLocations[i].WebAdmin.contactPhone.Suffix      = locationList.lstLocations[i].WebAdmin.contactPhone.Suffix;
-                locationMailModel.Content.lstLocations[i].WebAdmin.strContactEmail          = locationList.lstLocations[i].WebAdmin.strContactEmail;
-                locationMailModel.Content.lstLocations[i].WebAdmin.intContactTypeID         = (short)Models.ContactPerson.ContactTypes.WebAdmin;
+                locationMailModel.Content.lstLocations[i].WebAdmin.FirstName      = locationList.lstLocations[i].WebAdmin.FirstName;
+                locationMailModel.Content.lstLocations[i].WebAdmin.LastName       = locationList.lstLocations[i].WebAdmin.LastName;
+                locationMailModel.Content.lstLocations[i].WebAdmin.ContactPhone             = new Models.PhoneNumber();
+                locationMailModel.Content.lstLocations[i].WebAdmin.ContactPhone.AreaCode    = locationList.lstLocations[i].WebAdmin.ContactPhone.AreaCode;
+                locationMailModel.Content.lstLocations[i].WebAdmin.ContactPhone.Prefix      = locationList.lstLocations[i].WebAdmin.ContactPhone.Prefix;
+                locationMailModel.Content.lstLocations[i].WebAdmin.ContactPhone.Suffix      = locationList.lstLocations[i].WebAdmin.ContactPhone.Suffix;
+                locationMailModel.Content.lstLocations[i].WebAdmin.Email          = locationList.lstLocations[i].WebAdmin.Email;
+                locationMailModel.Content.lstLocations[i].WebAdmin.ContactTypeID         = (short)Models.ContactPerson.ContactTypes.WebAdmin;
                 locationMailModel.Content.lstLocations[i].WebAdmin.ContactType              = Models.ContactPerson.ContactTypes.WebAdmin;
 
-                if (!String.IsNullOrEmpty(locationList.lstLocations[i].WebAdmin.strContactFirstName) && !String.IsNullOrEmpty(locationList.lstLocations[i].WebAdmin.strContactLastName)) {
-                    locationMailModel.Content.lstLocations[i].WebAdmin.strFullName = locationList.lstLocations[i].WebAdmin.strContactLastName + ", " + locationList.lstLocations[i].WebAdmin.strContactFirstName;
+                if (!String.IsNullOrEmpty(locationList.lstLocations[i].WebAdmin.FirstName) && !String.IsNullOrEmpty(locationList.lstLocations[i].WebAdmin.LastName)) {
+                    locationMailModel.Content.lstLocations[i].WebAdmin.FullName = locationList.lstLocations[i].WebAdmin.LastName + ", " + locationList.lstLocations[i].WebAdmin.FirstName;
                 }
 
-                if (!String.IsNullOrEmpty(locationList.lstLocations[i].WebAdmin.contactPhone.AreaCode) && !String.IsNullOrEmpty(locationList.lstLocations[i].WebAdmin.contactPhone.Prefix) && !String.IsNullOrEmpty(locationList.lstLocations[i].WebAdmin.contactPhone.Suffix)) {
-                    locationMailModel.Content.lstLocations[i].WebAdmin.strFullPhone = '(' + locationList.lstLocations[i].WebAdmin.contactPhone.AreaCode + ") " + locationList.lstLocations[i].WebAdmin.contactPhone.Prefix + '-' + locationList.lstLocations[i].WebAdmin.contactPhone.Suffix;
+                if (!String.IsNullOrEmpty(locationList.lstLocations[i].WebAdmin.ContactPhone.AreaCode) && !String.IsNullOrEmpty(locationList.lstLocations[i].WebAdmin.ContactPhone.Prefix) && !String.IsNullOrEmpty(locationList.lstLocations[i].WebAdmin.ContactPhone.Suffix)) {
+                    locationMailModel.Content.lstLocations[i].WebAdmin.Phone = '(' + locationList.lstLocations[i].WebAdmin.ContactPhone.AreaCode + ") " + locationList.lstLocations[i].WebAdmin.ContactPhone.Prefix + '-' + locationList.lstLocations[i].WebAdmin.ContactPhone.Suffix;
                 }
 
                 //Customer Service Contact Information
                 locationMailModel.Content.lstLocations[i].CustService                       = new Models.ContactPerson();
-                locationMailModel.Content.lstLocations[i].CustService.strContactFirstName   = locationList.lstLocations[i].CustService.strContactFirstName;
-                locationMailModel.Content.lstLocations[i].CustService.strContactLastName    = locationList.lstLocations[i].CustService.strContactLastName;
-                locationMailModel.Content.lstLocations[i].CustService.contactPhone          = new Models.PhoneNumber();
-                locationMailModel.Content.lstLocations[i].CustService.contactPhone.AreaCode = locationList.lstLocations[i].CustService.contactPhone.AreaCode;
-                locationMailModel.Content.lstLocations[i].CustService.contactPhone.Prefix   = locationList.lstLocations[i].CustService.contactPhone.Prefix;
-                locationMailModel.Content.lstLocations[i].CustService.contactPhone.Suffix   = locationList.lstLocations[i].CustService.contactPhone.Suffix;
-                locationMailModel.Content.lstLocations[i].CustService.strContactEmail       = locationList.lstLocations[i].CustService.strContactEmail;
-                locationMailModel.Content.lstLocations[i].CustService.intContactTypeID      = (short)Models.ContactPerson.ContactTypes.CustomerService;
+                locationMailModel.Content.lstLocations[i].CustService.FirstName   = locationList.lstLocations[i].CustService.FirstName;
+                locationMailModel.Content.lstLocations[i].CustService.LastName    = locationList.lstLocations[i].CustService.LastName;
+                locationMailModel.Content.lstLocations[i].CustService.ContactPhone          = new Models.PhoneNumber();
+                locationMailModel.Content.lstLocations[i].CustService.ContactPhone.AreaCode = locationList.lstLocations[i].CustService.ContactPhone.AreaCode;
+                locationMailModel.Content.lstLocations[i].CustService.ContactPhone.Prefix   = locationList.lstLocations[i].CustService.ContactPhone.Prefix;
+                locationMailModel.Content.lstLocations[i].CustService.ContactPhone.Suffix   = locationList.lstLocations[i].CustService.ContactPhone.Suffix;
+                locationMailModel.Content.lstLocations[i].CustService.Email       = locationList.lstLocations[i].CustService.Email;
+                locationMailModel.Content.lstLocations[i].CustService.ContactTypeID      = (short)Models.ContactPerson.ContactTypes.CustomerService;
                 locationMailModel.Content.lstLocations[i].CustService.ContactType           = Models.ContactPerson.ContactTypes.CustomerService;
 
-                if (!String.IsNullOrEmpty(locationList.lstLocations[i].CustService.strContactFirstName) && !String.IsNullOrEmpty(locationList.lstLocations[i].CustService.strContactLastName)) {
-                    locationMailModel.Content.lstLocations[i].CustService.strFullName = locationList.lstLocations[i].CustService.strContactLastName + ", " + locationList.lstLocations[i].CustService.strContactFirstName;
+                if (!String.IsNullOrEmpty(locationList.lstLocations[i].CustService.FirstName) && !String.IsNullOrEmpty(locationList.lstLocations[i].CustService.LastName)) {
+                    locationMailModel.Content.lstLocations[i].CustService.FullName = locationList.lstLocations[i].CustService.LastName + ", " + locationList.lstLocations[i].CustService.FirstName;
                 }
 
-                if (!String.IsNullOrEmpty(locationList.lstLocations[i].CustService.contactPhone.AreaCode) && !String.IsNullOrEmpty(locationList.lstLocations[i].CustService.contactPhone.Prefix) && !String.IsNullOrEmpty(locationList.lstLocations[i].CustService.contactPhone.Suffix)) {
-                    locationMailModel.Content.lstLocations[i].CustService.strFullPhone = '(' + locationList.lstLocations[i].CustService.contactPhone.AreaCode + ") " + locationList.lstLocations[i].CustService.contactPhone.Prefix + '-' + locationList.lstLocations[i].CustService.contactPhone.Suffix;
+                if (!String.IsNullOrEmpty(locationList.lstLocations[i].CustService.ContactPhone.AreaCode) && !String.IsNullOrEmpty(locationList.lstLocations[i].CustService.ContactPhone.Prefix) && !String.IsNullOrEmpty(locationList.lstLocations[i].CustService.ContactPhone.Suffix)) {
+                    locationMailModel.Content.lstLocations[i].CustService.Phone = '(' + locationList.lstLocations[i].CustService.ContactPhone.AreaCode + ") " + locationList.lstLocations[i].CustService.ContactPhone.Prefix + '-' + locationList.lstLocations[i].CustService.ContactPhone.Suffix;
                 }
 
                 //Web Portal Information
@@ -219,19 +219,19 @@ namespace GCRBA {
                 body = body.Replace("{UserEmail}", locationMailModel.UserEmail);
 
                 body = body.Replace("{LocationContactType}", locationMailModel.Content.lstLocations[i].LocationContact.ContactType.ToString());
-                body = body.Replace("{LocationContactName}", locationMailModel.Content.lstLocations[i].LocationContact.strFullName);
-                body = body.Replace("{LocationContactEmail}", locationMailModel.Content.lstLocations[i].LocationContact.strContactEmail);
-                body = body.Replace("{LocationContactPhone}", locationMailModel.Content.lstLocations[i].LocationContact.strFullPhone);
+                body = body.Replace("{LocationContactName}", locationMailModel.Content.lstLocations[i].LocationContact.FullName);
+                body = body.Replace("{LocationContactEmail}", locationMailModel.Content.lstLocations[i].LocationContact.Email);
+                body = body.Replace("{LocationContactPhone}", locationMailModel.Content.lstLocations[i].LocationContact.Phone);
 
                 body = body.Replace("{CustServiceContactType}", locationMailModel.Content.lstLocations[i].CustService.ContactType.ToString());
-                body = body.Replace("{CustServiceContactName}", locationMailModel.Content.lstLocations[i].CustService.strFullName);
-                body = body.Replace("{CustServiceContactEmail}", locationMailModel.Content.lstLocations[i].CustService.strContactEmail);
-                body = body.Replace("{CustServiceContactPhone}", locationMailModel.Content.lstLocations[i].CustService.strFullPhone);
+                body = body.Replace("{CustServiceContactName}", locationMailModel.Content.lstLocations[i].CustService.FullName);
+                body = body.Replace("{CustServiceContactEmail}", locationMailModel.Content.lstLocations[i].CustService.Email);
+                body = body.Replace("{CustServiceContactPhone}", locationMailModel.Content.lstLocations[i].CustService.Phone);
 
                 body = body.Replace("{WebAdminContactType}", locationMailModel.Content.lstLocations[i].WebAdmin.ContactType.ToString());
-                body = body.Replace("{WebAdminContactName}", locationMailModel.Content.lstLocations[i].WebAdmin.strFullName);
-                body = body.Replace("{WebAdminContactEmail}", locationMailModel.Content.lstLocations[i].WebAdmin.strContactEmail);
-                body = body.Replace("{WebAdminContactPhone}", locationMailModel.Content.lstLocations[i].WebAdmin.strFullPhone);
+                body = body.Replace("{WebAdminContactName}", locationMailModel.Content.lstLocations[i].WebAdmin.FullName);
+                body = body.Replace("{WebAdminContactEmail}", locationMailModel.Content.lstLocations[i].WebAdmin.Email);
+                body = body.Replace("{WebAdminContactPhone}", locationMailModel.Content.lstLocations[i].WebAdmin.Phone);
 
                 body = body.Replace("{FacebookURL}", locationMailModel.Content.lstLocations[i].Facebook.strSocialMediaLink);
                 body = body.Replace("{FacebookAvailable}", locationMailModel.Content.lstLocations[i].Facebook.blnAvailable.ToString());

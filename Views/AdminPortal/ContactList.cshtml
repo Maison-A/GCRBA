@@ -1,0 +1,14 @@
+﻿@using GCRBA.ViewModels
+@model ProfileViewModel
+
+<div class="row">
+	<div class="col text-left">
+		<select name="contacts" id="edit-contacts-list" class="form-control col-md-4">
+			<option value="none" disabled selected>Contacts</option>
+			@foreach (var item in Model.Contacts)
+			{
+				<option value="@item.ContactPersonID">@item.FullName</option>
+			}
+		</select>
+	</div>
+</div>

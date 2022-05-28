@@ -328,36 +328,36 @@ namespace GCRBA.Views.Bakery {
                         //Member Only Variables
                         //Contact Person Information
                         loc.LocationContact = new Models.ContactPerson();
-                        loc.LocationContact.strContactFirstName = col["lstLocations[" + index + "].LocationContact.strContactFirstName"];
-                        loc.LocationContact.strContactLastName = col["lstLocations[" + index + "].LocationContact.strContactLastName"];
-                        loc.LocationContact.contactPhone = new Models.PhoneNumber();
-                        loc.LocationContact.contactPhone.AreaCode = col["lstLocations[" + index + "].LocationContact.contactPhone.AreaCode"];
-                        loc.LocationContact.contactPhone.Prefix = col["lstLocations[" + index + "].LocationContact.contactPhone.Prefix"];
-                        loc.LocationContact.contactPhone.Suffix = col["lstLocations[" + index + "].LocationContact.contactPhone.Suffix"];
-                        loc.LocationContact.strContactEmail = col["lstLocations[" + index + "].LocationContact.strContactEmail"];
-                        loc.LocationContact.intContactTypeID = (short)Models.ContactPerson.ContactTypes.LocationContact;
+                        loc.LocationContact.FirstName = col["lstLocations[" + index + "].LocationContact.strContactFirstName"];
+                        loc.LocationContact.LastName = col["lstLocations[" + index + "].LocationContact.strContactLastName"];
+                        loc.LocationContact.ContactPhone = new Models.PhoneNumber();
+                        loc.LocationContact.ContactPhone.AreaCode = col["lstLocations[" + index + "].LocationContact.contactPhone.AreaCode"];
+                        loc.LocationContact.ContactPhone.Prefix = col["lstLocations[" + index + "].LocationContact.contactPhone.Prefix"];
+                        loc.LocationContact.ContactPhone.Suffix = col["lstLocations[" + index + "].LocationContact.contactPhone.Suffix"];
+                        loc.LocationContact.Email = col["lstLocations[" + index + "].LocationContact.strContactEmail"];
+                        loc.LocationContact.ContactTypeID = (short)Models.ContactPerson.ContactTypes.LocationContact;
 
                         //Web Admin contact information
                         loc.WebAdmin = new Models.ContactPerson();
-                        loc.WebAdmin.strContactFirstName = col["lstLocations[" + index + "].WebAdmin.strContactFirstName"];
-                        loc.WebAdmin.strContactLastName = col["lstLocations[" + index + "].WebAdmin.strContactLastName"];
-                        loc.WebAdmin.contactPhone = new Models.PhoneNumber();
-                        loc.WebAdmin.contactPhone.AreaCode = col["lstLocations[" + index + "].WebAdmin.contactPhone.AreaCode"];
-                        loc.WebAdmin.contactPhone.Prefix = col["lstLocations[" + index + "].WebAdmin.contactPhone.Prefix"];
-                        loc.WebAdmin.contactPhone.Suffix = col["lstLocations[" + index + "].WebAdmin.contactPhone.Suffix"];
-                        loc.WebAdmin.strContactEmail = col["lstLocations[" + index + "].WebAdmin.strContactEmail"];
-                        loc.WebAdmin.intContactTypeID = (short)Models.ContactPerson.ContactTypes.WebAdmin;
+                        loc.WebAdmin.FirstName = col["lstLocations[" + index + "].WebAdmin.strContactFirstName"];
+                        loc.WebAdmin.LastName = col["lstLocations[" + index + "].WebAdmin.strContactLastName"];
+                        loc.WebAdmin.ContactPhone = new Models.PhoneNumber();
+                        loc.WebAdmin.ContactPhone.AreaCode = col["lstLocations[" + index + "].WebAdmin.contactPhone.AreaCode"];
+                        loc.WebAdmin.ContactPhone.Prefix = col["lstLocations[" + index + "].WebAdmin.contactPhone.Prefix"];
+                        loc.WebAdmin.ContactPhone.Suffix = col["lstLocations[" + index + "].WebAdmin.contactPhone.Suffix"];
+                        loc.WebAdmin.Email = col["lstLocations[" + index + "].WebAdmin.strContactEmail"];
+                        loc.WebAdmin.ContactTypeID = (short)Models.ContactPerson.ContactTypes.WebAdmin;
 
                         //Customer Service Contact Information
                         loc.CustService = new Models.ContactPerson();
-                        loc.CustService.strContactFirstName = col["lstLocations[" + index + "].CustService.strContactFirstName"];
-                        loc.CustService.strContactLastName = col["lstLocations[" + index + "].CustService.strContactLastName"];
-                        loc.CustService.contactPhone = new Models.PhoneNumber();
-                        loc.CustService.contactPhone.AreaCode = col["lstLocations[" + index + "].CustService.contactPhone.AreaCode"];
-                        loc.CustService.contactPhone.Prefix = col["lstLocations[" + index + "].CustService.contactPhone.Prefix"];
-                        loc.CustService.contactPhone.Suffix = col["lstLocations[" + index + "].CustService.contactPhone.Suffix"];
-                        loc.CustService.strContactEmail = col["lstLocations[" + index + "].CustService.strContactEmail"];
-                        loc.CustService.intContactTypeID = (short)Models.ContactPerson.ContactTypes.CustomerService;
+                        loc.CustService.FirstName = col["lstLocations[" + index + "].CustService.strContactFirstName"];
+                        loc.CustService.LastName = col["lstLocations[" + index + "].CustService.strContactLastName"];
+                        loc.CustService.ContactPhone = new Models.PhoneNumber();
+                        loc.CustService.ContactPhone.AreaCode = col["lstLocations[" + index + "].CustService.contactPhone.AreaCode"];
+                        loc.CustService.ContactPhone.Prefix = col["lstLocations[" + index + "].CustService.contactPhone.Prefix"];
+                        loc.CustService.ContactPhone.Suffix = col["lstLocations[" + index + "].CustService.contactPhone.Suffix"];
+                        loc.CustService.Email = col["lstLocations[" + index + "].CustService.strContactEmail"];
+                        loc.CustService.ContactTypeID = (short)Models.ContactPerson.ContactTypes.CustomerService;
 
                         //Web Portal Information
                         loc.MainWeb = new Models.Website();

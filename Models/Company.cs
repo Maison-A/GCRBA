@@ -8,7 +8,7 @@ namespace GCRBA.Models
 {
     public class Company
     {
-        public int CompanyID { get; set; }
+        public long CompanyID { get; set; }
         public string Name { get; set; }
         public string About { get; set; }
         public string Year { get; set; }
@@ -56,6 +56,12 @@ namespace GCRBA.Models
             }
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
+
+        public Company GetCompanyInfo()
+		{
+            Database db = new Database();
+            return db.GetCompanyInfo(this);
+		}
 
         public enum ActionTypes
         {

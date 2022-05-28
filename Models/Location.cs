@@ -7,7 +7,7 @@ namespace GCRBA.Models
 {
     public class Location
     {
-        public int LocationID { get; set; }
+        public long LocationID { get; set; }
         public int CompanyID { get; set; }
         public string Address { get; set; }
         public string City { get; set; }
@@ -60,7 +60,8 @@ namespace GCRBA.Models
             UpdateSuccessful = 3,
             DeleteSuccessful = 4,
             Unknown = 5,
-            RequiredFieldMissing = 6
+            RequiredFieldMissing = 6,
+            DuplicateAddress = 7
         }
     }
 }

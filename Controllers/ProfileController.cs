@@ -17,196 +17,173 @@ namespace GCRBA.Controllers
 
         public ActionResult Index()
         {
-            Models.User user = new Models.User();
-            user = user.GetUserSession();
-            if (user.IsAuthenticated)
-            {
-                ViewBag.Name = user.FirstName + " " + user.LastName;
-            }
-            return View(user);
+            // create new instance of User object and get current user session 
+            // if no current user session, User object will be null
+            User u = new User();
+            u = u.GetUserSession();
+            
+            return View(u);
         }
 
         public ActionResult Login()
         {
             User u = new User();
             u = u.GetUserSession();
+
             return View(u);
         }
 
         [HttpPost]
         public ActionResult Login(FormCollection col)
         {
-            try
-            {
-                // create instance of user object to pass to the view 
-                Models.User user = new Models.User();
-
-                // has submit button with value login been pressed?
-                if (col["btnSubmit"] == "login")
-                {
-                    // yes, assign Username and Password values to Username and Password properties in User object
-                    user.Username = col["Username"];
-                    user.Password = col["Password"];
-                    
-                    // are input fields empty? 
-                    if (user.Username.Length == 0 || user.Password.Length == 0)
-                    {
-                        // yes, change User ActionType and return View with User object as argument 
-                        user.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
-                        return View(user);
-                    }
-                   
-                    // call Login method on User object
-                    // method will either return a User object or null
-                    user = user.NonAdminLogin();
-
-                    if (user != null && user.UID > 0)
-                    {
-                        // user is not null and is not 0 so we can save the current user session 
-                        user.SaveUserSession();
-
-                        // create instance of datbase object 
-                        Database db = new Database();
-
-                        // call method that determines if current user is member or not 
-                        db.IsUserMember(user);
-
-                        // show logged in profile 
-                        if (user.isAdmin == 1)
-                        {
-                            // this login area is for members/non-members only, not admin 
-                            user.ActionType = Models.User.ActionTypes.LoginFailed;
-                        }
-                        else
-                        {
-                            if (user.isMember == 0)
-                            {
-                                // user is not a member, so send them to non-member interface
-                                return RedirectToAction("NonMember");
-                            }
-                            else
-                            {
-                                // user is a member, so send them to the member interface
-                                return RedirectToAction("Member");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        user = new Models.User();
-                        user.Username = col["Username"];
-                        user.ActionType = Models.User.ActionTypes.LoginFailed;
-                        return View(user);
-                    }
-                }
-               
-                // redirect to AddNewUser form if signup clicked
-                else if(col["btnSubmit"] == "signup")
-                {
-                    return RedirectToAction("AddNewUser","User");
-                }
-
-                return View(user);
-                
-            }
-            catch (Exception)
-            {
-                Models.User user = new Models.User();
-                return View(user);
-            }
-        }
-
-        public ActionResult AdminLogin()
-        {
+            // create instance of user object
             User u = new User();
-            u = u.GetUserSession();
+
+            // login button pressed
+            if (col["btnSubmit"].ToString() == "login")
+			{
+                // assign username and password input to user object
+                u.Username = col["Username"];
+                u.Password = col["Password"];
+
+                // are the input fields empty?
+                if (u.ValidateLogin() != Models.User.ActionTypes.NoType)
+				{
+                    return View(u);
+				}
+
+                // call login method 
+                u = u.Login();
+
+                if (u != null && u.UID > 0)
+				{
+                    // save user session so they stay logged in as they navigate to 
+                    // different pages of the site 
+                    u.SaveUserSession();
+
+                    // check user status to show appropriate areas of site
+                    // admin can see admin portal and member portal for their own user info 
+                    // member can see member portal
+                    // nonmember can see nonmember portal
+                    if (u.isAdmin == 1)
+					{
+                        return RedirectToAction("Index", "AdminPortal");
+					}
+
+                    if (u.isMember == 1)
+					{
+                        return RedirectToAction("Member", "Profile");
+					}
+                    else
+					{
+                        return RedirectToAction("NonMember", "Profile");
+					}
+				}
+                else
+				{
+                    // login failed, notify user 
+                    u.ActionType = Models.User.ActionTypes.LoginFailed;
+                    return View(u);
+				}
+			}
+
+            // signup button pressed
+            if (col["btnSubmit"].ToString() == "signup")
+			{
+                return RedirectToAction("AddNewUser", "User");
+			}
+
             return View(u);
         }
 
-        [HttpPost]
-        public ActionResult AdminLogin(FormCollection col)
-        {
-            try
-            {
-                // create instance of user object to pass to the view 
-                Models.User user = new Models.User();
+        //public ActionResult AdminLogin()
+        //{
+        //    User u = new User();
+        //    u = u.GetUserSession();
+        //    return View(u);
+        //}
 
-                // get whatever input is in the textboxes 
-                user.Username = col["Username"];
-                user.Password = col["Password"];
+        //[HttpPost]
+        //public ActionResult AdminLogin(FormCollection col)
+        //{
+        //    try
+        //    {
+        //        // create instance of user object to pass to the view 
+        //        Models.User user = new Models.User();
 
-                // are input fields empty? 
-                if (user.Username.Length == 0 || user.Password.Length == 0)
-                {
-                    // yes, change User ActionType and return View with User object as argument 
-                    user.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
-                    return View(user);
-                }
-                // no, fields aren't empty 
-                else
-                {
-                    // has submit button with value login been pressed?
-                    if (col["btnSubmit"] == "login")
-                    {
-                        // yes, assign Username and Password values to Username and Password properties in User object
-                        user.Username = col["Username"];
-                        user.Password = col["Password"];
+        //        // get whatever input is in the textboxes 
+        //        user.Username = col["Username"];
+        //        user.Password = col["Password"];
 
-                        // call Login method on User object
-                        // method will either return a User object or null
-                        user = user.AdminLogin();
+        //        // are input fields empty? 
+        //        if (user.Username.Length == 0 || user.Password.Length == 0)
+        //        {
+        //            // yes, change User ActionType and return View with User object as argument 
+        //            user.ActionType = Models.User.ActionTypes.RequiredFieldMissing;
+        //            return View(user);
+        //        }
+        //        // no, fields aren't empty 
+        //        else
+        //        {
+        //            // has submit button with value login been pressed?
+        //            if (col["btnSubmit"] == "login")
+        //            {
+        //                // yes, assign Username and Password values to Username and Password properties in User object
+        //                user.Username = col["Username"];
+        //                user.Password = col["Password"];
 
-                        if (user != null && user.UID > 0)
-                        {
-                            if (user.isAdmin == 1)
-                            {
-                                // user is not null and is not 0 so we can save the current user session 
-                                user.SaveUserSession();
+        //                // call Login method on User object
+        //                // method will either return a User object or null
+        //                user = user.AdminLogin();
 
-                                // user is an admin so send them to the admin interface 
-                                return RedirectToAction("Index", "AdminPortal");
-                            }
-                            else
-                            {
-                                user.ActionType = Models.User.ActionTypes.LoginFailed;
-                            }
-                        }
-                        else
-                        {
-                            user = new Models.User();
-                            user.Username = col["Username"];
-                            user.ActionType = Models.User.ActionTypes.LoginFailed;
-                            return View(user);
-                        }
-                    }
+        //                if (user != null && user.UID > 0)
+        //                {
+        //                    if (user.isAdmin == 1)
+        //                    {
+        //                        // user is not null and is not 0 so we can save the current user session 
+        //                        user.SaveUserSession();
 
-                    return View(user);
+        //                        // user is an admin so send them to the admin interface 
+        //                        return RedirectToAction("Index", "AdminPortal");
+        //                    }
+        //                    else
+        //                    {
+        //                        user.ActionType = Models.User.ActionTypes.LoginFailed;
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    user = new Models.User();
+        //                    user.Username = col["Username"];
+        //                    user.ActionType = Models.User.ActionTypes.LoginFailed;
+        //                    return View(user);
+        //                }
+        //            }
 
-                }
-            }
-            catch (Exception)
-            {
-                Models.User user = new Models.User();
-                return View(user);
-            }
-        }
+        //            return View(user);
+
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        Models.User user = new Models.User();
+        //        return View(user);
+        //    }
+        //}
 
         public ActionResult NonMember()
         {
-            // create user object
             User u = new User();
-
-            // get current user session
             u = u.GetUserSession();
 
-            // get notification(s)
-            u.Notifications = new List<Notification>();
-            u.Notifications = GetUserNotifications(u);
+            // get notifications for user 
+            u = GetNotifications(u);
 
-            // create user notification object
+            // create notification object so view doesn't throw
+            // null object exception 
             u.Notification = new Notification();
 
-            // check if any of the messages are unread 
+            // check if any of the messages are unread
             u.Notification.UnreadNotifications = GetIfUnread(u);
 
             return View(u);
@@ -215,24 +192,19 @@ namespace GCRBA.Controllers
         [HttpPost]
         public ActionResult NonMember(FormCollection col)
         {
-            // create user object
             User u = new User();
-
-            // get current user session
             u = u.GetUserSession();
 
-            // get notification(s)
-            u.Notifications = new List<Notification>();
-            u.Notifications = GetUserNotifications(u);
+            // get notifications for user
+            u = GetNotifications(u);
 
-            // create user notification object 
-            u.Notification = new Notification();
-
+            // button with value editProfile pressed
             if (col["btnSubmit"].ToString() == "editProfile")
 			{
                 return RedirectToAction("EditProfile", "Profile");
 			}
 
+            // button with value viewNotifications pressed
             if (col["btnSubmit"].ToString() == "viewNotifications")
 			{
                 return RedirectToAction("UserNotifications", "Profile");
@@ -249,8 +221,7 @@ namespace GCRBA.Controllers
             u = u.GetUserSession();
 
             // get notification(s)
-            u.Notifications = new List<Notification>();
-            u.Notifications = GetUserNotifications(u);
+            u = GetNotifications(u);
 
             u.Notification = new Notification();
 
@@ -266,16 +237,19 @@ namespace GCRBA.Controllers
             u = u.GetUserSession();
 
             // get notification(s)
-            u.Notifications = new List<Notification>();
-            u.Notifications = GetUserNotifications(u);
+            u = GetNotifications(u);
 
+            // formcollection (col) returns a string of all values separated
+            // by a comma when returning more than one value for an object 
+            // so declare new string to hold potential string list
             string notificationIDs;
 
             if (col["btnSubmit"].ToString() == "delete")
 			{
+                // are any of the notifications selected?
                 if (col["notification"] != null)
 				{
-                    // get list of messages selected 
+                    // yes, get list of messages selected 
                     // then delete from db and return view 
                     notificationIDs = col["notification"];
                     u.ActionType = DeleteNotifications(u, notificationIDs);
@@ -289,9 +263,10 @@ namespace GCRBA.Controllers
 
             if (col["btnSubmit"].ToString() == "markAsRead")
 			{
+                // are any of the notifications selected?
                 if (col["notification"] != null)
 				{
-                    // get list of messages selected 
+                    // yes, get list of messages selected 
                     // then update status as read in db and return view 
                     notificationIDs = col["notification"];
                     u.ActionType = UpdateNotificationStatus(u, notificationIDs);
@@ -314,8 +289,7 @@ namespace GCRBA.Controllers
             u = u.GetUserSession();
 
             // get notification(s)
-            u.Notifications = new List<Notification>();
-            u.Notifications = GetUserNotifications(u);
+            u = GetNotifications(u);
 
             // create user notification object
             u.Notification = new Notification();
@@ -335,8 +309,8 @@ namespace GCRBA.Controllers
             // get current user session 
             u = u.GetUserSession();
 
-            Models.Database db = new Models.Database();
-            u.lstMemberLocations = db.GetMemberLocations(u);
+            // get member locations 
+            u = GetMemberLocations(u); 
 
             // create user notification object
             u.Notification = new Notification();
@@ -377,17 +351,6 @@ namespace GCRBA.Controllers
                 LandingLocations = GetAllLandingLocations(landingLocations)
             };
             return View(landingLocList);
-        }
-
-        public List<SelectListItem> GetAllLandingLocations(List<Models.NewLocation> landingLocations)
-        {
-            List<SelectListItem> items = new List<SelectListItem>();
-            foreach (Models.NewLocation loc in landingLocations)
-            {
-
-                items.Add(new SelectListItem { Text = loc.LocationName, Value = loc.lngLocationID.ToString() });
-            }
-            return items;
         }
 
         [HttpPost]
@@ -566,8 +529,6 @@ namespace GCRBA.Controllers
             // get company associated with user 
             vm.Company = GetCompany(vm);
 
-            int editedColumn = 0;
-
 			if (col["btnSubmit"].ToString() == "submit")
 			{
                 if (col["Company.Name"] != vm.Company.Name)
@@ -657,29 +618,12 @@ namespace GCRBA.Controllers
             return View(vm);
 		}
 
-        private void SaveButtonSession(string buttonValue)
-        {
-            try
-            {
-                // create button object 
-                Button button = new Button();
-
-                // get value of button pressed 
-                button.CurrentButton = buttonValue;
-
-                // save button session 
-                button.SaveButtonSession();
-            } catch (Exception ex) { throw new Exception(ex.Message); }
-        }
-
         [HttpPost]
         public ActionResult EditWebsites(FormCollection col)
 		{
             ProfileViewModel vm = InitProfileViewModel();
             vm.Company = new Company();
             vm.Company = GetCompany(vm);
-
-            int editedColumn = 0;
 
             // create website list object then get list of websites 
             vm.Websites = new List<Website>();
@@ -889,8 +833,6 @@ namespace GCRBA.Controllers
             vm.Company = new Company();
             vm.Company = GetCompany(vm);
 
-            int editedColumn = 0;
-
             // create list to hold social media links
             vm.SocialMediaList = new List<SocialMedia>();
 
@@ -979,9 +921,6 @@ namespace GCRBA.Controllers
 
                                     // update new link in db 
                                     vm.SocialMedia.ActionType = UpdateSocialMedia(item);
-
-                                    // 7 is PK for strSocialMediaLink in tblCompanySocialMedia 
-                                    editedColumn = 7;
 
                                     // notify admin of changes
                                     SendEditNotification(vm.User, 7, 3, previousVersion, item.strSocialMediaLink);
@@ -1173,8 +1112,6 @@ namespace GCRBA.Controllers
             vm.States = new List<State>();
 
             vm = GetStates(vm);
-
-            int editedColumn = 0;
 
             if (col["btnSubmit"].ToString() == "editLocation")
 			{
@@ -1627,184 +1564,6 @@ namespace GCRBA.Controllers
             return View(vm);
         }
 
-        private SaleSpecial.ActionTypes AddSpecialToLocation(ProfileViewModel vm)
-        {
-            try
-            {
-                // create db object
-                Database db = new Database();
-
-                // add new special to tblSpecial first 
-                vm.Special = db.InsertSpecial(vm.Special);
-
-                // then add special and location to tblSpecialLocation 
-                vm.Special.ActionType = db.InsertSpecialLocation(vm.Special, vm.Location);
-
-                string newVersion = "intSpecialID " + vm.Special.SpecialID + " in tblSpecial";
-
-                // notify admin of change 
-                SendEditNotification(vm.User, 17, 6, "NEW SPECIAL INSERTED", newVersion);
-
-                return vm.Special.ActionType;
-            } catch (Exception ex) { throw new Exception(ex.Message); }
-        }
-
-        private SaleSpecial.ActionTypes DeleteSpecialFromLocation(ProfileViewModel vm)
-        {
-            try
-            {
-                // create db object
-                Database db = new Database();
-
-                // delete from table 
-                vm.Special.ActionType = db.DeleteSpecialLocation(vm.Special, vm.Location);
-
-                // notify admin of change
-                SendEditNotification(vm.User, 17, 6, vm.Special.strDescription, "DELETED SPECIAL");
-
-                return vm.Special.ActionType;
-            } catch (Exception ex) { throw new Exception(ex.Message); }
-        }
-
-        private List<SaleSpecial> GetSpecials(Location l)
-        {
-            try
-            {
-                // create specials list object
-                List<SaleSpecial> specials = new List<SaleSpecial>();
-
-                // create db object
-                Database db = new Database();
-
-                // get list of specials 
-                specials = db.GetLandingSpecials(l.LocationID);
-
-                return specials;
-            } catch (Exception ex) { throw new Exception(ex.Message); }
-        }
-
-        private CategoryItem.ActionTypes AddCategoriesToDB(ProfileViewModel vm, string categoryIDs)
-        {
-            try
-            {
-                // create database object
-                Database db = new Database();
-
-                // create array by splitting string at each comma 
-                string[] AllStrings = categoryIDs.Split(',');
-
-                // loop through array and assign CategoryID to Category object 
-                // then add object to list of category items
-                foreach (string item in AllStrings)
-                {
-                    // get categoryID 
-                    vm.Category.ItemID = int.Parse(item);
-
-                    // add to database
-                    vm.Category.ActionType = db.InsertCategories(vm.Category, vm.Location);
-
-                    // send notification of change to admin 
-                    SendEditNotification(vm.User, 15, 5, "N/A", "ADDED CATEGORY TO LOCATION");
-                }
-                return vm.Category.ActionType;
-            } catch (Exception ex) { throw new Exception(ex.Message); }
-        }
-
-        private CategoryItem.ActionTypes DeleteCategories(ProfileViewModel vm, string categoryIDs)
-        {
-            try
-            {
-                // create database object
-                Database db = new Database();
-
-                // create array by splitting string at each comma 
-                string[] AllStrings = categoryIDs.Split(',');
-
-                // loop through array and assign CategoryID to Category object 
-                // then add object to list of category items
-                foreach (string item in AllStrings)
-                {
-                    // get categoryID 
-                    vm.Category.ItemID = int.Parse(item);
-
-                    // add to database
-                    vm.Category.ActionType = db.DeleteCategories(vm.Location, vm.Category);
-
-                    SendEditNotification(vm.User, 15, 5, "N/A", "REMOVED CATEGORY FROM LOCATION");
-                }
-                return vm.Category.ActionType;
-            } catch (Exception ex) { throw new Exception(ex.Message); }
-        }
-
-        private List<CategoryItem> GetNotCategories(ProfileViewModel vm)
-        {
-            try
-            {
-                // create db object 
-                Database db = new Database();
-
-                // get category list 
-                vm.Categories = db.GetNotCategories(vm.Categories, vm.Location);
-
-                return vm.Categories;
-
-            } catch (Exception ex) { throw new Exception(ex.Message); }
-        }
-
-        private List<CategoryItem> GetCurrentCategories(ProfileViewModel vm)
-        {
-            try
-            {
-                // create db object
-                Database db = new Database();
-
-                // get current category list
-                vm.Categories = db.GetCurrentCategories(vm.Categories, vm.Location);
-
-                return vm.Categories;
-
-            } catch (Exception ex) { throw new Exception(ex.Message); }
-        }
-
-        private Location.ActionTypes DeleteLocation(ProfileViewModel vm)
-		{
-            try
-			{
-                Database db = new Database();
-
-                vm.Location.ActionType = db.MemberDeleteLocation(vm.Location);
-
-                return vm.Location.ActionType;
-            }
-            catch (Exception ex) { throw new Exception(ex.Message); }
-		}
-
-        private List<Location> GetLocations(ProfileViewModel vm)
-		{
-            try
-			{
-                Database db = new Database();
-
-                vm.Locations = db.GetLocations(vm.Company);
-
-                return vm.Locations;
-			}
-            catch (Exception ex) { throw new Exception(ex.Message); }
-		}
-
-        private Location GetUpdatedLocationInfo(Location l)
-		{
-            try
-			{
-                Database db = new Database();
-
-                l = db.GetLocation(l);
-
-                return l;
-			}
-            catch (Exception ex) { throw new Exception(ex.Message); }
-		}
-
 		public ActionResult Logout()
         {
             // create user object
@@ -1821,6 +1580,18 @@ namespace GCRBA.Controllers
         // -------------------------------------------------------------------------------------------------
         // ADDING/DELETING FROM DATABASE   
         // -------------------------------------------------------------------------------------------------
+
+        private Location.ActionTypes DeleteLocation(ProfileViewModel vm)
+        {
+            try
+            {
+                Database db = new Database();
+
+                vm.Location.ActionType = db.MemberDeleteLocation(vm.Location);
+
+                return vm.Location.ActionType;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
 
         private Website.ActionTypes AddWebsite(ProfileViewModel vm)
         {
@@ -1978,10 +1749,110 @@ namespace GCRBA.Controllers
             } catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
+        private CategoryItem.ActionTypes AddCategoriesToDB(ProfileViewModel vm, string categoryIDs)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // create array by splitting string at each comma 
+                string[] AllStrings = categoryIDs.Split(',');
+
+                // loop through array and assign CategoryID to Category object 
+                // then add object to list of category items
+                foreach (string item in AllStrings)
+                {
+                    // get categoryID 
+                    vm.Category.ItemID = int.Parse(item);
+
+                    // add to database
+                    vm.Category.ActionType = db.InsertCategories(vm.Category, vm.Location);
+
+                    // send notification of change to admin 
+                    SendEditNotification(vm.User, 15, 5, "N/A", "ADDED CATEGORY TO LOCATION");
+                }
+                return vm.Category.ActionType;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private CategoryItem.ActionTypes DeleteCategories(ProfileViewModel vm, string categoryIDs)
+        {
+            try
+            {
+                // create database object
+                Database db = new Database();
+
+                // create array by splitting string at each comma 
+                string[] AllStrings = categoryIDs.Split(',');
+
+                // loop through array and assign CategoryID to Category object 
+                // then add object to list of category items
+                foreach (string item in AllStrings)
+                {
+                    // get categoryID 
+                    vm.Category.ItemID = int.Parse(item);
+
+                    // add to database
+                    vm.Category.ActionType = db.DeleteCategories(vm.Location, vm.Category);
+
+                    SendEditNotification(vm.User, 15, 5, "N/A", "REMOVED CATEGORY FROM LOCATION");
+                }
+                return vm.Category.ActionType;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private SaleSpecial.ActionTypes AddSpecialToLocation(ProfileViewModel vm)
+        {
+            try
+            {
+                // create db object
+                Database db = new Database();
+
+                // add new special to tblSpecial first 
+                vm.Special = db.InsertSpecial(vm.Special);
+
+                // then add special and location to tblSpecialLocation 
+                vm.Special.ActionType = db.InsertSpecialLocation(vm.Special, vm.Location);
+
+                string newVersion = "intSpecialID " + vm.Special.SpecialID + " in tblSpecial";
+
+                // notify admin of change 
+                SendEditNotification(vm.User, 17, 6, "NEW SPECIAL INSERTED", newVersion);
+
+                return vm.Special.ActionType;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private SaleSpecial.ActionTypes DeleteSpecialFromLocation(ProfileViewModel vm)
+        {
+            try
+            {
+                // create db object
+                Database db = new Database();
+
+                // delete from table 
+                vm.Special.ActionType = db.DeleteSpecialLocation(vm.Special, vm.Location);
+
+                // notify admin of change
+                SendEditNotification(vm.User, 17, 6, vm.Special.strDescription, "DELETED SPECIAL");
+
+                return vm.Special.ActionType;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
 
         // -------------------------------------------------------------------------------------------------
         // RETRIEVING DATA FROM DATABASE   
         // -------------------------------------------------------------------------------------------------
+
+        private User GetMemberLocations(User u)
+        {
+            Database db = new Database();
+
+            u.lstMemberLocations = db.GetMemberLocations(u);
+
+            return u;
+        }
 
         private List<Website> GetCompanyWebsites(ProfileViewModel vm)
         {
@@ -1997,6 +1868,101 @@ namespace GCRBA.Controllers
             } catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
+        private User GetNotifications(User u)
+        {
+            // create new instance of Notification object
+            // then get list of notifications 
+            u.Notifications = new List<Notification>();
+            u.Notifications = GetUserNotifications(u);
+
+            return u;
+        }
+
+        public List<SelectListItem> GetAllLandingLocations(List<Models.NewLocation> landingLocations)
+        {
+            List<SelectListItem> items = new List<SelectListItem>();
+            foreach (Models.NewLocation loc in landingLocations)
+            {
+
+                items.Add(new SelectListItem { Text = loc.LocationName, Value = loc.lngLocationID.ToString() });
+            }
+            return items;
+        }
+
+        private List<SaleSpecial> GetSpecials(Location l)
+        {
+            try
+            {
+                // create specials list object
+                List<SaleSpecial> specials = new List<SaleSpecial>();
+
+                // create db object
+                Database db = new Database();
+
+                // get list of specials 
+                specials = db.GetLandingSpecials(l.LocationID);
+
+                return specials;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+
+
+        private List<CategoryItem> GetNotCategories(ProfileViewModel vm)
+        {
+            try
+            {
+                // create db object 
+                Database db = new Database();
+
+                // get category list 
+                vm.Categories = db.GetNotCategories(vm.Categories, vm.Location);
+
+                return vm.Categories;
+
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private List<CategoryItem> GetCurrentCategories(ProfileViewModel vm)
+        {
+            try
+            {
+                // create db object
+                Database db = new Database();
+
+                // get current category list
+                vm.Categories = db.GetCurrentCategories(vm.Categories, vm.Location);
+
+                return vm.Categories;
+
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+
+
+        private List<Location> GetLocations(ProfileViewModel vm)
+        {
+            try
+            {
+                Database db = new Database();
+
+                vm.Locations = db.GetLocations(vm.Company);
+
+                return vm.Locations;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
+
+        private Location GetUpdatedLocationInfo(Location l)
+        {
+            try
+            {
+                Database db = new Database();
+
+                l = db.GetLocation(l);
+
+                return l;
+            } catch (Exception ex) { throw new Exception(ex.Message); }
+        }
         private List<SocialMedia> GetCompanySocialMedia(ProfileViewModel vm)
         {
             try
@@ -2083,6 +2049,7 @@ namespace GCRBA.Controllers
                 }
 
                 return u.Notification.UnreadNotifications;
+
             } catch (Exception ex) { throw new Exception(ex.Message); }
         }
 

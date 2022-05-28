@@ -1,0 +1,32 @@
+﻿@using GCRBA.ViewModels
+@model ProfileViewModel
+
+<div class="row">
+	<div class="col text-left">
+		@Html.LabelFor(model => model.ContactPerson.FullName, "Full Name", new { @class = "form-label font-weight-bold" })
+		@Html.TextBoxFor(model => model.ContactPerson.FullName, new { @class = "form-control", @id = "name-input" })
+	</div>
+	<div class="col text-left">
+		@Html.LabelFor(model => model.ContactPerson.Phone, "Contact Phone Number", new { @class = "form-label font-weight-bold" })
+		@Html.TextBoxFor(model => model.ContactPerson.Phone, new { @class = "form-control", @id = "phone-input" })
+	</div>
+</div>
+<div class="row text-left">
+	<div class="col text-left">
+		@Html.LabelFor(model => model.ContactPerson.Email, "Contact Email", new { @class = "form-label font-weight-bold" })
+		@Html.TextBoxFor(model => model.ContactPerson.Email, new { @class = "form-control", @id = "email-input" })
+	</div>
+</div>
+<div class="row mt-3">
+	<div class="col text-left">
+		<div class="font-weight-bold">Contact Type</div>
+	</div>
+</div>
+<div class="row mt-2">
+	<div class="col text-left">
+		<label class="w-100">@Html.RadioButtonFor(model => model.ContactPerson.ContactType, new { @class = "form-control", @value = "1", @id = "type-input" }) Location Contact</label>
+		<label class="w-100">@Html.RadioButtonFor(model => model.ContactPerson.ContactType, new { @class = "form-control", @value = "2", @id = "type-input" }) Customer Service Representative</label>
+		<label class="w-100">@Html.RadioButtonFor(model => model.ContactPerson.ContactType, new { @class = "form-control", @value = "3", @id = "type-input" }) Web Admin</label>
+	</div>
+</div>
+
