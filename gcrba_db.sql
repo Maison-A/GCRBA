@@ -150,6 +150,9 @@ IF OBJECT_ID ('DELETELOCATION')								IS NOT NULL DROP PROCEDURE DELETELOCATION
 IF OBJECT_ID ('GET_ADMIN_NOTIFICATIONS')								IS NOT NULL DROP PROCEDURE GET_ADMIN_NOTIFICATIONS
 IF OBJECT_ID ('DELETE_ADMIN_NOTIFICATIONS')								IS NOT NULL DROP PROCEDURE DELETE_ADMIN_NOTIFICATIONS
 IF OBJECT_ID ('MARK_ADMIN_NOTIFICATION_AS_READ')								IS NOT NULL DROP PROCEDURE MARK_ADMIN_NOTIFICATION_AS_READ
+IF OBJECT_ID ('GET_SPECIFIC_CONTACT')								IS NOT NULL DROP PROCEDURE GET_SPECIFIC_CONTACT
+IF OBJECT_ID ('UPDATE_CONTACT')								IS NOT NULL DROP PROCEDURE UPDATE_CONTACT
+IF OBJECT_ID ('SELECT_CONTACT_TYPES')								IS NOT NULL DROP PROCEDURE SELECT_CONTACT_TYPES
 
 CREATE TABLE tblTempCompany   
 (
@@ -1184,8 +1187,8 @@ CREATE PROCEDURE [dbo].[INSERT_CONTACTPERSON]
 @intContactPersonID AS BIGINT OUTPUT
 ,@PROC_TEST AS INT OUTPUT
 ,@strContactName AS NVARCHAR(50)
-,@strContactPhone AS NVARCHAR(20)
-,@strContactEmail AS NVARCHAR(50)
+,@strContactPhone AS NVARCHAR(20) = NULL
+,@strContactEmail AS NVARCHAR(50) = NULL 
 ,@intCompanyID AS BIGINT
 ,@intContactPersonTypeID AS SMALLINT
 AS
@@ -1224,7 +1227,7 @@ CREATE PROCEDURE [dbo].[INSERT_LOCATION]
 ,@intStateID AS SMALLINT
 ,@strZip NVARCHAR(15)
 ,@strPhone NVARCHAR(20)
-,@strEmail NVARCHAR(50)
+,@strEmail NVARCHAR(50) = NULL
 AS
 SET NOCOUNT ON
 SET XACT_ABORT ON
@@ -1530,6 +1533,25 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [db_owner].[GET_SPECIFIC_CONTACT]
+@intContactPersonID BIGINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT	c.strContactName, c.strContactPhone, c.strContactEmail, c.intContactPersonTypeID, ct.strContactPersonType, cl.intLocationID, l.strAddress, l.strCity, l.intStateID, s.strState, l.strZip
+	FROM	tblContactPerson as c FULL OUTER JOIN tblContactPersonType as ct
+			ON ct.intContactPersonTypeID = c.intContactPersonTypeID
+			FULL OUTER JOIN tblContactLocation as cl
+			ON c.intContactPersonID = cl.intContactPersonID
+			FULL OUTER JOIN tblLocation as l
+			ON l.intLocationID = cl.intLocationID
+			FULL OUTER JOIN tblState as s
+			ON s.intStateID = l.intStateID
+	WHERE	c.intContactPersonID = @intContactPersonID 
+END
+GO
+
 CREATE PROCEDURE [db_owner].[GET_SPECIFIC_COMPANY]
 @intCompanyID BIGINT
 AS 
@@ -1599,6 +1621,16 @@ BEGIN
     -- Insert statements for procedure here
 	SELECT *
 	FROM tblState
+END
+GO
+
+CREATE PROCEDURE [db_owner].[SELECT_CONTACT_TYPES]
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT	*
+	FROM	tblContactPersonType
 END
 GO
 
@@ -1695,23 +1727,22 @@ SET NOCOUNT ON
 SET XACT_ABORT ON
 BEGIN
 	
-	DECLARE @intContactPersonID AS TINYINT 
-	
-	SELECT @intContactPersonID = intContactPersonID FROM tblContactPerson WHERE intCompanyID = @intCompanyID
-
-	DELETE FROM tblCompanyMember WHERE intCompanyID = @intCompanyID 
-	DELETE FROM tblCategoryLocation WHERE intLocationID IN (SELECT intLocationID FROM tblLocation WHERE intCompanyID = @intCompanyID)
-	DELETE FROM tblLocationHours WHERE intLocationID IN (SELECT intLocationID FROM  tblLocation WHERE intCompanyID = @intCompanyID)
+	DELETE FROM tblLocationImages WHERE intLocationID IN (SELECT intLocationID FROM tblLocation WHERE intCompanyID = @intCompanyID)
+	DELETE FROM tblLocationHours WHERE intLocationID IN (SELECT intLocationID FROM tblLocation WHERE intCompanyID = @intCompanyID)
 	DELETE FROM tblSpecialLocation WHERE intLocationID IN (SELECT intLocationID FROM tblLocation WHERE intCompanyID = @intCompanyID)
-	DELETE FROM tblContactPerson WHERE intCompanyID = @intCompanyID
-	DELETE FROM tblLocation WHERE intCompanyID = @intCompanyID
-	DELETE FROM tblCompanyAward WHERE intCompanyID = @intCompanyID
-	DELETE FROM tblCompanySocialMedia WHERE intCompanyID = @intCompanyID
-	DELETE FROM tblContactLocation WHERE intContactPersonID = @intContactPersonID
+	DELETE FROM tblEventLocation WHERE intLocationID IN (SELECT intLocationID FROM tblLocation WHERE intCompanyID = @intCompanyID)
+	DELETE FROM tblCategoryLocation WHERE intLocationID IN (SELECT intLocationID FROM tblLocation WHERE intCompanyID = @intCompanyID)
+	DELETE FROM tblContactLocation WHERE intContactPersonID IN (SELECT intContactPersonID FROM tblContactPerson WHERE intCompanyID = @intCompanyID)
 	DELETE FROM tblContactPerson WHERE intCompanyID = @intCompanyID
 	DELETE FROM tblWebsite WHERE intCompanyID = @intCompanyID
+	DELETE FROM tblContactLocation WHERE intLocationID IN (SELECT intLocationID FROM tblLocation WHERE intCompanyID = @intCompanyID)
+	DELETE FROM tblLocation WHERE intCompanyID = @intCompanyID
+	DELETE FROM tblCompanyMember WHERE intCompanyID = @intCompanyID
+	DELETE FROM tblCompanyAward WHERE intCompanyID = @intCompanyID
+	DELETE FROM tblCompanySocialMedia WHERE intCompanyID = @intCompanyID
 	DELETE FROM tblCompany WHERE intCompanyID = @intCompanyID
 	RETURN @@rowcount
+
 END
 GO
 
@@ -2058,8 +2089,8 @@ GO
 
 CREATE PROCEDURE[dbo].[INSERT_CONTACTLOCATION_RELATIONSHIP]
 @strContactName AS NVARCHAR(50)
-,@strContactPhone AS NVARCHAR(20)
-,@strContactEmail AS NVARCHAR(50)
+,@strContactPhone AS NVARCHAR(20) = null
+,@strContactEmail AS NVARCHAR(50) = null
 ,@intCompanyID AS BIGINT
 ,@intContactPersonTypeID AS SMALLINT
 ,@intLocationID AS BIGINT
@@ -2682,6 +2713,28 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [db_owner].[UPDATE_CONTACT]
+@intContactPersonID BIGINT,
+@strContactName NVARCHAR(50),
+@strContactPhone NVARCHAR(20) = NULL,
+@strContactEmail NVARCHAR(50) = NULL,
+@intCompanyID BIGINT
+
+AS 
+BEGIN
+	SET NOCOUNT ON;
+
+	UPDATE	tblContactPerson
+	SET		strContactName = @strContactName, 
+			strContactPhone = @strContactPhone,
+			strContactEmail = @strContactEmail,
+			intCompanyID = @intCompanyID
+	WHERE	intContactPersonID = @intContactPersonID 
+
+	RETURN 1
+END
+GO
+
 CREATE PROCEDURE [db_owner].[INSERT_ADMIN_NOTIFICATION_EDIT]
 @intUserID SMALLINT,
 @intEditedColumnID SMALLINT,
@@ -2922,7 +2975,7 @@ VALUES	(1, '2030 Madison Rd', 'Cincinnati', 3, '45208-3289', '513-321-3399', 'cu
 INSERT INTO tblContactPerson (strContactName, strContactPhone, strContactEmail, intCompanyID, intContactPersonTypeID)
 VALUES					('Briggs, Randall', '5555555555', 'briggs.r@gmail.com', 1, 1)
 						,('Hall, Ben', '5555555555', 'hall.b@gmail.com', 1, 2)
-						,('Cowen, Candice', '5555555555', 'cowen.c@gmail.com', 1, 3)
+						,('Cowen, Candice', '5555555555', null, 1, 3)
 						,('Smith, Bob', '5555555555', 'bob.smith@gmail.com', 3, 1)
 						,('Brown, Erica', '5555555555', 'erica.b@gmail.com', 3, 1)
 						,('Lopez, Maria', '5555555555', 'maria_lopez@gmail.com', 3, 2)
@@ -2936,6 +2989,7 @@ VALUES						(1, 1)
 							,(5, 2)
 							,(6, 2)
 							,(7, 3)
+							,(7, 4)
 
 INSERT INTO tblLocationHours (intLocationID, intDayID, strOpen, strClose)
 VALUES	(1, 1, '10:00am', '4:00pm'),
@@ -3152,4 +3206,6 @@ VALUES									(1, 1)
 
 INSERT INTO tblTempCompanySocialMedia (intCompanyID, strSocialMediaLink, intSocialMediaID)
 VALUES					(1, 'https://www.facebook.com', 1)
+
+
 
