@@ -1,4 +1,7 @@
-﻿// hide until toggled
+﻿// get initial list of contacts for removal list 
+populateContactRemovalList();
+
+// hide until toggled
 // -----------------------------------------------
 $('.edit-company-nav-options').hide();
 $('#add-contact-area').hide();
@@ -6,6 +9,7 @@ $('#edit-contact-area').hide();
 $('#remove-contact-area').hide();
 $('#manage-contacts-by-location').hide();
 $('#manage-contacts').hide();
+$('#remove-contact-list-area').hide();
 // -----------------------------------------------
 
 // toggle hide/show 
@@ -33,6 +37,7 @@ $('#edit-companies-list').change(hideShowCompanyOptions);
 // send form input to controller method when clicked 
 $('#add-new-contact-submit').click(postNewContact);
 $('#edit-contact-submit').click(postEditedContact);
+$('#remove-contacts-submit').click(postContactRemoval);
 
 function hideShowCompanyOptions() {
 
@@ -149,6 +154,67 @@ function postEditedContact() {
 	resetEditedContactFields();
 }
 
+function postContactRemoval() {
+
+	// variable to hold success/failure message
+	var statusMessage = '';
+
+	// controller/method called
+	var url = '/AdminPortal/RemoveContacts';
+
+	// get the selected contact(s)
+	const selectedContacts = $('#remove-contacts-list').val();
+
+	// post array to method 
+	$.post(url, { SelectedContacts: selectedContacts }, function (data) {
+
+		var statusMessage = '';
+
+		if (data == 'DeleteSuccessful') {
+			statusMessage = 'Selected contact(s) successfully deleted.';
+		}
+
+		if (data == 'Unknown') {
+			statusMessage = 'There was an issue when processing your requset. Please refresh the page and try again.';
+		}
+
+		// reset list 
+		populateContactRemovalList();
+
+		displayStatusMessage('remove-contacts-submission-message', statusMessage);
+		hideStatusMessage('remove-contacts-submission-message');
+	})
+}
+
+function populateContactRemovalList() {
+
+	// make call to method to get contact list 
+	$.get('/AdminPortal/GetContactsByCompany/', function (data) {
+
+		// are there 1 or more items in list?
+		if (data.length <= 0) {
+
+			// no, so hide list and display message
+			$('#remove-contact-list-area').hide();
+			$('#remove-contact-area').append('<p>There are currently no contacts for the selected company.</p>');
+
+		} else {
+
+			// make sure list is empty so we can updated list 
+			$('#remove-contacts-list').find('option').remove();
+
+			// yes, so populate and show list of contacts
+			$('#remove-contact-list-area').show();
+
+			$.each(data, function (index, value) {
+				$('#remove-contacts-list').append('<option value="' + value.ContactPersonID + '">' + value.FullName + '</option>');
+			})
+
+		}
+
+	})
+}
+
 $('#edit-contacts-list').change(function () {
 	$.get('/AdminPortal/ContactInfo/' + $('#edit-contacts-list').val(), function (data) {
 		$.each(data, function (index, value) {
@@ -174,7 +240,7 @@ $('#edit-contacts-list').change(function () {
 			}
 		});
 	});
-});
+})
 
 function displayStatusMessage(messageLocation, statusMessage) {
 	$('#' + messageLocation).show();

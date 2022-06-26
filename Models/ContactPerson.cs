@@ -181,6 +181,32 @@ namespace GCRBA.Models {
 			}
 		}
 
+		public ActionTypes RemoveContacts(List<string> selectedContacts)
+		{
+			Database db = new Database();
+
+			List<long> contactIDs = new List<long>();
+
+			// convert each ID from string to long
+			foreach (string contactID in selectedContacts)
+			{
+				contactIDs.Add(long.Parse(contactID));
+			}
+
+			// submit to db 
+			foreach (long contactID in contactIDs)
+			{
+				if (!db.DeleteContact(contactID))
+				{
+					return ActionTypes.Unknown;
+				}
+
+			}
+
+			return ActionTypes.DeleteSuccessful;
+
+		}
+
 		public string FormatName()
 		{
 			this.FullName = this.LastName + ", " + this.FirstName;

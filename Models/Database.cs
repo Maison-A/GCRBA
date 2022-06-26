@@ -1780,6 +1780,33 @@ namespace GCRBA.Models
 			catch (Exception ex) { throw new Exception(ex.Message); }
 		}
 
+		public bool DeleteContact(long contactID)
+		{
+			try
+			{
+				SqlConnection cn = null;
+				if (!GetDBConnection(ref cn)) throw new Exception("Database did not connect");
+				SqlCommand cm = new SqlCommand("DELETE_CONTACT", cn);
+				int intReturnValue = -1;
+
+				SetParameter(ref cm, "@intContactPersonID", contactID, SqlDbType.BigInt);
+				SetParameter(ref cm, "ReturnValue", 0, SqlDbType.Int, Direction: ParameterDirection.ReturnValue);
+
+				cm.ExecuteReader();
+
+				intReturnValue = (int)cm.Parameters["ReturnValue"].Value;
+				CloseDBConnection(ref cn);
+
+				if (intReturnValue == 1)
+				{
+					return true;
+				}
+
+				return false;
+				
+			} catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
 		public Website.ActionTypes DeleteWebsite(Website w)
 		{
 			try

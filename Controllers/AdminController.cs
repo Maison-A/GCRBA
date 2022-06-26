@@ -1668,6 +1668,16 @@ namespace GCRBA.Controllers
             return contact.UpdateContact(FirstName, LastName, Phone, Email, ContactID);
 		}
 
+        // AdminPortal --> Edit Existing Company --> Edit Contact(s) --> Remove Contact(s)
+        // when contact(s) selected in drop down and button for removal section is clicked, 
+        // this method is called, and submits removal to database
+		public ContactPerson.ActionTypes RemoveContacts(List<string> SelectedContacts)
+		{
+			ContactPerson contact = new ContactPerson();
+
+			return contact.RemoveContacts(SelectedContacts);
+		}
+
 		// AdminPortal --> Edit Existing Company --> Edit Contact(s) --> Edit Existing Contact 
 		// when contact is selected in dropdown, this method is called
 		// method gets contact info based on selected contact and returns said contact object 

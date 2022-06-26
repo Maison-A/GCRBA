@@ -2,18 +2,20 @@
 @model ProfileViewModel
 
 <div class="row">
+	<div class="col">
+		<div id="remove-contacts-submission-message" class="mb-3"></div>
+	</div>
+</div>
+<div class="row" id="remove-contact-list-area">
 	<div class="col text-left">
-		<select name="remove-contacts" class="form-control w-25" multiple>
-			<option value="none" disabled selected>Choose Contact(s)</option>
-			@foreach (var item in Model.Contacts)
-			{
-				<option value="@item.ContactPersonID">@item.FullName</option>
-			}
+		<label for="remove-contacts" class="form-label font-weight-bold">Select Contact(s) to Remove</label>
+		<select name="remove-contacts" id="remove-contacts-list" class="form-control w-25" multiple>
+
 		</select>
 	</div>
 </div>
 <div class="row mt-3">
 	<div class="col text-left">
-		<button name="btnSubmit" value="remove" class="btn btn-warning">Submit Section</button>
+		<button type="button" id="remove-contacts-submit" class="btn btn-warning">Submit Section</button>
 	</div>
 </div>
